@@ -109,7 +109,8 @@
 <h1 class="article-title"><span>Qt动画类</span></h1>
 <p>[toc]</p>
 <h1 id="动画框架结构"><a href="#动画框架结构" class="headerlink" title="动画框架结构"></a>动画框架结构</h1><p>动画框架由基类 <code>QAbstractAnimation</code> 以及它的两个子类<code> QVariantAnimation</code> 、<code>QAnimationGroup</code> 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationGroup、QSequentialAnimationGroup），完成一个连续的动画。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/%E5%8A%A8%E7%94%BB/images/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%A1%86%E6%9E%B6.png" alt="Qt动画框架">QPropertyAnimation</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/%E5%8A%A8%E7%94%BB/images/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%A1%86%E6%9E%B6.png"></div></div>QPropertyAnimation
+
 <p><code>QPropertyAnimation</code> 类能够修改Qt的属性值，如pos、geometry等属性。设置好动画的初值和末值，以及持续的时间后，一个属性动画就基本完成了。</p>
 <h2 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h2><p>通过修改控件的geometry属性可以实现缩放效果，也可以实现位移的动画，该属性的前两个值确定了控件左上角的位置，后两个值确定了控件的大小。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//scale</span></span><br><span class="line">QPropertyAnimation *pScaleAnimation1 = <span class="keyword">new</span> <span class="built_in">QPropertyAnimation</span>(ui-&gt;scaleButton, <span class="string">&quot;geometry&quot;</span>);</span><br><span class="line">pScaleAnimation1-&gt;<span class="built_in">setDuration</span>(<span class="number">1000</span>);</span><br><span class="line">pScaleAnimation1-&gt;<span class="built_in">setStartValue</span>(<span class="built_in">QRect</span>(<span class="number">190</span>, <span class="number">230</span>, <span class="number">0</span>, <span class="number">0</span>));</span><br><span class="line">pScaleAnimation1-&gt;<span class="built_in">setEndValue</span>(<span class="built_in">QRect</span>(<span class="number">120</span>, <span class="number">160</span>, <span class="number">140</span>, <span class="number">140</span>));</span><br></pre></td></tr></table></figure>
@@ -121,7 +122,8 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//opacity</span></span><br><span class="line">QGraphicsOpacityEffect *pButtonOpacity = <span class="keyword">new</span> <span class="built_in">QGraphicsOpacityEffect</span>(<span class="keyword">this</span>);</span><br><span class="line">pButtonOpacity-&gt;<span class="built_in">setOpacity</span>(<span class="number">1</span>);</span><br><span class="line">ui-&gt;opasityButton-&gt;<span class="built_in">setGraphicsEffect</span>(pButtonOpacity);</span><br><span class="line"></span><br><span class="line">QPropertyAnimation *pOpacityAnimation1 = <span class="keyword">new</span> <span class="built_in">QPropertyAnimation</span>(pButtonOpacity, <span class="string">&quot;opacity&quot;</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setDuration</span>(<span class="number">1000</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setStartValue</span>(<span class="number">1</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setEndValue</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
 <h2 id="动画曲线"><a href="#动画曲线" class="headerlink" title="动画曲线"></a>动画曲线</h2><p>动画还可以设置时间的插值曲线，默认是linear，即线性运动，通过设置QEasingCurve即可。Qt提供了40种已经定义好的曲线（如果有需要也可以自定义曲线）：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/%E5%8A%A8%E7%94%BB/images/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%9B%B2%E7%BA%BF.png" alt="Qt动画曲线"></p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/%E5%8A%A8%E7%94%BB/images/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%9B%B2%E7%BA%BF.png"></div></div>
+
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pScaleAnimation1-&gt;<span class="built_in">setEasingCurve</span>(QEasingCurve::InOutQuad);</span><br></pre></td></tr></table></figure>
 
 
@@ -132,7 +134,7 @@
 
 </article>
 
-<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%9C%86%E5%BD%A2%E8%BF%9B%E5%BA%A6%E6%9D%A1/">Qt 圆形进度条</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%90%AF%E5%8A%A8%E5%8A%A8%E7%94%BB/">Qt 启动动画</a></div></section></div>
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%90%AF%E5%8A%A8%E5%8A%A8%E7%94%BB/">Qt 启动动画</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%8A%A8%E7%94%BB/">Qt 动画效果 （抖动、下坠、透明度）</a></div></section></div>
 
 
 
@@ -271,7 +273,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }

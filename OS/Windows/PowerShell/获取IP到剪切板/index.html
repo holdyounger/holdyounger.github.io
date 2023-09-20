@@ -31,7 +31,7 @@
 <meta property="og:description" content="获取当前ip到剪切板 客户端开发远程调试每次都需要获取机器的ip，然后手动填写，较为麻烦，因此简单做了一个可以获取ip到剪切板当中的批处理脚本，可以获取系统当前ip到剪切板中。  [toc] 获取ip获取ip的命令有多种，最终实现就是只要能打印出当前系统ip的命令都可以。  ipconfig route print  以下两个脚本就是从上述两个命令当中获取ip地址： ipconfig1234567">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-18T05:27:41.823Z">
-<meta property="article:modified_time" content="2023-09-18T05:27:41.823Z">
+<meta property="article:modified_time" content="2023-09-20T08:45:48.364Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="windows">
 <meta property="article:tag" content="批处理">
@@ -136,6 +136,8 @@
 
 
 <p>结合以上两个命令，脚本稍微修改一下就能实现获取ip到剪切版的功能。</p>
+<h1 id="完整脚本"><a href="#完整脚本" class="headerlink" title="完整脚本"></a>完整脚本</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> /f <span class="string">&quot;tokens=4&quot;</span> %%a <span class="keyword">in</span> (<span class="string">&#x27; route print ^| findstr 0.0.0.0.*0.0.0.0 ^| findstr /v &quot;默认&quot; &#x27;</span>) <span class="keyword">do</span> (<span class="built_in">set</span> IP=%%a)</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> 你的局域网IP是： %IP%</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> %IP% | clip</span><br><span class="line"></span><br><span class="line">pause</span><br><span class="line"></span><br><span class="line">@rem 或者使用定时</span><br><span class="line">@rem <span class="built_in">timeout</span> /t 5</span><br></pre></td></tr></table></figure>
+
 
 
 
@@ -283,7 +285,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }

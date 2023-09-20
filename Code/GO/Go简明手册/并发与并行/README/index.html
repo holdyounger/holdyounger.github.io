@@ -30,12 +30,12 @@
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="知识点 并发与并行 协程 goroutine channel select  并发编程 并发与并行并发指在同一时刻只能有一条指令执行，但多个进程指令被快速的轮换执行，使得在宏观上具有多个进程同时执行的效果，但在微观上并不是同时执行的，只是把时间分成若干段，通过 CPU 时间片轮转使多个进程快速交替的执行。而并行的关键是你有同时处理多个任务的能力。并发和并行都可以是很多个线程，就看这些线程能不能同时">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/README/1.jpeg">
+<meta property="og:image" content="http://example.com/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/README/images/README/1.jpeg">
 <meta property="article:published_time" content="2023-09-18T05:27:41.688Z">
 <meta property="article:modified_time" content="2023-09-18T05:27:41.688Z">
 <meta property="article:author" content="mingming">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/README/1.jpeg">
+<meta name="twitter:image" content="http://example.com/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/README/images/README/1.jpeg">
   
   
   
@@ -113,7 +113,7 @@
 </ul>
 <h1 id="并发编程"><a href="#并发编程" class="headerlink" title="并发编程"></a>并发编程</h1><blockquote>
 <h4 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h4><p>并发指在同一时刻只能有一条指令执行，但多个进程指令被快速的轮换执行，使得在宏观上具有多个进程同时执行的效果，但在微观上并不是同时执行的，只是把时间分成若干段，通过 CPU 时间片轮转使多个进程快速交替的执行。而并行的关键是你有同时处理多个任务的能力。并发和并行都可以是很多个线程，就看这些线程能不能同时被（多个）CPU 执行，如果可以就说明是并行，而并发是多个线程被（一个）CPU 轮流切换着执行。一个经典且通俗易懂的例子这样解释并发与并行的区别：并发是两个队列，使用一台咖啡机；并行是两个队列，使用两台咖啡机。如果串行，一个队列使用一台咖啡机，那么哪怕前面那个人有事出去了半天，后面的人也只能等着他回来才能去接咖啡，这效率无疑是最低的。图解：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/images/README/1.jpeg" alt="并发与并行"></p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="images/README/1.jpeg"></div></div>
 </blockquote>
 <blockquote>
 <h4 id="协程"><a href="#协程" class="headerlink" title="协程*"></a>协程<code>*</code></h4><p>协程也叫轻量级线程。与传统的进程和线程相比，协程最大的优点就在于其足够“轻”，操作系统可以轻松创建上百万个协程而不会导致系统资源枯竭，而线程和进程通常最多不过近万个。而多数语言在语法层面上是不支持协程的，一般都是通过库的方式进行支持，但库的支持方式和功能不够完善，经常会引发阻塞等一系列问题，而 Go 语言在语法层面上支持协程，也叫 <code>goroutine</code>。这让协程变得非常简单，让轻量级线程的切换管理不再依赖于系统的进程和线程，也不依赖 CPU 的数量。</p>
@@ -306,7 +306,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }

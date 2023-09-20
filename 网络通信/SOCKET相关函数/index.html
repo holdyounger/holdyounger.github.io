@@ -20,24 +20,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#f8f8f8">
   
-  <title>oone</title>
+  <title>windows socket使用Demo - oone</title>
 
   
     <meta name="description" content="Windows 下 Socket相关  一、socket()函数 创建套接字Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol);  实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_STREAM, 0);  &#x2F;&#x2F;创建TCP套接">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oone">
-<meta property="og:url" content="http://example.com/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/SOCKET%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0(CC++)/index.html">
+<meta property="og:title" content="windows socket使用Demo">
+<meta property="og:url" content="http://example.com/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/SOCKET%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Windows 下 Socket相关  一、socket()函数 创建套接字Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol);  实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_STREAM, 0);  &#x2F;&#x2F;创建TCP套接">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-18T05:27:41.913Z">
-<meta property="article:modified_time" content="2023-09-18T05:27:41.913Z">
+<meta property="article:modified_time" content="2023-09-20T11:10:12.441Z">
 <meta property="article:author" content="mingming">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="Socket">
 <meta name="twitter:card" content="summary">
   
   
   
-  
+  <meta name="keywords" content="网络,Socket">
 
   <!-- feed -->
   
@@ -82,7 +84,7 @@
 <widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
 
 
-<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#sockaddr%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">sockaddr结构体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sockaddr-in-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">sockaddr_in 结构体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#in-addr-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">in_addr 结构体</span></a></li></ol></div></div></widget>
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">windows socket使用Demo</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#sockaddr%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">sockaddr结构体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sockaddr-in-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">sockaddr_in 结构体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#in-addr-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">in_addr 结构体</span></a></li></ol></div></div></widget>
 
 
 
@@ -101,7 +103,7 @@
 <div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/">网络通信</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.913Z">2023-09-18</time></div></div>
 
 <article class="md-text content post">
-
+<h1 class="article-title"><span>windows socket的使用</span></h1>
 <blockquote>
 <p>Windows 下 Socket相关</p>
 </blockquote>
@@ -292,7 +294,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }

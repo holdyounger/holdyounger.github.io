@@ -154,7 +154,8 @@
 <ol>
 <li>那如何去验证呢，我们还是看代码，这次我们在 Qt 的 <code>qrc</code> 文件中，去掉图片的后缀名，不带后缀属性去读取图片看看其是否可以读取成功。</li>
 </ol>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/../../images/Qt%E5%9B%BE%E7%89%87/image-20220423143541263.png" alt="去掉后缀属性"></p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="../../images/Qt%E5%9B%BE%E7%89%87/image-20220423143541263.png"></div></div>
+
 <p><mark>运行结果</mark>:  <code>QLabel</code> 读取成功</p>
 <p>如上图所示，在 <code>qrc</code> 文件中去掉图片的后缀，读取图片设置到 <code>QLabel</code> 依然是成功的。 </p>
 <ol start="2">
@@ -169,7 +170,8 @@
 <p>在 <code>Qt</code> 的内部有很大的几率是通过文件的后缀去判断调用哪个图片读取算法的。也就是说，当你人为的修改了 <code>png-&gt;jpg</code> 时，在 <code>Qt</code> 中就会出现设置图片失败的问题。目前看来，在代码没有问题，但是图片设置后不显示的情况下，最好的方式是，就是去掉图片的后缀，让 <code>Qt</code> 自己去判断调用哪个算法读取图片。</p>
 </blockquote>
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><p>这里有关于 <code>Qt</code> 图片 <code>I\O</code> 的描述可以看看Qt帮助手册中关于图像文件读写的文档。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/../../images/Qt%E5%9B%BE%E7%89%87/image-20220423152853629.png" alt="读写图片文件"></p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="../../images/Qt%E5%9B%BE%E7%89%87/image-20220423152853629.png"></div></div>
+
 <p>源码部分，我们只需查看两个<code>Qt</code> 类就行，个人感觉看一个就知道了。两者识别图片的算法应该是一致的。包括 <code>setStyleSheet()</code>接口中设置图片的接口应该都是一致的。 </p>
 <blockquote>
 <ol>
@@ -359,7 +361,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }

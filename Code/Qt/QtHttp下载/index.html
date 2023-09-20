@@ -110,7 +110,8 @@
 <h2 id="QT之HTTP请求下载"><a href="#QT之HTTP请求下载" class="headerlink" title="QT之HTTP请求下载"></a>QT之HTTP请求下载</h2><p>标签： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freesion.com/tag/Qt/">Qt</a> <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freesion.com/tag/HTTP/">HTTP</a></p>
 <h1 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h1><p>最近在研究了一下用Qt 的方法来实现<strong>http下载</strong>，Qt 中的<strong>Http请求</strong>主要用到了<strong>QNetworkAccessManager</strong>、<strong>QNetworkReply</strong>、<strong>QNetworkRequest</strong> 这三块。本篇文章主要叙述如何用Qt 的方法进行HTTP 请求下载文件，能够支持****断点续传****（断点续传即能够手动停止下载，下次可以从已经下载的部分开始继续下载未完成的部分，而没有必要从头开始上传下载），并且实时更新下载信息。整体代码考虑十分周到，对各种情况也做了相应的处理，并且有通俗易懂的注释。好了，代码走起！</p>
 <h1 id="代码之路"><a href="#代码之路" class="headerlink" title="代码之路"></a>代码之路</h1><p>在讲解代码之前先看一下效果图：</p>
-<h3 id="效果："><a href="#效果：" class="headerlink" title="效果："></a>效果：</h3><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Qt/images/QtHttp%E4%B8%8B%E8%BD%BD/QtHttpDownload.gif" alt="效果"></p>
+<h3 id="效果："><a href="#效果：" class="headerlink" title="效果："></a>效果：</h3><div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Qt/images/QtHttp%E4%B8%8B%E8%BD%BD/QtHttpDownload.gif"></div></div>
+
 <p>从图中可以看出点击start按钮，进行下载，stop按钮暂停当前下载，close按钮停止当前下载，并删除已经下载的临时文件，并将所有参数重置， 这里界面中下载链接输入框为空是因为我在代码中默认了url，也可以在输入框中输入url进行下载。</p>
 <hr>
 <p>代码主要包含两个部分：</p>
@@ -273,7 +274,7 @@
     stellar.search = {};
     stellar.search.service = 'local_search';
     if (stellar.search.service == 'local_search') {
-      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
       stellar.search[stellar.search.service] = service_obj;
     }
   }
