@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>热补丁支持 - oone</title>
+
+  
+    <meta name="description" content="[TOC] 补丁定义补丁是指衣服、被褥上为遮掩破洞而钉补上的小布块。明白了吗？  现在也指对于大型软件系统(如微软操作系统)在使用过程中暴露的问题（一般由黑客或病毒设计者发现）而发布的解决问题的小程序。就像衣服烂了就要打补丁一样，人编写程序不可能十全十美的，所以软件也免不了会出现BUG，而补丁是专门修复这些BUG做的因为原来发布的软件存在缺陷，发现之后另外编制一个小程序使其完善，这种小程序俗称补丁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="热补丁支持">
+<meta property="og:url" content="http://example.com/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/3-13-%E7%83%AD%E8%A1%A5%E4%B8%81%E6%94%AF%E6%8C%81/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[TOC] 补丁定义补丁是指衣服、被褥上为遮掩破洞而钉补上的小布块。明白了吗？  现在也指对于大型软件系统(如微软操作系统)在使用过程中暴露的问题（一般由黑客或病毒设计者发现）而发布的解决问题的小程序。就像衣服烂了就要打补丁一样，人编写程序不可能十全十美的，所以软件也免不了会出现BUG，而补丁是专门修复这些BUG做的因为原来发布的软件存在缺陷，发现之后另外编制一个小程序使其完善，这种小程序俗称补丁">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.908Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.908Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="《深入理解Windows操作系统》">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="《深入理解Windows操作系统》,Windows">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">热补丁支持</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E8%BD%AF%E8%A1%A5%E4%B8%81"><span class="toc-text">微软补丁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%83%AD%E8%A1%A5%E4%B8%81%E6%89%A7%E8%A1%8C%E6%93%8D%E4%BD%9C"><span class="toc-text">热补丁执行操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E5%88%B6"><span class="toc-text">限制</span></a></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/">立志博览群书</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/">《深入理解Windows操作系统》</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.908Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>热补丁支持</span></h1>
+<p>[TOC]</p>
+<h1 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a>补丁</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>补丁是指衣服、被褥上为遮掩破洞而钉补上的小布块。明白了吗？</p>
+<blockquote>
+<p>现在也指对于大型<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E8%BD%AF%E4%BB%B6">软件</a>系统(如<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E5%BE%AE%E8%BD%AF%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/233219">微软操作系统</a>)在使用过程中暴露的问题（一般由<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E9%BB%91%E5%AE%A2/118396">黑客</a>或<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E7%97%85%E6%AF%92/21267">病毒</a>设计者发现）而发布的解决问题的小程序。就像衣服烂了就要打补丁一样，人编写程序不可能十全十美的，所以<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E8%BD%AF%E4%BB%B6/12053">软件</a>也免不了会出现BUG，而补丁是专门修复这些BUG做的因为原来发布的软件存在缺陷，发现之后另外编制一个小程序使其完善，这种小程序俗称补丁。补丁是由<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E8%BD%AF%E4%BB%B6/12053">软件</a>的原来作者制作的，可以访问网站下载补丁。</p>
+<p>补丁一般都是 <code>.exe</code> 文件</p>
+</blockquote>
+<h2 id="微软补丁"><a href="#微软补丁" class="headerlink" title="微软补丁"></a>微软补丁</h2><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/%E5%BE%AE%E8%BD%AF">微软</a>的<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">Windows操作系统</a>比较大，比较复杂。因此总有考虑不周的地方。有些病毒或者黑客就利用微软的漏洞进行攻击。微软发现漏洞后就发布一些补丁程序。 我们得到微软的补丁程序后安装到计算机上就叫打补丁。</p>
+<blockquote>
+<p>什么是微软补丁？</p>
+<p>微软发布的系统补丁有两种类型：<code>Hotfix</code> 和 <code>Service Pack</code>，下面介绍它们之间的区别和联系。</p>
+<ul>
+<li><code>hotfix</code> 是微软针对某一个具体的系统漏洞或安全问题而发布的专门解决程序，<code>Hotfix</code>的程序文件名有严格的规定，一般格式为“产品名-KBXXXXXX-处理器平台-语言版本.exe”。现在一个例子来详细说明：微软针对震荡病毒而发布的<code>Hotfix</code>程序名为“Win2K-KB835732-X86-CHS.exe”，我们知道这个补丁是针对Win2000系统的，其知识库编号为 835732，应用于 X86 处理器平台，语言版本为简体中文。</li>
+<li><code>Hotfix</code> 是针对某一个具体问题而发布的解决程序，因此它会经常发布，数量非常大。用户想要知道目前已经发布了哪些<code>Hotfix</code>程序是一件非常麻烦的事。因此微软将这些<code>Hotfix</code>补丁全部打包成一个程序提供给用户安装，这就是<code>Service Pack</code>，简称<code>SP</code>。<code>Service Pack</code>包含了发布日期以前所有的<code>Hotfix</code>程序，因此只要安装了它，就可以保证自己不会漏掉一个<code>Hotfix</code>程序。而且发布时间晚的<code>Service Pack</code>程序会包含以前的<code>Service Pack</code>，例如 <code>SP3</code>会包含<code>SP1</code>、<code>SP2</code>的所有补丁。</li>
+</ul>
+</blockquote>
+<h1 id="热补丁支持"><a href="#热补丁支持" class="headerlink" title="热补丁支持"></a>热补丁支持</h1><blockquote>
+<p>重新引导一台机器以便把最新的补丁都应用上，这对于服务器来说可能会意味着一段显著的宕机时间，这也正是为什么Windows要支持运行时刻的补丁方法，称为热补丁（hot patch，或简化为hotpatch）。与之相反的是冷补丁（coldpatch），它要求一次重新引导。热补丁并非只是简单地允许文件可在执行过程中被覆盖;相反地，它包括了一系列可能会被请求执行的复杂操作（这些操作也可能会组合起来）。</p>
+</blockquote>
+<h2 id="热补丁执行操作"><a href="#热补丁执行操作" class="headerlink" title="热补丁执行操作"></a>热补丁执行操作</h2><p>下表列出了这些操作：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>含义</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>映像文件改名称<br>（Rename Image)</td>
+<td>替换磁盘上一个正在被其他应用程序使用的DLL，或者替换磁盘上一个已经被内核加载到系统中的驱动程序</td>
+<td>当一个用户模式的库需要完整地被替换的时候，内核可以检测到哪些进程和服务正在引用该库，将它们卸载出内存，然后更新DLL，再重新启动这些程序和服务（通过<u>重启管理器</u>[restart manager]来完成）。当一个驱动程序需要被替换的时候，内核可以卸载该驱动程序（该驱动程序要求有一个卸载例程），更新驱动程序，然后重新加载替换后的驱动程序</td>
+</tr>
+<tr>
+<td>对象交换<br>（Object Swap）</td>
+<td>以原子操作的方式更改对象目录名字空间中的一个对象</td>
+<td>当一个文件（往往是已知的DLL）需要被原子凡事修改名称，但不影响任何可能正在使用该文件的进程时（所以，这些进程可以立即使用新的文件，且仍然使用老的句柄，但不要求应用程序重新启动）</td>
+</tr>
+<tr>
+<td>补丁函数代码<br>（Patch Function Code）</td>
+<td>将一个映像文件中的一个或多个函数的代码替换为新的版本</td>
+<td>如果在运行时刻一个DLL或驱动程序不能被替换或修改名称，则该映像中的函数可以直接被打上补丁。对于一个包含了新代码的热补丁DLL，当老的函数被调用时，它会跳转到新的代码中。</td>
+</tr>
+<tr>
+<td>刷新系统DLL<br>（Refresh System DLL）</td>
+<td>重新为Ntdll.dll加载内存映射区对象</td>
+<td>Windows的系统原生库Ntdll.dll只在系统引导过程中被加载一次，以后只是被简单地复制到每个新进程的地址空间中。如果它呗热补丁了，那么，系统必须刷新这一内存区对象，以便加载新的版本</td>
+</tr>
+</tbody></table>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p><mark style="background-color:red">运行时刻卸载</mark></p>
+<p>热补丁文件的构成除了包括要替换的函数部分，还包括一个<u><code>Update.exe</code>的程序</u>以及<u>一个额外的<code>.hp</code>热补丁文件</u>。</p>
+<ul>
+<li><code>Update.exe</code>：完成该补丁的提取工作，也执行相应的更新过程。</li>
+<li><code>.hp</code>热补丁文件：此文件包含一个特殊的<code>PE头</code>，称为<code>.HOT1</code>。该PE头包含了一个数据结构，描述了该文件中出现的各种补丁描述符（patch descriptor）。每一个补丁描述述符指明了在原始文件中需要被补丁的偏移位置、一个验证机制（它可以包含一份老数据的简单比较、一个校验和，或者一个散列值），以及待补丁的新数据。内核将解析这些描述符，并且执行恰当的修改动作。若是被保护的进程（protected process，有关进程的更多信息，参见《深入理解Windows操作系统》第5章），或者其他经过数字签名的二进制映像，在这些情况下，热补丁也必须被经过数字签名，以避免针对敏感文件或进程执行“伪造的”补丁。</li>
+</ul>
+<p>在编译时刻对热补丁的支持，是通过在每个函数的开始处加入7个额外的字节来做到的。其中5个字节被看做前一个函数的结束部分，2个字节被看作<strong>函数前缀</strong>（function prolog）部分，也就是函数的开始。</p>
+<h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>使用热补丁也存在一些限制：</p>
+<ol>
+<li>与安全软件的不兼容。像安全软件类的第三方应用程序可能会阻止这样的补丁；补丁也可能与第三方应用程序的操作系统不兼容</li>
+<li>补丁要修改一个文件的导出表或导入表</li>
+<li>补丁要改变数据结构，修正无限循环，或者包含内联的汇编代码</li>
+</ol>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/index/">第7章 网络安全</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/7-1-OSI%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B/">OSI参考模型</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

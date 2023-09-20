@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>Go简明手册——词频统计综合案例 - oone</title>
+
+  
+    <meta name="description" content="wordcount.go  实现词频统计的程序逻辑很简单。我们首先会创建一个映射，然后读取文件的每一行，提取单词，然后更新映射中单词所对应的数量即可。 为了演示面向对象和 goroutine 的使用，我们将基础映射类型封装成了一个统计单词频率的包。我们在基础映射类型上创建了类型 WordCound，然后为该类型了实现了关键方法 UpdateFreq() 和 WordFreqCounter()，其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go简明手册——词频统计综合案例">
+<meta property="og:url" content="http://example.com/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E8%AF%8D%E9%A2%91%E7%BB%9F%E8%AE%A1%E7%BB%BC%E5%90%88%E6%A1%88%E4%BE%8B/README/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="wordcount.go  实现词频统计的程序逻辑很简单。我们首先会创建一个映射，然后读取文件的每一行，提取单词，然后更新映射中单词所对应的数量即可。 为了演示面向对象和 goroutine 的使用，我们将基础映射类型封装成了一个统计单词频率的包。我们在基础映射类型上创建了类型 WordCound，然后为该类型了实现了关键方法 UpdateFreq() 和 WordFreqCounter()，其">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.693Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.693Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Go简明手册">
+<meta property="article:tag" content="Code">
+<meta property="article:tag" content="GO">
+<meta property="article:tag" content="面向对象编程">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Go简明手册,Code,GO,面向对象编程">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">Go简明手册——词频统计综合案例</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/Code/">Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/GO/">GO</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/">Go简明手册</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E8%AF%8D%E9%A2%91%E7%BB%9F%E8%AE%A1%E7%BB%BC%E5%90%88%E6%A1%88%E4%BE%8B/">词频统计综合案例</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.693Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>Go简明手册——词频统计综合案例</span></h1>
+<blockquote>
+<p><a href="./wordcount/wordcount.go">wordcount.go</a></p>
+</blockquote>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>词频统计的程序逻辑很简单。我们首先会创建一个映射，然后读取文件的每一行，提取单词，然后更新映射中单词所对应的数量即可。</p>
+<p>为了演示面向对象和 goroutine 的使用，我们将基础映射类型封装成了一个统计单词频率的包。我们在基础映射类型上创建了类型 <code>WordCound</code>，然后为该类型了实现了关键方法 <code>UpdateFreq()</code> 和 <code>WordFreqCounter()</code>，其中前者会读取一个文件并统计该文件中的所有单词的词频，后者通过 goroutine 实现了并发统计。</p>
+<p>其并发逻辑是：对于每一个文件，创建一个 goroutine，在这个 goroutine 内部调用 <code>UpdateFreq()</code> 方法统计对应文件的词频，当统计完成以后会将映射中每一对键值转化为 <code>Pair</code> 结构发送到 <code>results</code> 通道，并在发送完成时候发送一个空结构体的值到 <code>done</code> 通道以表示自己的任务已经完成。由于 <code>map</code> 映射结构不支持并发写操作，所以我们通过 <code>result</code> 通道来保证每次只有一个 goroutine 能更新映射。又因为当所有的 goroutine 结束以后，有可能 <code>results</code> 通道中还有没来得及处理的数据，所以在 <code>WordFreqCounter()</code> 的结尾我们又开启了一个 <code>for</code> 循环处理 <code>results</code> 通道中的剩余数据。说了这么多，我们直接写代码吧。</p>
+<p>在 <code>$GOPATH/src/wordcount</code> 目录中创建文件 <code>wordcount.go</code>，输入以下源码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> wordcount</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bufio&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;io&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">    <span class="string">&quot;sort&quot;</span></span><br><span class="line">    <span class="string">&quot;strings&quot;</span></span><br><span class="line">    <span class="string">&quot;unicode&quot;</span></span><br><span class="line">    <span class="string">&quot;unicode/utf8&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Pair <span class="keyword">struct</span> &#123;</span><br><span class="line">    Key   <span class="type">string</span></span><br><span class="line">    Value <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// PariList实现了sort接口，可以使用sort.Sort对其排序</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> PairList []Pair</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p PairList)</span></span> Swap(i, j <span class="type">int</span>)      &#123; p[i], p[j] = p[j], p[i] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p PairList)</span></span> Len() <span class="type">int</span>           &#123; <span class="keyword">return</span> <span class="built_in">len</span>(p) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p PairList)</span></span> Less(i, j <span class="type">int</span>) <span class="type">bool</span> &#123; <span class="keyword">return</span> p[j].Value &lt; p[i].Value &#125; <span class="comment">// 逆序</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 提取单词</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SplitOnNonLetters</span><span class="params">(s <span class="type">string</span>)</span></span> []<span class="type">string</span> &#123;</span><br><span class="line">    notALetter := <span class="function"><span class="keyword">func</span><span class="params">(char <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123; <span class="keyword">return</span> !unicode.IsLetter(char) &#125;</span><br><span class="line">    <span class="keyword">return</span> strings.FieldsFunc(s, notALetter)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">   基于map实现了类型WordCount, 并对期实现了Merge(), Report(), SortReport(), UpdateFreq(),</span></span><br><span class="line"><span class="comment">   WordFreqCounter() 方法</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> WordCount <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用于合并两个WordCount</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(source WordCount)</span></span> Merge(wordcount WordCount) WordCount &#123;</span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> wordcount &#123;</span><br><span class="line">        source[k] += v</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> source</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印词频统计情况</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wordcount WordCount)</span></span> Report() &#123;</span><br><span class="line">    words := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(wordcount))</span><br><span class="line">    wordWidth, frequencyWidth := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> word, frequency := <span class="keyword">range</span> wordcount &#123;</span><br><span class="line">        words = <span class="built_in">append</span>(words, word)</span><br><span class="line">        <span class="keyword">if</span> width := utf8.RuneCountInString(word); width &gt; wordWidth &#123;</span><br><span class="line">            wordWidth = width</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> width := <span class="built_in">len</span>(fmt.Sprint(frequency)); width &gt; frequencyWidth &#123;</span><br><span class="line">            frequencyWidth = width</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    sort.Strings(words)</span><br><span class="line">    gap := wordWidth + frequencyWidth - <span class="built_in">len</span>(<span class="string">&quot;Word&quot;</span>) - <span class="built_in">len</span>(<span class="string">&quot;Frequency&quot;</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Word %*s%s\n&quot;</span>, gap, <span class="string">&quot; &quot;</span>, <span class="string">&quot;Frequency&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> _, word := <span class="keyword">range</span> words &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;%-*s %*d\n&quot;</span>, wordWidth, word, frequencyWidth,</span><br><span class="line">            wordcount[word])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从多到少打印词频</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wordcount WordCount)</span></span> SortReport() &#123;</span><br><span class="line">    p := <span class="built_in">make</span>(PairList, <span class="built_in">len</span>(wordcount))</span><br><span class="line">    i := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> wordcount &#123; <span class="comment">// 将wordcount map转换成PairList</span></span><br><span class="line">        p[i] = Pair&#123;k, v&#125;</span><br><span class="line">        i++</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sort.Sort(p) <span class="comment">// 因为PairList实现了排序接口，所以可以使用sort.Sort()对其排序</span></span><br><span class="line"></span><br><span class="line">    wordWidth, frequencyWidth := <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _, pair := <span class="keyword">range</span> p &#123;</span><br><span class="line">        word, frequency := pair.Key, pair.Value</span><br><span class="line">        <span class="keyword">if</span> width := utf8.RuneCountInString(word); width &gt; wordWidth &#123;</span><br><span class="line">            wordWidth = width</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> width := <span class="built_in">len</span>(fmt.Sprint(frequency)); width &gt; frequencyWidth &#123;</span><br><span class="line">            frequencyWidth = width</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    gap := wordWidth + frequencyWidth - <span class="built_in">len</span>(<span class="string">&quot;Word&quot;</span>) - <span class="built_in">len</span>(<span class="string">&quot;Frequency&quot;</span>)</span><br><span class="line">    fmt.Printf(<span class="string">&quot;Word %*s%s\n&quot;</span>, gap, <span class="string">&quot; &quot;</span>, <span class="string">&quot;Frequency&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _, pair := <span class="keyword">range</span> p &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;%-*s %*d\n&quot;</span>, wordWidth, pair.Key, frequencyWidth,</span><br><span class="line">            pair.Value)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从文件中读取单词，并更新其出现的次数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wordcount WordCount)</span></span> UpdateFreq(filename <span class="type">string</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> file *os.File</span><br><span class="line">    <span class="keyword">var</span> err <span class="type">error</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> file, err = os.Open(filename); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">&quot;failed to open the file: &quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close() <span class="comment">// 本函数退出之前时，关闭文件</span></span><br><span class="line"></span><br><span class="line">    reader := bufio.NewReader(file)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        line, err := reader.ReadString(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> _, word := <span class="keyword">range</span> SplitOnNonLetters(strings.TrimSpace(line)) &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(word) &gt; utf8.UTFMax ||</span><br><span class="line">                utf8.RuneCountInString(word) &gt; <span class="number">1</span> &#123;</span><br><span class="line">                wordcount[strings.ToLower(word)] += <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> err != io.EOF &#123;</span><br><span class="line">                log.Println(<span class="string">&quot;failed to finish reading the file: &quot;</span>, err)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 并发统计单词频次</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(wordcount WordCount)</span></span> WordFreqCounter(files []<span class="type">string</span>) &#123;</span><br><span class="line"></span><br><span class="line">    results := <span class="built_in">make</span>(<span class="keyword">chan</span> Pair, <span class="built_in">len</span>(files))  <span class="comment">// goroutine 将结果发送到该channel</span></span><br><span class="line">    done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, <span class="built_in">len</span>(files)) <span class="comment">// 每个goroutine工作完成后，发送一个空结构体到该channel，表示工作完成</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(files); &#123; <span class="comment">// 有多少个文件就开启多少个goroutine, 使用匿名函数的方式</span></span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(done <span class="keyword">chan</span>&lt;- <span class="keyword">struct</span>&#123;&#125;, results <span class="keyword">chan</span>&lt;- Pair, filename <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">            wordcount := <span class="built_in">make</span>(WordCount)</span><br><span class="line">            wordcount.UpdateFreq(filename)</span><br><span class="line">            <span class="keyword">for</span> k, v := <span class="keyword">range</span> wordcount &#123;</span><br><span class="line">                pair := Pair&#123;k, v&#125;</span><br><span class="line">                results &lt;- pair</span><br><span class="line">            &#125;</span><br><span class="line">            done &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">        &#125;(done, results, files[i])</span><br><span class="line"></span><br><span class="line">        i++</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> working := <span class="built_in">len</span>(files); working &gt; <span class="number">0</span>; &#123; <span class="comment">// 监听通道，直到所有的工作goroutine完成任务时才退出</span></span><br><span class="line">        <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> pair := &lt;-results: <span class="comment">// 接收发送到通道中的统计结果</span></span><br><span class="line">            wordcount[pair.Key] += pair.Value</span><br><span class="line"></span><br><span class="line">        <span class="keyword">case</span> &lt;-done: <span class="comment">// 判断工作goroutine是否全部完成</span></span><br><span class="line">            working--</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">DONE: <span class="comment">// 再次启动for循环处理通道中还未处理完的值</span></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> pair := &lt;-results:</span><br><span class="line">            wordcount[pair.Key] += pair.Value</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span> DONE</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">close</span>(results)</span><br><span class="line">    <span class="built_in">close</span>(done)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在 <code>$GOPATH</code> 目录中创建文件 <code>wordfreq.go</code>，输入以下源码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">    <span class="string">&quot;path/filepath&quot;</span></span><br><span class="line">    <span class="string">&quot;wordcount&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) == <span class="number">1</span> || os.Args[<span class="number">1</span>] == <span class="string">&quot;-h&quot;</span> || os.Args[<span class="number">1</span>] == <span class="string">&quot;--help&quot;</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;usage: %s &lt;file1&gt; [&lt;file2&gt; [... &lt;fileN&gt;]]\n&quot;</span>,</span><br><span class="line">            filepath.Base(os.Args[<span class="number">0</span>]))</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    wordcounter := <span class="built_in">make</span>(wordcount.WordCount)</span><br><span class="line">    <span class="comment">// for _, filename := range os.Args[1:] &#123;</span></span><br><span class="line">    <span class="comment">//  wordcount.UpdateFreq(filename)</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    wordcounter.WordFreqCounter(os.Args[<span class="number">1</span>:])</span><br><span class="line"></span><br><span class="line">    wordcounter.SortReport()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E6%8E%A5%E5%8F%A3/README/">Go面向对象编程4——接口</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6/README/">Go并发编程——超时机制</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

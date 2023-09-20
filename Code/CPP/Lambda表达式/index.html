@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>Lambda表达式 - oone</title>
+
+  
+    <meta name="description" content="概述：lambda表达式使用及说明  [toc] lambda表达式说明lambda表达式的结构如下所示： 1auto func &#x3D; [capture] (params) opt -&gt; ret &amp;#123; func_body; &amp;#125;;  其中 func 是可以当作 lambda 表达式的名字，作为一个函数使用，capture 是捕获列表，params 是参数表，opt： 不需要可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lambda表达式">
+<meta property="og:url" content="http://example.com/Code/CPP/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：lambda表达式使用及说明  [toc] lambda表达式说明lambda表达式的结构如下所示： 1auto func &#x3D; [capture] (params) opt -&gt; ret &amp;#123; func_body; &amp;#125;;  其中 func 是可以当作 lambda 表达式的名字，作为一个函数使用，capture 是捕获列表，params 是参数表，opt： 不需要可">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.662Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.662Z">
+<meta property="article:author" content="mingming">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">Lambda表达式</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%95%E8%8E%B7%E5%88%97%E8%A1%A8%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B"><span class="toc-text">捕获列表使用实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">返回值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-text">其他关键字</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mutable"><span class="toc-text">mutable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%9A%E8%BF%87%E5%80%BC%E6%8B%B7%E8%B4%9D%E7%9A%84%E6%96%B9%E5%BC%8F%E6%8D%95%E8%8E%B7%E7%9A%84%E5%A4%96%E9%83%A8%E5%8F%98%E9%87%8F%E6%98%AF%E5%8F%AA%E8%AF%BB%E7%9A%84"><span class="toc-text">关于为什么通过值拷贝的方式捕获的外部变量是只读的:</span></a></li></ol></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/Code/">Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/CPP/">CPP</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.662Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>Lambda表达式</span></h1>
+<blockquote>
+<p>概述：lambda表达式使用及说明</p>
+</blockquote>
+<p>[toc]</p>
+<h1 id="lambda表达式说明"><a href="#lambda表达式说明" class="headerlink" title="lambda表达式说明"></a>lambda表达式说明</h1><p>lambda表达式的结构如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> func = [capture] (params) opt -&gt; ret &#123; func_body; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中 func 是可以当作 lambda 表达式的名字，作为一个函数使用，capture 是捕获列表，params 是参数表，opt： 不需要可以省略。 （mutable: 可以修改按值传递进来的拷贝（注意是能修改拷贝，而不是值本身）exception: 指定函数抛出的异常，如抛出整数类型的异常，可以使用 throw ()）， ret 是返回值类型，func_body 是函数体。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> f = [](<span class="type">int</span> a) -&gt; <span class="type">int</span> &#123; <span class="keyword">return</span> a + <span class="number">1</span>; &#125;;</span><br><span class="line">std::cout &lt;&lt; <span class="built_in">f</span>(<span class="number">1</span>) &lt;&lt; std::endl;  <span class="comment">// 输出: 2</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="使用-lambda-表达式捕获列表"><a href="#使用-lambda-表达式捕获列表" class="headerlink" title="使用 lambda 表达式捕获列表"></a>使用 lambda 表达式捕获列表</h1><p>lambda 表达式还可以通过捕获列表捕获一定范围内的变量：</p>
+<ul>
+<li>[] 不捕获任何变量。</li>
+<li>[&amp;] 捕获外部作用域中所有变量，并作为引用在函数体中使用（按引用捕获）。</li>
+<li>[&#x3D;] 捕获外部作用域中所有变量，并作为副本在函数体中使用（按值捕获）。</li>
+<li>[&#x3D;，&amp;foo] 按值捕获外部作用域中所有变量，并按引用捕获 foo 变量。</li>
+<li>[bar] 按值捕获 bar 变量，同时不捕获其他变量。</li>
+<li>[this] 捕获当前类中的 this 指针，让 lambda 表达式拥有和当前类成员函数同样的访问权限。如果已经使用了 &amp; 或者 &#x3D;，就默认添加此选项。捕获 this 的目的是可以在 lamda 中使用当前类的成员函数和成员变量。</li>
+</ul>
+<h2 id="捕获列表使用实例"><a href="#捕获列表使用实例" class="headerlink" title="捕获列表使用实例"></a>捕获列表使用实例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">lambdaTest</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">output</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="comment">//auto x1 = [] &#123;return m_number; &#125;;						// error</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">auto</span> x2 = [=] &#123;<span class="keyword">return</span> m_number + x + y; &#125;;				<span class="comment">// ok</span></span><br><span class="line">		<span class="comment">// auto x3 = [=] &#123; x = 2; return m_number + x + y; &#125;;	// error</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">auto</span> x4 = [&amp;] &#123;<span class="keyword">return</span> m_number + x + y; &#125;;				<span class="comment">// ok</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">auto</span> x5 = [<span class="keyword">this</span>] &#123;<span class="keyword">return</span> m_number; &#125;;					<span class="comment">// ok</span></span><br><span class="line">		<span class="comment">//auto x6 = [this] &#123;return m_number + x + y; &#125;;			// error</span></span><br><span class="line">		<span class="keyword">auto</span> x7 = [<span class="keyword">this</span>, x, y] &#123;<span class="keyword">return</span> m_number + x + y; &#125;;		<span class="comment">// ok</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> m_number = <span class="number">100</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	lambdaTest test;</span><br><span class="line"></span><br><span class="line">	test.<span class="built_in">output</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th>是否可读</th>
+<th>是否可修改</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">x1</td>
+<td>:x:</td>
+<td>:x:</td>
+<td>错误，没有捕获外部变量，不能使用任何外部变量</td>
+</tr>
+<tr>
+<td align="center">x2</td>
+<td>:heavy_check_mark:</td>
+<td>:x:</td>
+<td>正确，值传递，可以访问所有外部变量</td>
+</tr>
+<tr>
+<td align="center">x3</td>
+<td>:heavy_check_mark:</td>
+<td>:x:</td>
+<td>错误，值传递，右值可读不可修改</td>
+</tr>
+<tr>
+<td align="center">x4</td>
+<td>:heavy_check_mark:</td>
+<td>:heavy_check_mark:</td>
+<td>正确，引用传递，可读可修改</td>
+</tr>
+<tr>
+<td align="center">x5</td>
+<td>:heavy_check_mark: this指针的成员变量可读<br>:x: 其他变量不可读</td>
+<td>:heavy_check_mark: this指针的成员可写<br>:x: 其他变量不可写</td>
+<td>正确，捕获this指针，可访问this指针的成员</td>
+</tr>
+<tr>
+<td align="center">x6</td>
+<td>同 <code>x5</code></td>
+<td>同 <code>x5</code></td>
+<td>错误，捕获 this 指针，<code>x</code> 和 <code>y</code> 不是其成员变量，不可访问</td>
+</tr>
+<tr>
+<td align="center">x7</td>
+<td>:heavy_check_mark: 值传递三个变量，均可读</td>
+<td>:heavy_check_mark: this指针成员可修改 <br>:x: x 和 y 不可修改</td>
+<td>正确，捕获 this 指针，x,y</td>
+</tr>
+</tbody></table>
+<h2 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h2><p>lambda表达式的返回值通过 ‘-&gt;’ 传递，如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> add = [](<span class="type">int</span> x, <span class="type">int</span> y) -&gt; <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+
+<p>如上所示的返回类型还可以使用 <code>decltype</code> 推导返回类型：</p>
+<blockquote>
+<p><code>decltype</code> 是一个 C++ 关键字，它用于在编译时推断表达式的类型。这在编写通用代码时非常有用，特别是在使用 C++11 引入的 <code>auto</code> 关键字和范围 for 循环时。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> add = [](<span class="type">int</span> x, <span class="type">int</span> y) -&gt; <span class="keyword">decltype</span>(x+y) &#123;</span><br><span class="line">    <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+
+<p>说明：<code>decltype(a + b)</code> 推导了 <code>a + b</code> 的结果类型，并将该类型作为 lambda 函数的返回类型。</p>
+<p>甚至，从 C++14 开始，还可以使用更简洁的方式来推导 lambda 函数的返回类型，即使用 <code>auto</code> 关键字。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> myLambda = [](<span class="type">int</span> a, <span class="type">int</span> b) -&gt; <span class="keyword">auto</span> &#123; <span class="keyword">return</span> a + b; &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，使用 <code>auto</code> 推导返回类型的 lambda 函数在某些情况下可能会引发歧义。例如，如果你在 lambda 表达式中返回一个嵌套类型（如 <code>std::pair</code>），<code>auto</code> 可能会被推导为 <code>std::pair</code>，而不是你期望的嵌套类型的具体类型。在这种情况下，使用 <code>decltype</code> 可以更明确地指定返回类型。</p>
+<h2 id="其他关键字"><a href="#其他关键字" class="headerlink" title="其他关键字"></a>其他关键字</h2><p>使用 lambda 表达式捕获列表捕获外部变量，如果希望去修改按值捕获的外部变量，那么应该如何处理呢？这就需要使用 mutable 选项，<code>被mutable修改是lambda表达式就算没有参数也要写明参数列表，并且可以去掉按值捕获的外部变量的只读（const）属性。</code></p>
+<h3 id="mutable"><a href="#mutable" class="headerlink" title="mutable"></a>mutable</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">auto</span> f1 = [=] &#123;<span class="keyword">return</span> a++; &#125;;              <span class="comment">// error, 按值捕获外部变量, a是只读的</span></span><br><span class="line"><span class="keyword">auto</span> f2 = [=]()<span class="keyword">mutable</span> &#123;<span class="keyword">return</span> a++; &#125;;     <span class="comment">// ok</span></span><br></pre></td></tr></table></figure>
+
+<p>:tipping_hand_man: 注意：mutable 只是允许在函数内部修改值而已，作用域仅限于 lambda 函数内部，参考以下代码及输出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">lambdaFunc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> add1 = [](<span class="type">int</span> x, <span class="type">int</span> y) -&gt; <span class="type">int</span> &#123; <span class="keyword">return</span> x + y;	&#125;;</span><br><span class="line">	<span class="keyword">auto</span> add2 = [](<span class="type">int</span> x, <span class="type">int</span> y) -&gt; <span class="keyword">decltype</span>(x + y) &#123; <span class="keyword">return</span> x + y;	&#125;;</span><br><span class="line">	<span class="keyword">auto</span> add3 = [](<span class="type">int</span> a, <span class="type">int</span> b) -&gt; <span class="keyword">auto</span> &#123; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">auto</span> modify_add = [](<span class="type">int</span> a, <span class="type">int</span> b)  <span class="keyword">mutable</span> -&gt; <span class="keyword">auto</span> &#123; a = <span class="number">3</span>; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line">	<span class="keyword">auto</span> value_modify_add = [=](<span class="type">int</span> a, <span class="type">int</span> b)  <span class="keyword">mutable</span> -&gt; <span class="keyword">auto</span> &#123; a = <span class="number">4</span>; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line">	<span class="keyword">auto</span> refrence_modify_add = [&amp;](<span class="type">int</span> a, <span class="type">int</span> b)  <span class="keyword">mutable</span> -&gt; <span class="keyword">auto</span> &#123; a = <span class="number">5</span>; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line">	<span class="keyword">auto</span> refrence_modify_add_byRef = [&amp;](<span class="type">int</span>&amp; a, <span class="type">int</span> b)  <span class="keyword">mutable</span> -&gt; <span class="keyword">auto</span> &#123; a = <span class="number">6</span>; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> x = <span class="number">2</span>, y = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;add1:&quot;</span> &lt;&lt; <span class="built_in">add1</span>(x, y) &lt;&lt; endl; <span class="comment">// add1:4</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;add2:&quot;</span> &lt;&lt; <span class="built_in">add2</span>(x, y) &lt;&lt; endl; <span class="comment">// add2:4</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;add3:&quot;</span> &lt;&lt; <span class="built_in">add3</span>(x, y) &lt;&lt; endl; <span class="comment">// add3:4</span></span><br><span class="line"></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;modify_add:&quot;</span> &lt;&lt; <span class="built_in">value_modify_add</span>(x, y) &lt;&lt; endl;  <span class="comment">// modify_add:5</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=2</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;value_modify_add:&quot;</span> &lt;&lt; <span class="built_in">value_modify_add</span>(x, y) &lt;&lt; endl; <span class="comment">// value_modify_add:6</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=2</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;value_modify_add:&quot;</span> &lt;&lt; <span class="built_in">refrence_modify_add</span>(x, y) &lt;&lt; endl; <span class="comment">// value_modify_add:7</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=2</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;refrence_modify_add_byRef:&quot;</span> &lt;&lt; <span class="built_in">refrence_modify_add_byRef</span>(x, y) &lt;&lt; endl; <span class="comment">// refrence_modify_add_byRef:8</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=6</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="关于为什么通过值拷贝的方式捕获的外部变量是只读的"><a href="#关于为什么通过值拷贝的方式捕获的外部变量是只读的" class="headerlink" title="关于为什么通过值拷贝的方式捕获的外部变量是只读的:"></a>关于为什么通过值拷贝的方式捕获的外部变量是只读的:</h3><p>lambda表达式的类型在C++11中会被看做是一个带 <code>operator()</code> 的类，即仿函数。<br>按照C++标准，lambda表达式的 <code>operator()</code> 默认是 <code>const</code> 的，一个 <code>const</code> 成员函数是无法修改成员变量值的。<br><code>mutable</code> 选项的作用就在于取消 <code>operator ()</code> 的 <code>const</code> 属性。</p>
+<p>因为 lambda 表达式在 C++ 中会被看做是一个仿函数，因此可以使用<code>std::function和std::bind</code>来存储和操作lambda表达式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">testLambdawithfunction</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 包装可调用函数</span></span><br><span class="line">	std::function&lt;<span class="type">int</span>(<span class="type">int</span>)&gt; f1 = [](<span class="type">int</span> a) &#123;<span class="keyword">return</span> a; &#125;;</span><br><span class="line">	<span class="comment">// 绑定可调用函数</span></span><br><span class="line">	std::function&lt;<span class="type">int</span>(<span class="type">int</span>)&gt; f2 = <span class="built_in">bind</span>([](<span class="type">int</span> a) &#123;<span class="keyword">return</span> a; &#125;, placeholders::_1);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 绑定可修改的函数</span></span><br><span class="line">	std::function&lt;<span class="type">int</span>(<span class="type">int</span>&amp;, <span class="type">int</span>)&gt; f3 = [](<span class="type">int</span>&amp; a, <span class="type">int</span> b) &#123; a = <span class="number">3</span>; <span class="keyword">return</span> a + b; &#125;;</span><br><span class="line">	<span class="comment">// 绑定可修改的函数</span></span><br><span class="line">	std::function&lt;<span class="type">int</span>(<span class="type">int</span>&amp;, <span class="type">int</span>)&gt; f4 = <span class="built_in">bind</span>([](<span class="type">int</span>&amp; a, <span class="type">int</span> b) &#123; a = <span class="number">4</span>; <span class="keyword">return</span> a + b; &#125;, std::placeholders::_1, std::placeholders::_2);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="type">int</span> x = <span class="number">2</span>, y = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 函数调用</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;f1(100)&quot;</span> &lt;&lt; <span class="built_in">f1</span>(<span class="number">100</span>) &lt;&lt; endl; <span class="comment">// f1(100)100</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;f2(200)&quot;</span> &lt;&lt; <span class="built_in">f2</span>(<span class="number">200</span>) &lt;&lt; endl; <span class="comment">// f2(200)200</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;f3(x, y)&quot;</span> &lt;&lt; <span class="built_in">f3</span>(x, y) &lt;&lt; endl; <span class="comment">// f3(x, y)5</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=3</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;f3(x, y)&quot;</span> &lt;&lt; <span class="built_in">f4</span>(x, y) &lt;&lt; endl; <span class="comment">// f3(x, y)6</span></span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;x=&quot;</span> &lt;&lt; x &lt;&lt; endl; <span class="comment">// x=4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于没有捕获任何变量的 lambda 表达式，还可以转换成一个普通的函数指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> func_ptr = <span class="built_in">int</span>(*)(<span class="type">int</span>);</span><br><span class="line"><span class="comment">// 没有捕获任何外部变量的匿名函数</span></span><br><span class="line">func_ptr f = [](<span class="type">int</span> a)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> a;  </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数调用</span></span><br><span class="line"><span class="built_in">f</span>(<span class="number">1314</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/asdasdde/article/details/116268964">C++——Lambda函数_c++ lambda函数_勿在浮沙築高臺的博客-CSDN博客</a></li>
+</ul>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/CPP/C++%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/">字符串类型转换整理(char、TCHAR、string、wstring、CString、WCHAR)</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/C/goto%E5%A6%99%E7%94%A8/">2023-09-18</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

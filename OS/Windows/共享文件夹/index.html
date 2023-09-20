@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>共享文件夹 - oone</title>
+
+  
+    <meta name="description" content="最近由于项目需求，需要编写一个监控本机共享文件夹的变化的模块，经过查询资料，找到并实现了一个较为稳定的方式项目实现是使用Win32 C++的，测试平台是Win 7 64和Win 10 64，XP测试也是好使的。下面是具体实现 首先要获取并监控系统共享文件夹的路径，相关注册表路径为 HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Lanman">
+<meta property="og:type" content="article">
+<meta property="og:title" content="共享文件夹">
+<meta property="og:url" content="http://example.com/OS/Windows/%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="最近由于项目需求，需要编写一个监控本机共享文件夹的变化的模块，经过查询资料，找到并实现了一个较为稳定的方式项目实现是使用Win32 C++的，测试平台是Win 7 64和Win 10 64，XP测试也是好使的。下面是具体实现 首先要获取并监控系统共享文件夹的路径，相关注册表路径为 HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Lanman">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/20190527113742209.png">
+<meta property="article:published_time" content="2023-09-18T05:27:41.841Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.841Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="共享文件夹">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/20190527113742209.png">
+  
+  
+  
+  <meta name="keywords" content="windows,共享文件夹">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">共享文件夹</span></div><div class="widget-body fs14"><div class="doc-tree active"></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/OS/">OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/">Windows</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.841Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>共享文件夹</span></h1>
+<p>最近由于项目需求，需要编写一个监控本机共享文件夹的变化的模块，经过查询资料，找到并实现了一个较为稳定的方式<br>项目实现是使用Win32 C++的，测试平台是Win 7 64和Win 10 64，XP测试也是好使的。下面是具体实现</p>
+<p>首先要获取并监控系统共享文件夹的路径，相关注册表路径为 HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Share ,他的值的格式为如图所示，</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/20190527113742209.png" alt="共享文件注册表"></p>
+<h1 id="C-获取共享文件夹目录"><a href="#C-获取共享文件夹目录" class="headerlink" title="C++ 获取共享文件夹目录"></a>C++ 获取共享文件夹目录</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">GetSharedFoldersList</span><span class="params">(map&lt;CString, HANDLE&gt; &amp;theList)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	BOOL bFlag = FALSE;</span><br><span class="line">	HKEY hKey = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//清空列表</span></span><br><span class="line">		theList.<span class="built_in">clear</span>();</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Share</span></span><br><span class="line">		<span class="comment">//通过注册表获取共享文件夹列表</span></span><br><span class="line">		HKEY rootKey = REG_SHARE_KEY;</span><br><span class="line">		CString szRegPath = REG_SHARE_PATH;</span><br><span class="line">		</span><br><span class="line">		<span class="type">int</span> ErrCode;</span><br><span class="line">		<span class="keyword">if</span> (ERROR_SUCCESS != (ErrCode = <span class="built_in">RegOpenKeyEx</span>(rootKey, szRegPath, <span class="number">0</span>, KEY_READ | KEY_WOW64_64KEY, &amp;hKey)))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		TCHAR szValue[MAX_VALUE_NAME] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">		DWORD dwValueSize = MAX_VALUE_NAME;</span><br><span class="line">		<span class="type">int</span> index = <span class="number">0</span>;</span><br><span class="line">		DWORD dwBufferSize = <span class="number">255</span>;</span><br><span class="line">		DWORD dwType;</span><br><span class="line">		TCHAR *szValBuffer = <span class="literal">NULL</span>;</span><br><span class="line">		DWORD dwSize;</span><br><span class="line">		<span class="keyword">while</span> (ERROR_NO_MORE_ITEMS != <span class="built_in">RegEnumValue</span> (</span><br><span class="line">			hKey, index, szValue, &amp;dwValueSize, <span class="literal">NULL</span>, &amp;dwType, <span class="literal">NULL</span>, &amp;dwBufferSize))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//判断值类型</span></span><br><span class="line">			<span class="keyword">switch</span>(dwType)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">//只找多个串的值</span></span><br><span class="line">			<span class="keyword">case</span> REG_MULTI_SZ:</span><br><span class="line">				&#123;</span><br><span class="line">					dwSize = dwBufferSize + <span class="number">1</span>;</span><br><span class="line">					szValBuffer = <span class="keyword">new</span> TCHAR[dwSize];</span><br><span class="line">					<span class="built_in">ZeroMemory</span>(szValBuffer, dwSize);</span><br><span class="line">					<span class="keyword">if</span> (ERROR_SUCCESS != <span class="built_in">RegQueryValueEx</span>(hKey, szValue, <span class="number">0</span>, &amp;dwType, (LPBYTE)szValBuffer, &amp;dwBufferSize))</span><br><span class="line">					&#123;</span><br><span class="line">						<span class="keyword">break</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="type">int</span> j = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">					CString TmpValue;</span><br><span class="line"> </span><br><span class="line">					<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;szValBuffer[i] != <span class="string">&#x27;\0&#x27;</span> ;i += j + <span class="number">1</span>)</span><br><span class="line">					&#123;	</span><br><span class="line">						<span class="keyword">for</span> (j = <span class="number">0</span>;szValBuffer[i + j] != <span class="string">&#x27;\0&#x27;</span>;j ++)</span><br><span class="line">						&#123;</span><br><span class="line">							TmpValue += szValBuffer[i + j];</span><br><span class="line">						&#125;</span><br><span class="line">						</span><br><span class="line">						<span class="comment">//如果找到共享路径，则直接放入容器，然后进行下一个路径的查找</span></span><br><span class="line">						<span class="keyword">if</span> (TmpValue.<span class="built_in">Find</span>(_T(<span class="string">&quot;Path=&quot;</span>)) == <span class="number">0</span>)</span><br><span class="line">						&#123;</span><br><span class="line">							<span class="comment">//m_vSharedList.push_back(TmpValue.Right(TmpValue.GetLength() - 5));</span></span><br><span class="line">							CString Tmp = TmpValue.<span class="built_in">Right</span>(TmpValue.<span class="built_in">GetLength</span>() - <span class="number">5</span>);</span><br><span class="line">							CString szTmp = Tmp;</span><br><span class="line">							Tmp.<span class="built_in">MakeLower</span>();</span><br><span class="line"> </span><br><span class="line">							<span class="keyword">break</span>;</span><br><span class="line">						&#125;</span><br><span class="line">						TmpValue = _T(<span class="string">&quot;&quot;</span>);</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">delete</span> szValBuffer;</span><br><span class="line">					szValBuffer = <span class="literal">NULL</span>;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line"> </span><br><span class="line">			<span class="comment">//其他类型跳过</span></span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			dwValueSize = MAX_VALUE_NAME;</span><br><span class="line">			dwBufferSize = <span class="number">255</span>;</span><br><span class="line">			index ++;</span><br><span class="line">		&#125;</span><br><span class="line">		bFlag = TRUE;</span><br><span class="line">	&#125;<span class="keyword">while</span>(FALSE);</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">if</span> (hKey != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">RegCloseKey</span>(hKey);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">return</span> bFlag;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="C-监控共享注册表变化"><a href="#C-监控共享注册表变化" class="headerlink" title="C++监控共享注册表变化"></a>C++监控共享注册表变化</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//监控注册表项以更新共享文件夹列表</span></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">SharedMonitor::RefreshThread</span><span class="params">(LPVOID lpParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	SharedMonitor *pThis = (SharedMonitor *)lpParam;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//只监控值的改变</span></span><br><span class="line">	DWORD  dwFilter = REG_NOTIFY_CHANGE_LAST_SET;</span><br><span class="line"> </span><br><span class="line">	HKEY hKey;</span><br><span class="line">	HKEY rootKey = REG_SHARE_KEY;</span><br><span class="line">	CString szRegPath = REG_SHARE_PATH;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//等待10分钟</span></span><br><span class="line">	<span class="type">int</span> iWaitTime = <span class="number">10</span> * <span class="number">60</span> * <span class="number">1000</span>;</span><br><span class="line">	<span class="keyword">while</span> (TRUE)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//监控注册表项改变</span></span><br><span class="line">		<span class="comment">//Sleep(iWaitTime);</span></span><br><span class="line">		HANDLE hEvent;</span><br><span class="line">		BOOL bFlag = FALSE;</span><br><span class="line">		<span class="keyword">do</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (ERROR_SUCCESS != <span class="built_in">RegOpenKeyEx</span>(rootKey, szRegPath, <span class="number">0</span>, KEY_ALL_ACCESS | KEY_WOW64_64KEY, &amp;hKey))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">MyDebugA</span> (<span class="string">&quot;RegMonitorThread--- RegOpenKeyEx ERR!&quot;</span>);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"> </span><br><span class="line">			<span class="keyword">if</span> (<span class="literal">NULL</span> == (hEvent = <span class="built_in">CreateEvent</span>(<span class="literal">NULL</span>, TRUE, FALSE, <span class="literal">NULL</span>)))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">MyDebugA</span> (<span class="string">&quot;CreateEvent ERR&quot;</span>);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"> </span><br><span class="line">			<span class="keyword">if</span> (ERROR_SUCCESS != <span class="built_in">RegNotifyChangeKeyValue</span> (hKey, TRUE, dwFilter, hEvent, TRUE))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">MyDebugA</span> (<span class="string">&quot;RegNotifyChangeKeyValue ERR&quot;</span>);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"> </span><br><span class="line">			<span class="keyword">if</span> (WAIT_FAILED == <span class="built_in">WaitForSingleObject</span> (hEvent, INFINITE))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">MyDebugA</span> (<span class="string">&quot;WaitForSingleObject ERR&quot;</span>);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"> </span><br><span class="line">			bFlag = TRUE;</span><br><span class="line">		&#125;<span class="keyword">while</span>(FALSE);</span><br><span class="line">		</span><br><span class="line">		<span class="built_in">RegCloseKey</span> (hKey);</span><br><span class="line"> </span><br><span class="line">		<span class="built_in">CloseHandle</span> (hEvent);</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//如果监控失败，则重新再来</span></span><br><span class="line">		<span class="keyword">if</span> (!bFlag)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//等待系统将注册表消息发放完毕，否则有时候添加或删除的注册表项无法被枚举到</span></span><br><span class="line">		<span class="built_in">Sleep</span>(<span class="number">200</span>);</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//进行共享列表枚举和比较</span></span><br><span class="line">		map&lt;CString, HANDLE&gt; theNewList;</span><br><span class="line">		<span class="comment">//获取新列表</span></span><br><span class="line">		pThis-&gt;<span class="built_in">GetSharedFoldersList</span>(theNewList);</span><br><span class="line">		map&lt;CString, HANDLE&gt; &amp;theOldList = pThis-&gt;<span class="built_in">GetListInstance</span>();</span><br><span class="line"> </span><br><span class="line">		BOOL bFindNew = FALSE;</span><br><span class="line">		<span class="comment">//比较两个列表</span></span><br><span class="line">		<span class="comment">//添加旧列表中没有的共享</span></span><br><span class="line">		<span class="keyword">for</span> (map&lt;CString, HANDLE&gt;::iterator it = theNewList.<span class="built_in">begin</span>();</span><br><span class="line">				it != theNewList.<span class="built_in">end</span>(); ++it)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (theOldList.<span class="built_in">find</span>(it-&gt;first) == theOldList.<span class="built_in">end</span>())</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">MyDebug</span>(_T(<span class="string">&quot;----------Find New Share----------&quot;</span>));</span><br><span class="line">				<span class="built_in">MyDebug</span>(it-&gt;first);</span><br><span class="line">				theOldList[it-&gt;first] = <span class="number">0</span>;</span><br><span class="line">				bFindNew = TRUE;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//MyDebug(_T(&quot;---------Start Delete--------&quot;));</span></span><br><span class="line"> </span><br><span class="line">		<span class="comment">//需要删除的列表,map不支持循环删除多个元素</span></span><br><span class="line">		vector&lt;CString&gt; theDeleteList;</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//删除旧列表中已经取消的共享</span></span><br><span class="line">		<span class="keyword">for</span> (map&lt;CString, HANDLE&gt;::iterator it = theOldList.<span class="built_in">begin</span>();</span><br><span class="line">			it != theOldList.<span class="built_in">end</span>(); ++it)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (theNewList.<span class="built_in">find</span>(it-&gt;first) == theNewList.<span class="built_in">end</span>())</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">//结束监控线程</span></span><br><span class="line">				<span class="keyword">if</span> (!<span class="built_in">TerminateThread</span>(it-&gt;second, <span class="number">0</span>))</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="built_in">MyDebug</span>(_T(<span class="string">&quot;TerminateThread ERR&quot;</span>));</span><br><span class="line">					<span class="built_in">MyDebug</span>(it-&gt;first);</span><br><span class="line">				&#125;</span><br><span class="line"> </span><br><span class="line">				<span class="comment">//将线程占用的共享目录句柄释放</span></span><br><span class="line">				<span class="keyword">if</span> (gs_mpDirHandleList[it-&gt;first])</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="built_in">CloseHandle</span>(gs_mpDirHandleList[it-&gt;first]);</span><br><span class="line">				&#125;</span><br><span class="line">				</span><br><span class="line">				<span class="built_in">CloseHandle</span>(it-&gt;second);</span><br><span class="line">				</span><br><span class="line">				theDeleteList.<span class="built_in">push_back</span>(it-&gt;first);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		<span class="built_in">MyDebug</span>(_T(<span class="string">&quot;-----------DeleteList-------------&quot;</span>));</span><br><span class="line">		<span class="comment">//删除旧列表中的过期共享</span></span><br><span class="line">		<span class="keyword">for</span> (vector&lt;CString&gt;::iterator it = theDeleteList.<span class="built_in">begin</span>();</span><br><span class="line">				it != theDeleteList.<span class="built_in">end</span>(); ++it)</span><br><span class="line">		&#123;</span><br><span class="line">			theOldList.<span class="built_in">erase</span>(*it);</span><br><span class="line">			<span class="built_in">MyDebug</span>(*it);</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		<span class="comment">//如果有新的共享</span></span><br><span class="line">		<span class="keyword">if</span> (bFindNew)</span><br><span class="line">		&#123;</span><br><span class="line">			pThis-&gt;<span class="built_in">SetSharedMonitor</span>();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="共享文件夹内文件监控"><a href="#共享文件夹内文件监控" class="headerlink" title="共享文件夹内文件监控"></a>共享文件夹内文件监控</h1><p>最后就是最终的目的，对共享文件夹内文件的变化进行监控操作。这里使用的是 WIN32 API ReadDirectoryChangesW ，这个的具体使用在我之前的一篇文章里有介绍，这里就不多说了，需要注意的一点是 ReadDirectoryChangesW 函数的第一个参数所需的句柄需要 CreateFile 去创建，而且创建后需要一直占用着不能释放，而创建时所需的权限(第三个参数) 必须设置为 “FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE”，因为如果少任意一个就有可能导致某些第三方软件的使用出现异常，例如迅雷下载，浏览器下载之类的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//监控线程</span></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ATSharedMonitor::MonitorThread</span><span class="params">(LPVOID lpParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	CString szRootPath = *(CString *)lpParam;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">	HANDLE hRootHandle = <span class="built_in">CreateFile</span>(</span><br><span class="line">		szRootPath,		<span class="comment">//监控路径</span></span><br><span class="line">		FILE_LIST_DIRECTORY, </span><br><span class="line">		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,</span><br><span class="line">		<span class="literal">NULL</span>,</span><br><span class="line">		OPEN_EXISTING,</span><br><span class="line">		FILE_FLAG_BACKUP_SEMANTICS<span class="comment">/* | FILE_FLAG_OVERLAPPED*/</span>,</span><br><span class="line">		<span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">if</span>(<span class="built_in">FAILED_HANDLE</span>(hRootHandle))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">MyDebug</span>(_T(<span class="string">&quot;CreateFile Fail&quot;</span>));</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//将目录句柄放到线程对应容器中</span></span><br><span class="line">	gs_mpDirHandleList[szRootPath] = hRootHandle;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//	OUTPUT_PARAM_DEBUGA(&quot;The CurrentThread:%X&quot;, GetCurrentThread());</span></span><br><span class="line"> </span><br><span class="line">	szRootPath += _T(<span class="string">&quot;\\&quot;</span>);</span><br><span class="line"> </span><br><span class="line">	<span class="type">wchar_t</span> notify[<span class="number">1024</span>];</span><br><span class="line">	<span class="built_in">ZeroMemory</span>(notify, <span class="number">1024</span>);</span><br><span class="line">	DWORD dwBytes;</span><br><span class="line">	FILE_NOTIFY_INFORMATION *pNotify = (FILE_NOTIFY_INFORMATION *)notify;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//过滤同一个文件的操作 </span></span><br><span class="line">	CString szLastFile = _T(<span class="string">&quot;&quot;</span>);</span><br><span class="line"> </span><br><span class="line">	<span class="keyword">while</span> (TRUE)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">ReadDirectoryChangesW</span> (hRootHandle, &amp;notify, <span class="built_in">sizeof</span>(notify), TRUE,</span><br><span class="line">			FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_FILE_NAME | </span><br><span class="line">			FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE,</span><br><span class="line">			&amp;dwBytes, <span class="literal">NULL</span>, <span class="literal">NULL</span>))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">MyDebug</span>(_T(<span class="string">&quot;---------Change Happened!------------&quot;</span>));</span><br><span class="line">			</span><br><span class="line"> </span><br><span class="line">			pNotify-&gt;FileName[pNotify-&gt;FileNameLength / <span class="number">2</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line">			<span class="comment">//CString tmp = pNotify-&gt;FileName;</span></span><br><span class="line">			<span class="comment">//tmp.MakeLower ();</span></span><br><span class="line"> </span><br><span class="line">			CString TmpPath = szRootPath + pNotify-&gt;FileName;</span><br><span class="line"> </span><br><span class="line">			<span class="keyword">switch</span>(pNotify-&gt;Action)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">//重命名获取</span></span><br><span class="line"> 			<span class="keyword">case</span> FILE_ACTION_RENAMED_OLD_NAME:</span><br><span class="line"> 				&#123;</span><br><span class="line"> 					<span class="built_in">MyDebug</span> (<span class="built_in">TEXT</span>(<span class="string">&quot;文件更名 :&quot;</span>) + TmpPath);</span><br><span class="line"> 					PFILE_NOTIFY_INFORMATION p = (PFILE_NOTIFY_INFORMATION)((<span class="type">char</span>*)pNotify+pNotify-&gt;NextEntryOffset);</span><br><span class="line"> 					p-&gt;FileName[p-&gt;FileNameLength/<span class="number">2</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br><span class="line"> 					CString newName = szRootPath + p-&gt;FileName;</span><br><span class="line"> 					<span class="built_in">MyDebug</span>(newName);</span><br><span class="line"> </span><br><span class="line"> 					<span class="keyword">break</span>;</span><br><span class="line"> 				&#125;</span><br><span class="line">				</span><br><span class="line"> </span><br><span class="line">				<span class="comment">//删除</span></span><br><span class="line"><span class="comment">// 			case FILE_ACTION_REMOVED:</span></span><br><span class="line"><span class="comment">// 				&#123;</span></span><br><span class="line"><span class="comment">// 					MyDebug (TEXT(&quot;文件删除 :&quot;) + TmpPath);</span></span><br><span class="line"><span class="comment">// 				&#125;</span></span><br><span class="line"> </span><br><span class="line">				<span class="comment">//修改..略过文件夹的修改,过滤同一个文件的修改</span></span><br><span class="line">			<span class="keyword">case</span> FILE_ACTION_MODIFIED:</span><br><span class="line">				&#123;</span><br><span class="line"> </span><br><span class="line">					<span class="keyword">if</span> (!<span class="built_in">PathIsDirectory</span>(TmpPath) <span class="comment">/*&amp;&amp; szLastFile.CompareNoCase(pNotify-&gt;FileName) != 0*/</span>)</span><br><span class="line">					&#123;</span><br><span class="line">						<span class="comment">//szLastFile = pNotify-&gt;FileName;</span></span><br><span class="line">						<span class="built_in">MyDebug</span> (<span class="built_in">TEXT</span>(<span class="string">&quot;文件修改 :&quot;</span>) + TmpPath);</span><br><span class="line">						</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line"> </span><br><span class="line">				<span class="comment">//新建文件获取</span></span><br><span class="line">			<span class="keyword">case</span> FILE_ACTION_ADDED:</span><br><span class="line">			 	&#123;</span><br><span class="line">					<span class="keyword">if</span> (!<span class="built_in">PathIsDirectory</span>(TmpPath) <span class="comment">/*&amp;&amp; szLastFile.CompareNoCase(pNotify-&gt;FileName) != 0*/</span>)</span><br><span class="line">					&#123;</span><br><span class="line">			 			<span class="built_in">MyDebug</span> (<span class="built_in">TEXT</span>(<span class="string">&quot;文件添加 :&quot;</span>) + TmpPath);</span><br><span class="line">						</span><br><span class="line">					&#125;</span><br><span class="line">			 		<span class="keyword">break</span>;</span><br><span class="line">			 	&#125;</span><br><span class="line"> </span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line"> </span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/vld%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">【不敢说一文搞懂】VLD 内存泄漏定位</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/OS/Windows/windows%E8%81%9A%E7%84%A6%E9%97%AE%E9%A2%98/">Windows聚焦不更新</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

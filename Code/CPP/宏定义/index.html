@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>各种宏定义用法整理 - oone</title>
+
+  
+    <meta name="description" content="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值1、把Ascii字符转16进制 1234567891011121314151617181920212223&#x2F;***************************函数名:Ascii2Hex功能描述:把Ascii字符转16进制参数：Ascii字符返回：16进制***************************&#x2F;unsigned">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各种宏定义用法整理">
+<meta property="og:url" content="http://example.com/Code/CPP/%E5%AE%8F%E5%AE%9A%E4%B9%89/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值1、把Ascii字符转16进制 1234567891011121314151617181920212223&#x2F;***************************函数名:Ascii2Hex功能描述:把Ascii字符转16进制参数：Ascii字符返回：16进制***************************&#x2F;unsigned">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.666Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.666Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="宏定义">
+<meta property="article:tag" content="用法">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="宏定义,用法">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">各种宏定义用法整理</span></div><div class="widget-body fs14"><div class="doc-tree active"></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/Code/">Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/CPP/">CPP</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.666Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>各种宏定义用法整理</span></h1>
+<h1 id="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值"><a href="#C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值" class="headerlink" title="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值"></a>C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值</h1><p><strong>1、把Ascii字符转16进制</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***************************</span></span><br><span class="line"><span class="comment">函数名:Ascii2Hex</span></span><br><span class="line"><span class="comment">功能描述:把Ascii字符转16进制</span></span><br><span class="line"><span class="comment">参数：Ascii字符</span></span><br><span class="line"><span class="comment">返回：16进制</span></span><br><span class="line"><span class="comment">***************************/</span></span><br><span class="line"><span class="function"><span class="type">unsigned</span> <span class="type">char</span> <span class="title">Ascii2Hex</span><span class="params">( <span class="type">unsigned</span> <span class="type">char</span> bAscii )</span>		</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> bHex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>( ( bAscii &gt;= <span class="number">0</span> ) &amp;&amp; ( bChar &lt;= <span class="number">9</span> ) )</span><br><span class="line">    &#123;</span><br><span class="line">        bHex = bAscii + <span class="number">0x30</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>( ( bAscii &gt;= <span class="number">10</span> ) &amp;&amp; ( bAscii &lt;= <span class="number">15</span> ) )</span><br><span class="line">    &#123;</span><br><span class="line">        bHex = bAscii + <span class="number">0x37</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        bHex = <span class="number">0xff</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> bHex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、把16进制转Ascii字符</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***************************</span></span><br><span class="line"><span class="comment">函数名:Hex2Ascii</span></span><br><span class="line"><span class="comment">功能描述:把16进制转Ascii字符</span></span><br><span class="line"><span class="comment">参数：16进制</span></span><br><span class="line"><span class="comment">返回：Ascii字符</span></span><br><span class="line"><span class="comment">***************************/</span></span><br><span class="line"><span class="function"><span class="type">unsigned</span> <span class="type">char</span> <span class="title">Hex2Ascii</span><span class="params">( <span class="type">unsigned</span> <span class="type">char</span> bHex )</span>		</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> bAscii = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>( ( bHex &gt;= <span class="string">&#x27;0&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="string">&#x27;9&#x27;</span> ) )</span><br><span class="line">    &#123;</span><br><span class="line">        bAscii =  bHex - <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>( ( bHex &gt;= <span class="string">&#x27;A&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="string">&#x27;F&#x27;</span> ) )</span><br><span class="line">    &#123;</span><br><span class="line">        bAscii = bHex - <span class="string">&#x27;7&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>( ( bHex &gt;= <span class="string">&#x27;a&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="string">&#x27;f&#x27;</span> ) )</span><br><span class="line">    &#123;</span><br><span class="line">        bAscii = bHex - <span class="number">0x57</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		bAscii = <span class="number">0xff</span>;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> bAscii;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、把16进制转BCD值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***************************</span></span><br><span class="line"><span class="comment">函数名:Hex2Bcd</span></span><br><span class="line"><span class="comment">功能描述:把16进制转BCD值</span></span><br><span class="line"><span class="comment">参数：16进制值</span></span><br><span class="line"><span class="comment">返回：BCD值</span></span><br><span class="line"><span class="comment">***************************/</span></span><br><span class="line"><span class="function">u_8 <span class="title">Hex2Bcd</span><span class="params">( u_8 HexCode )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span>( ( HexCode % <span class="number">10</span> ) + ( HexCode / <span class="number">10</span> * <span class="number">16</span> ) );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、把BCD值转2进制</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***************************</span></span><br><span class="line"><span class="comment">函数名:Bcd2Bin</span></span><br><span class="line"><span class="comment">功能描述:把BCD值转2进制</span></span><br><span class="line"><span class="comment">参数：BCD值</span></span><br><span class="line"><span class="comment">返回：2进制值</span></span><br><span class="line"><span class="comment">***************************/</span></span><br><span class="line"><span class="function">u_8 <span class="title">Bcd2Bin</span><span class="params">( u_8 BcdCode )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span>( ( ( ( BcdCode &gt;&gt; <span class="number">4</span> ) &amp; <span class="number">0x0F</span> ) * <span class="number">10</span> ) + ( BcdCode &amp; <span class="number">0x0F</span> ));  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、把2进制转BCD值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***************************</span></span><br><span class="line"><span class="comment">函数名:Bin2BCD</span></span><br><span class="line"><span class="comment">功能描述:把2进制转BCD值</span></span><br><span class="line"><span class="comment">参数：2进制值</span></span><br><span class="line"><span class="comment">返回：BCD值</span></span><br><span class="line"><span class="comment">***************************/</span></span><br><span class="line"><span class="function">u_8 <span class="title">Bin2BCD</span><span class="params">( u_8 BinCode )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span>( ( ( (BinCode)/<span class="number">10</span> ) &lt;&lt; <span class="number">4</span> ) + ( (BinCode) %<span class="number">10</span> ));  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、把x值的第i位置为1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/********把x值的第i位置为1*************/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> X_SETBIT( x , i )       ( (x) |= ( 0x1 &lt;&lt; (i) )) </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>7、把x值的第i位清为0</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**********把x值的第i位清为0**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> X_CLRBIT( x , i )       ( (x) &amp;= ( ~( 0x01 &lt;&lt; (i) )))</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>8、判断x值的第i位是否为1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********判断x值的第i位是否为1**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> X_CHKBIT( x , i )       ( ((x) &gt;&gt; (i) ) &amp; 0x01 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>9、x,y值中的最小值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********x,y值中的最小值**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> X_MIN( x ,y )           (((x)&gt;(y))?(y):(x))</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>10、x,y值中的最大值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********x,y值中的最大值**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> X_MAX( x ,y )           (((x)&gt;(y))?(x):(y))</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>11、取i值的低8位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********取i值的低8位**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GET_4_BYTE(i)    (u_8)( ( (i) &amp; 0xFF ) &gt;&gt; 0 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>12、取i值的8-16位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********取i值的8-16位**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GET_3_BYTE(i)    (u_8)( ( (i) &amp; 0xFF00 ) &gt;&gt; 8 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>13、取i值的16-24位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********取i值的16-24位**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GET_2_BYTE(i)    (u_8)( ( (i) &amp; 0xFF0000 ) &gt;&gt; 16 ) </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>14、取i值的24-32位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********取i值的24-32位**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GET_1_BYTE(i)    (u_8)( ( (i) &amp; 0xFF000000 ) &gt;&gt; 24 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>15、4个字节为int型变量</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********4个字节为int型变量**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BYTE_TO_INT( byte,byte1,byte2,byte3 )    ( (byte&lt;&lt;24) | (byte1 &lt;&lt; 16) | (byte2 &lt;&lt; 8) | byte3 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>16、2个字节为short型变量</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********2个字节为short型变量**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BYTE_TO_SHORT( byte ,byte1)       ( (byte&lt;&lt;8)  | byte1 )</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>17、int型变量为4个字节</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********int型变量为4个字节**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INT_TO_BYTE( Val,byte )      do&#123; (byte)[0] = ((Val)&gt;&gt;24)&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                            (byte)[1] = ((Val)&gt;&gt;16)&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                            (byte)[2] = ((Val)&gt;&gt;8)&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                            (byte)[3] = ((Val))&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                        &#125;while(0)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>18、short型变量为2个字节</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********short型变量为2个字节**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SHORT_TO_BYTE( Val ,byte)     do&#123; (byte)[0] = ((Val)&gt;&gt;8)&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                             (byte)[1] = (Val)&amp;0xff;\</span></span><br><span class="line"><span class="meta">                                        &#125;while(0)</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>19、标准时间time转换字符串输出</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********标准时间time转换字符串输出**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TIME_2_STR(t, str) do&#123; tm_t tmtime;\</span></span><br><span class="line"><span class="meta">         gmtime_r( (time_t *)&amp;t,&amp;tmtime );\</span></span><br><span class="line"><span class="meta">         sprintf(str,<span class="string">&quot;%04d-%02d-%02d %02d:%02d:%02d&quot;</span>,1900 + tmtime.tm_year, tmtime.tm_mon + 1, \</span></span><br><span class="line"><span class="meta">                          tmtime.tm_mday,tmtime.tm_hour, tmtime.tm_min, tmtime.tm_sec);\</span></span><br><span class="line"><span class="meta">                             &#125;while(0)  </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>20、IP值转换IP字符串输出</strong>              </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********IP值转换IP字符串输出**********/</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IPADDR_2_STR(lIp, str) do&#123; u_8 ipaddr[4];\</span></span><br><span class="line"><span class="meta">     memcpy (&amp;(ipaddr[0]), &amp;(lIp), 4);\                                                 </span></span><br><span class="line">     <span class="built_in">sprintf</span>(str,<span class="string">&quot;%03d.%03d.%03d.%03d&quot;</span>,ipaddr[<span class="number">0</span>],ipaddr[<span class="number">1</span>],ipaddr[<span class="number">2</span>],ipaddr[<span class="number">3</span>]);\</span><br><span class="line">                                  &#125;<span class="keyword">while</span>(<span class="number">0</span>)   </span><br></pre></td></tr></table></figure>
+
+<p>一、字符串化操作符#</p>
+<ol>
+<li><p><code>#</code> 的功能：将#后面的宏参数转化成字符串。</p>
+</li>
+<li><p>使用条件：只能用于有传入参数的宏定义中，且#必须置于宏定义体中的参数名前。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">// s是宏参数</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> Str(s) #s    <span class="comment">//功能：使用Str(s)将s转化为字符串</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="built_in">Str</span>(HelloWorld));</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出：HelloWorld</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>3.对空格的处理</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> example1(instr) #instr</span></span><br><span class="line"></span><br><span class="line">stringstr=<span class="built_in">example1</span>(abc)； 将会展成：string str=<span class="string">&quot;abc&quot;</span>；</span><br></pre></td></tr></table></figure>
+
+<pre><code>    🥝 a、忽略传入参数名前面和后面的空格。
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如：str=example1( abc )； 将会被扩展成 str=&quot;abc&quot;；</span><br></pre></td></tr></table></figure>
+
+<pre><code>    🥝 b、当传入参数名间存在空格时，编译器将自动连接各个子字符串，用每个子字符串中只一个空格连接，忽略多余一个空格。
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如：str=<span class="built_in">exapme1</span>( abc    def ); 将会被扩展成 str=<span class="string">&quot;abc def&quot;</span>；</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>宏定义作为宏参数，不展开，仍然作为字符串字面信息输出。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> STR(s)     #s </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// INT_MAX是某个文件中定义的宏，</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;int max: %s\n&quot;</span>,  <span class="built_in">STR</span>(INT_MAX)); <span class="comment">// 输出int max: INT_MAX</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>二、符号连接操作符 ##</p>
+<ol>
+<li><p><code>##</code> 的功能: 将前后两个标识符连接形成一个标识符。</p>
+</li>
+<li><p>使用条件：只能用于有传入参数的宏定义中，且##必须置于宏定义体中的参数名前。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> Var(x) var##x</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">Var</span><span class="params">(<span class="number">1</span>)</span></span>=<span class="number">1</span>,<span class="built_in">Var</span>(<span class="number">2</span>)=<span class="number">2</span>,<span class="built_in">Var</span>(<span class="number">3</span>)=<span class="number">3</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var1=%d\n&quot;</span>,var1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var2=%d\n&quot;</span>,var2);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var3=%d\n&quot;</span>,var3);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.注意</p>
+<p>a、当用##连接形参时，##前后的空格可有可无。</p>
+<p>如：#define exampleNum(n) num ## n 相当于 #define exampleNum(n) num##n<br>b、连接后的实际参数名，必须为实际存在的参数名或是编译器已知的宏定义。连接之后只是组成了一个参数名，并没有定义，因此要求这个参数名需要是已经存在或者说已经被定义了的参数或宏定义。</p>
+<p>c、当宏参数是另一个宏时，凡宏定义中存在#或##的地方，宏参数不会再展开。</p>
+<p>（ 只有当前宏生效, 参数里的宏！不会生效 ！）</p>
+<pre><code>    ① 宏定义不存在’#‘和’##&#39;的情况
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> TOW      (2) </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MUL(a,b) (a*b) </span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d*%d=%d/n&quot;</span>, TOW, TOW, <span class="built_in">MUL</span>(TOW,TOW)); </span><br><span class="line">这行的宏会被展开为： </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d*%d=%d/n&quot;</span>, (<span class="number">2</span>), (<span class="number">2</span>), ((<span class="number">2</span>)*(<span class="number">2</span>))); </span><br><span class="line">MUL里的参数TOW会被展开为(<span class="number">2</span>). </span><br></pre></td></tr></table></figure>
+
+<pre><code>    ② 宏定义存在’#‘或’##&#39;的时候（#在上方有讲解）
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line">	</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> A          2 </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 由于A是宏，且作为宏CONS的参数，并且宏CONS##符号，所以A不能被解引用，因此上方程序编译报错。 </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, <span class="built_in">CONS</span>(A, A));  <span class="comment">// compile error   无法展开</span></span><br><span class="line">	<span class="comment">//printf(&quot;%d\n&quot;, (int)(AeA)); </span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错信息如下：</span></span><br><span class="line">main.c: In function ‘main’:</span><br><span class="line">main.c:<span class="number">8</span>:<span class="number">22</span>: error: ‘AeA’ <span class="built_in">undeclared</span> (first use in <span class="keyword">this</span> function)</span><br><span class="line">    <span class="number">8</span> |  <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, <span class="built_in">CONS</span>(A, A));  <span class="comment">// compile error   无法展开</span></span><br><span class="line">      |                      ^</span><br><span class="line">main.c:<span class="number">5</span>:<span class="number">26</span>: note: in definition of macro ‘CONS’</span><br><span class="line">    <span class="number">5</span> | <span class="meta">#<span class="keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span></span><br><span class="line">      |                          ^</span><br><span class="line">main.c:<span class="number">8</span>:<span class="number">22</span>: note: each undeclared identifier is reported only once <span class="keyword">for</span> each function it appears in</span><br><span class="line">    <span class="number">8</span> |  <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, <span class="built_in">CONS</span>(A, A));  <span class="comment">// compile error   无法展开</span></span><br><span class="line">      |                      ^</span><br><span class="line">main.c:<span class="number">5</span>:<span class="number">26</span>: note: in definition of macro ‘CONS’</span><br><span class="line">    <span class="number">5</span> | <span class="meta">#<span class="keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span></span><br><span class="line">      |                          ^</span><br></pre></td></tr></table></figure>
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/CPP/%E5%8A%A8%E6%80%81%E5%A3%B0%E6%98%8E%E5%AD%90%E7%B1%BB/">动态声明子类</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/CPP/try-catch%E5%9D%97/">try-catch块</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

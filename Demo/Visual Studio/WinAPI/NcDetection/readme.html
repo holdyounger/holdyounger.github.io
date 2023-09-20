@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>oone</title>
+
+  
+    <meta name="description" content="NC异常检测(NCQuery)及修复(NcRecovery)说明[toc] 1. NC异常检测(NCQuery)检测模块 虚拟网卡(netcard)  检查虚拟网卡的状态（禁用、启用、未启用）   通信服务及部分操作(ncopt)  与 Trustcore 的通信及网卡启动前操作   vnic  检查虚拟ip的分配是否成功   路由  检查路由表&gt;    返回结构12345678910111">
+<meta property="og:type" content="website">
+<meta property="og:title" content="oone">
+<meta property="og:url" content="http://example.com/Demo/Visual%20Studio/WinAPI/NcDetection/readme.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="NC异常检测(NCQuery)及修复(NcRecovery)说明[toc] 1. NC异常检测(NCQuery)检测模块 虚拟网卡(netcard)  检查虚拟网卡的状态（禁用、启用、未启用）   通信服务及部分操作(ncopt)  与 Trustcore 的通信及网卡启动前操作   vnic  检查虚拟ip的分配是否成功   路由  检查路由表&gt;    返回结构12345678910111">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.577Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.577Z">
+<meta property="article:author" content="mingming">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="page">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-NC%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B-NCQuery"><span class="toc-text">1. NC异常检测(NCQuery)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B%E6%A8%A1%E5%9D%97"><span class="toc-text">检测模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%84"><span class="toc-text">返回结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#netcard"><span class="toc-text">netcard</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ncip"><span class="toc-text">ncip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ncopt"><span class="toc-text">ncopt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#route"><span class="toc-text">route</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Status-%E8%AF%B4%E6%98%8E"><span class="toc-text">Status 说明</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%99%9A%E6%8B%9F%E7%BD%91%E5%8D%A1-0-1-2-100"><span class="toc-text">1. 虚拟网卡[0,1,2~100]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%80%9A%E4%BF%A1%E5%8F%8A%E6%93%8D%E4%BD%9C-ncopt-0-1-101-200"><span class="toc-text">2. 通信及操作(ncopt)[0,1,101~200]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-vnic-0-1-201-300"><span class="toc-text">3. vnic[0,1,201~300]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%B7%AF%E7%94%B1%E8%A1%A8-0-1-301-400"><span class="toc-text">4. 路由表[0,1,301~400]</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-NC%E5%BC%82%E5%B8%B8%E4%BF%AE%E5%A4%8D-NcRecovery"><span class="toc-text">2. NC异常修复(NcRecovery)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A6%E5%8F%91nc%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-text">触发nc的操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%BD%91%E5%8D%A1"><span class="toc-text">设置网卡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Win7%E5%8F%8A%E4%BB%A5%E5%90%8E"><span class="toc-text">Win7及以后</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">#1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">#2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">#3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">#4</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1"><span class="toc-text">#1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1"><span class="toc-text">#2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1"><span class="toc-text">#3</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1"><span class="toc-text">添加路由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%B7%AF%E7%94%B1"><span class="toc-text">删除路由</span></a></li></ol></div></div></widget>
+
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" placeholder="站内搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+  
+
+<header class="header mobile-only"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
+
+
+
+      
+
+
+
+<article class="md-text content page"><h1 id="NC异常检测-NCQuery-及修复-NcRecovery-说明"><a href="#NC异常检测-NCQuery-及修复-NcRecovery-说明" class="headerlink" title="NC异常检测(NCQuery)及修复(NcRecovery)说明"></a>NC异常检测(NCQuery)及修复(NcRecovery)说明</h1><p>[toc]</p>
+<h2 id="1-NC异常检测-NCQuery"><a href="#1-NC异常检测-NCQuery" class="headerlink" title="1. NC异常检测(NCQuery)"></a>1. NC异常检测(NCQuery)</h2><h3 id="检测模块"><a href="#检测模块" class="headerlink" title="检测模块"></a>检测模块</h3><ol>
+<li><p>虚拟网卡(netcard)</p>
+<blockquote>
+<p>检查虚拟网卡的状态（禁用、启用、未启用）</p>
+</blockquote>
+</li>
+<li><p>通信服务及部分操作(ncopt)</p>
+<blockquote>
+<p>与 <code>Trustcore</code> 的通信及网卡启动前操作</p>
+</blockquote>
+</li>
+<li><p>vnic</p>
+<blockquote>
+<p>检查虚拟ip的分配是否成功</p>
+</blockquote>
+</li>
+<li><p>路由</p>
+<blockquote>
+<p>检查路由表&gt;</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="返回结构"><a href="#返回结构" class="headerlink" title="返回结构"></a>返回结构</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;error_code&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Configure vnic Success&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;modules&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Create remote vnip success&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ncip&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;time&quot;</span><span class="punctuation">:</span> <span class="string">&quot; 2023-04-07T10:33:14Z&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Get &amp; Set OPtions Success&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ncopt&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;time&quot;</span><span class="punctuation">:</span> <span class="string">&quot; 2023-04-07T10:33:14Z&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Configure vnic Success&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;netcard&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;\&quot;data\&quot;: &#123;\&quot;block_exclude_lan\&quot;: 0, \&quot;block_internet\&quot;: 0, \&quot;dns\&quot;: [], \&quot;dns4\&quot;: [], \&quot;dns6\&quot;: [], \&quot;dns_suffix\&quot;: \&quot;\&quot;, \&quot;ip\&quot;: \&quot;1.1.1.114\&quot;, \&quot;ipv4\&quot;: \&quot;1.1.1.114\&quot;, \&quot;mask\&quot;: \&quot;255.255.255.255\&quot;, \&quot;route_assign4\&quot;: [], \&quot;route_assign6\&quot;: [], \&quot;route_auto\&quot;: \&quot;1\&quot;, \&quot;route_includes4\&quot;: [\&quot;1.1.1.1/32\&quot;, \&quot;10.41.3.204/32\&quot;, \&quot;10.41.3.222/32\&quot;, \&quot;10.44.250.1/32\&quot;, \&quot;10.44.250.2/31\&quot;, \&quot;10.44.250.4/30\&quot;, \&quot;10.44.250.8/29\&quot;, \&quot;10.44.250.16/28\&quot;, \&quot;10.44.250.32/27\&quot;, \&quot;10.44.250.64/26\&quot;, \&quot;10.44.250.128/30\&quot;, \&quot;10.44.250.134/31\&quot;, \&quot;10.44.250.136/29\&quot;, \&quot;10.44.250.144/28\&quot;, \&quot;10.44.250.160/27\&quot;, \&quot;10.44.250.192/27\&quot;, \&quot;10.44.250.224/28\&quot;, \&quot;10.44.250.240/29\&quot;, \&quot;10.44.250.248/30\&quot;, \&quot;10.44.250.252/31\&quot;, \&quot;10.44.250.254/32\&quot;, \&quot;10.92.2.33/32\&quot;, \&quot;10.92.2.250/32\&quot;, \&quot;10.92.3.132/32\&quot;, \&quot;198.18.0.0/30\&quot;, \&quot;198.18.0.4/31\&quot;, \&quot;198.18.0.6/32\&quot;], \&quot;route_opt\&quot;: \&quot;0\&quot;, \&quot;vpn_host\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_ip\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_ip4\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_port\&quot;: \&quot;443\&quot;&#125;, \&quot;errcode\&quot;: \&quot;0\&quot;&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;time&quot;</span><span class="punctuation">:</span> <span class="string">&quot; 2023-04-07T10:33:22Z&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Add route table Success&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;route&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;routetable&quot;</span><span class="punctuation">:</span> <span class="string">&quot;[\&quot;1.1.1.1/32\&quot;, \&quot;10.41.3.204/32\&quot;, \&quot;10.41.3.222/32\&quot;, \&quot;10.44.250.1/32\&quot;, \&quot;10.44.250.2/31\&quot;, \&quot;10.44.250.4/30\&quot;, \&quot;10.44.250.8/29\&quot;, \&quot;10.44.250.16/28\&quot;, \&quot;10.44.250.32/27\&quot;, \&quot;10.44.250.64/26\&quot;, \&quot;10.44.250.128/30\&quot;, \&quot;10.44.250.134/31\&quot;, \&quot;10.44.250.136/29\&quot;, \&quot;10.44.250.144/28\&quot;, \&quot;10.44.250.160/27\&quot;, \&quot;10.44.250.192/27\&quot;, \&quot;10.44.250.224/28\&quot;, \&quot;10.44.250.240/29\&quot;, \&quot;10.44.250.248/30\&quot;, \&quot;10.44.250.252/31\&quot;, \&quot;10.44.250.254/32\&quot;, \&quot;10.92.2.33/32\&quot;, \&quot;10.92.2.250/32\&quot;, \&quot;10.92.3.132/32\&quot;, \&quot;198.18.0.0/30\&quot;, \&quot;198.18.0.4/31\&quot;, \&quot;198.18.0.6/32\&quot;]&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;time&quot;</span><span class="punctuation">:</span> <span class="string">&quot; 2023-04-07T10:33:22Z&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;os&quot;</span><span class="punctuation">:</span> <span class="string">&quot;windows&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;service&quot;</span><span class="punctuation">:</span> <span class="string">&quot;trustnc&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;R&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;time&quot;</span><span class="punctuation">:</span> <span class="string">&quot; 2023-04-07T10:33:22Z&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="netcard"><a href="#netcard" class="headerlink" title="netcard"></a>netcard</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>父节点</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>netcard</td>
+<td>\</td>
+<td></td>
+<td>返回虚拟网卡相关状态</td>
+</tr>
+<tr>
+<td>level</td>
+<td>netcard</td>
+<td>string</td>
+<td>返回异常状态的级别</td>
+</tr>
+<tr>
+<td>status</td>
+<td>netcard</td>
+<td>string</td>
+<td>返回虚拟网卡状态的状态码</td>
+</tr>
+<tr>
+<td>options</td>
+<td>Netcard</td>
+<td>string</td>
+<td>(独有)返回虚拟网卡的配置信息</td>
+</tr>
+<tr>
+<td>message</td>
+<td>netcard</td>
+<td>string</td>
+<td>返回状态码对应的描述信息</td>
+</tr>
+</tbody></table>
+<h4 id="ncip"><a href="#ncip" class="headerlink" title="ncip"></a>ncip</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>父节点</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ncip</td>
+<td>\</td>
+<td></td>
+<td>返回虚拟ip相关状态</td>
+</tr>
+<tr>
+<td>level</td>
+<td>ncip</td>
+<td>string</td>
+<td>返回异常状态的级别level</td>
+</tr>
+<tr>
+<td>status</td>
+<td>ncip</td>
+<td>string</td>
+<td>返回虚拟ip的状态码</td>
+</tr>
+<tr>
+<td>message</td>
+<td>ncip</td>
+<td>string</td>
+<td>返回状态码对应的描述信息</td>
+</tr>
+</tbody></table>
+<h4 id="ncopt"><a href="#ncopt" class="headerlink" title="ncopt"></a>ncopt</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>父节点</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ncopt</td>
+<td>\</td>
+<td></td>
+<td>返回nc通信的状态</td>
+</tr>
+<tr>
+<td>level</td>
+<td>ncopt</td>
+<td>string</td>
+<td>返回异常状态的级别</td>
+</tr>
+<tr>
+<td>status</td>
+<td>ncopt</td>
+<td>string</td>
+<td>返回通信状态的状态码</td>
+</tr>
+<tr>
+<td>message</td>
+<td>ncopt</td>
+<td>string</td>
+<td>返回状态码对应的描述信息</td>
+</tr>
+</tbody></table>
+<h4 id="route"><a href="#route" class="headerlink" title="route"></a>route</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>父节点</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>route</td>
+<td>\</td>
+<td></td>
+<td>返回路由信息</td>
+</tr>
+<tr>
+<td>status</td>
+<td>route</td>
+<td>string</td>
+<td>返回路由的状态码</td>
+</tr>
+<tr>
+<td>level</td>
+<td>route</td>
+<td>string</td>
+<td>返回异常状态的级别</td>
+</tr>
+<tr>
+<td>message</td>
+<td>route</td>
+<td>string</td>
+<td>返回路由状态码对应的描述信息</td>
+</tr>
+<tr>
+<td>routetable</td>
+<td>route</td>
+<td>string</td>
+<td>返回路由表的json字符串</td>
+</tr>
+</tbody></table>
+<h3 id="Status-说明"><a href="#Status-说明" class="headerlink" title="Status 说明"></a>Status 说明</h3><ol>
+<li>虚拟网卡</li>
+<li>通信服务</li>
+<li>vnic</li>
+<li>路由</li>
+</ol>
+<h4 id="1-虚拟网卡-0-1-2-100"><a href="#1-虚拟网卡-0-1-2-100" class="headerlink" title="1. 虚拟网卡[0,1,2~100]"></a>1. 虚拟网卡[0,1,2~100]</h4><table>
+<thead>
+<tr>
+<th>level</th>
+<th>status</th>
+<th>message</th>
+<th>描述</th>
+<th>处置动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>0</td>
+<td></td>
+<td>正常状态</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>1. opened</td>
+<td>正常状态：启用虚拟网卡成功</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>2. HKLM Query Class Success</td>
+<td>正常状态：</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>3. HKLM Query Network Success</td>
+<td>正常状态：</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>4. Find Friendly Name</td>
+<td>正常状态：</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>Connect has started</td>
+<td>正常状态：</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1</td>
+<td>unknown</td>
+<td>初始化状态</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>2</td>
+<td>Not Found Device Vnic</td>
+<td>未找到vnic设备</td>
+<td>重新安装</td>
+</tr>
+<tr>
+<td></td>
+<td>3</td>
+<td>Configure vnic failed</td>
+<td>设置网卡信息失败（ip、网关、掩码、dns等）</td>
+<td>重新获取网卡配置并设置</td>
+</tr>
+<tr>
+<td></td>
+<td>4</td>
+<td><a target="_blank" rel="external nofollow noopener noreferrer" href="https://wiki.qianxin-inc.cn/pages/viewpage.action?pageId=712315064">HKLM Query Faild</a></td>
+<td>查询注册表失败</td>
+<td>一般情况下还是网卡未安装</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="2-通信及操作-ncopt-0-1-101-200"><a href="#2-通信及操作-ncopt-0-1-101-200" class="headerlink" title="2. 通信及操作(ncopt)[0,1,101~200]"></a>2. 通信及操作(ncopt)[0,1,101~200]</h4><table>
+<thead>
+<tr>
+<th>level</th>
+<th>status</th>
+<th>message</th>
+<th>描述</th>
+<th>处置动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INFO</td>
+<td>0</td>
+<td>1. normal<br></td>
+<td>正常状态</td>
+<td></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>0</td>
+<td>Get &amp; Set OPtions Success</td>
+<td>获取配置和设置句柄成功</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>Configure vnic Success</td>
+<td>正常状态：连接core成功</td>
+<td></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>0</td>
+<td>Connect has started</td>
+<td>虚拟网卡已经启动</td>
+<td>？</td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>1</td>
+<td>unknown</td>
+<td>初始化状态</td>
+<td></td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>101</td>
+<td>Send initial msg to vpncore failed</td>
+<td>发送PTUN请求失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>102</td>
+<td>Send initial msg to vpncore failed with option</td>
+<td>发送默认路由失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>103</td>
+<td>Recv msg header from vpncore failed</td>
+<td>接收PTUN消息失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>104</td>
+<td>Alloc for msg_body failed</td>
+<td>初始化内存失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>105</td>
+<td>Recv initial msg response from vpnclient failed</td>
+<td>接收消息失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>106</td>
+<td>NC options is null</td>
+<td>获取NC配置为空</td>
+<td>?</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>107</td>
+<td>Set Handler Failed</td>
+<td>设置控制句柄失败</td>
+<td>重新获取配置</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="3-vnic-0-1-201-300"><a href="#3-vnic-0-1-201-300" class="headerlink" title="3. vnic[0,1,201~300]"></a>3. vnic[0,1,201~300]</h4><table>
+<thead>
+<tr>
+<th>level</th>
+<th>status</th>
+<th>message</th>
+<th>描述</th>
+<th>处置动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INFO</td>
+<td>0</td>
+<td>1.</td>
+<td>正常状态</td>
+<td></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>1</td>
+<td>unknown</td>
+<td>初始化状态</td>
+<td></td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>201</td>
+<td>Create remote ip failed</td>
+<td>创建虚拟ip失败</td>
+<td>重新创建且重新走开启虚拟网卡流程</td>
+</tr>
+</tbody></table>
+<h4 id="4-路由表-0-1-301-400"><a href="#4-路由表-0-1-301-400" class="headerlink" title="4. 路由表[0,1,301~400]"></a>4. 路由表[0,1,301~400]</h4><table>
+<thead>
+<tr>
+<th>level</th>
+<th>status</th>
+<th>message</th>
+<th>描述</th>
+<th>处置动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INFO</td>
+<td>0</td>
+<td></td>
+<td>正常状态</td>
+<td></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>0</td>
+<td>Add route table Success</td>
+<td>添加路由（同时保存路由表）</td>
+<td></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>1</td>
+<td>unknown</td>
+<td>初始化状态</td>
+<td></td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>301</td>
+<td>Add route table failed</td>
+<td>添加路由失败</td>
+<td>重新添加</td>
+</tr>
+<tr>
+<td></td>
+<td>302</td>
+<td>Repair route table failed</td>
+<td>修复路由失败</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="2-NC异常修复-NcRecovery"><a href="#2-NC异常修复-NcRecovery" class="headerlink" title="2. NC异常修复(NcRecovery)"></a>2. NC异常修复(NcRecovery)</h2><p>异常修复针对针对上一节中的 Status 对应的处置动作详细说明。对nc内部发生的异常可供内部修复的项目进行处理。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;ncip&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;unknown&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ncopt&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;unknown&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;netcard&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span> <span class="string">&quot;INFO&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Add route table Success&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;\&quot;L4\&quot;: &#123;\&quot;hostname_excludes\&quot;: [], \&quot;hostname_includes\&quot;: [\&quot;www.test.com\&quot;, \&quot;www.qianxin.com\&quot;, \&quot;aa.com\&quot;], \&quot;proxy_port\&quot;: 50568, \&quot;proxy_rules\&quot;: [&#123;\&quot;action\&quot;: \&quot;bypass\&quot;, \&quot;ip_max\&quot;: \&quot;10.44.250.132\&quot;, \&quot;ip_min\&quot;: \&quot;10.44.250.132\&quot;, \&quot;port_max\&quot;: 443, \&quot;port_min\&quot;: 443, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;bypass\&quot;, \&quot;ip_max\&quot;: \&quot;10.44.250.132\&quot;, \&quot;ip_min\&quot;: \&quot;10.44.250.132\&quot;, \&quot;port_max\&quot;: 443, \&quot;port_min\&quot;: 443, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;bypass\&quot;, \&quot;ip_max\&quot;: \&quot;10.44.250.133\&quot;, \&quot;ip_min\&quot;: \&quot;10.44.250.133\&quot;, \&quot;port_max\&quot;: 443, \&quot;port_min\&quot;: 443, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv4\&quot;, \&quot;ip_max\&quot;: \&quot;1.1.1.1\&quot;, \&quot;ip_min\&quot;: \&quot;1.1.1.1\&quot;, \&quot;port_max\&quot;: 3, \&quot;port_min\&quot;: 3, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv4\&quot;, \&quot;ip_max\&quot;: \&quot;10.44.250.134\&quot;, \&quot;ip_min\&quot;: \&quot;10.44.250.134\&quot;, \&quot;port_max\&quot;: 80, \&quot;port_min\&quot;: 80, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv4\&quot;, \&quot;ip_max\&quot;: \&quot;10.92.2.33\&quot;, \&quot;ip_min\&quot;: \&quot;10.92.2.33\&quot;, \&quot;port_max\&quot;: 80, \&quot;port_min\&quot;: 80, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv4\&quot;, \&quot;ip_max\&quot;: \&quot;198.18.255.255\&quot;, \&quot;ip_min\&quot;: \&quot;198.18.0.0\&quot;, \&quot;port_max\&quot;: 65535, \&quot;port_min\&quot;: 0, \&quot;protocol\&quot;: \&quot;tcp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv4\&quot;, \&quot;ip_max\&quot;: \&quot;255.255.255.255\&quot;, \&quot;ip_min\&quot;: \&quot;0.0.0.0\&quot;, \&quot;port_max\&quot;: 53, \&quot;port_min\&quot;: 53, \&quot;protocol\&quot;: \&quot;udp\&quot;&#125;, &#123;\&quot;action\&quot;: \&quot;redirect\&quot;, \&quot;family\&quot;: \&quot;ipv6\&quot;, \&quot;ip_max\&quot;: \&quot;FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF\&quot;, \&quot;ip_min\&quot;: \&quot;::\&quot;, \&quot;port_max\&quot;: 53, \&quot;port_min\&quot;: 53, \&quot;protocol\&quot;: \&quot;udp\&quot;&#125;]&#125;, \&quot;data\&quot;: &#123;\&quot;block_exclude_lan\&quot;: 0, \&quot;block_internet\&quot;: 0, \&quot;dns\&quot;: [], \&quot;dns4\&quot;: [], \&quot;dns6\&quot;: [], \&quot;dns_suffix\&quot;: \&quot;\&quot;, \&quot;ip\&quot;: \&quot;1.1.1.29\&quot;, \&quot;ipv4\&quot;: \&quot;1.1.1.29\&quot;, \&quot;mask\&quot;: \&quot;255.255.255.255\&quot;, \&quot;route_assign4\&quot;: [], \&quot;route_assign6\&quot;: [], \&quot;route_auto\&quot;: \&quot;1\&quot;, \&quot;route_includes4\&quot;: [\&quot;1.1.1.1/32\&quot;, \&quot;10.44.250.130/32\&quot;, \&quot;10.44.250.134/32\&quot;, \&quot;10.92.2.33/32\&quot;, \&quot;198.18.0.0/31\&quot;, \&quot;198.18.0.2/32\&quot;], \&quot;route_opt\&quot;: \&quot;0\&quot;, \&quot;vpn_host\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_ip\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_ip4\&quot;: \&quot;10.44.250.133\&quot;, \&quot;vpn_port\&quot;: \&quot;443\&quot;&#125;, \&quot;errcode\&quot;: \&quot;0\&quot;&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;routetable&quot;</span><span class="punctuation">:</span> <span class="string">&quot;[\&quot;1.1.1.1/32\&quot;, \&quot;10.44.250.130/32\&quot;, \&quot;10.44.250.134/32\&quot;, \&quot;10.92.2.33/32\&quot;, \&quot;198.18.0.0/31\&quot;, \&quot;198.18.0.2/32\&quot;]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;recv&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;route&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;route&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;unknown&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="触发nc的操作"><a href="#触发nc的操作" class="headerlink" title="触发nc的操作"></a>触发nc的操作</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SP_TAP_STAGE_CREATE         = <span class="number">0x00</span>,     <span class="comment">// Created</span></span><br><span class="line">SP_TAP_STAGE_ACCEPT_APP     = <span class="number">0x01</span>,     <span class="comment">// Accept APP end&#x27;s connection, or connected backend APP server</span></span><br><span class="line"><span class="comment">// <span class="doctag">TODO:</span> more stage for PROXY supports: proxy-connecting proxy-handshaking</span></span><br><span class="line">SP_TAP_STAGE_CONNECT_LOOKUP = <span class="number">0x02</span>,     <span class="comment">// DNS lookup, resolving remote host</span></span><br><span class="line">SP_TAP_STAGE_CONNECT_TCP    = <span class="number">0x03</span>,     <span class="comment">// connecting remote host by TCP</span></span><br><span class="line">SP_TAP_STAGE_CONNECT_SSL    = <span class="number">0x04</span>,     <span class="comment">// connecting remote host by SSL or SSL handshaking on exists TCP</span></span><br><span class="line">SP_TAP_STAGE_HANDSHAKE      = <span class="number">0x05</span>,     <span class="comment">// has connected SSLVPN server authorizing</span></span><br><span class="line">SP_TAP_STAGE_FORWARD        = <span class="number">0x06</span>,     <span class="comment">// has authorized SSLVPN Server forwarding data</span></span><br><span class="line">SP_TAP_STAGE_IDLE           = <span class="number">0x07</span>,     <span class="comment">// has NO L3 services, nc tunnel is not connected, idle state</span></span><br><span class="line"><span class="comment">// SP_TAP_STAGE_ERROR          = 0x7E,</span></span><br><span class="line">SP_TAP_STAGE_CLOSED         = <span class="number">0x7F</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>触发 SP_TAP_STAGE_FORWARD 的操作</p>
+<ul>
+<li><p>OnTapAppRead <code>stage!=SP_TAP_STAGE_FORWARD</code> 已认证需要tap数据</p>
+</li>
+<li><p>SPTapTunnelBypass::OnTapVpnEvent <code>stage&lt;SP_TAP_STAGE_HANDSHAKE</code> 已连接但未认证</p>
+</li>
+<li><p>SPTapTunnelRelay::OnTapVpnEvent <code>stage== BEV_EVENT_CONNECTED &amp;&amp; stage&lt;SP_TAP_STAGE_HANDSHAKE</code> 已连接但未认证</p>
+</li>
+<li><p>SPTapTrustTunnelTCP::OnHandshakeRsp接口 <code>errorcode == 0</code></p>
+</li>
+<li><p>SPTapTrustTunnelIP::OnHandshakeRsp接口<code>errorcode == 0</code> </p>
+</li>
+<li><p>SPTapAgent::OnTapVpnRead <code>隧道建立成功 &amp;&amp; stage==SP_TAP_STAGE_HANDSHAKE</code></p>
+</li>
+<li><p>SPTapAgent::OnTapVpnRead <code>tag == SP_MSG_VPN_AGT_SESSION_START</code> 会话开始</p>
+</li>
+<li><p>SPTapAgentHub::OnRspMsgBinary <code>tag==SP_MSG_VPN_AGT_PROXY_AUTH</code> 服务访问授权</p>
+</li>
+<li><p>SPTapUDPGateway::OnTapAppRead <code>stage&lt;SP_TAP_STAGE_FORWARD</code> </p>
+</li>
+<li><p>SPTapTrustRESTful::OnTapVpnRead <code>stage == SP_TAP_STAGE_HANDSHAKE</code></p>
+</li>
+<li><p>SPTapTunnelHTTPD::OnTapAppRead <code>stage!=SP_TAP_STAGE_FORWARD</code> </p>
+</li>
+<li><p>SPTapTunnelNC::OnTapVpnRead <code>stage==SP_TAP_STAGE_FORWARD</code></p>
+</li>
+<li><p>SPTapTunnelMsg::OnTapVpnEvent <code>stage==SP_TAP_STAGE_CONNECT_SSL</code></p>
+</li>
+</ul>
+<h1 id="测试建议"><a href="#测试建议" class="headerlink" title="测试建议"></a>测试建议</h1><h2 id="设置网卡"><a href="#设置网卡" class="headerlink" title="设置网卡"></a>设置网卡</h2><blockquote>
+<p>对应下发节点（data节点）：</p>
+<ul>
+<li>ip 虚拟路由</li>
+<li>ipv4 虚拟路由</li>
+<li>mask 掩码</li>
+<li>vpn_ip 网关</li>
+</ul>
+</blockquote>
+<h3 id="Win7及以后"><a href="#Win7及以后" class="headerlink" title="Win7及以后"></a>Win7及以后</h3><h4 id="1"><a href="#1" class="headerlink" title="#1"></a>#1</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netsh interface ip set address 14 static 1.1.1.95 255.255.255.255 store=active</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">netsh interface ip <span class="built_in">set</span> address ? <span class="comment"># 查看详细帮助</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>14: 为 “TrusgAgent VNIC” 的索引（此处也可以设置为名称）。</li>
+<li>1.1.1.95: 为下发的虚拟ip</li>
+<li>255.255.255.255: 为掩码</li>
+<li>store: <code>active</code> 时表示设置仅持续到下一次启动；<code>persistent</code> ，设置永久有效</li>
+</ul>
+<h4 id="2"><a href="#2" class="headerlink" title="#2"></a>#2</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netsh interface ip set interface interface=14 metric=1 store=active</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">netsh interface ip <span class="built_in">set</span> interface ? <span class="comment">#查看帮助</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>interface: 接口名称或索引</li>
+<li>metric: 接口跃点数，已添加到接口上的所有路由的路由跃点数</li>
+<li>store: 同【#1】</li>
+</ul>
+<h4 id="3"><a href="#3" class="headerlink" title="#3"></a>#3</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh interface ip delete dns 14 all</span><br></pre></td></tr></table></figure>
+<p>netsh interface  ip delete ?</p>
+<p>下列指令有效:</p>
+<p>此上下文中的命令:<br>delete address - 从指定的接口删除 IP 地址或默认网关。<br>delete arpcache - 刷新一个特定接口或所有接口的 ARP 缓存。<br>delete destinationcache - 删除目标缓存。<br>delete dnsservers - 从指定的接口删除 DNS 服务器。<br>delete excludedportrange - 为连续的端口块删除排除。<br>delete neighbors - 刷新一个特定接口或所有接口的 ARP 缓存。<br>delete route   - 删除路由。<br>delete winsservers - 从指定的接口删除 WINS 服务器。</p>
+<h4 id="4"><a href="#4" class="headerlink" title="#4"></a>#4</h4><p>添加dns服务武器IP和wins服务器IP</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加 dns 服务器IP</span></span><br><span class="line">netsh interface ip add dns 14 %s validate = no</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加 Wins 服务器IP</span></span><br><span class="line">netsh interface ip add wins %d %s</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="1-1"><a href="#1-1" class="headerlink" title="#1"></a>#1</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netsh interface ip set address 以太网 dhcp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>以太网： 网络名称</li>
+<li>dhcp：动态路由</li>
+</ul>
+<h4 id="2-1"><a href="#2-1" class="headerlink" title="#2"></a>#2</h4><p>通过系统API添加(虚拟ip、目标ip、掩码等）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DeviceIoControl</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-1"><a href="#3-1" class="headerlink" title="#3"></a>#3</h4><p>通过系统API设置dns</p>
+<h2 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h2><blockquote>
+<p>对应下发节点： data &gt; route_includes</p>
+</blockquote>
+<p>vnic执行的命令如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ADD %ip% MASK %mask% %remoteip%</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ipv4<ul>
+<li>ip: 获取配置字段中的<code>vpn_ip</code>，一般为【tap地址】</li>
+<li>mask:</li>
+<li>remotip</li>
+</ul>
+</li>
+<li>ipv6<ul>
+<li>ip: 同【ipv4】</li>
+<li>mask: 同 【ipv4】</li>
+<li>remoteip:添加ipv6路由时，远端ip为 <code>&quot;20.21.8.20&quot;</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="删除路由"><a href="#删除路由" class="headerlink" title="删除路由"></a>删除路由</h2><p>使用 <code>Route Print</code> 查看活动路由</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">route DELETE %s MASK %s</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">示例：删除[网络目标]为 10.44.250.144,[网络掩码]为 255.255.255.240的条目</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">route delete 10.44.250.144 mask 255.255.255.240</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

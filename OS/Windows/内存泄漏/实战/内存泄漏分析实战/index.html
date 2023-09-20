@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>内存泄漏分析实战 - oone</title>
+
+  
+    <meta name="description" content="[toc] 前言本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。 泄漏分类# malloc 内存泄漏下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()***\hea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存泄漏分析实战">
+<meta property="og:url" content="http://example.com/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%AE%9E%E6%88%98/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[toc] 前言本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。 泄漏分类# malloc 内存泄漏下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()***\hea">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.844Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.845Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="内存泄漏">
+<meta property="article:tag" content="实战">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="内存泄漏,实战">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">内存泄漏分析实战</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#malloc-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-text"># malloc 内存泄漏</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-text"># new 内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#strdup-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-text"># strdup 内存泄漏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#malloc-base"><span class="toc-text"># _malloc_base</span></a></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/OS/">OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">内存泄漏</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%AE%9E%E6%88%98/">实战</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.844Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>内存泄漏分析实战</span></h1>
+<p>[toc]</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。</p>
+<p>关于内存泄漏和分析的文章可查看博客相关文章，有 <code>UMDH</code> 和 <code>vld</code> 两种方式，可根据个人需求展开分析。</p>
+<h1 id="泄漏分类"><a href="#泄漏分类" class="headerlink" title="泄漏分类"></a>泄漏分类</h1><h2 id="malloc-内存泄漏"><a href="#malloc-内存泄漏" class="headerlink" title="# malloc 内存泄漏"></a># <code>malloc</code> 内存泄漏</h2><p>下述日志为一次 <code>malloc</code>  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ntdll.dll!RtlAllocateHeap()</span><br><span class="line">***\heap\malloc_base.cpp (34): XXX.dll!_malloc_base() + 0xF bytes</span><br><span class="line">XXX.dll!_event_debugx() + 0x1A7 bytes</span><br></pre></td></tr></table></figure>
+
+<p><mark style="background:green;border-radius:10px;color:white;border:none">解决方案：</mark></p>
+<p>根据提示的位置找到并释放该内存。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> *ch = (<span class="type">char</span>*)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="number">8</span>));</span><br><span class="line">free ch;</span><br><span class="line">ch = <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<p>另外，也可以使用智能指针管理该指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> *ch = (<span class="type">char</span>*)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(<span class="number">8</span>));</span><br><span class="line"><span class="function">shared_ptr&lt;<span class="type">char</span>&gt; <span class="title">spCh</span><span class="params">(ch)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="new-内存泄漏"><a href="#new-内存泄漏" class="headerlink" title="# new 内存泄漏"></a># <code>new</code> 内存泄漏</h2><p>关于 <code>new</code> 的内存泄漏分析写了一段代码用来展示一下：</p>
+<p><font size="1">注：代码 Section2 部分为一个崩溃代码，堆内存申请后使用时一处，而在堆内存申请和释放时以及程序结束时释放堆内存时，都 <mark>存在堆溢出检查</mark> ，检查点会抛出异常，导致程序奔溃。</font></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码 Section2</span></span><br><span class="line"><span class="comment">// 该函数代码还涉及奔溃问题</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">test_heap_alloc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="type">int</span>* pTable = <span class="keyword">new</span> <span class="built_in">int</span>(<span class="number">256</span>); <span class="comment">// 申请一个int结构体变量，初始值为256;</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++)</span><br><span class="line">		pTable[i] = i;</span><br><span class="line">	<span class="keyword">return</span> pTable;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   	<span class="built_in">test_heap_alloc</span>();</span><br><span class="line">    <span class="comment">// 执行上述代码之后再去下边这句申请堆内存会奔溃。</span></span><br><span class="line">    <span class="type">char</span>* p = <span class="keyword">new</span> <span class="built_in">char</span>(<span class="number">0</span>); <span class="comment">// 申请一个字节，内容初始化为0</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以下为 vld 生成的泄漏日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">WARNING: Visual Leak Detector detected memory leaks!</span><br><span class="line">---------- Block 1 at 0x010AAC68: 4 bytes ----------</span><br><span class="line">  Leak Hash: 0x03729B3D, Count: 1, Total 4 bytes</span><br><span class="line">  Call Stack (TID 33760):</span><br><span class="line">    ucrtbase.dll!malloc()</span><br><span class="line">    d:\agent\_work\3\s\src\vctools\crt\vcstartup\src\heap\new_scalar.cpp (35): vldforptr.exe!operator new() + 0x8 bytes</span><br><span class="line">    d:\code_source\c++\vs2019\vldforptr\vldforptr.cpp (45): vldforptr.exe!main() + 0x7 bytes</span><br><span class="line">    KERNEL32.DLL!BaseThreadInitThunk() + 0x19 bytes</span><br><span class="line">    ntdll.dll!RtlGetAppContainerNamedObjectPath() + 0x11E bytes</span><br><span class="line">    ntdll.dll!RtlGetAppContainerNamedObjectPath() + 0xEE bytes</span><br><span class="line">  Data:</span><br><span class="line">    00 00 00 00                                                  ........ ........</span><br></pre></td></tr></table></figure>
+
+<p><mark style="background:green;border-radius:10px;color:white;border:none">解决方案：</mark></p>
+<p>调用 <code>delete</code> 释放 <code>new</code> 出来的内存。</p>
+<ol>
+<li><p>问题：不确定变量什么时候使用完的，如何释放？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用智能指针</span></span><br><span class="line"><span class="type">char</span> *ch = <span class="keyword">new</span> <span class="type">char</span>[<span class="number">256</span>];</span><br><span class="line"><span class="function">std::shared_ptr&lt;<span class="type">char</span>&gt; <span class="title">spCh</span><span class="params">(ch)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="strdup-内存泄漏"><a href="#strdup-内存泄漏" class="headerlink" title="# strdup 内存泄漏"></a># <code>strdup</code> 内存泄漏</h3><p><code>strdup</code>函数说明：</p>
+<p>功能：将字符串拷贝到新建的位置处</p>
+<p>返回值 ：返回一个指向新字符串的指针，该字符串是字符串s的副本，如果分配空间失败，则返回NULL值。新字符串的内存由strdup函数原型内部的malloc（）获得，需用free（）释放。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ntdll.dll!RtlAllocateHeap()</span><br><span class="line">minkernel\crts\ucrt\src\appcrt\heap\malloc_base.cpp (34): XXX.dll!_malloc_base() + 0xF bytes</span><br><span class="line">XXX.dll!BUF_strndup() + 0x8A bytes</span><br></pre></td></tr></table></figure>
+
+<p>把返回内存地址的释放权交给了别的变量，这就很容易忘记释放，所以 <code>strdup</code> 这个函数也很容易造成内存泄漏。</p>
+<h1 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h1><h2 id="malloc-base"><a href="#malloc-base" class="headerlink" title="# _malloc_base"></a># <code>_malloc_base</code></h2><p><code>_malloc_base</code> 就是编译器编译之后的 <code>malloc</code>。</p>
+<p>查看vld的log可以看到，堆栈显示的 <code>_malloc_base</code> 所在的文件夹为 <code>minkernel\crts\ucrt\src\appcrt\heap\malloc_base.cpp</code>，这个文件就是 <code>malloc</code> 声明和定义的文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">领导您好！</span><br><span class="line">以下内容为本次绩效期间我的工作概述以及自我评价。</span><br><span class="line"></span><br><span class="line">本次绩效期间，我的主要工作内容集中在零信任国信版本和天擎零信任插件部分，同时也负责了部分工行、标板的需求开发（SPA、异常告警、命令行登录等）。零信任国信版本共计发布版本两次，均在发布版本之前完成了需求的开发和bug的修复，涉及的需求十多项，需求提测均通过，在完成需求的同时，整理编写了相应的技术开发文档十多篇，同时也补充了零信任客户端部分配置文件的说明文档。开发同时，针对国信零信任版本的升级故障问题（升级失败，升级检测问题），优化了该部分的逻辑，对整个客户端的无逻辑代码和日志部分进行了优化，以便于后续快速定位和分析问题，国信发布版本期间，为保证出包顺利，解决临时出现的问题，与团队一起解决问题并完成版本发布的任务；零信任插件部分，插件的开发让我学习到了较多框架方面的知识，了解了插件的开发以及团队联调的过程，零信任插件的开发在团队帮助下开发较为顺利，并且按时提测，且完成度较高，故障部分相对较少，调整部分基本为业务方面的逻辑调整。工行和标板的需求也是在计划内完成了需求的开发并提测成功，本次绩效期间，工作充实，如期完成了各项需求开发。不足就是多个需求的开发和提测过程相对较慢，由于环境（tac）问题，在开发自测和提测过程中出现了效果不一致的情况，在以后开发中需要注意该方面问题对开发提测的影响，提测前尽量保证自测完整，需求完善。</span><br><span class="line"></span><br><span class="line">以上就是本期自我评价。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%AE%9A%E4%BD%8D%20UMDH/">使用 UMDH 定位用户模式内存泄漏</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/WinDbg%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">windbg 定位内存泄漏</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

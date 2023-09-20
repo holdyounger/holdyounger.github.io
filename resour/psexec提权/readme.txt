@@ -1,0 +1,1 @@
+psexec -i -d -s  cmd.exe 就是提权运行cmd

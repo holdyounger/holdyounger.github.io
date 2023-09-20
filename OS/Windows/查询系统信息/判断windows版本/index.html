@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>判断windows版本 - oone</title>
+
+  
+    <meta name="description" content="[toc] 接口说明在windows操作系统上，判断系统版本号一般都是使用 GetVersionEx 函数，但是该函数 windows8.1 以后被启用了，尽管可以通过添加宏来忽略 4996 的错误。在新的API中提供了新的接口以供判断操作系统版本：  Versionhelpers.h 标头 - Win32 apps | Microsoft Learn 声明的宏  本文介绍如何使用 IsWindo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="判断windows版本">
+<meta property="og:url" content="http://example.com/OS/Windows/%E6%9F%A5%E8%AF%A2%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF/%E5%88%A4%E6%96%ADwindows%E7%89%88%E6%9C%AC/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[toc] 接口说明在windows操作系统上，判断系统版本号一般都是使用 GetVersionEx 函数，但是该函数 windows8.1 以后被启用了，尽管可以通过添加宏来忽略 4996 的错误。在新的API中提供了新的接口以供判断操作系统版本：  Versionhelpers.h 标头 - Win32 apps | Microsoft Learn 声明的宏  本文介绍如何使用 IsWindo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-18T05:27:41.848Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.848Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="os">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="windows,os">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">判断windows版本</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC%E5%8F%8A%E4%BB%A5%E4%B8%8A%E7%9A%84-Windows-%E7%89%88%E6%9C%AC%EF%BC%9A"><span class="toc-text">检查特定版本及以上的 Windows 版本：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC%E5%92%8C-Service-Pack-%E7%9A%84-Windows-%E7%89%88%E6%9C%AC%EF%BC%9A"><span class="toc-text">检查特定版本和 Service Pack 的 Windows 版本：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%98%AF%E5%90%A6%E4%B8%BA%E7%89%B9%E5%AE%9A-Windows-Server-%E7%89%88%E6%9C%AC%EF%BC%9A"><span class="toc-text">检查是否为特定 Windows Server 版本：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%AC%E3%80%81Service-Pack-%E5%92%8C%E4%BA%A7%E5%93%81%E7%B1%BB%E5%9E%8B%E7%9A%84-Windows-%E7%89%88%E6%9C%AC%EF%BC%9A"><span class="toc-text">检查特定版本、Service Pack 和产品类型的 Windows 版本：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dwPlatformId-%E5%AD%97%E6%AE%B5%E8%AF%B4%E6%98%8E"><span class="toc-text">dwPlatformId 字段说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD"><span class="toc-text">判断</span></a></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/OS/">OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/OS/Windows/%E6%9F%A5%E8%AF%A2%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF/">查询系统信息</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.848Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>判断windows版本</span></h1>
+<p>[toc]</p>
+<h1 id="接口说明"><a href="#接口说明" class="headerlink" title="接口说明"></a>接口说明</h1><p>在windows操作系统上，判断系统版本号一般都是使用 <code>GetVersionEx</code> 函数，但是该函数 <code>windows8.1</code> 以后被启用了，尽管可以通过添加宏来忽略 <code>4996</code> 的错误。在新的API中提供了新的接口以供判断操作系统版本：</p>
+<ol>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/api/versionhelpers/">Versionhelpers.h 标头 - Win32 apps | Microsoft Learn</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/winprog/using-the-windows-headers#macros-for-conditional-declarations">声明的宏</a></li>
+</ol>
+<p>本文介绍如何使用 <code>IsWindowsVersionOrGreater </code> 和 <code>verifyVersionInfoW</code> 函数。</p>
+<p>关于如何查询windows版本号可以看这个文档： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170">更新 WINVER 和 _WIN32_WINNT | Microsoft Learn</a></p>
+<h1 id="Windows各个版本的宏"><a href="#Windows各个版本的宏" class="headerlink" title="Windows各个版本的宏"></a>Windows各个版本的宏</h1><table>
+<thead>
+<tr>
+<th align="left">所需的最低系统</th>
+<th align="left">NTDDI_VERSION的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Windows 10 1903 “19H1”</td>
+<td align="left"><strong>NTDDI_WIN10_19H1</strong> (0x0A000007)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1809 “红石 5”</td>
+<td align="left"><strong>NTDDI_WIN10_RS5</strong> (0x0A000006)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1803 “红石 4”</td>
+<td align="left"><strong>NTDDI_WIN10_RS4</strong> (0x0A000005)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1709 “红石 3”</td>
+<td align="left"><strong>NTDDI_WIN10_RS3</strong> (0x0A000004)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1703 “红石 2”</td>
+<td align="left"><strong>NTDDI_WIN10_RS2</strong> (0x0A000003)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1607 “红石 1”</td>
+<td align="left"><strong>NTDDI_WIN10_RS1</strong> (0x0A000002)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1511“阈值 2”</td>
+<td align="left"><strong>NTDDI_WIN10_TH2</strong> (0x0A000001)</td>
+</tr>
+<tr>
+<td align="left">Windows 10 1507“阈值”</td>
+<td align="left"><strong>NTDDI_WIN10</strong> (0x0A000000)</td>
+</tr>
+<tr>
+<td align="left">Windows 8.1</td>
+<td align="left"><strong>NTDDI_WINBLUE</strong> (0x06030000)</td>
+</tr>
+<tr>
+<td align="left">Windows 8</td>
+<td align="left"><strong>NTDDI_WIN8</strong> (0x06020000)</td>
+</tr>
+<tr>
+<td align="left">Windows 7</td>
+<td align="left"><strong>NTDDI_WIN7</strong> (0x06010000)</td>
+</tr>
+<tr>
+<td align="left">Windows Server 2008</td>
+<td align="left"><strong>NTDDI_WS08</strong> (0x06000100)</td>
+</tr>
+<tr>
+<td align="left">Windows Vista Service Pack 1 (SP1)</td>
+<td align="left"><strong>NTDDI_VISTASP1</strong> (0x06000100)</td>
+</tr>
+<tr>
+<td align="left">Windows Vista</td>
+<td align="left"><strong>NTDDI_VISTA</strong> (0x06000000)</td>
+</tr>
+<tr>
+<td align="left">Windows Server 2003 Service Pack 2 (SP2)</td>
+<td align="left"><strong>NTDDI_WS03SP2</strong> (0x05020200)</td>
+</tr>
+<tr>
+<td align="left">带有 Service Pack 1 (SP1) 的 Windows Server 2003</td>
+<td align="left"><strong>NTDDI_WS03SP1</strong> (0x05020100)</td>
+</tr>
+<tr>
+<td align="left">Windows Server 2003</td>
+<td align="left"><strong>NTDDI_WS03</strong> (0x05020000)</td>
+</tr>
+<tr>
+<td align="left">Windows XP Service Pack 3 (SP3)</td>
+<td align="left"><strong>NTDDI_WINXPSP3</strong> (0x05010300)</td>
+</tr>
+<tr>
+<td align="left">Windows XP Service Pack 2 (SP2)</td>
+<td align="left"><strong>NTDDI_WINXPSP2</strong> (0x05010200)</td>
+</tr>
+<tr>
+<td align="left">Windows XP Service Pack 1 (SP1)</td>
+<td align="left"><strong>NTDDI_WINXPSP1</strong> (0x05010100)</td>
+</tr>
+<tr>
+<td align="left">Windows XP</td>
+<td align="left"><strong>NTDDI_WINXP</strong> (0x05010000)</td>
+</tr>
+</tbody></table>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>关于 函数的三个参数的输入可以参考文档中定义的宏：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> OSVER(Version)  ((Version) &amp; OSVERSION_MASK)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SPVER(Version)  (((Version) &amp; SPVERSION_MASK) &gt;&gt; 8)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SUBVER(Version) (((Version) &amp; SUBVERSION_MASK) )</span></span><br></pre></td></tr></table></figure>
+
+<p>除此之外，还可以使用以下宏获取三个版本号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">LOWORD()得到一个32bit数的低16bit  </span></span><br><span class="line"><span class="comment">HIWORD()得到一个32bit数的高16bit</span></span><br><span class="line"><span class="comment">LOBYTE()得到一个16bit数最低（最右边）那个字节</span></span><br><span class="line"><span class="comment">HIBYTE()得到一个16bit数最高（最左边）那个字节</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOWORD(l)           ((WORD)(((DWORD_PTR)(l)) &amp; 0xffff))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HIWORD(l)           ((WORD)((((DWORD_PTR)(l)) &gt;&gt; 16) &amp; 0xffff))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) &amp; 0xff))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HIBYTE(w)           ((BYTE)((((DWORD_PTR)(w)) &gt;&gt; 8) &amp; 0xff))</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><p><code>IsWindowsVersionOrGreater</code> 函数是 Windows API 中的一个函数，用于检查当前运行的操作系统版本是否满足指定的条件。以下是该函数的一些常见用法：</p>
+<ol>
+<li><h2 id="检查特定版本及以上的-Windows-版本："><a href="#检查特定版本及以上的-Windows-版本：" class="headerlink" title="检查特定版本及以上的 Windows 版本："></a>检查特定版本及以上的 Windows 版本：</h2></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：检查 Windows 7 及以上版本</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">IsWindowsVersionOrGreater</span>(<span class="number">6</span>, <span class="number">1</span>, <span class="number">0</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 在 Windows 7 或更高版本上执行某些操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><h2 id="检查特定版本和-Service-Pack-的-Windows-版本："><a href="#检查特定版本和-Service-Pack-的-Windows-版本：" class="headerlink" title="检查特定版本和 Service Pack 的 Windows 版本："></a>检查特定版本和 Service Pack 的 Windows 版本：</h2></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：检查 Windows 10 版本 1809（秋季创意者更新）及以上版本</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">IsWindowsVersionOrGreater</span>(<span class="number">10</span>, <span class="number">0</span>, <span class="number">17763</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 在 Windows 10 版本 1809（秋季创意者更新）或更高版本上执行某些操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><h2 id="检查是否为特定-Windows-Server-版本："><a href="#检查是否为特定-Windows-Server-版本：" class="headerlink" title="检查是否为特定 Windows Server 版本："></a>检查是否为特定 Windows Server 版本：</h2></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：检查是否为 Windows Server 2016 版本</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">IsWindowsVersionOrGreater</span>(<span class="built_in">HIBYTE</span>(_WIN32_WINNT_WIN10), <span class="built_in">LOBYTE</span>(_WIN32_WINNT_WIN10), <span class="number">0</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 在 Windows Server 2016 或更高版本上执行某些操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><h2 id="检查特定版本、Service-Pack-和产品类型的-Windows-版本："><a href="#检查特定版本、Service-Pack-和产品类型的-Windows-版本：" class="headerlink" title="检查特定版本、Service Pack 和产品类型的 Windows 版本："></a>检查特定版本、Service Pack 和产品类型的 Windows 版本：</h2></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例：检查 Windows 8.1 Update 版本且为工作站类型</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">IsWindowsVersionOrGreater</span>(<span class="number">6</span>, <span class="number">3</span>, <span class="number">0</span>, VER_GREATER_EQUAL, VER_NT_WORKSTATION))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 在 Windows 8.1 Update 版本且为工作站类型上执行某些操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些示例可以帮助你理解 <code>IsWindowsVersionOrGreater</code> 函数的各种用法，你可以根据实际需求在代码中适当调整参数和条件。</p>
+<p>请注意，<code>IsWindowsVersionOrGreater</code> 是一个动态链接库函数，在使用时需要包含 <code>&lt;Windows.h&gt;</code> 头文件，且需要链接到 <code>Version.lib</code> 库。</p>
+<h1 id="判断-dwPlatformId"><a href="#判断-dwPlatformId" class="headerlink" title="判断 dwPlatformId"></a>判断 dwPlatformId</h1><h2 id="dwPlatformId-字段说明"><a href="#dwPlatformId-字段说明" class="headerlink" title="dwPlatformId 字段说明"></a>dwPlatformId 字段说明</h2><p>在 Windows 系统中，常用的平台标识（Platform ID）定义如下：</p>
+<ul>
+<li><code>VER_PLATFORM_WIN32s</code>：表示 Win32s 子系统，它是为 Windows 3.1 提供的一个扩展运行环境，使得部分 32 位应用程序可以在 Windows 3.1 上运行。</li>
+<li><code>VER_PLATFORM_WIN32_WINDOWS</code>：表示 Windows 9x 系列操作系统，包括 Windows 95、Windows 98 和 Windows ME。这些操作系统都是基于 MS-DOS 的。</li>
+<li><code>VER_PLATFORM_WIN32_NT</code>：表示 Windows NT 系列操作系统，包括 Windows NT、Windows 2000、Windows XP、Windows Server 2003、Windows Vista、Windows 7、Windows 8、Windows 10 等版本。这些操作系统是基于全新的内核设计的，并具有更强大的功能和稳定性。</li>
+</ul>
+<p>每个平台标识对应不同的操作系统系列，因此在开发应用程序时，根据需要选择正确的平台标识是很重要的。</p>
+<h2 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">IsWindowsNT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	OSVERSIONINFOEX osvi;</span><br><span class="line">	<span class="built_in">ZeroMemory</span>(&amp;osvi, <span class="built_in">sizeof</span>(OSVERSIONINFOEX));</span><br><span class="line">	osvi.dwOSVersionInfoSize = <span class="built_in">sizeof</span>(OSVERSIONINFOEX);</span><br><span class="line">	<span class="comment">// osvi.dwPlatformId = VER_PLATFORM_WIN32s;</span></span><br><span class="line">	<span class="comment">// osvi.dwPlatformId = VER_PLATFORM_WIN32_WINDOWS;</span></span><br><span class="line">	osvi.dwPlatformId = VER_PLATFORM_WIN32_NT;</span><br><span class="line"></span><br><span class="line">	DWORDLONG conditionMask = <span class="number">0</span>;</span><br><span class="line">	<span class="built_in">VER_SET_CONDITION</span>(conditionMask, VER_PLATFORMID, VER_EQUAL);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>  <span class="built_in">VerifyVersionInfo</span>(&amp;osvi, VER_PLATFORMID, conditionMask);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/OS/Windows/%E6%9F%A5%E8%AF%A2%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF/%E6%9F%A5%E8%AF%A2%E5%A4%84%E7%90%86%E5%99%A8%E6%9E%B6%E6%9E%84/">【windows】查询处理器架构</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E9%99%8D%E6%9D%83/">Windows 降权</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【管道】（一） 初识管道 - oone</title>
+
+  
+    <meta name="description" content="管道的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【管道】（一） 初识管道">
+<meta property="og:url" content="http://example.com/Code/IPC/%E5%88%9D%E8%AF%86%E7%AE%A1%E9%81%93/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="管道的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/%E5%88%9D%E8%AF%86%E7%AE%A1%E9%81%93/Linux-ipc.png">
+<meta property="article:published_time" content="2023-09-18T05:27:41.705Z">
+<meta property="article:modified_time" content="2023-09-18T05:27:41.705Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="《深入理解Windows操作系统》">
+<meta property="article:tag" content="IPC">
+<meta property="article:tag" content="Pipe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/%E5%88%9D%E8%AF%86%E7%AE%A1%E9%81%93/Linux-ipc.png">
+  
+  
+  
+  <meta name="keywords" content="《深入理解Windows操作系统》,IPC,Pipe">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="./images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【管道】（一） 初识管道</span></div><div class="widget-body fs14"><div class="doc-tree active"></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/Code/">Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Code/IPC/">IPC</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-09-18T05:27:41.705Z">2023-09-18</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>【管道】（一） 初识管道</span></h1>
+<p>[toc]</p>
+<p>自己的理解，</p>
+<p>首先要区分概念：管道和管道通信</p>
+<p>所谓“管道”，是指用于连接一个读进程和一个写进程以实现它们之间通信的一个共享文件，又名pipe文件 （是一种特殊的文件，这就意味着你可以向操作文件一样操作无名管道，无名管道在内核中对应的是一段特殊的内存空间，这段内存空间由操作系统进行管理，对用户是不可见的，在用户空间的应用程序中只能通过系统调用来访问它。在这段内存空间中以循环队列的方式来临时存储一个进程发往另外一个进程的信息，并且在通信完成后就会自动释放相应的空间。）</p>
+<p>而管道通信是消息传递的一种特殊方式。</p>
+<p>即管道是文件，是服务于管道通信的特殊文件，而管道通信是一种通信方式，这种通信方式比较特殊，是半双工的通信方式，即数据只能单向流动，数据传递的方式是字符流形式，它一般是应用在具有共同祖先的进程间使用。</p>
+<ol>
+<li><p>管道通信是什么？      </p>
+<p>用于进程之间通信的一种通信方式。</p>
+</li>
+<li><p>管道通信有哪些特点？</p>
+<p>半双工的通信方式，数据只能单向流动，数据传递的方式是字符流形式。</p>
+</li>
+<li><p>管道通信的应用场合？</p>
+<p>具有共同祖先的进程间使用。</p>
+</li>
+</ol>
+<h1 id="1、什么是管道"><a href="#1、什么是管道" class="headerlink" title="1、什么是管道"></a>1、什么是管道</h1><p>管道：<br>—就像现实中的水管，水就像数据。（连接进程，相当于在进程间连接一个通路，用来传递信息）<br>—管道是一种半双工的通信方式<br>—数据只能单向流动，而且只能在具有共同祖先的进程间使用。</p>
+<p>所谓半双工的模式</p>
+<p>（假设通信双方是甲方和乙方，双工通信方式的意思是甲可以向乙发送数据，乙也可以向甲发送数据，即数据流通是双向的。而半双工的通信方式是指甲乙两方不能同时向对方发送数据，也就是甲向乙发送数据时，乙只能接收不能发送，而乙向甲发送数据时，甲只能接收不能向乙发送数据）</p>
+<p>举个例子：<br>形象来说类似一个单刀双掷开关，有两个选择，但是二者是互斥的，当选择了一方另一方就失效。<br>而对于此处的管道，可以把它想成是管道的一端，一次只能调用一种功能读入或者写入，二者也是互斥的。</p>
+<p>管道通信是消息传递的一种特殊方式，管道机制必须提供以下三方面的协调能力：互斥、同步和确定对方的存在。</p>
+<h1 id="2、为什么要有管道"><a href="#2、为什么要有管道" class="headerlink" title="2、为什么要有管道"></a>2、为什么要有管道</h1><p>在一个多进程操作系统所提供的运行环境下，可以通过两种不同的途径或者说采用两种不同的策略，来建立起复杂的大型应用系统。一种途径就是通过一个孤立的,大型的，复杂的进程提供所需的全部服务，另外一种途径就是通过由若干相互联系的，小型的。相对简单的进程构成的组合来提供所需的功能。早期的操作系统往往倾向与前者，而Unix以及其衍生的各种操作系统往往倾向于后者。相比之下，后者有着各种好处：1.模块化，2.各个进程都得到保护，在相当程度上排除了相互干扰的可能性，3.灵活性更强。<br>当然这种好处也是要付出代价的，也有缺点，但是相比之下，这种途径的优点远远超出了其缺点。<br>Unix（从而Linux）向应用软件提供了一些进程间通信的手段，早期的Unix提供了：管道（pipe），信（signal），跟踪（trace）。</p>
+<p>进程之间的通信，从物理上分，可以分为同主机的进程之间的通信和不同主机间的进程之间的通信。从通信内容方式上分，可以分为数据交互、同步通信、异步通信。</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.2cto.com/os/linux/">Linux 教程</a></p>
+<p>系统进程之间的通信方式大致如下图所示</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/images/%E5%88%9D%E8%AF%86%E7%AE%A1%E9%81%93/Linux-ipc.png" alt="image-20230612092651943"></p>
+<p>集合上述两种从物理和内容方式的划分，可以这样理解上图：</p>
+<p>（1）同主机进程间数据交互机制：无名管道（PIPE）、有名管道（FIFO）、消息队列（Message Queue）和共享<a target="_blank" rel="external nofollow noopener noreferrer" href="https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98&spm=1001.2101.3001.7020">内存</a>（Shared Memory）。</p>
+<p>（2）同主机进程间同步通信机制：信号量（Semaphore）。</p>
+<p>（3）同主机进程间异步通信机制：信号（Signal）。</p>
+<p>（4）不同主机间进程数据交互机制：套接字（Socket）、远程调用RPC（Remote Procedure Call）。</p>
+<p><strong>管道通信</strong></p>
+<p>管道又可以分为<strong>无名管道</strong>和<strong>命名管道</strong>，两者的用途是不一样的。</p>
+<p>无名管道PIPE：主要用于具有亲缘关系的进程之间的通信，无名管道的通信是单向的，只能由一段到另外一段；无名管道是临时性的，完成通信后将自动消失。一般采用先创建无名管道，再创建子进程，使子进程继承父进程的管道文件描述符，从而实现父子进程间的通信；在非亲缘关系管道之间，如果想利用无名管道进行通信，则需要借助另外的文件描述符传递机制。</p>
+<p>有名管道FIFO：有名管道是一个实际存在的特殊文件，利用有名管道可以实现同主机任意进程之间的数据交互。</p>
+<p>无名管道是一种特殊的文件，这就意味着你可以向操作文件一样操作无名管道，无名管道在内核中对应的是一段特殊的内存空间，这段内存空间由操作系统进行管理，对用户是不可见的，在用户空间的应用程序中只能通过系统调用来访问它。在这段内存空间中以循环队列的方式来临时存储一个进程发往另外一个进程的信息，并且在通信完成后就会自动释放相应的空间。</p>
+<p>即无名管道主要用于具有亲缘关系的父子进程之间的通信，是临时性的，需要先创建管道，再创建子进程；管道都是单向的，若要实现双向通信，则需要两个管道。命名管道是实际存在的文件，使用前需要先打开，管道默认的read和write操作都是阻塞式的。</p>
+<h1 id="3、如何建立进程间管道？"><a href="#3、如何建立进程间管道？" class="headerlink" title="3、如何建立进程间管道？"></a>3、如何建立进程间管道？</h1><p>这里我们只谈管道：父进程与子进程，或者两个兄弟进程之间，可以通过系统调用建立起一个单向的通信管道。但是，这种管道只能由父进程来建立，所以对于子进程来说是静态的，与生俱来的。管道两端的进程各自将该管道视作一个文件。一个进程往通道中写的内容由另一个进程从通道读出，通过通道传递的内容遵循“先入先出”（FIFO）的规则。每个通道都是单向的，需要双向通信时要建立起两个通道。</p>
+<p>下面说一说进程间管道的建立，在这之前我们要说到fork()函数，在Linux系统中一个新的进程是由一个已经存在的进程“复制”出来的，而不是“创造”出来的（而所谓的“创建”实际上就是复制）。<br>管道机制的主体是系统调用pipe()，但是由pipe（）所建立的管道的两端都在同一个进程中，这样的管道起不到进程间通信的作用。所以必须在fork（）的配合下，才能在父子进程间或者两个子进程之间建立起进程间的通信管道。</p>
+<p>下面就介绍一下怎样将管道用于进程间通信：<br>（1）进程A创建了一个管道，创建完成时代表管道两端的两个已打开文件都在进程A中。</p>
+<p>(2)进程A通过frok（）创建出进程B，在fork（）的过程中进程A的打开文件表按原样复制到进程B中。</p>
+<p>(3)进程A关闭管道的读端，而进程B关闭管道的写段。于是，管道的写段在进程A中而读端在进程B中，成为了父子进程之间的通信管道。</p>
+<p>(4)进程A又通过frok（）创建进程C，而后关闭其管道写段而与管道脱离关系，使得管道的写段在进程C中而读端在进程B中，成为两个兄弟进程之间的管道。</p>
+<p>人们在认识到管道机制也存在一些缺点和不足。由于管道是一种“无名”，“无形”的文件，它可以通过fork（）的过程创建于“近亲” 的进程之间，而不能成为可以在任意两个进程之间建立通信的机制，更不可能成为一种一般的，通用的进程间通信模型，同时，管道机制的这种缺点本身强烈的暗示着人们，只要用“有名”，“有形”的文件来实现管道，就能克服这种缺点。所以有了管道之后，“命名管道”的出现时必然的。<br>为了实现“命名管道”，在“普通文件”，“块设备文件”，“字符设备文件”之外，又设立了一种文件类型，称为FIFO文件。对这种文件的访问严格遵循“先进先出”的原则。这样就可以像在磁盘上建立一个文件一样建立一个命名管道，具体可以使用命令mknod来建立。</p>
+<p>函数介绍：<br>¢int read(intfd, void *buf, int count);<br>—功能：从参数fd指定的读端读取管道数据到大小为count的缓存buf中，返回实际读取到的字节数。<br>—参数<br>¢fd:管道读端<br>¢buf:缓存区，保存读到的数据<br>¢count:读取字节数</p>
+<p>•intwrite(intfd, void *buf, intcount);<br>•功能：向参数fd指定的写端从缓存buf中取出count个字节到管道中，返回值为实际写入的字节数。</p>
+<p>•参数<br>•fd:管道写端<br>•buf:缓存区，将要写入管道的数据<br>•count:写入的字节数</p>
+<p>参考来源：  <a target="_blank" rel="external nofollow noopener noreferrer" href="http://blog.csdn.net/followingturing/article/details/6071937">http://blog.csdn.net/followingturing/article/details/6071937</a></p>
+<p>​          <a target="_blank" rel="external nofollow noopener noreferrer" href="http://c.biancheng.net/cpp/html/2592.html">http://c.biancheng.net/cpp/html/2592.html</a></p>
+<p>​          <a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.2cto.com/os/201410/343247.html">http://www.2cto.com/os/201410/343247.html</a></p>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/Code/Python/gui%E7%95%8C%E9%9D%A2%E8%87%AA%E5%8A%A8%E8%BE%93%E5%85%A5/">Python 界面实现 Gui 界面自动输入</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/Code/LeetCode/ConvertFileSize/">文件大小换算方法</a></div></section></div>
+
+
+
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
