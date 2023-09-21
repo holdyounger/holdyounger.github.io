@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-09-20T10:59:45.241Z</updated>
+  <updated>2023-09-21T00:05:34.364Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>windbg手册</title>
+    <link href="http://example.com/OS/Windows/Windbg/Windbg%E6%89%8B%E5%86%8C/"/>
+    <id>http://example.com/OS/Windows/Windbg/Windbg%E6%89%8B%E5%86%8C/</id>
+    <published>2023-09-21T00:05:34.364Z</published>
+    <updated>2023-09-21T00:05:34.364Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="0n-命令"><a href="#0n-命令" class="headerlink" title="? 0n 命令"></a>? 0n 命令</h2><p>Windbg中的 ?0n 是一个命令，用来设置表达式的数制为十进制。具体来说，当你需要查看一个内存地址或者变量以十进制格式时，可以使用 ?0n 命令。</p><p>在Windbg中，数制的表示：</p><ul><li><p>0x表示十六进制</p></li><li><p>0n表示十进制</p></li><li><p>0t表示八进制</p></li><li><p>0y表示二进制。</p></li></ul><p>Windbg默认数制为十六进制。</p><h2 id="切换线程"><a href="#切换线程" class="headerlink" title="切换线程"></a>切换线程</h2><p>在WinDbg中，可以使用以下命令来切换线程：</p><ol><li><code>~</code> 命令：用于切换当前活动线程。例如，<code>~0s</code>将切换到线程ID为0的线程。</li><li><code>~*</code> 命令：用于切换到所有线程中的下一个线程。</li><li><code>~[]</code> 命令：用于切换到特定索引的线程。例如，<code>~[3]s</code>将切换到索引为3的线程。</li></ol><p>请注意，使用这些命令时，要确保已经在调试会话中加载了适当的符号和源代码，并且已经打开了需要调试的进程和线程。</p><h2 id="切换进程"><a href="#切换进程" class="headerlink" title="切换进程"></a>切换进程</h2><p>在WinDbg中，可以使用以下命令来切换进程：</p><ol><li><code>|</code> 命令：用于切换当前活动进程。例如，<code>|1s</code>将切换到进程ID为1的进程。</li><li><code>~*</code> 命令：用于切换到所有进程中的下一个进程。</li><li><code>~[]</code> 命令：用于切换到特定索引的进程。例如，<code>~[3]s</code>将切换到索引为3的进程。</li></ol><p>请注意，使用这些命令时，要确保已经在调试会话中加载了适当的符号和源代码，并且已经打开了需要调试的进程和线程。</p><h2 id="process-命令"><a href="#process-命令" class="headerlink" title="!process 命令"></a>!process 命令</h2><p>在Windows Debugger（WinDbg）中，<code>!process</code>命令用于显示有关特定进程或所有进程的信息，包括EPROCESS块。</p><p>该命令的语法随Windows版本的不同而有所不同。</p><p>在Windows NT 4.0中，它的语法如下：</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">!</span>process[<span class="type">Process</span>[<span class="type">Flags</span>]]</span><br></pre></td></tr></table></figure><p>在Windows 2000中，它的语法如下：</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">!</span>process[<span class="operator">/</span>sSession] [<span class="type">Process</span>[<span class="type">Flags</span>]]</span><br></pre></td></tr></table></figure><p>在Windows XP及更高版本中，它的语法如下：</p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator">!</span>process[<span class="operator">/</span>sSession] [<span class="operator">/</span>mModule] [<span class="type">Process</span>[<span class="type">Flags</span>]]</span><br></pre></td></tr></table></figure><p>以上命令中的参数含义如下：</p><ul><li><code>/sSession</code>（Windows 2000及之后）指定拥有给定进程的会话（session）。</li><li><code>/mModule</code>（Windows XP及之后）指定拥有需要的进程的模块。</li><li><code>Process</code> 指定目标机上某个进程的16进制地址或者进程ID。</li><li><code>Flags</code> 是用于控制命令行为的标志位，例如，<code>/d</code> 用于显示完整的进程环境块，<code>/c</code> 用于显示完整的线程环境块等。</li></ul><p>以上信息仅供参考，如需更多信息，建议咨询专业的技术人员。</p><h2 id="IDT"><a href="#IDT" class="headerlink" title="!IDT"></a>!IDT</h2><p>在WinDbg中，<code>!idt</code>命令用于显示中断分配表（Interrupt Dispatch Table，简称IDT）中的中断服务例程（Interrupt Service Routine，简称ISR）。</p><p>该命令的语法为：<code>!idt [IDT]</code>，其中<code>IDT</code>是可选项，用于指定要显示的特定IDT。</p><p>如果未指定IDT，并且在没有指定<code>-a</code>选项的情况下，该命令将简短地显示目标机上所有处理器的IDT。</p><p>如果指定了<code>-a</code>选项，该命令将显示所有IDT的ISR。</p><p>如果需要获取该命令的帮助文本，可以在调试器命令窗口中使用<code>!idt -?</code>命令。</p><p>需要注意的是，该命令只能对x64或者x86目标机使用。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;0n-命令&quot;&gt;&lt;a href=&quot;#0n-命令&quot; class=&quot;headerlink&quot; title=&quot;? 0n 命令&quot;&gt;&lt;/a&gt;? 0n 命令&lt;/h2&gt;&lt;p&gt;Windbg中的 ?0n 是一个命令，用来设置表达式的数制为十进制。具体来说，当你需要查看一个内存地址或者变</summary>
+      
+    
+    
+    
+    <category term="OS" scheme="http://example.com/categories/OS/"/>
+    
+    <category term="Windows" scheme="http://example.com/categories/OS/Windows/"/>
+    
+    <category term="Windbg" scheme="http://example.com/categories/OS/Windows/Windbg/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>GetPrivateProfileString 用法</title>
@@ -441,9 +467,9 @@
     <category term="网络通信" scheme="http://example.com/categories/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/"/>
     
     
-    <category term="IO复用" scheme="http://example.com/tags/IO%E5%A4%8D%E7%94%A8/"/>
-    
     <category term="网络" scheme="http://example.com/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+    <category term="IO复用" scheme="http://example.com/tags/IO%E5%A4%8D%E7%94%A8/"/>
     
   </entry>
   
@@ -572,38 +598,6 @@
     <category term="网络安全" scheme="http://example.com/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
     
     <category term="DDoS" scheme="http://example.com/tags/DDoS/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>密钥分配</title>
-    <link href="http://example.com/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/7.5%20%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D/"/>
-    <id>http://example.com/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/7.5%20%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D/</id>
-    <published>2023-09-18T05:27:41.909Z</published>
-    <updated>2023-09-18T05:27:41.909Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="密钥分配"><a href="#密钥分配" class="headerlink" title="密钥分配"></a>密钥分配</h1><p>由于密码算法是公开的，网路的安全性就完全基于密钥的安全保护上。因此在密码学中出现了一个重要的分支——密钥管理。密钥管理包括：密钥的产生、分配、注入、验证和使用。本节只讨论密钥的分配。</p><blockquote><p><strong>密钥分配</strong>（或<strong>密钥分发</strong>）是密钥管理中最大的问题。密钥必须通过最安全的通路进行分配。</p><p>例如，可以派非常可靠的信使携带密钥分配给互相通信的各用户。这种方法称为<strong>网外分配方式</strong>。但随着用户的增多和网络流量的增大，密钥更换频繁（密钥必须定期更换才能做到可靠），派信使的办法已不再使用，而应采用网内分配方式，即对密钥自动分配。</p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;密钥分配&quot;&gt;&lt;a href=&quot;#密钥分配&quot; class=&quot;headerlink&quot; title=&quot;密钥分配&quot;&gt;&lt;/a&gt;密钥分配&lt;/h1&gt;&lt;p&gt;由于密码算法是公开的，网路的安全性就完全基于密钥的安全保护上。因此在密码学中出现了一个重要的分支——密钥管理。密钥管理包括：</summary>
-      
-    
-    
-    
-    <category term="立志博览群书" scheme="http://example.com/categories/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/"/>
-    
-    <category term="《计算机网络 第7版》" scheme="http://example.com/categories/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%AC%AC7%E7%89%88%E3%80%8B/"/>
-    
-    <category term="第7章 网络安全" scheme="http://example.com/categories/%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"/>
-    
-    
-    <category term="密钥管理" scheme="http://example.com/tags/%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86/"/>
-    
-    <category term="对称密钥" scheme="http://example.com/tags/%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5/"/>
-    
-    <category term="公钥" scheme="http://example.com/tags/%E5%85%AC%E9%92%A5/"/>
     
   </entry>
   
