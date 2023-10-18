@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>弱密码学习记录：OpenVPN 弱密码 - oone</title>
+
+  
+    <meta name="description" content="Here&#39;s something encrypted, password is required to continue reading.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OpenVPN 弱密码">
+<meta property="og:url" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/OpenVPN%E5%BC%B1%E5%AF%86%E7%A0%81.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="Here&#39;s something encrypted, password is required to continue reading.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-25T02:23:47.736Z">
+<meta property="article:modified_time" content="2023-09-25T02:23:47.736Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="弱密码">
+<meta property="article:tag" content="windows">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content=",">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="wiki">
+    
+
+  
+
+
+
+
+<div class="widgets"><widget class="widget-wrapper logo-wrap wiki"><div class="widget-body"><a style="filter: grayscale(100%)" class="wiki-home cap" href="/"><svg aria-hidden="true" viewbox="0 0 16 16" width="1rem" height="1rem" fill="currentColor"><path fill-rule="evenodd" d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/></svg>所有项目</a><a class="title" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html"><div class="main" ff="title">弱密码学习记录</div><div class="sub normal cap">弱密码</div><div class="sub hover cap" style="opacity:0"> Weak Password</div></a></div></widget>
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/wiki/安全/" placeholder="在 /wiki/安全/ 中搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+
+
+<widget class="widget-wrapper toc multi" id="data-toc"><div class="widget-header cap dis-select"><span class="name">OpenVPN 弱密码</span></div><div class="widget-body fs14"><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html#start"><span class="toc-text">ActiveMQ 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ElasticSearch%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">ElasticSearch 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/Jboss%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">JBoss 弱密码</span></a></div><div class="doc-tree active"><a class="doc-tree-link active" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/OpenVPN%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">OpenVPN 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/SharpDecrptyPwd%E4%BD%BF%E7%94%A8.html"><span class="toc-text">SharpDecrpty的使用</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/WebLogic%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">WebLogic 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/index.html"><span class="toc-text">弱密码检测</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/hashcat%E4%BD%BF%E7%94%A8.html"><span class="toc-text">hashcat使用</span></a></div></div></widget>
+
+
+
+<widget class="widget-wrapper related"><div class="widget-header cap theme dis-select"><span class="name">更多安全</span></div><div class="widget-body related-posts"><a class="item wiki" href="/wiki/windows/API/FormatMessageA.html"><span class="title">Windows API</span><span class="excerpt">有关于windows API的使用记录，包括但不限于用法、原理、安全……</span></a><a class="item wiki" href="/wiki/windows/%E6%9C%AA%E5%85%AC%E5%BC%80%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B4%E7%90%86%E6%B1%87%E6%80%BB.html"><span class="title">Windows</span><span class="excerpt">有关于windows，包括但不限于用法、原理、安全……</span></a></div></widget>
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+  
+  
+  
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html">弱密码学习记录</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-09-25T02:23:47.736Z">2023-09-25</time></div></div>
+
+  <article class="md-text content wiki">
+  <h1 class="article-title"><span>OpenVPN 弱密码</span></h1>
+  <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="840b461258c02c19313b67ae41921b4f205df1734f568b5e14ae746a06c5cf20">b8dad81d5080efe848ccdfe21653cefb39cb140b8e59d6ec6abc1ff223403761c8519a59810add1e11d7496f02f9492ace6bc0357509b63b055eaf11d30f95206771d5e2bbe94cbc65b06b1b968147fcd8fe2a5896d00756704a7b3bf1ea2a12145e424ed8397082782395d78572706daa5cafa049a29c76e1b41be45f7a1970899b7d3257ccdfb6874b9b625dfdc94df7ec16743e14ae0eb8570ccf4e53b3738ead4c023f699abcf9fb9ee979c9bde9a0fa6f5cf7f75d79e7e819c5bacbed09defdb0c505f19d03d3e1579754c4ec7df88fe1679507fd703f81fcf03a814fee07e391cd21b53bf224e07ac037c486c808b71a451fd891d8b721f1b3eaf6c2e22f9be086900df3d12de065ca162a05b243e73d93f84ffab95fe40ec3eb56cb77f6d85dd7d5fc2367384bbbd7947f4fe1cd04f46e1db2372ce2f235d34aab8c60ef3afd21089083a99d7a6cdc0841a1965d679d604e0ec2ef6cc688f962ddc901efd520cf8588e42e4409f3b12533db4499d8582f0369804c73f71524d3e508750bce69c0d5b66c5444d8a541e12a16400780897ce88ed3b9e752cfd32e196fb08b5bd488d776fd71fc49cb4173bb93eea9b74f77d59be2f78fa093af583553e2bbdbd2967201d3308c670ce31f5b1853eecaa527964899f9f375b9577956ab4f6db9b7709fb34f5600fe97c8d6f880ea56f130c533bab90adecee649925136312698a618706c5eaecba1b560000f597dab7d1eabcea143376ab1175469bc96d441ed24cdcaf9a84b32695b0f7e53c9364909b47d00a25f629813db7898fec40eb7cd9ec89cf943d8b7444e4b915ab33da400fd56c7d45fc492d61724be997d0f2d757aca39eb59a2b70f98e446ddabb7adbffb318f3b7f3bec7925c95e3c992c569bee9c810adff17d23a8c80e5e2b8f5a403ffd1036cb55ad801286e13c83d3b4ca24a363bde54beee052754933a693db65bc3189b68a41b58c45c9686851fba58f5c5616213427694bcae02439bc7da8ad4b6779ae970c08a5ed98908738a88c43ab7eef38ef3374ba6c436245ec09f5a6f20777045b356d8a67b38bc75aca4e7ce3edebe0328a55efdda45ae63fd2257d13f6787958f93b509769edabcc850adc9a83ee06246242700c4418d640fff59eff9f23baedbb7c2966427da6aabc9ef940b4828278af434084f5c2af50f6e3ddb4aaa2abd0101a7b0eed2be6089c9dd3e8e4f18c790658d78e425e3262e4507beab238c3d244edde74ce601a9f88fe56fdd8e023cccfef9b89bf1d966bd3aa20311e6c99b922f4ee2efaf0b463a07238a54636a0b575b48f9b151248b075c88fc93b7ec6e3db3a534483688df11280c98eb0898876094193e52ebfda588d5690da76da32daf460f74ebd839cade15f39268fb0a644f021e48140a43160a0487dea013622a384444c7a2ee0dc0d960eb504bf08970c2534e2b1f433c848fa781fd7d6a40bcdd03d5061b9b491128adfb27e995021dc826c0413a9e47e377e7597d9693a8b7c6a005bf79149ff9025950980542f41de3f4340c6bec1310579235a512db7e243246e30685cbd1b7db59b80332999a06a79e7a39900053c227790050ca7d7631a168ad510519bacc3e66c3723566125ecb29229811faa8862daf9da89207945efbc7a6bb9d9305066fe373cdbfe48a8853e14aee0325231e73a75c64e8921175dfecf5049856430656e2e2a6bb0a795c0670ecd73db61de0d50bc924fbae853a99a30df3375e43e42d8a8aa32fa3b729a9ef168f5a0ed0fff7f278eca5b19f3d9564b9b095f8914d232fa1e073d233e99dae2f19704752cb61bbb67890532ddc6f1b2e37c5163d25e834e948351d795a6715e5b1b088075f643a5314a22ee3bbdc121f68a7bdec12747f78b6d0805261444941897ac5835a1f3a831415ee4633393e0ddc8f804794b8b6dfe4c1e155865c6b30a51ecd9742891dac047a0ebc72a8dec72364eb3e7c198e0e5c19312617b4f2980271f59c42150bf8ee1d1e7bea0c15446b885a37bd0adbda3fb98f3a27181599f92722a447232f513845c70870ca839d5198eda073492c828955cd13edc76a8adf84a0525c34e01c4e6c1dc1c27bec7d80b51aefedb9bfda77e968c0719cb8a52d3c6f3c40e0ab43d7f0105511f339d18487d3fd754b0a888368d412cd08c34893f4027f2e3698fc7c928a10057f5531f5c203679d9d08257ec7788481a8a9bc57e6fdc682ec359c8a4524062402b1500101bc57fc66da526829684bfefc470d4490db2740e438cf45e641d38d39afcb60b632cbbda1bde4a2379dd8d2e678d4dd84b995573d89090fd27fba47f0ac91849358c15b48fef372434a52c874348a8f4af8f357339c3e4f66ff32328acc1b182c3358b1d0acf31255509cfc112c374561d1be6a66978576b67bcf276a54d14fea9ca81edd770bf6008508a63384442971a1f3b134ed64026bbfddcc96c95f0a167db44735754e9c8b39983a176986e8299a9bbd05311be156f9ab25de80c531809b700546d879dabd8fe6a0ee2e1906015a83bf1e8d8d10cb0870f9309d5b1af88956c9ad37d4dfda5a398d2af3bb477bb2f6761a3bec0ec00bfdf203670d8ebb4423f27ce7e6ce5cd69daed6d78998ba99ed24a705cf9382dff71745ece50c295f89a301d77a58420ec37d123cdae576a3ad3f9b0feee7d75a91a28d3702893ac3ce912cb3b5acb0e2685b8b261f8920551d709c4d7cd7f71bd3535a8d0b767df68ff69629ce4c8926a4ad38d9307ec05b75e476e910bbeb70a92456b73abc7fcf234dfa8b0d60a9d44e1070e79ae445d4110b68e19c94e8dda37793e445c4cff93c42cf018efd6906cd1716fe12298377c0496b4613d2ef868eab9ee2b294a9bcf63baf288a328bedc1f4241bfd411c4aa115a2d2c16131176ec1eba9f09343cec843160d8cb0bc334ea993acb2183372eeae920559d2edffd1ccbc2810d91ac58dfcf57c71942b3c73ee9ae1a1c80c7a94fbbe693c30355cda672c2a18fb05d1c4ea9d3f90fdc38f25a9e9ecd3a20160645cc59efa5c2bbb27127d0a5d8c73c44f4347fe5952aa7c1a519605c020c5937def2e7741176b339d41fc85e7ff291558899314c07db963cf69c4ac652eb1be82081f1750b4bb144e4e9ecd30a0de11d46665a49bcd331fe555b37b66a5266d55fb877da36dad0da84a45af54306e1ed2906d4c5b6cc237375f1bd7b273202a15ee76ca8e126f80b0a516d92c17f8bfded55810df76dc54803b1aca32cab4fa0f0702a75170e24c8c047620fad017ec79c7f09a95ba9fb63e698017a2d06d3c4c930a6f19057328953a827e85e84fa90cd6f3c720abac29adfa8a60f859d7f3c5f589e22028fbbfa2c936c5ada50cf4089a8107a967a6d95cbe84f5c337f3bb9eaae2a8355a2d5ace25a38955ad771d031357f554d1e2aeec02ac209306f35486c9bff2cd2badb1cc2ed6c886cdd81feec7854d86e07e0051508ef4a04ea8968f23403d92bc9a189f068cec2171426aad56bd037fa76ed60c9109e80d2d36a99e2adedc4228d42755f375701e33d5d0a5b9419f737d5478409ff049c7cd82fc5340e4e64455130b4fb5d335101ced10a1637a4a900e22673ff96d9c7e208d5b2cccd4aaa65b50a6c29bcdd3bbd5012df6a120ecd2e7b1237cfd67d09e939d85568ff6ebd58b79567fa880377cf3a3146c842781bb7f03b495c25fda63347ba11c4e0a50e4eaf48c822e2ef937c1adc932c49f66d7c6a140f7331fcc77d0f46e82ffd10d9c42118d237d97b57adbfa3ade4df52cf60a8923735b5089b7ba817bc16e6f16fe4585b2436eaad7c4c81b902636113d4bcae98656a716af3926c2fe370f006e3ca68525179482ac8c8cb29f729b9b970ff404fa2884eade33936fdf24c9a46851992fa32283af61bb3e6aaaba1b9e22d232358627618e6f343159d6d857cf632fa4b54168eae562c1ba7504f9bb14ed3001aad9fa4859e106bb995b1cfd80f0c790a1b093fae85144e789ba7b2c7c5e619c9d2cdef644ceeb3376307d13cd27cc9396b956700d8f81ef56a83f06190ae1616492b1a68cb1193209563299a51e422252fbeff7e6296891f6328e59280d784ef673f5d9136d35f4abe128a44b62ae17466f62be9f165ddaddc7dbb1739b77c1cfefa1e159e44cbc6fbb655aefcdf84f84f518f3644541de3c04b82109b676132934d36b0bb56bbaee6daac378b9218d50092984e00dffa894ee37b275f2dd36af8efda6e54500575c6c4a0636d35755a9e347f8b5f7d2a4d591e92f86e6ddd4b358f2efd179863793684df23a44ccad45652d300933341bd6c03af7794eca8bbdc5b9813da0e0ec8a2cd963ea57020d3cbd697ade0ee3a0dd4b7120942b7d479b617e73090fbb703088233b6a23dd2367c225401597caca7a4e749c7148921cda6f2974ff80f65ecd21369ebe0d89e9e9764be720407e52c4dc5d9e6c0c0c55525de5f265531b7f27994b318c6ef7d2474ac179fffe6153c799720d8424e73a17c146efb8ab3562898f8eca011f9bd4a9911908938eb871b8e75fe35ddc3e112186e5d171cc042340685c10fdbdea697a14eee71e0dd4e6e50741dcba484f31e212f6db2bbbb0ad300d36f4761ce45d4ec5eb4e640b7a8bf592edaec162417d4bbb680ebaac1b4a767388d3617c3185a4fdab4bb6e7aada4760e298ce4962e61ed2fa1eda82c087729212ee5db5f97c7ed6ec0b147c97efa2a27ecbbb990eb380de7e75ad6804072545b72a037be14adaf3adb6d42b7aef00b2cff32157acc69a165c7efb4a6e019498e3f962b465a46e83c075ad1a7a8717a281015d75b3c4b850ff9dc1226ff03896a53b859511e62334dcbdae674575683980b7780639688876f871147a300f72a3c0be0a60c25f91a376c81a14552944a38d87a1bbcb0befcb07a515444f62962dde6ec5cd4f819de65f78e83ea17d4842bbf2244db96844d2115edd7afd6ba240d5ddc14da4c2f8de79969ea769a92fb2db097541de318f4097faddd5c2bafe3903a8314bf662ec7f0fc2fca2de90bd2c85f046ba3098bbad018854ba776386e27833e3972c2ef707209c3fbb384c5d346c0565ee6625c24261f63b7deb6fc3eae2c5254a83b893a2f74c4da41acd455bd84f2add640a8b5861142cc7621686f4304882555ebcfd003f75962c3cced20d1a301fcc8c185f2525fbef4d63259f4591d1d0ed76ee9d1417b8984d6c5497ba555ad32aee9e423e9f47d0a7ab8385d5eb5075da4fc208059273c994137b4fba3a25858ade6c8c554b9de54ee90a2c150803168f699b1dc683860840cc2752ea60029b88a10824ad67c46ffb1d24c6b71d42e553bc2b43d06ed8d59e3f7ec86b64afba7c2f8a5f547ce60444ace1507957fe3ece4625af423b06df5b3829be90105ed582d4c691896939d11edc28cd9910e366054c4d5c7835a4b92019ceec6cf00dc80e58b9f05e8d8e2addca64258c07aad49c38459f0975c81cd2383d05cf1b161f42e0fae66495f57201d2e4eeb2d2463359e0bb734b7adc6b6f8e0157600f976d2f68b328782471bf76a7d7ac907c9be4b40d4615191c2d588594e878b52e1490dc3c71df40ef66b1c224920dcd206c507845990a23cb68140b65d2e77c2abbc9027011f44027e3bba2f88c016738a7e656b6084fc846e8021b352fd24e80d23b2d9e082e578314b1950a230fa81ab3887242d8d95da47253aefecc2a418e74a7ce49d7b87dce20b81d5e10182d3a2bbea06a1078688868b9d88ba606941a52d6a34c2c9fcde532c8eeb4328309076e941ac484b41f6a764b9113492a21b6ce9b1768548ea5883448d15918ce15e691b9f9d673c8de8b1a8ead4b26827a2ff72dacdc44ea7aef3857fa6756185bd4d401dbc1f8b8f896dbf2d205c682c165218eb1528b43d6117ce59827d2688bc72403067f945f0059eeeee9d0dd67a8f4c314f7d9f8b316b4b753f9a340254cd27c1594270df250b426e12453127af812c363065008d23f9380bab852ceccb3ad8b2a24de4f18342d28136444aa9da41d396bea4a1359220fcc15f5c77b9f8b131f4e3a8ae153b34abb3e18cbb5aa16439922f1775fed0af297c776ddfe6222e614cc214416457da3f711f4901b36a6251c0bf8a6a6956b2999fe0fc49cde1bab0e5ec7748f061376f7968e3922e3be82b686803dedd8881bba00ac9ce3fe3354aeb064724f7f9dffdee32e1a3da9d641188bf39178bf891eb26c0cb135d60f7b40265aa16d1ac0a66756ba98f433e6daf6e2efbfadd55b5f2552c71236b93c69bcffe4719787e3dc285a78ff1366fd453215def9c9a2251e587f71926d8181ba37b8719829c7e4be64aeff72824f35a1944369592aa9bfccde354849b2218da684615ae683a69cafe5f74d1f870b9e54374beace977fb1e52a4fc20ee5cffb15555241a0a1c47222dc16ff2f21d0bec06a097854675a47b86e84d9cc8bea5c3c54a1081cdd51a94dcc93c964488b826e67121cb57b1a6a9bef7ebcd7984a54ba1a178156d2d6ac708425f76cf863a388e59facf7a80749eabba9e309e9c3ace67dc4eb595e575cc3e7e5d71a2778d6ec7af8dfc7c3345a0a6f7c0e3359f8f64389b51e97970cb5f9a73ea713c9d76f939f4c42ed40577a803a73ec2c54adb969f73f1d93cae98fd2bb7f6e843b68a47f3ef8a243de4c07bf6a36cb1bcbb45a6a54c5bdf9c86c0ed071a34090553c0e8d6f8dbae92115730dc3748741fa8cd468c12808f50c21da60af50f0f70c301a5f7607bb7e6fd797e470ccd9897f6c38993e285571bf20e42743ceace5fac5be2d9b4568495c5d2911acda450f2d18f9a3455c837eba6ad2efd302be7392fe57b0bff6724d4d7f5239776d13bcef8f5c8994dfad93812e49e4e4113538ef5249bee67c57ec10d661ea03dc57e2d0a92c9c040a0369cfa47b6c6ca7eca8fc4c3bf4dd1d648afa04c2504ed66a43e029e5bb4b711bb64d1304741d097d5d1b86bd0ad49bcf84220a3327758ea28826b5bf0bdaa4c61d642cda1680cbb21431dc530ed31523a11e4d2c918a60bb4733f39d36bcda746bbe1fc75b3969be7eca6e120da9e7c597bb2865831256267608f38e5fc5adb0b4b863771360fd11d07a5df37c56a10286dd33178c01e211dfe71e24ecace966b46545265446818b7c8986a559898d49a747858237c4f423658e6e179a0f1fb85647a0ea52a00c24deda20ee0ceab8c6c83315f5f163d427e920ef7fa8829c130dec0d347c3344a607dbe9342d4248c9f41892d04fc79061e980fb2f696a8cb46591ab0beb9e54d73c33ec5c36d40c505c6d091723b64bee04eb906dcee9cdb9cf65d337c83f262bf94235e5eeb74707c645e97d24d587d1f0f02a219568b34be454b2eb38d9f57280707d1b4085b2f15b5b890b609be0a72392b87dfa8b82468fe11383d232bf5d5c47e2061e2dbb3b1f2159245b9c0e5621bfd565ba025cbb99b095f247d211ceb0502e325254ae15f1b4a8051b0ac1dbf3a206aa12a835a1ee143acf75034e50b2497681905399b583631f61a091583da5537f710c42c5f46c8ab90dd0439e45a8bfb827db5f62318c8fb6de0301b2e28cf0504e690fe0dcf799341d95b2f912b751fb3aa6bb11ad5f7b11e3766498819c71a63860783f5c0ba4d8b051d270143a9fc685015c5561edd9a2659873375e0adb1ac19bf99b58c6d5573ea6419cec601ce3ecda369a172605bc0cbe8a587b68edc857b7bba7b080b0b897c9ac97a27fc67cea25e5fb39dd0a18698ca091057804e3faad9f22f81e59da0ae0f4f6e974001a9887b09d6fe97019f7d37ad6d6c3048a3d228f5a9b1f4f8b99d9b18a0bfde7068de1bb77b1584d23521e0b129360d905ce35405db6b9b6fd9cfc59c39daf13049a5d77025dc7e548ff62392328086a5b1e19a6a37bb97508c318b1d01c3dcc59f6af412804ae0c1fbaab091d5833472c90a3c7ff7ff5a41492e49bf5a63d582ffc66ecb3c0e33ff8c41acae77912df61774f8266a575d246802a69aa7af0be975a18a15efbca731e264a0106957f1856febf5f17639e7942d683d486de40204c0557a7c90a7efe7a415f2ef7bbe8208eee490eeaeadc8730941a0d1c77a5ce3c8826fd2e1048e2a0959def09677c326fb25cf78b57488e0720227c57f00ce96178840d141093946d541e6a470f59c518827ac3e7a8f55425b6958de540f44d6d7edbad7ad3bd89a0ae04a264cd6da851c3311a00d2148c06265586ff4fb9e6c5f08278f758ad4fd02d6c0352354e5951d179fe4e7b400642e394a3787cd45ed6b24d435e33fda3b57cb8e3660b2639bb96f1467239cad58117985dfbc6db33e8f64383c9494c1047c1aa8efd37294127cbe865bbf0981fb1498c000df8a16dbc5abca66ee0928e86f1bfb7c1460465d13ed3780a0c745b02a70419214f72467f46c08134e13c3d805898c8afe8b6dd579952166ec0806ac9ae7533c76e840211dff0b6bce256716009b4b4378abdb56abbe975530a0cf20ebf2e00586cc2b593e7ec0fe794313361e7daa302457aca72067bdfa4abdba061eda4fb43ebe80752abfda2aa84cf8112572d4432e5274d5a66c1a6f000155dc529f0bf4d90374a7eac7837cf62baeea3f0711c225c5bad6e5da16ceae962aeefa99286dc0e1364f532195575b87542efe13d73463ae8434bf1b482558771df039140fddb921f637d69aba03222369dbded644006345cda19c7321043b316f41bdab37f7cee97f597cedade88c425929e4131f89de7376460f372eace6a590ef3989b1c88f0a5610abacc8cecb706fd1e58ffe1b6829ea2464cc6623e9d2e6b3ef51b962e6df283d630bcd32e062f01415c5b39b2d3736b9943478a69d471abd5b5917ad622416e10b21bbc0aa200565b9d83dfc0e1928e41959f01d808c3eb31c53f0aa1b66f8563f8060d89acd78f38a426ead263a19a75e2ad8bf6e5f62e02fd8386bbae006b766ecdd905f4dbc8b62b872297a84d4ba3c956e1b8f</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+  
+  
+<div class="article-footer reveal fs14"><section id="references"><div class="header"><span>参考资料</span></div><div class="body"><ul><li class="post-title"><a href="https://zhuanlan.zhihu.com/p/525182495" target="_blank" rel="external nofollow noopener noreferrer">OpenVPN Windows 平台安装架设部署教程 - 知乎</a></li></ul></div></section></div>
+
+  </article>
+  
+
+
+  
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
