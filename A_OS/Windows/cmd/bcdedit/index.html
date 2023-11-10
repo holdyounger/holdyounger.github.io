@@ -147,12 +147,12 @@
 <h2 id="双机调试基本步骤"><a href="#双机调试基本步骤" class="headerlink" title="双机调试基本步骤"></a>双机调试基本步骤</h2><h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><h4 id="虚拟机设置"><a href="#虚拟机设置" class="headerlink" title="虚拟机设置"></a>虚拟机设置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 打开调试模式</span></span><br><span class="line">bcdedit /debug on</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 设置网络方式调试</span></span><br><span class="line"><span class="comment"># hostip：主机IP地址</span></span><br><span class="line"><span class="comment"># port: 主机的端口</span></span><br><span class="line"><span class="comment"># key：(可省略) 登录密码</span></span><br><span class="line">bcdedit /dbgsettings net hostip:192.168.0.102 port:50000 key:1.2.3.4</span><br><span class="line"></span><br><span class="line"><span class="comment">#3. 设置数字签名</span></span><br><span class="line">bcdedit /set testsigning on</span><br></pre></td></tr></table></figure>
 
 <h4 id="主机windbg连接虚拟机"><a href="#主机windbg连接虚拟机" class="headerlink" title="主机windbg连接虚拟机"></a>主机windbg连接虚拟机</h4><p>如下图所示填入上述得到key或自定义设置的key之后连接即可。</p>
-<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Windows%2Fimages%2Fbcdedit%2F1.png"></div></div>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Windows%2Fimages%2Fbcdedit%2F1.png" fancybox="true"></div></div>
 
 <h3 id="串口调试"><a href="#串口调试" class="headerlink" title="串口调试"></a>串口调试</h3><ol>
 <li>添加串行调试端口<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/cmd/bcdedit/image-20230929210001760.png" class title="添加端口"></li>
-<li>设置管道名，并删除打印机<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230929214828006.png"></div></div></li>
-<li>查看管道名<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230929230319494.png"></div></div></li>
+<li>设置管道名，并删除打印机<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230929214828006.png" fancybox="true"></div></div></li>
+<li>查看管道名<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230929230319494.png" fancybox="true"></div></div></li>
 </ol>
 <h4 id="虚拟机设置-1"><a href="#虚拟机设置-1" class="headerlink" title="虚拟机设置"></a>虚拟机设置</h4><ol>
 <li><p>管理员cmd</p>
@@ -166,19 +166,19 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bcdedit /dbgsettings SERIAL DEBUGPORT:1 BAUDRATE:115200</span><br><span class="line"></span><br><span class="line">bcdedit /bootdebug on</span><br><span class="line"></span><br><span class="line">bcdedit /debug on</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>运行 ‘msconfig’</p>
-<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917204346062.png"></div></div>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917204346062.png" fancybox="true"></div></div>
 
 <ul>
 <li>win+R 输入 msconfig</li>
-<li>查看引导项是否有Debug模式<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917204844775.png"></div></div></li>
-<li>查看高级选项，调试端口和波特率<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit//image-20230917205109487.png"></div></div></li>
+<li>查看引导项是否有Debug模式<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917204844775.png" fancybox="true"></div></div></li>
+<li>查看高级选项，调试端口和波特率<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit//image-20230917205109487.png" fancybox="true"></div></div></li>
 </ul>
 </li>
 <li><p>到此为止，虚拟机设置完毕，启动后操作系统启动时选择 <code>Debug</code></p>
 </li>
 </ol>
 <h4 id="Windbg连接"><a href="#Windbg连接" class="headerlink" title="Windbg连接"></a>Windbg连接</h4><ol>
-<li>连接内核<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917205922673.png"></div></div></li>
+<li>连接内核<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./bcdedit/image-20230917205922673.png" fancybox="true"></div></div></li>
 <li>设置管道名</li>
 </ol>
 
@@ -197,7 +197,7 @@
       <div class="title cap theme">您可能感兴趣的文章</div>
     </section>
     <section class="body">
-    <div class="related-posts"><a class="item" href="\A_OS\Windows\cmd\netsh用法整理\" title="【一文搞懂】【WIN】【CMD】netsh用法整理"><span class="title">【一文搞懂】【WIN】【CMD】netsh用法整理</span></a></div></section></div>
+    <div class="related-posts"><a class="item" href="\A_OS\Windows\cmd\sc创建服务\" title="【Windows】 sc创建服务"><span class="title">【Windows】 sc创建服务</span></a></div></section></div>
 
 
 
