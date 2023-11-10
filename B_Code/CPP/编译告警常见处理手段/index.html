@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>visual studio 编译告警常见处理手段 - oone</title>
+
+  
+    <meta name="description" content="[TOC] C2001 常量中有换行符  文件保存为 UTF-8 签名 C4100 “*” 类型未使用  windows 代码文件中使用  1UNREFERENCED_PARAMETER(X)  如果是在Qt中，则可以使用 1Q_UNUSED(X);  另外，也不建议使用上述两种方式。当实现接口或标准导出内的方法时，有一些参数没有被引用是相当常见的。编译器会发现未 使用的参数，并产生一个警告，有些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="visual studio 编译告警常见处理手段">
+<meta property="og:url" content="http://example.com/B_Code/CPP/%E7%BC%96%E8%AF%91%E5%91%8A%E8%AD%A6%E5%B8%B8%E8%A7%81%E5%A4%84%E7%90%86%E6%89%8B%E6%AE%B5/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[TOC] C2001 常量中有换行符  文件保存为 UTF-8 签名 C4100 “*” 类型未使用  windows 代码文件中使用  1UNREFERENCED_PARAMETER(X)  如果是在Qt中，则可以使用 1Q_UNUSED(X);  另外，也不建议使用上述两种方式。当实现接口或标准导出内的方法时，有一些参数没有被引用是相当常见的。编译器会发现未 使用的参数，并产生一个警告，有些">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.111Z">
+<meta property="article:modified_time" content="2023-10-27T01:24:02.111Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="CPP">
+<meta property="article:tag" content="visual studio">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="CPP,visual studio">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">visual studio 编译告警常见处理手段</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#C2001"><span class="toc-text">C2001</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C4100"><span class="toc-text">C4100</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C4805"><span class="toc-text">C4805</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C4996"><span class="toc-text">C4996</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GetVersionExA-%E8%A2%AB%E5%A3%B0%E6%98%8E%E4%B8%BA%E5%B7%B2%E5%90%A6%E5%86%B3"><span class="toc-text">GetVersionExA 被声明为已否决</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-text">其他</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C5208"><span class="toc-text">C5208</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C6387"><span class="toc-text">C6387</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LNK4098"><span class="toc-text">LNK4098</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LNK4099"><span class="toc-text">LNK4099</span></a></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/B-Code/">B_Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/B-Code/CPP/">CPP</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-10-27T01:24:02.111Z">2023-10-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>visual studio 编译告警常见处理手段</span></h1>
+<p>[TOC]</p>
+<h3 id="C2001"><a href="#C2001" class="headerlink" title="C2001"></a>C2001</h3><blockquote>
+<p>常量中有换行符</p>
+</blockquote>
+<p>文件保存为 UTF-8 签名</p>
+<h3 id="C4100"><a href="#C4100" class="headerlink" title="C4100"></a>C4100</h3><blockquote>
+<p>“*” 类型未使用</p>
+</blockquote>
+<p>windows 代码文件中使用 </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UNREFERENCED_PARAMETER</span>(X)</span><br></pre></td></tr></table></figure>
+
+<p>如果是在Qt中，则可以使用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Q_UNUSED</span>(X);</span><br></pre></td></tr></table></figure>
+
+<p>另外，也不建议使用上述两种方式。当实现接口或标准导出内的方法时，有一些参数没有被引用是相当常见的。编译器会发现未 使用的参数，并产生一个警告，有些组件甚至会认为这是一个错误。为避免发生如此情况， 将未使用的参数使用&#x2F;* 参数名 *&#x2F; 语法将其注释掉。不要使用 UNREFERENCED_PARAMETER（） 宏，因为其 1）太繁琐，2）并不能保证参数实际上真的未被引用。</p>
+<p>最好的方法就是在函数接口中注释掉未使用的变量。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LRESULT WndProc（HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM <span class="comment">/* lParam */</span>）</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="C4805"><a href="#C4805" class="headerlink" title="C4805"></a>C4805</h3><blockquote>
+<p>操作类型混合不安全：一般在操作 <code>bool</code> 和 <code>int</code> 时会触发这一警告</p>
+</blockquote>
+<p>简单处理就是不要使用这种作为判断的依据，要么用 <code>bool</code> 类型，要么用 <code>int</code> 类型。</p>
+<ul>
+<li>也可以使用强制转换。</li>
+</ul>
+<h3 id="C4996"><a href="#C4996" class="headerlink" title="C4996"></a>C4996</h3><h4 id="GetVersionExA-被声明为已否决"><a href="#GetVersionExA-被声明为已否决" class="headerlink" title="GetVersionExA 被声明为已否决"></a><code>GetVersionExA</code> 被声明为已否决</h4><p>碰见这种情况，需要关闭项目的SDL检查。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Project Properties &gt; Configuration Properties &gt; C/C++ &gt; General &gt; SDL checks关掉</span><br></pre></td></tr></table></figure>
+
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ol>
+<li>‘qsort’：Use std::sort</li>
+<li></li>
+</ol>
+<h3 id="C5208"><a href="#C5208" class="headerlink" title="C5208"></a>C5208</h3><p>出现这个问题的原因是 C 风格代码和 C++ 风格代码混用导致的，结构体在 C 和 C++ 中是不一样的：</p>
+<p>C</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">     <span class="type">char</span> *yyy=new zzz[ttt];</span><br><span class="line">&#125;xxx;</span><br></pre></td></tr></table></figure>
+<p>CPP</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">xxx</span> </span><br><span class="line">&#123;</span><br><span class="line">     <span class="type">char</span> *yyy=<span class="keyword">new</span> zzz[ttt];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>具体原因是：最新的C++20标准中，为了更好的实现模块<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.zhihu.com/search?q=module&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:1243864776%7D">module</a>的特性，typedef 一个未命名的struct被限制为只能使用纯粹的c语言语法，它不能通过赋值进行类内初始化了。</p>
+</blockquote>
+<p>所以修改的方案就是不要声明匿名结构体，在声明时创建结构体名。</p>
+<h3 id="C6387"><a href="#C6387" class="headerlink" title="C6387"></a>C6387</h3><blockquote>
+<p>警告内容：“***”可能是0，这不符合函数“****”的规范。</p>
+</blockquote>
+<p>这个问题就是函数参数没有做校验，也就是判空等情况，如下所示代码就会出现该警告：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">m_hMutex = <span class="built_in">CreateMutex</span>(<span class="literal">NULL</span>, TRUE, <span class="keyword">this</span>-&gt;MutexName);</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">GetLastError</span>() == ERROR_ALREADY_EXISTS)</span><br><span class="line">&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">WaitForSingleObject</span>(m_hMutex, INFINITE) == WAIT_OBJECT_0)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">Unlock</span>(m_hMutex);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			g_hMutex = m_hMutex;</span><br><span class="line">			MutexReleased = FALSE;</span><br><span class="line">			<span class="keyword">return</span> TRUE;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改为如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">m_hMutex = <span class="built_in">CreateMutex</span>(<span class="literal">NULL</span>, TRUE, <span class="keyword">this</span>-&gt;MutexName);</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">GetLastError</span>() == ERROR_ALREADY_EXISTS)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (m_hMutex != <span class="literal">NULL</span>) <span class="comment">// 添加判空逻辑</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">WaitForSingleObject</span>(m_hMutex, INFINITE) == WAIT_OBJECT_0)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">Unlock</span>(m_hMutex);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			g_hMutex = m_hMutex;</span><br><span class="line">			MutexReleased = FALSE;</span><br><span class="line">			<span class="keyword">return</span> TRUE;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LNK4098"><a href="#LNK4098" class="headerlink" title="LNK4098"></a>LNK4098</h3><blockquote>
+<p>LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 &#x2F;NODEFAULTLIB:library</p>
+</blockquote>
+<p>简单处理就是在VS项目属性 -&gt; 链接器 -&gt; 命令行 中添加上述提示的内容。以 <code>LIBCMT</code> 库为例：添加内容如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/NODEFAULTLIB:LIBCMT</span><br></pre></td></tr></table></figure>
+
+<h3 id="LNK4099"><a href="#LNK4099" class="headerlink" title="LNK4099"></a>LNK4099</h3><blockquote>
+<p>warning LNK4099: 未找到 PDB“cryptlib.pdb”(使用“cryptlib.lib(cryptlib.obj)</p>
+</blockquote>
+<p>一般这种情况属于使用了开源库编译的lib，在项目中使用时，调试信息格式选择了 <code>/zi</code> 选项。因此会提示没有 <code>obj</code> 文件。</p>
+<p>解决办法就是程序调试信息选择无即可。另外就是我们编译过程中如果需要调试信息格式，也就是pdb该怎么同时处理这两个问题：</p>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/B_Code/CPP/%E6%97%B6%E9%97%B4%E5%A4%84%E7%90%86/">⏰ 时间处理</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/B_Code/CPP/%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80%E6%A0%A1%E9%AA%8C/">文件后缀校验</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\B_Code\CPP\【CPP】内存分配\" title="C++内存分配"><span class="title">C++内存分配</span></a><a class="item" href="\A_OS\Windows\Visual Studio\文件内置引入\" title="【Visual Studio】内置引入文件"><span class="title">【Visual Studio】内置引入文件</span><span class="excerpt">
+概述：介绍了如何使用 visual studio 引入默认的库文件和头文件
+</span></a><a class="item" href="\A_OS\Windows\Visual Studio\控制台程序不显示界面\" title="【Visual Studio】如何让控制台程序不显示界面"><span class="title">【Visual Studio】如何让控制台程序不显示界面</span></a><a class="item" href="\B_Code\CPP\Json11\" title="Json11 C++ 用法总结"><span class="title">Json11 C++ 用法总结</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

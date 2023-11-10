@@ -1,0 +1,114 @@
+digraph D {
+    node [fontname="Microsoft Yahei"];
+    node [shape=plaintext]
+    labelloc="t"
+    rankdir="LR"
+    PESTU [label=<
+    <table border='0' cellborder='1' color='black' cellspacing='0'>
+        <tr>
+            <td>节点</td>
+            <td width="210">数据</td>
+        </tr>
+        <tr>
+            <td>
+                DOS头
+            </td>
+            <td>
+                <table border="1" color='black' cellspacing='0'>
+                    <tr><td port="MZ" bgcolor="#FFA33C">MZ头部</td></tr>
+                    <tr><td>DOS存根（或称DOS残留）</td></tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PE头
+            </td>
+            <td>
+                <table border="1" color='black' cellspacing='0'>
+                    <tr><td port="PESign"  bgcolor="#FFA33C">PE标识</td></tr>
+                    <tr><td>文件头</td></tr>
+                    <tr><td>可选头</td></tr>
+                </table>
+            </td>
+        </tr>
+        
+        <tr>
+            <td port="st">
+                节表
+            </td>
+            <td>
+                <table border="1" color='black' cellspacing='0'>
+                    <tr><td>节表一</td></tr>
+                    <tr><td>节表二</td></tr>
+                    <tr><td>节表三</td></tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td port="std">
+                节表数据
+            </td>
+            <td>
+                <table border="1" color='black' cellspacing='0'>
+                    <tr><td>节表一数据（代码）</td></tr>
+                    <tr><td>节表二数据（代码或数据）</td></tr>
+                    <tr><td>节表三数据（代码或数据）</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    >];
+
+    MZHeadBInary [
+        label=<
+            <table border="1" cellspacing='1'>
+                <tr><td PORT="MZf0">MZ实例</td></tr>
+                <tr>
+                    <td port="MZf1">
+                        <font color="red"><b>4D 5A</b></font>  90 00 03 00 00 00  04 00 00 00 FF FF 00 00
+                    </td>
+                </tr>
+                <tr><td>B8 00 00 00 00 00 00 00  40 00 00 00 00 00 00 00</td></tr>
+                <tr><td>00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</td></tr>
+                <tr>
+                    <td port="MZf2"> 00 00 00 00 00 00 00 00  00 00 00 00 <font color="red"><b> E8 00 00 00 </b> </font></td>
+                 </tr>
+                <tr><td>0E 1F BA 0E 00 B4 09 CD  21 B8 01 4C CD 21 54 68</td></tr>
+            </table>
+        >
+    ]
+
+    PESignBInary [
+        label=<
+        <table border="1" cellspacing='1'>
+            <tr><td PORT="PEf0" colspan="2">PE实例</td></tr>
+            <tr>
+                <td>4EF800E8</td><td PORT="PEf1"><font color="red"><b>50 45 00 00</b></font>  4C 01 06 00</td>
+            </tr>
+            <tr><td>4EF800F0</td><td>77 7B 41 86  00 00 00 00</td></tr>
+            <tr><td>4EF800F8</td><td>00 00 00 00  E0 00 02 21</td></tr>
+            <tr><td>4EF80100</td><td>0B 01 0E 14  00 C2 0A 00</td></tr>
+            <tr><td>4EF80108</td><td>00 EA 00 00  00 00 00 00</td></tr>
+            <tr><td>4EF80110</td><td>50 D3 03 00  00 10 00 00</td></tr>
+            <tr><td>4EF80118</td><td>00 E0 0A 00  .. .. .. ..</td></tr>
+        </table>
+        >
+    ]
+
+    fontname="Microsoft Yahei"
+    label="PE文件结构说明";
+
+    # PESTU:st1 -> PESTU:std1 [style=""]
+    # PESTU:st2 -> PESTU:std2 [style=""]
+    # PESTU:st3 -> PESTU:std3 [style=""]
+
+    PESTU:MZ -> MZHeadBInary:MZf0
+    MZHeadBInary:MZf1 -> MZ标识 [xlabel="固定值" color=red fontsize=10 fontname="Microsoft Yahei"]
+    MZHeadBInary:MZf2 -> PE头地址[fontname="Microsoft Yahei"]
+    PE头地址 -> PESignBInary:PEf0 [constraint=false]
+    PESTU:PESign -> PESignBInary:PEf0
+
+    PESignBInary:PEf1 -> PE标识 [xlabel="固定值" color=red fontsize=10 fontname="Microsoft Yahei"]
+}

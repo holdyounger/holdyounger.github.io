@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【Windows】降权 - oone</title>
+
+  
+    <meta name="description" content="[toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 Explore.exe 的权限去调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Windows】降权">
+<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E9%99%8D%E6%9D%83/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 Explore.exe 的权限去调">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.063Z">
+<meta property="article:modified_time" content="2023-10-27T01:24:02.063Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="权限">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Windows,权限">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【Windows】降权</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E8%AF%B4%E6%98%8E"><span class="toc-text">背景说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%80%BB%E8%BE%91"><span class="toc-text">实现逻辑</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3"><span class="toc-text">接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li></ol></li></ol></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/">权限与会话</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-10-27T01:24:02.063Z">2023-10-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>【Windows】降权</span></h1>
+<p>[toc]</p>
+<h1 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h1><p>在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 <code>SYSTEM</code> 权限，导致安装程序与预期不符合。</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 <code>Explore.exe</code> 的权限去调用安装程序。</p>
+<h1 id="实现逻辑"><a href="#实现逻辑" class="headerlink" title="实现逻辑"></a>实现逻辑</h1><p>此逻辑也可以用于解决 <code>UAC</code> 弹窗的问题。</p>
+<ol>
+<li>获取token</li>
+<li>通过token获取用户的会话ID</li>
+<li>通过token和ID启动进程</li>
+</ol>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><h2 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h2><p>最终调用的接口为： <code>CreateProcessAsUser</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">ExecutePackage</span><span class="params">(LPCSTR pszPath, LPCSTR pszParams)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="literal">nullptr</span> == pszPath)</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">	wstring szPath = <span class="built_in">stringToWstring</span>(pszPath);</span><br><span class="line"></span><br><span class="line">	wstring szParams;</span><br><span class="line">	<span class="keyword">if</span> (pszParams)</span><br><span class="line">	&#123;</span><br><span class="line">		szParams = <span class="built_in">stringToWstring</span>(pszParams);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">CreateProcessWithAdmin</span>(szPath.<span class="built_in">c_str</span>(), szParams.<span class="built_in">c_str</span>());</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>实现如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* @fn           </span></span><br><span class="line"><span class="comment">* @brief        CreateProcessWithAdmin</span></span><br><span class="line"><span class="comment">* @param[in]    </span></span><br><span class="line"><span class="comment">*   strpath： 程序路径</span></span><br><span class="line"><span class="comment">*   strParams: 程序执行命令</span></span><br><span class="line"><span class="comment">* @param[out]   </span></span><br><span class="line"><span class="comment">* @return       </span></span><br><span class="line"><span class="comment">*               </span></span><br><span class="line"><span class="comment">* @detail      </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">CreateProcessWithAdmin</span><span class="params">(LPCWSTR lpExePath, LPCWSTR lpParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HANDLE hExplorerToken = <span class="built_in">GetExplorerToken</span>();</span><br><span class="line">    HANDLE hTokenDup = <span class="literal">NULL</span>;</span><br><span class="line">    LPVOID pEnvironment = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="type">bool</span> res&#123; <span class="literal">false</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span>	szErr[<span class="number">256</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="type">int</span>		iErrCode = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (hExplorerToken == <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            iErrCode = <span class="built_in">GetLastError</span>();</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 复制令牌,把调用方有效的所有访问权限给复制后的令牌.</span></span><br><span class="line">        DWORD dwReturnBytes = <span class="number">0</span>;</span><br><span class="line">        DWORD dwReturnLen = <span class="number">0</span>;</span><br><span class="line">        DWORD dwTokenSessionId = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 通过token获取sessionId</span></span><br><span class="line">        <span class="keyword">if</span> (::<span class="built_in">GetTokenInformation</span>(hExplorerToken, TokenSessionId, &amp;dwTokenSessionId, <span class="built_in">sizeof</span>(DWORD), &amp;dwReturnLen) == FALSE)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过 SessionId 和 Token运行程序</span></span><br><span class="line">-		res = _CreateProcessAsSystemBySession(lpExePath, lpParam, <span class="literal">NULL</span>, dwTokenSessionId, hExplorerToken); <span class="comment">// 改动如下所示</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 改动</span></span><br><span class="line">        <span class="comment">// 判断当前特权token是否已提升，如果已经提升，则直接通过当前的token启动，如果未提升，则通过提升后的token启动</span></span><br><span class="line">+        HANDLE hNewToken = <span class="literal">NULL</span>;</span><br><span class="line">+		<span class="keyword">if</span> (<span class="built_in">GetElevatedToken</span>(hExplorerToken, &amp;hNewToken) &amp;&amp; hNewToken)</span><br><span class="line">+		&#123;</span><br><span class="line">+			res = <span class="built_in">CreateProcessByToken</span>(hNewToken, hExplorerToken, lpExePath, lpParam, <span class="literal">NULL</span>, FALSE);</span><br><span class="line">+			<span class="built_in">CloseHandle</span>(hNewToken);</span><br><span class="line">+		&#125;</span><br><span class="line">+		<span class="keyword">else</span></span><br><span class="line">+		&#123;</span><br><span class="line">+			res = <span class="built_in">CreateProcessAsSystemBySession</span>(lpExePath, lpParam, <span class="literal">NULL</span>, dwTokenSessionId, hExplorerToken);</span><br><span class="line">+		&#125;</span><br><span class="line">+		<span class="built_in">CloseHandle</span>(hExplorerToken);</span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断token是否被提升：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">IsElevatedToken</span><span class="params">(HANDLE hToken, PBOOL pbElevated)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DWORD dwReturnBytes = <span class="number">0</span>;</span><br><span class="line">	DWORD dwElevateionType = <span class="number">0</span>;</span><br><span class="line">	BOOL bElevated = FALSE;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hToken &amp;&amp; pbElevated)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">GetTokenInformation</span>(hToken, TokenElevationType, &amp;dwElevateionType, <span class="built_in">sizeof</span>(dwElevateionType), &amp;dwReturnBytes))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (dwElevateionType == TokenElevationTypeFull)</span><br><span class="line">				bElevated = TRUE;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (dwElevateionType == TokenElevationTypeDefault)</span><br><span class="line">			&#123;</span><br><span class="line">				TOKEN_ELEVATION te;</span><br><span class="line">				<span class="built_in">ZeroMemory</span>(&amp;te, <span class="built_in">sizeof</span>(te));</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (<span class="built_in">GetTokenInformation</span>(hToken, TokenElevation, &amp;te, <span class="built_in">sizeof</span>(te), &amp;dwReturnBytes))</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">if</span> (te.TokenIsElevated)</span><br><span class="line">						bElevated = TRUE;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (pbElevated)</span><br><span class="line">			*pbElevated = bElevated;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> TRUE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">GetElevatedToken</span><span class="params">(HANDLE hToken, PHANDLE phNewToken)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	BOOL bElevated = FALSE;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">IsElevatedToken</span>(hToken, &amp;bElevated);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (bElevated)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">DuplicateTokenEx</span>(hToken, TOKEN_ALL_ACCESS, <span class="literal">NULL</span>, SecurityImpersonation, TokenPrimary, phNewToken);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		DWORD dwReturnBytes = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">GetTokenInformation</span>(hToken, TokenLinkedToken, phNewToken, <span class="built_in">sizeof</span>(HANDLE), &amp;dwReturnBytes);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>获取资源管理器的 <code>token</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">HANDLE <span class="title">GetExplorerToken</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">PromotePrivilege</span>();</span><br><span class="line"></span><br><span class="line">    HANDLE hSnapshot = ::<span class="built_in">CreateToolhelp32Snapshot</span>(TH32CS_SNAPPROCESS, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (hSnapshot == INVALID_HANDLE_VALUE)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    HANDLE hExplorerToken = <span class="literal">NULL</span>;</span><br><span class="line">    PROCESSENTRY32 pe = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    pe.dwSize = <span class="built_in">sizeof</span>(pe);</span><br><span class="line"></span><br><span class="line">    BOOL bMore = ::<span class="built_in">Process32First</span>(hSnapshot, &amp;pe);</span><br><span class="line">    <span class="keyword">while</span> (bMore)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">StrCmpI</span>(<span class="string">L&quot;explorer.exe&quot;</span>, pe.szExeFile) == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            HANDLE hProcess = <span class="built_in">OpenProcess</span>(PROCESS_QUERY_INFORMATION, FALSE, pe.th32ProcessID);</span><br><span class="line">            <span class="keyword">if</span> (hProcess == <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">OpenProcessToken</span>(hProcess, TOKEN_QUERY, &amp;hExplorerToken))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">CloseHandle</span>(hProcess);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        bMore = ::<span class="built_in">Process32Next</span>(hSnapshot, &amp;pe);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hSnapshot);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> hExplorerToken;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>给本进程特权，以便访问系统进程</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* @fn       PromotePrivilege</span></span><br><span class="line"><span class="comment">* @brief    调整进程权限      </span></span><br><span class="line"><span class="comment">*               </span></span><br><span class="line"><span class="comment">* @detail   将进程权限提升成具有调试权限的进程，这个权限应该是进程所能具有的最大权限</span></span><br><span class="line"><span class="comment">*           前提启动这个进程的账户必须是一个管理员，否则没法提升</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function">BOOL <span class="title">PromotePrivilege</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 附给本进程特权,以便访问系统进程  </span></span><br><span class="line">    HANDLE hToken;</span><br><span class="line">    <span class="comment">// 打开一个进程的访问令牌  </span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">OpenProcessToken</span>(<span class="built_in">GetCurrentProcess</span>(), TOKEN_ADJUST_PRIVILEGES, &amp;hToken))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 取得特权名称为&quot;SetDebugPrivilege&quot;的LUID  </span></span><br><span class="line">        LUID uID;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">LookupPrivilegeValue</span>(<span class="literal">NULL</span>, SE_DEBUG_NAME, &amp;uID))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">CloseHandle</span>(hToken);</span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 调整特权级别  </span></span><br><span class="line">        TOKEN_PRIVILEGES tp;</span><br><span class="line">        tp.PrivilegeCount = <span class="number">1</span>; <span class="comment">// 只启动调试权限，所以权限的个数是一个</span></span><br><span class="line">        tp.Privileges[<span class="number">0</span>].Luid = uID;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//当Attributes = SE_PRIVILEGE_ENABLE时，激活权限</span></span><br><span class="line">        <span class="comment">//当Attributes = 0时，关闭权限</span></span><br><span class="line">        tp.Privileges[<span class="number">0</span>].Attributes = SE_PRIVILEGE_ENABLED;</span><br><span class="line">        </span><br><span class="line">		<span class="comment">// AdjustTokenPrivileges函数激活或者关闭tp中给定的权限</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">AdjustTokenPrivileges</span>(hToken, FALSE, &amp;tp, <span class="built_in">sizeof</span>(tp), <span class="literal">NULL</span>, <span class="literal">NULL</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">CloseHandle</span>(hToken);</span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 关闭访问令牌句柄  </span></span><br><span class="line">        <span class="built_in">CloseHandle</span>(hToken);</span><br><span class="line">        <span class="keyword">return</span> TRUE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>设置当前进程的会话信息：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">CreateProcessAsSystemBySession</span><span class="params">(LPCTSTR pszAppName, LPCTSTR pszCmd, LPCTSTR pszCwd, DWORD dwSession, HANDLE hEnvToken)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pszCmd == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> bRet = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    HANDLE hTokenThis = <span class="literal">NULL</span>;</span><br><span class="line">    bRet = <span class="built_in">OpenProcessToken</span>(<span class="built_in">GetCurrentProcess</span>(), TOKEN_DUPLICATE | TOKEN_QUERY, &amp;hTokenThis);</span><br><span class="line">    <span class="keyword">if</span> (!bRet || hTokenThis == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    HANDLE hTokenDup = <span class="literal">NULL</span>;</span><br><span class="line">    bRet = <span class="built_in">DuplicateTokenEx</span>(hTokenThis, MAXIMUM_ALLOWED, <span class="literal">NULL</span>, SecurityIdentification, TokenPrimary, &amp;hTokenDup);</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hTokenThis);</span><br><span class="line">    <span class="keyword">if</span> (!bRet || hTokenDup == <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">SetTokenInformation</span>(hTokenDup, TokenSessionId, &amp;dwSession, <span class="built_in">sizeof</span>(DWORD)))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">CloseHandle</span>(hTokenDup);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bRet = <span class="built_in">CreateProcessByToken</span>(hTokenDup, hEnvToken, pszAppName, pszCmd, pszCwd, TRUE);</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hTokenDup);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bRet;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>调用接口创建进程：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">BOOL</span><span class="params">(STDMETHODCALLTYPE FAR* LPFNCREATEENVIRONMENTBLOCK)</span> <span class="params">(LPVOID* lpEnvironment, HANDLE  hToken, BOOL    bInherit)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">BOOL</span><span class="params">(STDMETHODCALLTYPE FAR* LPFNDESTROYENVIRONMENTBLOCK)</span> <span class="params">(LPVOID lpEnvironment)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">CreateProcessByToken</span><span class="params">(HANDLE hToken, HANDLE hEnvToken, LPCTSTR pszAppName, LPCTSTR pszCmd, LPCTSTR pszCwd, BOOL bWndHide<span class="comment">/* = FALSE*/</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    STARTUPINFO si = &#123; <span class="built_in">sizeof</span>(si) &#125;;</span><br><span class="line">    PROCESS_INFORMATION pi = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line">    si.lpDesktop = (LPWSTR)<span class="string">L&quot;Winsta0\\Default&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bWndHide)</span><br><span class="line">    &#123;</span><br><span class="line">        si.dwFlags = STARTF_USESHOWWINDOW;</span><br><span class="line">        si.wShowWindow = SW_HIDE;</span><br><span class="line">    &#125;</span><br><span class="line">    DWORD  dwCreationFlag = NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE;</span><br><span class="line">    LPVOID pEnvironment = <span class="literal">NULL</span>;</span><br><span class="line">    LPFNCREATEENVIRONMENTBLOCK  lpfnCreateEnvironmentBlock = <span class="literal">NULL</span>;</span><br><span class="line">    LPFNDESTROYENVIRONMENTBLOCK lpfnDestroyEnvironmentBlock = <span class="literal">NULL</span>;</span><br><span class="line">    HMODULE hUserEnvLib = <span class="literal">NULL</span>;</span><br><span class="line">    hUserEnvLib = <span class="built_in">LoadLibrary</span>(<span class="string">L&quot;userenv.dll&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> != hUserEnvLib)</span><br><span class="line">    &#123;</span><br><span class="line">        lpfnCreateEnvironmentBlock = (LPFNCREATEENVIRONMENTBLOCK)<span class="built_in">GetProcAddress</span>(hUserEnvLib, <span class="string">&quot;CreateEnvironmentBlock&quot;</span>);</span><br><span class="line">        lpfnDestroyEnvironmentBlock = (LPFNDESTROYENVIRONMENTBLOCK)<span class="built_in">GetProcAddress</span>(hUserEnvLib, <span class="string">&quot;DestroyEnvironmentBlock&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> != lpfnCreateEnvironmentBlock)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">lpfnCreateEnvironmentBlock</span>(&amp;pEnvironment, hEnvToken, FALSE))</span><br><span class="line">        &#123;</span><br><span class="line">            dwCreationFlag |= CREATE_UNICODE_ENVIRONMENT; <span class="comment">// must specify				</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            pEnvironment = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> bRet = <span class="literal">false</span>;</span><br><span class="line">    BOOL bDisableRedirect = FALSE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">CreateProcessAsUser</span>(hToken, pszAppName, (LPTSTR)pszCmd, <span class="literal">NULL</span>, <span class="literal">NULL</span>, FALSE, dwCreationFlag, pEnvironment, pszCwd, &amp;si, &amp;pi))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">CloseHandle</span>(pi.hThread);</span><br><span class="line"></span><br><span class="line">        DWORD dwRet = <span class="built_in">WaitForSingleObject</span>(pi.hProcess, <span class="number">2</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line">        <span class="keyword">if</span> (WAIT_TIMEOUT == dwRet)</span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (WAIT_OBJECT_0 == dwRet)</span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            bRet = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">CloseHandle</span>(pi.hProcess);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> != lpfnDestroyEnvironmentBlock)</span><br><span class="line">        <span class="built_in">lpfnDestroyEnvironmentBlock</span>(pEnvironment);</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> != hUserEnvLib)</span><br><span class="line">        <span class="built_in">FreeLibrary</span>(hUserEnvLib);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bRet;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Windows/%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0/">【windows】查看进程启动参数命令行</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/">【Windows】服务中以管理员\普通权限启动进程</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Windows\API_加载动态库\" title="加载动态库 (loadlibrary)"><span class="title">加载动态库 (loadlibrary)</span><span class="excerpt">使用using加载动态库的代码</span></a><a class="item" href="\A_OS\Windows\查看进程启动命令行参数\" title="【windows】查看进程启动参数命令行"><span class="title">【windows】查看进程启动参数命令行</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\7-1-OSI参考模型\" title="OSI参考模型"><span class="title">OSI参考模型</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\3-13-热补丁支持\" title="热补丁支持"><span class="title">热补丁支持</span></a><a class="item" href="\A_OS\Windows\权限与会话\提权\" title="【Windows】提权"><span class="title">【Windows】提权</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

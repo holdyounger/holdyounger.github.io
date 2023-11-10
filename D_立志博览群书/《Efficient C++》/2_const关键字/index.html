@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title><2> const 关键字 - oone</2></title>
+
+  
+    <meta name="description" content="[toc] const 修饰指针变量对于指针，你可以指定指针本身是否为常量，也可以指定指针所指向的内容是常量，或两者都是，或两者都不是。 1234567891011121314151617&#x2F;&#x2F; constPointer.h#ifndef __CONSTPOINTER_H__#define __CONSTPOINTER_H__#include &lt;iostream&gt;char greetin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;2&gt; const 关键字">
+<meta property="og:url" content="http://example.com/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AEfficient%20C++%E3%80%8B/2_const%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[toc] const 修饰指针变量对于指针，你可以指定指针本身是否为常量，也可以指定指针所指向的内容是常量，或两者都是，或两者都不是。 1234567891011121314151617&#x2F;&#x2F; constPointer.h#ifndef __CONSTPOINTER_H__#define __CONSTPOINTER_H__#include &lt;iostream&gt;char greetin">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.449Z">
+<meta property="article:modified_time" content="2023-11-07T05:28:13.856Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="《Efficient C++》">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="C++,《Efficient C++》">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name"><2> const 关键字</2></span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#const-%E4%BF%AE%E9%A5%B0%E6%8C%87%E9%92%88%E5%8F%98%E9%87%8F"><span class="toc-text">const 修饰指针变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%AD%E7%9A%84-const"><span class="toc-text">迭代器中的 const</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#const-%E4%BF%AE%E9%A5%B0%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">const 修饰函数返回值</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#const-%E4%BF%AE%E9%A5%B0%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E5%8F%AF%E4%BB%A5%E8%A2%AB%E9%87%8D%E8%BD%BD"><span class="toc-text">const 修饰成员变量可以被重载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E5%B8%B8%E9%87%8F%E6%80%A7%E4%B8%8E%E9%80%BB%E8%BE%91%E5%B8%B8%E9%87%8F%E6%80%A7"><span class="toc-text">二进制位常量性与逻辑常量性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E5%B8%B8%E9%87%8F%E6%80%A7"><span class="toc-text">二进制位常量性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E5%B8%B8%E9%87%8F%E6%80%A7"><span class="toc-text">逻辑常量性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E5%B8%B8%E9%87%8F%E5%92%8C%E9%9D%9E%E5%B8%B8%E9%87%8F%E6%88%90%E5%91%98%E9%87%8D%E5%A4%8D"><span class="toc-text">避免常量和非常量成员重复</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%BB%E9%87%8D%E5%A4%8D%E4%BB%A3%E7%A0%81"><span class="toc-text">去重复代码</span></a></li></ol></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#const-%E4%BF%AE%E9%A5%B0%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="toc-text">const 修饰成员函数</span></a></li></div></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/D-%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/">D_立志博览群书</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/D-%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AEfficient-C-%E3%80%8B/">《Efficient C++》</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-10-27T01:24:02.449Z">2023-10-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span><2> const 关键字</2></span></h1>
+<p>[toc]</p>
+<h1 id="const-修饰指针变量"><a href="#const-修饰指针变量" class="headerlink" title="const 修饰指针变量"></a><code>const</code> 修饰指针变量</h1><p>对于指针，你可以指定指针本身是否为常量，也可以指定指针所指向的内容是常量，或两者都是，或两者都不是。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constPointer.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __CONSTPOINTER_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __CONSTPOINTER_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">char</span> greeting[] = <span class="string">&quot;Hello&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Widget</span></span><br><span class="line">&#123;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f1</span><span class="params">(<span class="type">const</span> Widget *pw)</span></span>; <span class="comment">// f1 获取一个指针指向常量的 Widget 对象</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f2</span><span class="params">(Widget <span class="type">const</span> *pw)</span></span>; <span class="comment">// f2 相同</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __CONSTPOINTER_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constPointer.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;constPointer.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">char</span> *p1 = greeting;                <span class="comment">// 非常量指针, 非常量数据</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> *p2 = greeting;          <span class="comment">// 非常量指针, 常量数据</span></span><br><span class="line">    <span class="type">char</span> <span class="type">const</span> *p3 = greeting;          <span class="comment">// 非常量指针, 常量数据</span></span><br><span class="line">    <span class="type">char</span> * <span class="type">const</span> p4 = greeting;         <span class="comment">// 常量指针, 非常量数据</span></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> * <span class="type">const</span> p5 = greeting;   <span class="comment">// 常量指针, 常量数据</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;p1 = &quot;</span> &lt;&lt; p1 &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;p2 = &quot;</span> &lt;&lt; p2 &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;p3 = &quot;</span> &lt;&lt; p3 &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;p4 = &quot;</span> &lt;&lt; p4 &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;p5 = &quot;</span> &lt;&lt; p5 &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>总结</strong>：如果 <code>const</code> 出现在星号的左边，那么被指针指向的内容就是常量；如果 <code>const</code> 出现在星号的右边，那么指针本身就是常量；如果 <code>const</code> 出现在星号两边，则表示指针和指针指向的内容都是常量。</p>
+<h1 id="迭代器中的-const"><a href="#迭代器中的-const" class="headerlink" title="迭代器中的 const"></a>迭代器中的 <code>const</code></h1><p><code>STL</code> 的迭代器是以指针为模型的，所以一个迭代器的行为很想一个和 <code>T*</code> 指针。声明一个迭代器的常数就像声明一个指针的常量（即声明一个 <code>T*</code> 常量指针）。迭代器不允许指向不同的内容，但它指向的内容可以被修改。如果你想要一个迭代器指向不能被修改的东西（即 STL 类似于一个 <code>const T*</code> 指针），则需要一个 <code>const_itrerator</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constIterator.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __CONSTITERATOR_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __CONSTITERATOR_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line">std::vector&lt;<span class="type">int</span>&gt; vec = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __CONSTITERATOR_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constIterator.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;constIterator.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 1. 指针为非常量，内容为非常量</span></span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt;::iterator iter1 = vec.<span class="built_in">begin</span>();</span><br><span class="line">    *iter1 = <span class="number">10</span>;     <span class="comment">// 正确</span></span><br><span class="line">    ++iter1;         <span class="comment">// 正确</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 指针为常量，内容为非常量</span></span><br><span class="line">    <span class="type">const</span> std::vector&lt;<span class="type">int</span>&gt;::iterator iter2 = vec.<span class="built_in">begin</span>();</span><br><span class="line">    *iter2 = <span class="number">10</span>;     <span class="comment">// 正确， 修改指针所指内容</span></span><br><span class="line">    ++iter2;         <span class="comment">// 错误，iter2 为常量指针，不能修改</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 指针为非常量，内容为常量</span></span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt;::const_iterator iter3 = vec.<span class="built_in">begin</span>();</span><br><span class="line">    *iter3 = <span class="number">10</span>;    <span class="comment">// 错误， *iter3 表示指针所指内容为常量，不能修改</span></span><br><span class="line">    ++iter3;        <span class="comment">// 正确，指针非常量，可以改变</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 指针为常量，内容为常量</span></span><br><span class="line">    <span class="type">const</span> std::vector&lt;<span class="type">int</span>&gt;::const_iterator iter4 = vec.<span class="built_in">begin</span>();</span><br><span class="line">    *iter4 = <span class="number">10</span>;    <span class="comment">// 错误， *iter4 表示指针所指内容为常量，不能修改</span></span><br><span class="line">    ++iter4;        <span class="comment">// 错误，iter4 为常量指针，不能修改</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5. 等效于 std::vector&lt;int&gt;::const_iterator iter5 = vec.begin();</span></span><br><span class="line">    <span class="keyword">auto</span> iter5 = vec.<span class="built_in">cbegin</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="const-修饰函数返回值"><a href="#const-修饰函数返回值" class="headerlink" title="const 修饰函数返回值"></a><code>const</code> 修饰函数返回值</h1><p>在成员函数上使用 <code>const</code> 的目的是为了确定哪些成员函数可以在 <code>const</code>对象上调用。这样的成员函数很重要，原因有二。首先，它们使一个类的接口更容易理解。知道哪些函数可以修改一个对象，哪些不可以，是很重要的。第二，它们使我们有可能与常量对象一起工作。这是编写高效代码的一个关键方面，提高 C++ 程序性能的基本方法之一是通过引用到常量来传递对象。这种技术只有在有常量成员函数的情况下才是可行的，可以用它来处理产生的常量限定的对象。</p>
+<p>关于 <code>const</code> 修饰成员函数主要讲以下三个知识点：</p>
+<ul>
+<li><code>const</code> 修饰的成员函数可以被重载。</li>
+<li>关于 ”二进制位常量性“ 与 ”逻辑常量性“。</li>
+<li>避免重载而导致重复代码。</li>
+</ul>
+<h2 id="const-修饰成员变量可以被重载"><a href="#const-修饰成员变量可以被重载" class="headerlink" title="const 修饰成员变量可以被重载"></a><code>const</code> 修饰成员变量可以被重载</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// overloadConst.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __OVERLOADCONST_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __OVERLOADCONST_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TextBlock</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">TextBlock</span>(std::string t) : <span class="built_in">text</span>(t) &#123;&#125;</span><br><span class="line">    ~<span class="built_in">TextBlock</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position) <span class="type">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;const char&amp; operator[](std::size_t position) const&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> text[position];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;char&amp; operator[](std::size_t position)&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">return</span> text[position];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string text;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __OVERLOADCONST_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// overloadConst.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;overloadConst.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 在函数中, ctb 是常量</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(<span class="type">const</span> TextBlock&amp; ctb)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 调用 const TextBlock::operator[]</span></span><br><span class="line">    std::cout &lt;&lt; ctb[<span class="number">0</span>] &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// ctb[0] = &#x27;x&#x27;;                           // 错误，不能修改一个常量</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 调用 TextBlock::operator[]</span></span><br><span class="line">    <span class="function">TextBlock <span class="title">tb</span><span class="params">(<span class="string">&quot;Hello&quot;</span>)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; tb[<span class="number">0</span>] &lt;&lt; std::endl;        <span class="comment">// 正确，只读一个非常量</span></span><br><span class="line">    tb[<span class="number">0</span>] = <span class="string">&#x27;x&#x27;</span>;                            <span class="comment">// 正确，修改一个非常量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用 const TextBlock::operator[]</span></span><br><span class="line">    <span class="function"><span class="type">const</span> TextBlock <span class="title">ctb</span><span class="params">(<span class="string">&quot;World&quot;</span>)</span></span>;</span><br><span class="line">    std::cout &lt;&lt; ctb[<span class="number">0</span>] &lt;&lt; std::endl;       <span class="comment">// 正确，只读一个常量</span></span><br><span class="line">    <span class="comment">// ctb[0] = &#x27;x&#x27;;                           // 错误，不能修改一个常量</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(tb);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过重载 <code>operator[]</code> 并赋予不同版本的返回值类型，你可以对常量和非常量 <code>TextBlocks</code> 进行不同的处理。</li>
+<li>常量对象在实际程序中最常出现的是通过指针或引用到常量的结果。例如示例代码中的 <code>void print(const TextBlock&amp; ctb)</code> 函数。</li>
+<li>请注意，<code>main()</code> 函数中 <code>ctb[0] = &#39;x&#39;;</code> 的错误只与被调用的 <code>operator[]</code> 的返回类型有关；对 <code>operator[]</code> 本身的调用都是正常的。错误是由于试图对 <code>const char&amp;</code> 进行赋值。</li>
+<li><code>operator[]</code> 的返回数据类型是 <code>char&amp;</code>，不是 <code>char</code>。如果 <code>operator[]</code> 如果只返回一个 <code>char</code>，是不会被编译通过的，因为修改内置数据类型的函数的返回值是不合法的。即使它是合法的，C++ 按值返回对象的事实将意味着一个 <code>tb.text[0]</code> 的副本会被修改，而不是 <code>tb.text[0]</code> 本身。</li>
+</ul>
+<h2 id="二进制位常量性与逻辑常量性"><a href="#二进制位常量性与逻辑常量性" class="headerlink" title="二进制位常量性与逻辑常量性"></a>二进制位常量性与逻辑常量性</h2><p>一个成员函数为常量意味着什么？有两个普遍的概念：“二进制位常量性”（也称为 “物理常量性”）和 “逻辑常量性”。</p>
+<h4 id="二进制位常量性"><a href="#二进制位常量性" class="headerlink" title="二进制位常量性"></a>二进制位常量性</h4><p>”二进制位常量性“ 阵营认为，当且仅当一个成员函数不修改对象的任何数据成员（不包括静态成员）时，它才是常量，也就是说它不修改对象内部的任何比特位。比特恒定性的好处是，它很容易被检测到违规行为，编译器只需查看对数据成员的赋值。事实上，逐位不变性是 C++ 对不变性的定义，而且一个常量成员函数不允许修改其所在对象的任何非静态数据成员。</p>
+<p>遗憾的是，许多不怎么规范的成员函数都通过了二进制位常量性测试。特别是，一个修改了 “指针所指向的内容” 的成员函数经常不算是常量成员。但如果对象中只有指针，那么称该函数是 “二进制位常量性”，编译器也不会有异议。例如下面的示例代码所示，假设有一个类似于 <code>TextBlock</code> 的类，它将其数据存储为 <code>char*</code> 类型而不是 <code>string</code>类型，因为它需要通过一个不认识 <code>string</code> 对象的 <code>C API</code> 进行交互。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bitwise.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __BITWISE_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __BITWISE_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CTextBlock</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CTextBlock</span>(std::string txt);</span><br><span class="line">    ~<span class="built_in">CTextBlock</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 二进制位常量性声明，实际并不合适</span></span><br><span class="line">    <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position) <span class="type">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> pText[position];</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">release</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">char</span> *pText;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __BITWISE_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bitwise.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;bitwise.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">CTextBlock::<span class="built_in">CTextBlock</span>(std::string txt) : <span class="built_in">pText</span>(<span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">release</span>();</span><br><span class="line">    <span class="type">int</span> len = txt.<span class="built_in">length</span>();</span><br><span class="line">    pText = <span class="keyword">new</span> <span class="type">char</span>[len + <span class="number">1</span>];</span><br><span class="line">    <span class="built_in">memset</span>(pText, <span class="number">0</span>, len + <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(pText, txt.<span class="built_in">data</span>(), len);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CTextBlock::~<span class="built_in">CTextBlock</span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">release</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">CTextBlock::release</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(pText != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">delete</span> pText;</span><br><span class="line">        pText = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="type">const</span> CTextBlock <span class="title">cctb</span><span class="params">(<span class="string">&quot;Hello&quot;</span>)</span></span>;</span><br><span class="line">    <span class="type">char</span> *pc = &amp;cctb[<span class="number">0</span>];</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;before modified: pc = &quot;</span> &lt;&lt; *pc &lt;&lt; std::endl;</span><br><span class="line">    *pc = <span class="string">&#x27;J&#x27;</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;after modified: pc = &quot;</span> &lt;&lt; *pc &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>CTextBlock</code> 类（不恰当地）将 <code>operator[]</code> 声明为一个常量成员函数，尽管该函数返回的是对对象内部数据的引用。注意到 <code>operator[]</code> 的实现并没有以任何方式修改 <code>pText</code>。因此，编译器会很乐意为 <code>operator[]</code> 生成代码。</p>
+<p>但是我们却发现在 <code>main()</code> 函数中 <code>*pc = &#39;J&#39;;</code> 对返回值进行了修改，<code>*pc</code> 可是调用 <code>operator[]</code> 后的返回值。</p>
+<h4 id="逻辑常量性"><a href="#逻辑常量性" class="headerlink" title="逻辑常量性"></a>逻辑常量性</h4><p>出现上面 “二进制位常量性” 示例代码中问题后出现了 “逻辑常量性” 派。 一个常量成员函数可能会修改它所调用的对象中的比特位，但只是以客户端检测不到的方式。例如，当你的 <code>CTextBlock</code> 类被请求后，可能想缓存文本块的长度。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// logic.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __LOGIC_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __LOGIC_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CTextBlock</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">std::<span class="type">size_t</span> <span class="title">length</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">char</span> *pText;</span><br><span class="line">    std::<span class="type">size_t</span> textLength;     <span class="comment">// 最近一次计算文本区块长度</span></span><br><span class="line">    <span class="type">bool</span> lengthIsValid;         <span class="comment">// 目前长度是否有效</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __LOGIC_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// logic.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;logic.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">std::<span class="type">size_t</span> <span class="title">CTextBlock::length</span><span class="params">()</span> <span class="type">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!lengthIsValid) &#123;</span><br><span class="line">        <span class="comment">// 错误，const 成员函数内不能给 textLength 和 lengthIsValid 赋值</span></span><br><span class="line">        textLength = std::<span class="built_in">strlen</span>(pText);</span><br><span class="line">        lengthIsValid = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> textLength;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>length()</code> 的实现不是 “二进制位常量性”，因为 <code>textLength</code> 和 <code>lengthIsValid</code> 都可能被修改。这两个数据被修改对 <code>const CTextBlock</code> 对象而言虽然可接受，但编译器不同意。</p>
+<p>解决办法也很简单，利用 C++ 的一个与 <code>const</code> 相关的摆动场：<code>mutable</code>（可变的）。<code>mutable</code> 释放掉非静态成员变量的 “二进制位常量性” 约束。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// logic.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __LOGIC_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __LOGIC_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CTextBlock</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">std::<span class="type">size_t</span> <span class="title">length</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">char</span> *pText;</span><br><span class="line">    <span class="keyword">mutable</span> std::<span class="type">size_t</span> textLength;     <span class="comment">// 最近一次计算文本区块长度</span></span><br><span class="line">    <span class="keyword">mutable</span> <span class="type">bool</span> lengthIsValid;         <span class="comment">// 目前长度是否有效</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __LOGIC_H__</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="避免常量和非常量成员重复"><a href="#避免常量和非常量成员重复" class="headerlink" title="避免常量和非常量成员重复"></a>避免常量和非常量成员重复</h2><p><code>mutable</code> 是一个很好的解决方案，它解决了二进制位常量性非我所欲的问题，但它并没有解决所有与常量相关的困难。例如，假设 <code>TextBlock</code>（和 <code>CTextBlock</code>）中的 <code>operator[]</code> 不仅返回对相应字符的引用，它还执行边界检查，记录访问信息，甚至可能进行数据完整性验证。把所有这些放在常量和非常量的 <code>operator[]</code> 函数中（不要担心，现在有隐式内联长度的函数–见实验《透彻内联》）会产生这种怪异的现象。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// avoidDuplication.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __AVOIDDUPLICATION_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __AVOIDDUPLICATION_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TextBlock</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position) <span class="type">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 边界检查</span></span><br><span class="line">        <span class="comment">// 日志数据访问</span></span><br><span class="line">        <span class="comment">// 验证数据完整性</span></span><br><span class="line">        <span class="keyword">return</span> text[position];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 边界检查</span></span><br><span class="line">        <span class="comment">// 日志数据访问</span></span><br><span class="line">        <span class="comment">// 验证数据完整性</span></span><br><span class="line">        <span class="keyword">return</span> text[position];</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string text;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __AVOIDDUPLICATION_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<p>看到上面示例代码，你能说代码重复，以及随之而来的编译时间、维护和代码漏洞等问题吗？当然，我们可以把所有的边界检查等代码移到一个单独的成员函数中（私有的），两个版本的 <code>operator[]</code> 都会调用。但你仍然会重复调用该函数，并且你仍然有重复的返回语句代码。</p>
+<p>你真正想做的是实现一次 <code>operator[]</code> 功能并使用它两次。也就是说，你想让一个版本的 <code>operator[]</code> 调用 <code>const operator[]</code>。这就使得我们需要去除常量性。</p>
+<h4 id="去重复代码"><a href="#去重复代码" class="headerlink" title="去重复代码"></a>去重复代码</h4><p>作为一般规则，转型是一个糟糕的想法，在实验《尽量少类型转换》整个实验来讨论这个问题，但代码重复也不是什么好事。在这种情况下，<code>const operator[]</code> 所做的与 <code>operator[]</code> 所做的事情相同，只有常量版本返回值类型受到常量约束。在这种情况下，将返回值中的 <code>const</code> 转型是安全的。因为不论调用 <code>operator[]</code> 还是 <code>const operator[]</code> 都一定首先有个非常量对象，否则就不能够调用非常量函数。所以用 <code>operator[]</code> 调用 <code>const operator[]</code> 是一个避免代码重复的安全做法，即使过程中需要一个转型动作。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// safeCast.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> __TEXTBLOCK_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __TEXTBLOCK_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TextBlock</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position) <span class="type">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 边界检查</span></span><br><span class="line">        <span class="comment">// 日志数据访问</span></span><br><span class="line">        <span class="comment">// 验证数据完整性</span></span><br><span class="line">        <span class="keyword">return</span> text[position];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">char</span>&amp; <span class="keyword">operator</span>[](std::<span class="type">size_t</span> position)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">const_cast</span>&lt;<span class="type">char</span>&amp;&gt;(<span class="built_in">static_cast</span>&lt;<span class="type">const</span> TextBlock&amp;&gt;(*<span class="keyword">this</span>)[position]);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::string text;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// __TEXTBLOCK_H__</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如示例代码所示，代码有两个转型，而不是一个。第一次用来为 <code>*this</code> 添加 <code>const</code> 使得 <code>operator[]</code> 可以调用 <code>const operator[]</code>，第二次则是从 <code>const operator[]</code> 的返回值中去除常量性。</li>
+<li>示例代码中使用 <code>operator[]</code> 调用 <code>const operator[]</code>，但如果只是单纯的调用会递归调用自己，那么代码会一直重复调用。为了避免无穷递归，调用时必须明确指出调用的是 <code>const operator[]</code>。</li>
+<li>C++ 缺乏直接的语法可以去调用，因此将 <code>*this</code> 从其原始类型 <code>TextBlock&amp;</code> 转型为 <code>const TextBlock&amp;</code>。</li>
+<li>使用 <code>static_cast</code> 添加常量性，强制进行了一次安全转型；再使用 <code>const_cast</code> 去除常量性。</li>
+</ul>
+<h1 id="const-修饰成员函数"><a href="#const-修饰成员函数" class="headerlink" title="const 修饰成员函数"></a><code>const</code> 修饰成员函数</h1>
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AEfficient%20C++%E3%80%8B/3_%E7%A1%AE%E5%AE%9A%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8%E5%89%8D%E5%88%9D%E5%A7%8B%E5%8C%96/"><3> 确定对象使用前初始化</3></a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AC++%20primer%20plus%E3%80%8B/%E7%AC%AC11%E7%AB%A0%20%E4%BD%BF%E7%94%A8%E7%B1%BB/%E5%8F%8B%E5%85%83/">友元</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\D_立志博览群书\《Efficient C++》\Readme\" title="《Efficient C++》 导读"><span class="title">《Efficient C++》 导读</span></a><a class="item" href="\B_Code\CPP\Json11\" title="Json11 C++ 用法总结"><span class="title">Json11 C++ 用法总结</span></a><a class="item" href="\B_Code\CPP\try-catch块\" title="try-catch块"><span class="title">try-catch块</span></a><a class="item" href="\B_Code\CPP\【CPP】字符串类型相互转换\" title="字符串类型转换整理(char、TCHAR、string、wstring、CString、WCHAR)"><span class="title">字符串类型转换整理(char、TCHAR、string、wstring、CString、WCHAR)</span></a><a class="item" href="\D_立志博览群书\《Efficient C++》\4_了解CPP默认创建并调用的函数\" title="<4> 了解C++默认创建并调用的函数"><span class="title"><4> 了解C++默认创建并调用的函数</4></span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
