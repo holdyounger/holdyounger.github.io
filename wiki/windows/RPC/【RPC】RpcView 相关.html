@@ -30,11 +30,13 @@
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：RpcView 代码学习及扫描逻辑整理  0x01 RpcView 代码学习silverf0x&#x2F;RpcView: RpcView is a free tool to explore and decompile Microsoft RPC interfaces。 RpcView 是一款开源的 Windows RPC 监控工具。界面部分是用Qt实现的，功能是C\C++写的，功能部分涉">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/wiki/windows/RPC/%E3%80%90RPC%E3%80%91RpcView">
 <meta property="article:published_time" content="2023-11-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-11-09T02:22:34.003Z">
+<meta property="article:modified_time" content="2023-11-09T11:11:34.759Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="RPC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/wiki/windows/RPC/%E3%80%90RPC%E3%80%91RpcView">
   
   
   
@@ -73,7 +75,7 @@
 
   
 
-<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
 
 <nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
 </header>
@@ -92,7 +94,7 @@
       
   
 
-<header class="header mobile-only"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Users/shimingming/Pictures.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
+<header class="header mobile-only"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
 
 
 
@@ -106,7 +108,7 @@
 <h2 id="0x01-RpcView-代码学习"><a href="#0x01-RpcView-代码学习" class="headerlink" title="0x01 RpcView 代码学习"></a>0x01 RpcView 代码学习</h2><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/silverf0x/RpcView/tree/master">silverf0x&#x2F;RpcView: RpcView is a free tool to explore and decompile Microsoft RPC interfaces</a>。</p>
 <p>RpcView 是一款开源的 Windows RPC 监控工具。界面部分是用Qt实现的，功能是C\C++写的，功能部分涉及到枚举系统的rpc并且还实现了rpc的反汇编。不管是要研究 RPC 还是学习代码逻辑、规范等，都比较有参考意义。</p>
 <p>本文主要是看功能部分，界面部分暂不涉及。</p>
-<h2 id="0x02-Rpc扫描"><a href="#0x02-Rpc扫描" class="headerlink" title="0x02 Rpc扫描"></a>0x02 Rpc扫描</h2>
+<h2 id="0x02-Rpc扫描"><a href="#0x02-Rpc扫描" class="headerlink" title="0x02 Rpc扫描"></a>0x02 Rpc扫描</h2><div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【RPC】RpcView" alt="相关/image-20231108172743827.png"></div><div class="image-meta"><span class="image-caption center">相关/image-20231108172743827.png</span></div></div>
 
 <p>可以看出来 RpcView 这款软件的强大之处哈，rpc的所有信息都可以拿到。</p>
 <h3 id="扫描逻辑"><a href="#扫描逻辑" class="headerlink" title="扫描逻辑"></a>扫描逻辑</h3><p>一个基础概念：&#x3D;&#x3D;PE文件结构：<strong>DOS头+PE头+节表+.data&#x2F;.rdata&#x2F;.text</strong>&#x3D;&#x3D;</p>

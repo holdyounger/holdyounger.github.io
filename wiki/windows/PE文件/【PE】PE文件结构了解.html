@@ -30,11 +30,18 @@
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析）">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-11-09T11:00:26.159Z">
-<meta property="article:modified_time" content="2023-11-09T11:00:26.159Z">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/pe.png">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/image-20231109153335507.png">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/image-20231109154333707.png">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/image-20231109155516699.png">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/image-20231109164320229.png">
+<meta property="og:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/image-20231109185705412.png">
+<meta property="article:published_time" content="2023-11-10T01:44:52.946Z">
+<meta property="article:modified_time" content="2023-11-10T01:44:52.946Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="PE">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/wiki/windows/PE%E6%96%87%E4%BB%B6/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E4%BA%86%E8%A7%A3/pe.png">
   
   
   
@@ -101,7 +108,7 @@
   
   
   
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/Homework-c-language/index.html">windows</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-11-09T11:00:26.159Z">2023-11-09</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/Homework-c-language/index.html">windows</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-11-10T01:44:52.946Z">2023-11-10</time></div></div>
 
   <article class="md-text content wiki">
   <h1 class="article-title"><span>【PE】PE文件结构（一）</span></h1>
@@ -120,9 +127,9 @@
 </li>
 </ul>
 <h2 id="0x02-PE结构"><a href="#0x02-PE结构" class="headerlink" title="0x02 PE结构"></a>0x02 PE结构</h2><p>PE 结构是由<strong>若干个复杂的结构体组合</strong>而成的，不是单单的一个结构体那么简单，它的结构就像文件系统的结构是由多个结构体组成的。PE 结构包含的结构体有 <strong>DOS 头、PE 标识、文件头、可选头、目录结构、节表</strong>等。如下图所示：</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/pe.png" fancybox="true"></div></div>
 
-
-<h3 id="DOS头"><a href="#DOS头" class="headerlink" title="DOS头"></a>DOS头</h3><p>DOS头中声明用的寄存器(我们可以看到e_ss、e_sp、e_ip、e_cs还是16位的寄存器)，所以在32位&#x2F;64为系统中用到的只有两个成员了（第一个和最后一个）。无论是32位还是64位PE文件，其文件的头部必定是DOS头。大小位 &#x3D;&#x3D;40H(64字节)&#x3D;&#x3D;。相关结构如下所示：</p>
+<h3 id="DOS头"><a href="#DOS头" class="headerlink" title="DOS头"></a>DOS头</h3><p>DOS头中声明用的寄存器(我们可以看到e_ss、e_sp、e_ip、e_cs还是16位的寄存器)，所以在32位&#x2F;64为系统中用到的只有两个成员了（第一个和最后一个）。无论是32位还是64位PE文件，其文件的头部必定是DOS头。大小为 &#x3D;&#x3D;40H(64字节)&#x3D;&#x3D;。相关结构如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WORD 为2字节</span></span><br><span class="line"><span class="comment">// DWORD 为4字节</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_IMAGE_DOS_HEADER</span> &#123;      <span class="comment">// DOS .EXE header(※Magic DOS signature MZ(4Dh 5Ah):MZ标记)</span></span><br><span class="line">    WORD   e_magic;                     <span class="comment">// Magic number</span></span><br><span class="line">    WORD   e_cblp;                      <span class="comment">// Bytes on last page of file</span></span><br><span class="line">    WORD   e_cp;                        <span class="comment">// Pages in file</span></span><br><span class="line">    WORD   e_crlc;                      <span class="comment">// Relocations</span></span><br><span class="line">    WORD   e_cparhdr;                   <span class="comment">// Size of header in paragraphs</span></span><br><span class="line">    WORD   e_minalloc;                  <span class="comment">// Minimum extra paragraphs needed</span></span><br><span class="line">    WORD   e_maxalloc;                  <span class="comment">// Maximum extra paragraphs needed</span></span><br><span class="line">    WORD   e_ss;                        <span class="comment">// Initial (relative) SS value</span></span><br><span class="line">    WORD   e_sp;                        <span class="comment">// Initial SP value</span></span><br><span class="line">    WORD   e_csum;                      <span class="comment">// Checksum</span></span><br><span class="line">    WORD   e_ip;                        <span class="comment">// Initial IP value</span></span><br><span class="line">    WORD   e_cs;                        <span class="comment">// Initial (relative) CS value</span></span><br><span class="line">    WORD   e_lfarlc;                    <span class="comment">// File address of relocation table</span></span><br><span class="line">    WORD   e_ovno;                      <span class="comment">// Overlay number</span></span><br><span class="line">    WORD   e_res[<span class="number">4</span>];                    <span class="comment">// Reserved words</span></span><br><span class="line">    WORD   e_oemid;                     <span class="comment">// OEM identifier (for e_oeminfo)</span></span><br><span class="line">    WORD   e_oeminfo;                   <span class="comment">// OEM information; e_oemid specific</span></span><br><span class="line">    WORD   e_res2[<span class="number">10</span>];                  <span class="comment">// Reserved words</span></span><br><span class="line">    LONG   e_lfanew;                    <span class="comment">// File address of new exe header</span></span><br><span class="line">  &#125; IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;</span><br></pre></td></tr></table></figure>
 
 <p>DOS 头又分为两部分，&#x3D;&#x3D;MZ头部&#x3D;&#x3D; 和 &#x3D;&#x3D;DOS存根&#x3D;&#x3D;。</p>
@@ -132,10 +139,10 @@
 <li><code>e_magic</code>：对应 MZ标识(固定值) ，也就是 <code>0x5A4D</code></li>
 <li><code>e_lfanew</code>: 指pe的偏移量，对应的PE数据块的基地址</li>
 </ul>
-</li>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/image-20231109153335507.png" fancybox="true"></div></div></li>
 </ul>
 <h4 id="DOS存根（DOS-stub）"><a href="#DOS存根（DOS-stub）" class="headerlink" title="DOS存根（DOS stub）"></a>DOS存根（DOS stub）</h4><p>DOS头(<code>IMAGE_DOS_HEADER</code>)和PE头(<code>IMAGE_NT_HEADERS</code>)中间的空余位置是一些垃圾值以及编译器填充的一些 *The is program cannot be run in DOS mode.*或 <em>This program must be run under Win32</em> 等信息。这些信息就是 DOS存根。DOS存根实际上是一段<strong>汇编代码</strong>。用于在DOS环境下启动PE文件时输出一些上述文本。</p>
-
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/image-20231109154333707.png" fancybox="true"></div></div>
 
 <blockquote>
 <p>在pe文件利用的时候，我们可以把payload写入到当前区域，诸如存放我们的shellcode，在读取时，获取dos头字节数，减去MZ头字节数，即为dos存根字节大小。然后拿去操作加载shellcode等。</p>
@@ -145,7 +152,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NT头</span></span><br><span class="line"><span class="comment">//pNTHeader = dosHeader + dosHeader-&gt;e_lfanew;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_NT_HEADERS</span>&#123;</span></span><br><span class="line">    <span class="number">0x00</span> DWORD Signature;   <span class="comment">//PE文件标识:ASCII的&quot;PE\0\0&quot;</span></span><br><span class="line">    <span class="number">0x04</span> _IMAGE_FILE_HEADER FileHeader;</span><br><span class="line">    <span class="number">0x18</span> _IMAGE_OPTIONAL_HEADER OptionalHeader;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>根据DOS头的<code>e_lfanew</code>成员我们就可以找到NT头，NT头的第一个成员<code>Signature</code>是<code>PE\0\0</code>（0X50 0X45 0X00 0X00四字节的签名），后两个成员则分别是标准PE头<code>FileHeader</code>（<code>_IMAGE_FILE_HEADER</code>）和<code>OptionalHeader</code>可选PE头（<code>_IMAGE_OPTIONAL_HEADER</code>）。</p>
-
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/image-20231109155516699.png" fancybox="true"></div></div>
 
 <h4 id="PE标识-Signature"><a href="#PE标识-Signature" class="headerlink" title="PE标识 Signature"></a>PE标识 Signature</h4><p>将文件标识为 PE 映像的 4 字节签名。字节为<code>PE\0\0</code>。这个字段是PE文件的标志字段，通常设置成 <code>00004550h</code>，其ASCII码为 <code>PE00</code>，这个字段是PE文件头的开始，前面的<code>DOS_HEADER</code>结构中的字段<code>e_lfanew</code>字段就是指向这里。</p>
 <h4 id="文件头-FileHeader"><a href="#文件头-FileHeader" class="headerlink" title="文件头 FileHeader"></a>文件头 FileHeader</h4><p>文件头结构体为 <code>_IMAGE_FILE_HEADER</code>，见<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_file_header">IMAGE_FILE_HEADER (winnt.h) - Win32 apps | Microsoft Learn</a>。结构体成员变量如下所示：</p>
@@ -226,7 +233,7 @@
 
 <p>上述共计 31 个字段，常用的一般是加<code>*</code>的几个。这里还是简单的按照内存和结构体一一对应分析看下。</p>
 <p>内存如下所示：</p>
-
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/image-20231109164320229.png" fancybox="true"></div></div>
 
 <table>
 <thead>
@@ -460,7 +467,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">_IMAGE_DATA_DIRECTORY</span>&#123;</span><br><span class="line">    DWORD   VirtualAddress;</span><br><span class="line">    DWORD   Size;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//占用16*8 = 128Byte = 80H = E0H(可选PE头默认大小) - 60H(前面所有成员固定占用大小)</span></span><br></pre></td></tr></table></figure>
 
 <p>关于最后一个成员变量，可枚举的 <code>IMAGE_NUMBEROF_DIRECTORY_ENTRIES</code> 索引总共有15个。也就是说，在 <strong>DataDirectory</strong> 位置存放了 15 个指针。可以参考之前的PE头对照一下，剩下的PE内存刚好存放了 15 个指针，如下图所示：</p>
-
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【PE】PE文件结构了解/image-20231109185705412.png" fancybox="true"></div></div>
 
 <h3 id="节表"><a href="#节表" class="headerlink" title="节表"></a>节表</h3><p>下篇文章记录</p>
 <h3 id="节表数据"><a href="#节表数据" class="headerlink" title="节表数据"></a>节表数据</h3><p>下篇文章记录</p>
