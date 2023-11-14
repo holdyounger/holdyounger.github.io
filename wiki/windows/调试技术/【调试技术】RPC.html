@@ -30,12 +30,14 @@
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：windwos RPC 调试记录">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/wiki/windows/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png">
 <meta property="article:published_time" content="2023-11-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-11-10T06:09:00.980Z">
+<meta property="article:modified_time" content="2023-11-10T10:36:47.117Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="调试技术">
 <meta property="article:tag" content="RPC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/wiki/windows/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png">
   
   
   
@@ -102,7 +104,7 @@
   
   
   
-<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/windows/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91PEB.html">调试技术</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-11-10T06:09:00.980Z">2023-11-10</time></div></div>
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/windows/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91PEB.html">调试技术</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-11-10T10:36:47.117Z">2023-11-10</time></div></div>
 
   <article class="md-text content wiki">
   <h1 class="article-title"><span>【调试技术】RPC</span></h1>
@@ -115,7 +117,7 @@
 
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>windows RPC 是常用的远程调用，有关 rpc 的使用可以在博客中搜索RPC关键字查看相关使用。RPC工具也可以使用开源 &#x3D;&#x3D;RPCView&#x3D;&#x3D;。</p>
 <h2 id="RPC及相关工具"><a href="#RPC及相关工具" class="headerlink" title="RPC及相关工具"></a>RPC及相关工具</h2><p>可以看到 RpcView 可以看到 RPC 进程使用的协议 <strong>ncacn_np</strong> ，以及 <strong>ncacn_np</strong> 协议对应的管道名 <code>\\pipe\\hello</code>。那本次调试的目标就是对标 RpcView。在 windbg 中可以查看一个进程RPC详细详细。</p>
-
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【调试技术】RPC/image-20231108152509853.png" fancybox="true"></div></div>
 
 <h2 id="调试步骤"><a href="#调试步骤" class="headerlink" title="调试步骤"></a>调试步骤</h2><p>rpc调试主要用到的 windows kits 中带的文件 dbgrpc.exe。详见微软官方文档 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/using-the-dbgrpc-tool">使用 DbgRpc 工具 - Windows drivers | Microsoft Learn</a></p>
 <h4 id="相关命令及输出说明"><a href="#相关命令及输出说明" class="headerlink" title="相关命令及输出说明"></a>相关命令及输出说明</h4>
