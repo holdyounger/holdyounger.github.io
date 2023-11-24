@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>弱密码攻防：【弱密码】MySQL8 - oone</title>
+
+  
+    <meta name="description" content="概述：MySQL8 弱密码研究  相关文章推荐 InnoDB – Jeremy Cole  IBD文件IBD 文件布局 The basics of InnoDB space file layout – Jeremy Cole IBD 主要以 spaces (空间也称作 tablespace) 作为 MySQL 存储的上下文，在 InnoDB 中，对于每一个 MySQL表，都增加了表空间文件，也就">
+<meta property="og:type" content="website">
+<meta property="og:title" content="【弱密码】MySQL8">
+<meta property="og:url" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：MySQL8 弱密码研究  相关文章推荐 InnoDB – Jeremy Cole  IBD文件IBD 文件布局 The basics of InnoDB space file layout – Jeremy Cole IBD 主要以 spaces (空间也称作 tablespace) 作为 MySQL 存储的上下文，在 InnoDB 中，对于每一个 MySQL表，都增加了表空间文件，也就">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/Basic_Page_Overview.png">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/FIL_Header_and_Trailer.png">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/INDEX_Page_Overview.png">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/INDEX_Header.png">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/INDEX_System_Records.png">
+<meta property="og:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/INDEX_Page_Directory.png">
+<meta property="article:published_time" content="2023-11-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-11-24T10:04:51.860Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8/Basic_Page_Overview.png">
+  
+  
+  
+  <meta name="keywords" content>
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="wiki">
+    
+
+  
+
+
+
+
+<div class="widgets"><widget class="widget-wrapper logo-wrap wiki"><div class="widget-body"><a style="filter: grayscale(100%)" class="wiki-home cap" href="/"><svg aria-hidden="true" viewbox="0 0 16 16" width="1rem" height="1rem" fill="currentColor"><path fill-rule="evenodd" d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/></svg>所有项目</a><a class="title" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html"><div class="main" ff="title">弱密码攻防</div><div class="sub normal cap">弱密码</div><div class="sub hover cap" style="opacity:0"> Weak Password</div></a></div></widget>
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/wiki/安全/" placeholder="在 /wiki/安全/ 中搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+
+
+<widget class="widget-wrapper toc multi" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【弱密码】MySQL8</span></div><div class="widget-body fs14"><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html#start"><span class="toc-text">ActiveMQ 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ElasticSearch%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">ElasticSearch 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/Jboss%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">JBoss 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/SharpDecrptyPwd%E4%BD%BF%E7%94%A8.html"><span class="toc-text">SharpDecrpty的使用</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/OpenVPN%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">OpenVPN 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/WebLogic%E5%BC%B1%E5%AF%86%E7%A0%81.html"><span class="toc-text">WebLogic 弱密码</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/hashcat%E4%BD%BF%E7%94%A8.html"><span class="toc-text">hashcat使用</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/index.html"><span class="toc-text">弱密码检测</span></a></div><div class="doc-tree active"><a class="doc-tree-link active" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8.html"><span class="toc-text">【弱密码】MySQL8</span></a><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%8E%A8%E8%8D%90"><span class="toc-text">相关文章推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IBD%E6%96%87%E4%BB%B6"><span class="toc-text">IBD文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IBD-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-text">IBD 文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B5"><span class="toc-text">页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#INDEX-Header"><span class="toc-text">INDEX Header</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#System-records-infimum-and-supermum"><span class="toc-text">System records: infimum and supermum</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#User-records"><span class="toc-text">User records</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-page-directory"><span class="toc-text">The page directory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Free-Space"><span class="toc-text">Free Space</span></a></li></ol></li></ol></li></ol></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91PostgreSQL.html"><span class="toc-text">【弱密码】PostgreSQL</span></a></div></div></widget>
+
+
+
+<widget class="widget-wrapper related"><div class="widget-header cap theme dis-select"><span class="name">更多安全</span></div><div class="widget-body related-posts"><a class="item wiki" href="/wiki/%E5%AE%89%E5%85%A8/AD%E5%9F%9F.html"><span class="title">windows安全开发</span><span class="excerpt">有关于windows安全开发、攻防、取证等</span></a><a class="item wiki" href="/wiki/Homework-c-language/index.html"><span class="title">Windows</span><span class="excerpt">有关于windows，包括但不限于用法、原理、安全……</span></a></div></widget>
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+  
+  
+  
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" id="home" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki/">项目</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/%E5%AE%89%E5%85%A8/%E5%BC%B1%E5%AF%86%E7%A0%81/ActiveMQ%E5%BC%B1%E5%AF%86%E7%A0%81.html">弱密码攻防</a></div><div id="post-meta">更新于&nbsp;<time datetime="2023-11-24T10:04:51.860Z">2023-11-24</time></div></div>
+
+  <article class="md-text content wiki">
+  <h1 class="article-title"><span>【弱密码】MySQL8</span></h1>
+  <blockquote>
+<p>概述：MySQL8 弱密码研究</p>
+</blockquote>
+<h2 id="相关文章推荐"><a href="#相关文章推荐" class="headerlink" title="相关文章推荐"></a>相关文章推荐</h2><ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jcole.us/innodb/">InnoDB – Jeremy Cole</a></li>
+</ul>
+<h2 id="IBD文件"><a href="#IBD文件" class="headerlink" title="IBD文件"></a>IBD文件</h2><p>IBD 文件布局</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jcole.us/2013/01/03/the-basics-of-innodb-space-file-layout/">The basics of InnoDB space file layout – Jeremy Cole</a></p>
+<p>IBD 主要以 <code>spaces</code> (空间也称作 <code>tablespace</code>) 作为 MySQL 存储的上下文，在 InnoDB 中，对于每一个 MySQL表，都增加了表空间文件，也就是 <code>.ibd</code> 文件，也即“file per table”，比如你创建了一个表 <code>test_user</code>，对应的就会创建一个 <code>test_user.ibd</code> 文件，本篇文章以翻译和记录为主描述 <code>.ibd</code> 文件的文件结构。</p>
+<h3 id="IBD-文件结构"><a href="#IBD-文件结构" class="headerlink" title="IBD 文件结构"></a>IBD 文件结构</h3><p>IBD文件的的主体结构如下所示，分为3部分：</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/Basic_Page_Overview.png" fancybox="true"></div></div>
+
+<p>每一个 ibd 文件都有一个38字节的头和8字节的尾。头部包含了一个页面的基础信息，决定了页面其余部分的结构，这一点和PE文件结构基本上一致，文件尾为文件检验和。</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/FIL_Header_and_Trailer.png" fancybox="true"></div></div>
+
+<p>文件头和文件尾包含了一下结构（乱序）：</p>
+<ul>
+<li>Page Type: 页面类型，解析页内容的关键，可被分配的类型包括但不限于 文件空间管理、数据字典、回滚日志等</li>
+<li>Space ID: 表空间ID</li>
+<li>Page Number: 一旦页面被初始化，Page Number 就会被存储在表头，可用于检查当前页面与文件中的偏移量是否匹配。该字段存在时表明当前页已经被初始化了。</li>
+<li>Checksum: 一个32位的校验和</li>
+<li>Next Page: 指向下一个 Page 的 32位指针。</li>
+<li>LSN for last page modification：存储在头部的页面最后修改的64尾日志序列号（LSN）,低32位存储在尾部中（Low 32 bits of LSN）。</li>
+<li>Flush LSN：一个64位的LSN字段，存储整个系统中所有页面当中最高的LSN。</li>
+</ul>
+<h4 id="页"><a href="#页" class="headerlink" title="页"></a>页</h4><p>Pages 是表文件的基本单位，每一个pages的大小为 16kib（也就是 $16 * 1024$ bits）。至于为什么是这个大小，Jeremy 在他的文章中表示可能有以下两个原因：</p>
+<ol>
+<li>编译时定义 <code>UNIV_PAGE_SIZE</code> 被更改</li>
+<li>使用了 InnoDB 对数据进行了压缩</li>
+</ol>
+<p>对于每一个 Page，都为其分配了一个 32bit 的整型数字，称作”变异量”，实际上是每个页面与空间开头的偏移量（对于多文件的表空间，不一定是文件）。基于此可知，page0 位于文件偏移0的位置，page10位于文件偏移16384的位置，以此类推。（引申一下 InnoDB 的数据限额，最大允许 64TiB 的容量，也就是 $2^{32} * 1024 Kib &#x3D; 64 TiB$）。</p>
+<p>每个表空间的第一页都是文件头的page。一个数据文件由很多个页组成，标准的数据页（INDEX page）组成结构如下所示：</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/INDEX_Page_Overview.png" fancybox="true"></div></div>
+
+<p>关于页的结构各部分描述如下所示：</p>
+<ul>
+<li>FIL Header: 文件头，所有页面类型通用部分，索引页有别于其他页的地方是其结构中的 <code>privious page</code> 和 <code>next page</code> 指向了同一级的索引。</li>
+<li>INDEX Header: 保存了很多和索引页以及记录管理相关的字段，后文详述。</li>
+<li>FSEG Header: FSEG头包含指向次索引所使用的文件段的指针。未被使用的索引页的 FSEG 是被0填充的。</li>
+<li>System Records: 在每个页中，InnoDB 都有两个行记录，一个是 <code>infinum</code>，一个是 <code>supremum</code>。这两个记录在页面中的位置是固定的，可以根据页面的自己偏移量直接找到这两个字段。</li>
+<li>User records: 真正存储用户数据的区域。每条记录都有一个不定长的表头和实际的数据。表头中包含了下一条记录的指针，该指针按升序记录了下一条记录的偏移量，整体构成一个单链表。</li>
+<li>Free Space: 未使用空间</li>
+<li>Page Directory: 页目录从 FIL Header 到 FIL Trailer 记录了每一个页的中一些记录的指针（每个页面的第4到第8条记录）。</li>
+</ul>
+<h4 id="INDEX-Header"><a href="#INDEX-Header" class="headerlink" title="INDEX Header"></a>INDEX Header</h4><p>在每一个索引页中，INDEX Header 都有一个固定的长度和如下所示的结构：</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/INDEX_Header.png" fancybox="true"></div></div>
+
+<p>INDEX Header 中字段：</p>
+<ul>
+<li>Number of Directory Slots: 当前页面目录在槽中的大小，每一个槽有 16-bit byte 的大小。</li>
+<li>Heap Top Position: 当前使用空间结束位置的偏移量。堆顶和页面目录结束之间的空间都是空闲空间。</li>
+<li>Number of Heap Records&#x2F;Format Flag: <ul>
+<li>Format Flag: 当前页的记录格式，存储在 <code>Number of Heap Records</code> 的高位（0x8000）中。总共有两个类型。<code>COMPACT</code> 和 <code>REDUNDANT</code> </li>
+<li>Number of Heap Records: 当前页面的记录总量，包括系统记录 <code>infimum</code> 和 <code>supremum</code> 以及删除的记录。</li>
+</ul>
+</li>
+<li>First Garbage Record Offset: 指向删除记录链表中第一个的入口。</li>
+<li>Garbage Space: 删除记录中已被删除的记录的字节总数。</li>
+<li>Last Insert Position: 最后插入页面记录的字节偏移量。</li>
+<li>Page Direction: 页面生长方向，<code>LEFT</code>、<code>RIGHT</code>、<code>NO_DIRECTION</code> 三个值。决定了页面是顺序插入还是随机插入。每次插入时，都会读取最后插入位置的记录，并将其键与当前插入记录的键进行比较，然后确定插入的方向。</li>
+<li>Number of Inserts in Page Direction: 当 <code>Page Direction</code> 被设置后，任何被插入的数据都不能重置方向，但是会递增当前值。</li>
+<li>Number of Records: 当前页面中未被删除的用户记录数量。</li>
+<li>MaxiMum Transaction ID: 当前页面中所有记录中最大的事务ID。</li>
+<li>Page Level: 当前页面在索引中的级别。叶子节点的级别为 0, B+树的级别一次递增。</li>
+<li>Index ID: 当前页面所属ID</li>
+</ul>
+<blockquote>
+<p>关于记录指针（Record pointer）：</p>
+<p>记录指针被用在服务的不同地方。INDEX Header 中的最后一次插入位置字段、所有页目录的值、以及系统中下一条记录、用户记录。所有的记录都包含了一个头（可变长），然后后边跟着一个实际的数据（可变长）。Record pointers 指向了记录数据中的第一个字节，实际上是介于头和记录数据之间。这样就可以通过从该位置向后读取头，并从该位置读取记录数据。</p>
+<p>由于系统记录和用户记录的Next指针总是指向 Header 中的第一个字段，因此从这个指针向后读取，就可以非常高效的读取一整个页面而不用解析可变长的数据记录。</p>
+</blockquote>
+<h4 id="System-records-infimum-and-supermum"><a href="#System-records-infimum-and-supermum" class="headerlink" title="System records: infimum and supermum"></a>System records: infimum and supermum</h4><p>每一个索引页都包含两个系统记录，<code>infimum</code> 和 <code>supermum</code>, 存储在固定的位置（依次 偏移位置 99 和 112）。结构如下所示：</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/INDEX_System_Records.png" fancybox="true"></div></div>
+
+<p>两个系统记录前都有一个典型的记录头，并且 <code>infimum</code> 和 <code>supremum</code> 是这两个系统记录的唯一值。只需要关注系统记录前的记录头即可。</p>
+<ul>
+<li>The infimum record</li>
+</ul>
+<p>infimum record 表示比当前页面任何键值都低的值。它的 <code>Next record</code> 指针指向了页面中键值最低的用户记录。infimum 是按序扫描用户数据的一个固定入口点。</p>
+<ul>
+<li>The supremum record</li>
+</ul>
+<p>supremum record 表示比当前页面任何键值都高的值。它的 <code>Next record</code> 始终为0（由于页头的问题，记录了一条无效地实际数据），页面中键值最高的用户记录的下一条记录总是指向supremum。</p>
+<h4 id="User-records"><a href="#User-records" class="headerlink" title="User records"></a>User records</h4><p>原作：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/">The physical structure of InnoDB index pages – Jeremy Cole</a></p>
+<p>用户表比较复杂，原作者在之后的文章中可能会详细描述。 用户记录会按照插入的顺序添加到页面（并且可以从先前删除的记录中获取现有的可用空间），并且使用每个记录中的 <code>next record</code> 按升序构成一条单链表。一个单链表从最小值开始。并在最大值处结束。使用这个链表可以扫描页面中的所有用户记录。</p>
+<p>这就意味着使用这个单链表按照升序从一页扫描到另一个很简单，从而遍历整个索引。大致如下：</p>
+<ol>
+<li>从索引页的第一页（lowest key）开始(这个页面是通过遍历B+树找到的)。</li>
+<li>读取 <code>infimum</code>, 然后跟踪它的 <code>next record</code> 指针。</li>
+<li>如果记录是 <code>supremum</code>, 则继续执行步骤5，如果不是，继续读取并处理文件</li>
+<li>跟踪 <code>next record</code> 指针，然后继续步骤3</li>
+<li>如果 <code>next record</code> 指针指向 NULL，则退出，如果没有，则继续跟踪 <code>next page</code>，然后执行步骤2。</li>
+</ol>
+<h4 id="The-page-directory"><a href="#The-page-directory" class="headerlink" title="The page directory"></a>The page directory</h4><p>页目录开始于文件尾，然后“向下”扩展到用户记录。页目录包含了一个指向 4-8条记录的指针。此外还包含了一个 infimum 和 supremum 的入口地址。</p>
+<div class="tag-plugin image"><div class="image-bg"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8/INDEX_Page_Directory.png" fancybox="true"></div></div>
+
+<p>页面目录只是一个动态大小的 16 位偏移指针数组，指向页面内的记录。作者暂时还没有展开细讲。</p>
+<h4 id="Free-Space"><a href="#Free-Space" class="headerlink" title="Free Space"></a>Free Space</h4><p>内存位于用户记录（向上增长）和页目录（向下增长）的空间就是闲置空间。一旦用户空间和页目录相遇，也就是闲置空间也被占用，就代表当前页已满。</p>
+
+  
+  
+<div class="article-footer reveal fs14"><section id="references"><div class="header"><span>参考资料</span></div><div class="body"><ul><li class="post-title"><a href="https://blog.jcole.us/2013/01/03/the-basics-of-innodb-space-file-layout/" target="_blank" rel="external nofollow noopener noreferrer">The basics of InnoDB space file layout – Jeremy Cole</a></li></ul></div></section></div>
+
+  </article>
+  
+
+
+  
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
