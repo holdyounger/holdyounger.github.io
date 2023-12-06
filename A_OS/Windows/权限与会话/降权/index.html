@@ -23,15 +23,15 @@
   <title>【Windows】降权 - oone</title>
 
   
-    <meta name="description" content="[toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 Explore.exe 的权限去调">
+    <meta name="description" content="概述：降权操作，Windows服务进程中以低权限创建进程  [toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Windows】降权">
 <meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E9%99%8D%E6%9D%83/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 Explore.exe 的权限去调">
+<meta property="og:description" content="概述：降权操作，Windows服务进程中以低权限创建进程  [toc] 背景说明在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 SYSTEM 权限，导致安装程序与预期不符合。 解决方案最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.063Z">
-<meta property="article:modified_time" content="2023-10-27T01:24:02.063Z">
+<meta property="article:modified_time" content="2023-11-30T06:35:35.808Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="权限">
@@ -88,6 +88,8 @@
 
 <widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【Windows】降权</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E8%AF%B4%E6%98%8E"><span class="toc-text">背景说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%80%BB%E8%BE%91"><span class="toc-text">实现逻辑</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-text">代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3"><span class="toc-text">接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li></ol></li></ol></div></div></widget>
 
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91ALPC/"><span class="title">【RPC】ALPC 调用详解（翻译|TODO）</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/"><span class="title">【Windows】提权工具 psExec.exe</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E5%AE%9E%E4%BE%8B%E8%AF%A6%E8%A7%A3/"><span class="title">【RPC】调用过程实例详解</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E6%BC%8F%E6%B4%9E/"><span class="title">【RPC】漏洞</span></a></div></widget>
+
 
 
 
@@ -106,6 +108,9 @@
 
 <article class="md-text content post">
 <h1 class="article-title"><span>【Windows】降权</span></h1>
+<blockquote>
+<p>概述：降权操作，Windows服务进程中以低权限创建进程</p>
+</blockquote>
 <p>[toc]</p>
 <h1 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h1><p>在服务程序中调用了某一个程序的安装程序，由于权限的问题，这个安装程序也继承了服务的 <code>SYSTEM</code> 权限，导致安装程序与预期不符合。</p>
 <h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>最终实现的目标就是在服务中以普通用户的权限去启动安装程序，要以普通用户去启动，就涉及到降权的问题，需要获取用户的信息。在任务管理器详细信息中可以看到，资源管理器是以普通用户的身份启动的，因此可以在服务中以 <code>Explore.exe</code> 的权限去调用安装程序。</p>
@@ -166,7 +171,10 @@
       <div class="title cap theme">您可能感兴趣的文章</div>
     </section>
     <section class="body">
-    <div class="related-posts"><a class="item" href="\A_OS\Windows\API_加载动态库\" title="加载动态库 (loadlibrary)"><span class="title">加载动态库 (loadlibrary)</span><span class="excerpt">使用using加载动态库的代码</span></a><a class="item" href="\A_OS\Windows\查看进程启动命令行参数\" title="【windows】查看进程启动参数命令行"><span class="title">【windows】查看进程启动参数命令行</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\3-13-热补丁支持\" title="热补丁支持"><span class="title">热补丁支持</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\7-1-OSI参考模型\" title="OSI参考模型"><span class="title">OSI参考模型</span></a><a class="item" href="\A_OS\Windows\权限与会话\提权\" title="【Windows】提权"><span class="title">【Windows】提权</span></a></div></section></div>
+    <div class="related-posts"><a class="item" href="\A_OS\Windows\API_加载动态库\" title="加载动态库 (loadlibrary)"><span class="title">加载动态库 (loadlibrary)</span><span class="excerpt">使用using加载动态库的代码</span></a><a class="item" href="\A_OS\Windows\查看进程启动命令行参数\" title="【windows】查看进程启动参数命令行"><span class="title">【windows】查看进程启动参数命令行</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\3-13-热补丁支持\" title="热补丁支持"><span class="title">热补丁支持</span></a><a class="item" href="\D_立志博览群书\《深入理解Windows操作系统》\7-1-OSI参考模型\" title="OSI参考模型"><span class="title">OSI参考模型</span></a><a class="item" href="\A_OS\Windows\权限与会话\Privilege constants\" title="【Windows】权限(Privilege Constants)"><span class="title">【Windows】权限(Privilege Constants)</span><span class="excerpt">
+windows 提权时常用的 Constants
+微软官方文档：Privilege Constants (Winnt.h) - Win32 apps | Microsoft Learn
+</span></a></div></section></div>
 
 
 

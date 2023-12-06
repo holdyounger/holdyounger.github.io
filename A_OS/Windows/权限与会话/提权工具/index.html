@@ -23,15 +23,15 @@
   <title>【Windows】提权工具 psExec.exe - oone</title>
 
   
-    <meta name="description" content="使用方法： 1psexec -i -d -s  cmd.exe # 就是提权运行cmd">
+    <meta name="description" content="概述：psexec 用法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Windows】提权工具 psExec.exe">
 <meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="使用方法： 1psexec -i -d -s  cmd.exe # 就是提权运行cmd">
+<meta property="og:description" content="概述：psexec 用法">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.061Z">
-<meta property="article:modified_time" content="2023-10-27T01:24:02.061Z">
+<meta property="article:modified_time" content="2023-12-06T09:37:50.688Z">
 <meta property="article:author" content="mingming">
 <meta name="twitter:card" content="summary">
   
@@ -85,8 +85,10 @@
 
 
 
-<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/C_OpenSource/pqxx/"><span class="title">【PostgreSQL】windows下编译pqxx</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E8%8E%B7%E5%8F%96%E8%BF%9B%E7%A8%8B%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF/"><span class="title">【汇编】获取进程系统信息</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91JCC/"><span class="title">【汇编】JCC</span></a><a class="item title" href="/A_OS/Windows/Visual%20Studio/%E3%80%90Visual%20Studio%E3%80%91MSVC%E9%93%BE%E6%8E%A5%E5%99%A8%E9%80%89%E9%A1%B9/"><span class="title">【Visual Studio】 MSVC链接器选项</span></a><a class="item title" href="/B_Code/CPP/README/"><span class="title">【C++】常用编码及经验整理</span></a></div></widget>
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91ALPC/"><span class="title">【RPC】ALPC 调用详解（翻译|TODO）</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/"><span class="title">【Windows】提权工具 psExec.exe</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E5%AE%9E%E4%BE%8B%E8%AF%A6%E8%A7%A3/"><span class="title">【RPC】调用过程实例详解</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E6%BC%8F%E6%B4%9E/"><span class="title">【RPC】漏洞</span></a></div></widget>
 
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91ALPC/"><span class="title">【RPC】ALPC 调用详解（翻译|TODO）</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/"><span class="title">【Windows】提权工具 psExec.exe</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%E5%AE%9E%E4%BE%8B%E8%AF%A6%E8%A7%A3/"><span class="title">【RPC】调用过程实例详解</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E6%BC%8F%E6%B4%9E/"><span class="title">【RPC】漏洞</span></a></div></widget>
 
 
 
@@ -106,9 +108,116 @@
 
 <article class="md-text content post">
 <h1 class="article-title"><span>【Windows】提权工具 psExec.exe</span></h1>
+<blockquote>
+<p>概述：psexec 用法</p>
+</blockquote>
+<span id="more"></span>
+
+
+
 <p>使用方法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">psexec -i -d -s  cmd.exe <span class="comment"># 就是提权运行cmd</span></span><br></pre></td></tr></table></figure>
 
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>-a</strong></td>
+<td align="left">使用逗号分隔应用程序可以在上面运行的处理器，其中 1 是编号最低的 CPU。 例如，若要在 CPU 2 和 CPU 4 上运行应用程序，请输入：“-a 2,4”</td>
+</tr>
+<tr>
+<td align="left"><strong>-c</strong></td>
+<td align="left">将指定的可执行文件复制到远程系统以执行。 如果省略此选项，则应用程序必须位于远程系统上的系统路径中。</td>
+</tr>
+<tr>
+<td align="left"><strong>-d</strong></td>
+<td align="left">不要等待进程终止（非交互式）。</td>
+</tr>
+<tr>
+<td align="left"><strong>-e</strong></td>
+<td align="left">不要加载指定帐户的配置文件。</td>
+</tr>
+<tr>
+<td align="left"><strong>-f</strong></td>
+<td align="left">复制指定的程序，即使文件已存在于远程系统上。</td>
+</tr>
+<tr>
+<td align="left">-i</td>
+<td align="left">运行程序，使其与远程系统上指定会话的桌面进行交互。 如果未指定会话，则进程在控制台会话中运行。 当尝试以交互方式运行控制台应用程序（使用重定向的标准 IO）时，<strong>需要</strong>此标志。</td>
+</tr>
+<tr>
+<td align="left"><strong>-h</strong></td>
+<td align="left">如果目标系统为 Vista 或更高版本，则使用帐户的提升令牌（如果可用）运行进程。</td>
+</tr>
+<tr>
+<td align="left"><strong>-l</strong></td>
+<td align="left">以受限用户身份运行进程（删除 Administrators 组，并仅允许分配给 Users 组的权限）。 在 Windows Vista 上，进程以低完整性运行。</td>
+</tr>
+<tr>
+<td align="left"><strong>-n</strong></td>
+<td align="left">指定连接到远程计算机的超时时间（以秒为单位）。</td>
+</tr>
+<tr>
+<td align="left"><strong>-p</strong></td>
+<td align="left">指定用户名的可选密码。 如果省略此内容，系统将提示你输入隐藏密码。</td>
+</tr>
+<tr>
+<td align="left"><strong>-r</strong></td>
+<td align="left">指定要创建或与之交互的远程服务的名称。</td>
+</tr>
+<tr>
+<td align="left"><strong>-s</strong></td>
+<td align="left">在系统帐户中运行远程进程。</td>
+</tr>
+<tr>
+<td align="left"><strong>-u</strong></td>
+<td align="left">指定登录远程计算机的可选用户名。</td>
+</tr>
+<tr>
+<td align="left"><strong>-v</strong></td>
+<td align="left">仅当指定文件的版本号较高或比远程系统上的版本号新时，才复制指定文件。</td>
+</tr>
+<tr>
+<td align="left"><strong>-w</strong></td>
+<td align="left">设置进程的工作目录（相对于远程计算机）。</td>
+</tr>
+<tr>
+<td align="left"><strong>-x</strong></td>
+<td align="left">在 Winlogon 安全桌面上显示 UI（仅限本地系统）。</td>
+</tr>
+<tr>
+<td align="left"><strong>-priority</strong></td>
+<td align="left">指定 -low、-belownormal、-abovenormal、-high 或 -realtime，以便以不同的优先级运行进程。 使用 -background 在 Vista 上以低内存和 I&#x2F;O 优先级运行。</td>
+</tr>
+<tr>
+<td align="left"><strong>computer</strong></td>
+<td align="left">指示 PsExec 在指定的远程计算机上运行应用程序。 如果省略计算机名称，PsExec 将在本地系统上运行应用程序，如果指定通配符 (\*)，PsExec 将在当前域中的所有计算机上运行命令。</td>
+</tr>
+<tr>
+<td align="left"><strong>@file</strong></td>
+<td align="left">PsExec 将在文件中列出的每台计算机上执行命令。</td>
+</tr>
+<tr>
+<td align="left"><strong>cmd</strong></td>
+<td align="left">要执行的应用程序的名称。</td>
+</tr>
+<tr>
+<td align="left"><strong>arguments</strong></td>
+<td align="left">要传递的参数（请注意，文件路径必须是目标系统上的绝对路径）。</td>
+</tr>
+<tr>
+<td align="left"><strong>-accepteula</strong></td>
+<td align="left">此标志禁止显示许可证对话框。</td>
+</tr>
+<tr>
+<td align="left"><strong>-nobanner</strong></td>
+<td align="left">此标志会消除启动横幅和版权消息。</td>
+</tr>
+</tbody></table>
 
 
 
@@ -125,7 +234,10 @@
       <div class="title cap theme">您可能感兴趣的文章</div>
     </section>
     <section class="body">
-    <div class="related-posts"><a class="item" href="\A_OS\Windows\权限与会话\提权\" title="【Windows】提权"><span class="title">【Windows】提权</span></a></div></section></div>
+    <div class="related-posts"><a class="item" href="\A_OS\Windows\权限与会话\Privilege constants\" title="【Windows】权限(Privilege Constants)"><span class="title">【Windows】权限(Privilege Constants)</span><span class="excerpt">
+windows 提权时常用的 Constants
+微软官方文档：Privilege Constants (Winnt.h) - Win32 apps | Microsoft Learn
+</span></a></div></section></div>
 
 
 
