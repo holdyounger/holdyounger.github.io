@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>b-Linux 系统文件管理 - oone</title>
+
+  
+    <meta name="description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="b-Linux 系统文件管理">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/4.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/5.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/8.png">
+<meta property="article:published_time" content="2023-12-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-27T07:15:32.883Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内核">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/1.png">
+  
+  
+  
+  <meta name="keywords" content="Linux,内核">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">b-Linux 系统文件管理</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Linux%E6%96%87%E4%BB%B6%E7%9A%84%E5%B1%8B%E9%87%8C%E7%BB%93%E6%9E%84"><span class="toc-text">0x01 Linux文件的屋里结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="toc-text">0x02 寻址方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">0x03 地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">0x04 Linux文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Linux%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">0x05 Linux文件类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-Linux-%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="toc-text">0x06 Linux 文件存储结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E8%BD%AF%E8%BF%9E%E6%8E%A5%E3%80%81%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="toc-text">0x07 软连接、硬链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-Linux%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86"><span class="toc-text">0x08 Linux文件目录管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E7%9B%AE%E5%BD%95%E6%8F%8F%E8%BF%B0"><span class="toc-text">0x09 Linux文件系统常见目录描述</span></a></li></ol></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/B_Code/C/HexToByte/"><span class="title">【编解码】Hex与Byte相互转化</span></a><a class="item title" href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/"><span class="title">【开发】查看编译的lib的运行库是什么</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"><span class="title">d-Linux 网络基础.md</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/"><span class="title">c-Linux 设备管理</span></a><a class="item title" href="/A_%E5%86%85%E5%8A%9F/B_%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/"><span class="title">设计模式之行为型模式</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-12-26T16:00:00.000Z">2023-12-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>b-Linux 系统文件管理</span></h1>
+<blockquote>
+<p>概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。</p>
+<ul>
+<li>Linux 文件的物理结构</li>
+<li>Linux 文件系统</li>
+<li>Linux 文件目录管理命令</li>
+<li>Linux 操作系统下的软链接和硬链接</li>
+</ul>
+</blockquote>
+<h2 id="0x01-Linux文件的屋里结构"><a href="#0x01-Linux文件的屋里结构" class="headerlink" title="0x01 Linux文件的屋里结构"></a>0x01 Linux文件的屋里结构</h2><p>在 Linux 中根据文件的大小，形成小型、中型、大型和巨型等不同规模的文件，如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/1.png" class title="图片描述">
+
+<h2 id="0x02-寻址方式"><a href="#0x02-寻址方式" class="headerlink" title="0x02 寻址方式"></a>0x02 寻址方式</h2><ol>
+<li>直接寻址方式</li>
+</ol>
+<p>Linux 系统为了提高对文件的检索速度，采用直接寻址方式。在索引节点中建立 12 个地址项，用来直接存放该文件所在的盘块号，对应的盘块称为直接块。</p>
+<ol>
+<li>一次间接寻址方式</li>
+</ol>
+<p>当文件较大时，Linux 系统提供了一次间接寻址方式。在这种寻址方式中，一次间接地址项中所对应的盘块（间接块）存放的不是文件所在的物理盘块号，而是直接块的块号表。为了通过间接块读取文件数据，需要先读取间接块找到对应的直接块项，然后从直接块中读取数据。</p>
+<ol>
+<li>多次间接寻址方式</li>
+</ol>
+<p>对于大型或巨型的文件，Linux 系统又引入了二次间接寻址和三次间接寻址。二次间接项中存放的是一次间接块号表，三次间接项对应的盘块中放有二次间接块号表。</p>
+<h2 id="0x03-地址转换"><a href="#0x03-地址转换" class="headerlink" title="0x03 地址转换"></a>0x03 地址转换</h2><p>Linux 系统利用地址转换过程将逻辑文件中的字节偏移量转换成文件的物理块号。首先，将字节偏移量转换成文件逻辑块号及块内偏移量，然后将逻辑块号转换成物理块号。</p>
+<ol>
+<li>直接地址</li>
+</ol>
+<p>当文件逻辑盘块号小于 12 时，将逻辑块号转换成物理块号的方法是将文件逻辑块号转换为索引节点的地址项下标，然后从该地址项中就可以直接获得该文件的物理盘块号。</p>
+<ol>
+<li>间接地址</li>
+</ol>
+<p>当计算出的文件逻辑块号大于或等于 12 而小于 268 时，采用一次间接地址方式。将逻辑块号转换为物理块号的方法是从一次间接项中得到一级间接的盘块号，根据该间接块的内容计算一次间接块中的地址下标，即将文件的逻辑块号减去 12 ，从相应下标的地址项中得到物理块号。</p>
+<h2 id="0x04-Linux文件系统"><a href="#0x04-Linux文件系统" class="headerlink" title="0x04 Linux文件系统"></a>0x04 Linux文件系统</h2><p>和普通 Unix 系统意义，Linux 使用树状的文件系统。每个系统都有一个根目录，从这里开始可以遍历整个系统中的所有文件，Linux 文件系统中没有类似 Windows 系统中的驱动器和盘符的概念。</p>
+<h2 id="0x05-Linux文件类型"><a href="#0x05-Linux文件类型" class="headerlink" title="0x05 Linux文件类型"></a>0x05 Linux文件类型</h2><p>Linux 系统下的文件类型主要有：</p>
+<ul>
+<li>普通文件：C 语言元代码、SHELL 脚本、二进制的可执行文件等。分为纯文本和二进制。</li>
+<li>目录文件：目录，存储文件的唯一地方。</li>
+<li>链接文件：指向同一个文件或目录的的文件。</li>
+<li>特殊文件：与系统外设相关的，通常在&#x2F;dev 下面。分为块设备和字符设备。</li>
+</ul>
+<p>在 Linux 系统下可以在终端使用 <code>ls –l</code>、<code>file</code>、<code>stat</code> 几个命令来查看文件的类型等相关信息。如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/2.png" class title="图片描述">
+
+<h2 id="0x06-Linux-文件存储结构"><a href="#0x06-Linux-文件存储结构" class="headerlink" title="0x06 Linux 文件存储结构"></a>0x06 Linux 文件存储结构</h2><p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code>)一个文件由目录项、inode 和数据块组成。</p>
+<ul>
+<li>目录项：包括文件名和 inode 节点号。</li>
+<li><code>inode</code>：又称文件索引节点，是文件基本信息的存放地和数据块指针存放地。</li>
+<li>数据块：文件的具体内容存放地。</li>
+</ul>
+<p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code> 等)将硬盘分区时会划分出目录块、<code>inode Table</code> 区块和 <code>data block</code> 数据区域。一个文件由一个目录项、<code>inode</code> 和数据区域块组成。<code>Inode</code> 包含文件的属性(如读写属性、<code>owner</code>等，以及指向数据块的指针)，数据区域块则是文件内容。当查看某个文件时，会先从 <code>inode table</code> 中查出文件属性及数据存放点，再从数据块中读取数据。</p>
+<p>如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/3.png" class title="图片描述">
+
+<p>其中目录项的结构如下(每个文件的目录项存储在改文件所属目录的文件内容里)，如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/4.png" class title="图片描述">
+
+<p>其中文件的 inode 结构如下（inode 里所包含的文件信息可以通过 <code>stat filename</code> 查看得到）：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/5.png" class title="图片描述">
+
+<p>以上只反映大体的结构，linux 文件系统本身在不断发展。但是以上概念基本是不变的。且如 <code>ext2</code>、<code>ext3</code>、<code>ext4</code> 文件系统也存在很大差别，如果要了解可以查看专门的文件系统介绍。</p>
+<h2 id="0x07-软连接、硬链接"><a href="#0x07-软连接、硬链接" class="headerlink" title="0x07 软连接、硬链接"></a>0x07 软连接、硬链接</h2><p>软链接和硬链接是我们常见的两种概念：</p>
+<ul>
+<li>硬链接：是给文件一个副本，同时建立两者之间的链接关系。修改其中一个，与其链接的文件同时被修改。如果删除其中 [color&#x3D;red] 任意一个 [&#x2F;color] 其余的文件将不受影响。</li>
+<li>软链接:也叫符号链接,他只是对源文件在新的位置建立一个“快捷方式（借用一下 <code>wondows</code> 常用词）”，所以，当源文件删除时，符号链接的文件将成为无源之水-&gt;仅仅剩下个文件名了，当然删除这个链接，也不会影响到源文件，但对链接文件的使用、引用都是直接调用源文件的。</li>
+</ul>
+<p>具体关系可以看下图：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/8.png" class title="图片描述">
+
+<p>从图上可以看出硬链接和软链接的区别：</p>
+<ul>
+<li>硬链接原文件和新文件的 <code>inode</code> 编号一致。而软链接不一样。</li>
+<li>对原文件删除，会导致软链接不可用，而硬链接不受影响。</li>
+<li>对原文件的修改，软、硬链接文件内容也一样的修改，因为都是指向同一个文件内容的。</li>
+</ul>
+<h2 id="0x08-Linux文件目录管理"><a href="#0x08-Linux文件目录管理" class="headerlink" title="0x08 Linux文件目录管理"></a>0x08 Linux文件目录管理</h2><p>磁盘和文件空间使用命令：</p>
+<ul>
+<li><code>dd</code>：把指定的输入文件复制到指定的输出文件中，并且在复制过程中进行格式转换。</li>
+<li><code>fdisk</code>：创建和维护分区表的程序，它兼容 DOS 类型的分区表、BSD 或者 SUN 类型的磁盘列表。</li>
+<li><code>df</code>：可以显示所有文件系统对 i 节点和磁盘块的使用情况</li>
+<li><code>du</code>：该命令逐级进入指定目录的每一个子目录并显示该目录占用文件系统数据块( 1024 字节)的情况。</li>
+</ul>
+<p>文件目录与管理使用命令：</p>
+<ul>
+<li><code>cd</code>：改变当前工作目录</li>
+<li><code>pwd</code>：显示当前工作目录的全路径名</li>
+<li><code>mkdir</code>：创建目录</li>
+<li><code>rmdir</code>：删除目录</li>
+<li><code>ls</code>：用于显示目录内容，类似 <code>DOS</code> 下的 <code>dir</code> 命令，它的使用权限是所有用户</li>
+<li><code>cp</code>：带目录复制</li>
+<li><code>rm</code>：删除文件或目录</li>
+<li><code>mv</code>：目录更名或搬移</li>
+</ul>
+<p>查看文件内容命令：</p>
+<ul>
+<li><code>cat</code>: <code>cat [file]</code> 查看文件的内容。全称是 concatenate 的意思，将文件内容连续输出到屏幕上。第一行到最后一行显示。</li>
+<li><code>tac</code>: <code>tac [file]</code> 和 <code>cat</code> 刚好相反 是从最后一行到第一行的方式查看。</li>
+</ul>
+<p><code>cat</code> 有个比较不好的地方时当文件比较大时候没办法看清楚，这个时候可以用 <code>more</code> 或者 <code>Less</code> 命令。</p>
+<ul>
+<li><code>more</code>: <code>more [file]</code> 如果使用 <code>grep</code> 或者 <code>find</code> 等命令时，可以配合使用 <code>more</code> 一页一页的查看。如果看到一半想退出，则敲入’q’即可退出。</li>
+<li><code>less</code>: <code>less [file]</code> <code>less</code>比 <code>more</code> 更有弹性，可以上下翻页。</li>
+</ul>
+<p>如果只想读取文件的头几行或者文件的末尾几行，可以用 <code>head</code> 或 <code>tail</code>.</p>
+<ul>
+<li><code>head –n [file]</code>：读取文件的前 n 行。</li>
+<li><code>tail –n [file]</code>：读取文件末尾 n 行。</li>
+</ul>
+<p>以上命令都是用于查看字符文件，二进制文件出来的都是乱码，要看二进制文件的内容，可以用 <code>od</code> 命令,如查看一个 MP3 文件里面的内容: <code>od shijiemori.mp3</code></p>
+<p>文件目录与权限命令：</p>
+<ul>
+<li><code>chmod</code>：修改文件或目录的存取权限</li>
+<li><code>chown</code>：改变文件拥有者</li>
+<li><code>chgrp</code>：改变文件的所属组</li>
+<li><code>umask</code>：用来设定[权限掩码]。[权限掩码]是由 3 个八进制的数字所组成，将现有的存取权限减掉权限掩码后，即可产生建立文件时预设的权限。</li>
+</ul>
+<p>文件查找命令：</p>
+<ul>
+<li><code>which</code>: <code>which [filename]</code> 该命令用于查询通过 PATH 路径到该路径内查找可执行文件。如：Which passwd:查找可执行文件 passwd</li>
+<li><code>whereis</code>: <code>whereis [-bmsu] [keyword]</code> 该命令用于把相关字的文件和目录都列出来。(Linux 会将文件都记录在一个文件数据库里面，该命令式从数据库去查询，所以速度比较快,Linux 每天会更新该数据库)</li>
+<li><code>locate</code>: <code>locate [filename]</code> 该命令用于把相关字的文件和目录都列出来。查找数据特别快，也是通过数据库方式来查询。但是数据库一周更新一次，所以可能有些存在数据查不到。可以去修改配置文件。</li>
+<li><code>find</code>: <code>find [path] [参数] [keyword]</code> 该命令用于在指定路径下查找文件。不是通过数据来查询，所以速度会比较慢。</li>
+</ul>
+<h2 id="0x09-Linux文件系统常见目录描述"><a href="#0x09-Linux文件系统常见目录描述" class="headerlink" title="0x09 Linux文件系统常见目录描述"></a>0x09 Linux文件系统常见目录描述</h2><p>Linux 各种发行版的目录结构基本一致，各个目录简单介绍如下：</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x2F;</td>
+<td>根目录</td>
+</tr>
+<tr>
+<td>&#x2F;bin</td>
+<td>做为基础系统所需要的最基础的命令就是放在这里。比如 ls、cp、mkdir 等命令；功能和&#x2F;usr&#x2F;bin 类似，这个目录中的文件都是可执行的，普通用户都可以使用的命令。</td>
+</tr>
+<tr>
+<td>&#x2F;boot</td>
+<td>Linux 的内核及引导系统程序所需要的文件，比如 vmlinuz initrd.img 文件都位于这个目录中。在一般情况下，GRUB 或 LILO 系统引导管理器也位于这个目录；启动装载文件存放位置，如 kernels,initrd,grub。一般是一个独立的分区。</td>
+</tr>
+<tr>
+<td>&#x2F;dev</td>
+<td>一些必要的设备,声卡、磁盘等。还有如 &#x2F;dev&#x2F;null. &#x2F;dev&#x2F;console &#x2F;dev&#x2F;zero &#x2F;dev&#x2F;full 等。</td>
+</tr>
+<tr>
+<td>&#x2F;etc</td>
+<td>系统的配置文件存放地. 一些服务器的配置文件也在这里；比如用户帐号及密码配置文件；&#x2F;etc&#x2F;opt:&#x2F;opt 对应的配置文件；&#x2F;etc&#x2F;X11:Xwindows 系统配置文件；&#x2F;etc&#x2F;xml:XML 配置文件；……</td>
+</tr>
+<tr>
+<td>&#x2F;home</td>
+<td>用户工作目录，和个人配置文件，如个人环境变量等，所有的账号分配一个工作目录。一般是一个独立的分区。</td>
+</tr>
+<tr>
+<td>&#x2F;lib</td>
+<td>库文件存放地。bin 和 sbin 需要的库文件。类似 windows 的 DLL。</td>
+</tr>
+<tr>
+<td>&#x2F;media</td>
+<td>可拆卸的媒介挂载点，如 CD-ROMs、移动硬盘、U 盘，系统默认会挂载到这里来。</td>
+</tr>
+<tr>
+<td>&#x2F;mnt</td>
+<td>临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，比如有 cdrom 等目录。可以参看 &#x2F;etc&#x2F;fstab 的定义。</td>
+</tr>
+<tr>
+<td>&#x2F;opt</td>
+<td>可选的应用程序包。</td>
+</tr>
+<tr>
+<td>&#x2F;proc</td>
+<td>操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如 cpu、硬盘分区、内存信息等）存放在这里。&#x2F;proc 目录伪装的文件系统 proc 的挂载目录，proc 并不是真正的文件系统，它的定义可以参见 &#x2F;etc&#x2F;fstab 。</td>
+</tr>
+<tr>
+<td>&#x2F;root</td>
+<td>Root 用户的工作目录</td>
+</tr>
+<tr>
+<td>&#x2F;sbin</td>
+<td>和 bin 类似，是一些可执行文件，不过不是所有用户都需要的，一般是系统管理所需要使用得到的。</td>
+</tr>
+<tr>
+<td>&#x2F;tmp</td>
+<td>系统的临时文件，一般系统重启不会被保存。</td>
+</tr>
+<tr>
+<td>&#x2F;usr</td>
+<td>包含了系统用户工具和程序。&#x2F;usr&#x2F;bin：非必须的普通用户可执行命令；&#x2F;usr&#x2F;include：标准头文件； &#x2F;usr&#x2F;lib:&#x2F;usr&#x2F;bin&#x2F; 和 &#x2F;usr&#x2F;sbin&#x2F;的库文件； &#x2F;usr&#x2F;sbin:非必须的可执行文件；&#x2F;usr&#x2F;src:内核源码；&#x2F;usr&#x2F;X11R6:X Window System, Version 11, Release 6.</td>
+</tr>
+<tr>
+<td>&#x2F;srv</td>
+<td>该目录存放一些服务启动之后需要提取的数据</td>
+</tr>
+</tbody></table>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/a-Linux%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">a-Linux 内存管理</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">d-Linux 网络基础.md</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\2 跟踪分析Linux内核的启动过程\" title="Linux内核2 跟踪分析Linux内核的启动过程"><span class="title">Linux内核2 跟踪分析Linux内核的启动过程</span></a><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\Readme\" title="Linux 内核分析配套实验"><span class="title">Linux 内核分析配套实验</span></a><a class="item" href="\A_OS\Linux\Linux基础入门\Readme\" title="Linux 基础入门"><span class="title">Linux 基础入门</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\3-操作系统进程控制及进程间通信概述\" title="3-操作系统进程控制及进程间通信概述"><span class="title">3-操作系统进程控制及进程间通信概述</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\1-操作系统概述\" title="Linux操作系统原理剖析——操作系统概述"><span class="title">Linux操作系统原理剖析——操作系统概述</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

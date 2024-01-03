@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>5-进程间通信方式之信号通信 - oone</title>
+
+  
+    <meta name="description" content="概述：知识点  Linux 信号概述 Linux 信号通信原理 Linux 信号相关 API 函数介绍   0x01 Linux信号概述信号机制是一种使用信号来进行进程之间传递消息的方法，信号的全称为软中断信号，简称软中断。关于 Linux 信号的特点可以概括如下几点：  信号是在软件层次上对中断机制的一种模拟。在原理上，一个进程收到一个信号与处理器收到一个中断请求可以说是一样的。 信号是异步的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5-进程间通信方式之信号通信">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：知识点  Linux 信号概述 Linux 信号通信原理 Linux 信号相关 API 函数介绍   0x01 Linux信号概述信号机制是一种使用信号来进行进程之间传递消息的方法，信号的全称为软中断信号，简称软中断。关于 Linux 信号的特点可以概括如下几点：  信号是在软件层次上对中断机制的一种模拟。在原理上，一个进程收到一个信号与处理器收到一个中断请求可以说是一样的。 信号是异步的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/4.png">
+<meta property="article:published_time" content="2023-12-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-27T03:11:11.974Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内核">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/1.png">
+  
+  
+  
+  <meta name="keywords" content="Linux,内核">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">5-进程间通信方式之信号通信</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Linux%E4%BF%A1%E5%8F%B7%E6%A6%82%E8%BF%B0"><span class="toc-text">0x01 Linux信号概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Linux%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86"><span class="toc-text">0x02 Linux信号通信原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Linux-%E4%BF%A1%E5%8F%B7%E7%9B%B8%E5%85%B3-API-%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="toc-text">0x03 Linux 信号相关 API 函数介绍</span></a></li></ol></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/B_Code/C/HexToByte/"><span class="title">【编解码】Hex与Byte相互转化</span></a><a class="item title" href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/"><span class="title">【开发】查看编译的lib的运行库是什么</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"><span class="title">d-Linux 网络基础.md</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/"><span class="title">c-Linux 设备管理</span></a><a class="item title" href="/A_%E5%86%85%E5%8A%9F/B_%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/"><span class="title">设计模式之行为型模式</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-12-25T16:00:00.000Z">2023-12-26</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>5-进程间通信方式之信号通信</span></h1>
+<blockquote>
+<p>概述：知识点</p>
+<ul>
+<li>Linux 信号概述</li>
+<li>Linux 信号通信原理</li>
+<li>Linux 信号相关 API 函数介绍</li>
+</ul>
+</blockquote>
+<h2 id="0x01-Linux信号概述"><a href="#0x01-Linux信号概述" class="headerlink" title="0x01 Linux信号概述"></a>0x01 Linux信号概述</h2><p>信号机制是一种使用信号来进行进程之间传递消息的方法，信号的全称为软中断信号，简称软中断。关于 Linux 信号的特点可以概括如下几点：</p>
+<ul>
+<li>信号是在软件层次上对中断机制的一种模拟。在原理上，一个进程收到一个信号与处理器收到一个中断请求可以说是一样的。</li>
+<li>信号是异步的，一个进程不必通过任何操作来等待信号的到达，事实上进程也不知道信号到底什么时候到达。</li>
+<li>信号可以直接进行用户空间进程和内核进程之间的交互，内核进程也可以利用它来通知用户空间进程发生了哪些系统事件。它可以在任何时候发给某一个进程，而无需知道该进程的状态。如果该信号当前并未处于执行态(Running),则该信号由内核保存起来，直到该进程恢复执行再传递给它为止。如果一个信号被进程设置为阻塞，则该信号的传递被延迟，直到其阻塞被取消时才被传递给进程。</li>
+<li>信号是进程间通信机制中唯一的异步通信机制，可以看作是异步通知，通知接收信号的进程有哪些事件发生了。信号机制除了基本通知外，还可以传递附加信息。</li>
+</ul>
+<p>在 Linux 系统内核头文件 <code>signal.h</code> 中定义有 64 种信号，这些信号都是以 <code>SIG</code> 开头，且都被定义为正整数。除了通过查看 <code>signal.h</code> 头文件能够看到信号的名字和定义外，还可以在 Linux 系统下使用命令 <code>kill -l</code> 来查看信号的名字以及序号，信号都是从 1 开始编号的，不存子 0 号信号。具体如下图所示(由于实验环境采用虚拟容器，所以执行 <code>kill -l</code> 并不会有结果显示)：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/1.png" class title="图片描述">
+
+<h2 id="0x02-Linux信号通信原理"><a href="#0x02-Linux信号通信原理" class="headerlink" title="0x02 Linux信号通信原理"></a>0x02 Linux信号通信原理</h2><p>要搞清楚信号通信的原理，就需要搞清楚信号的产生、传输以及响应。</p>
+<p>信号时间产生其实就是信号的来源，对于 Linux 操作系统来说信号的主要来源可以归纳为以下两点：</p>
+<ul>
+<li>硬件来源。如我们按下了键盘上的按钮 或者出现其他硬件故障；</li>
+<li>软件来源。最常用发送信号的系统函数有 kill()、raise()、alarm()、setitimer() 和 sigqueue()等，软件来源还包括一些非法运算等操作。</li>
+</ul>
+<p>而对于信号在产生之后，Linux 对每个信号都有一个缺省的动作，典型的缺省动作就是终止进程，当这个信号的进程收到信号后会根据这个信号的具体情况提供以下三种不同的处理方式：</p>
+<ul>
+<li>忽略信号。忽略信号即对信号不做处理，其中，有两个信号不能忽略：<code>SIGKILL</code> 和 <code>SIGSTOP</code>。</li>
+<li>捕捉信号。定义信号处理函数，当信号发生时，执行响应的处理函数。</li>
+<li>执行默认操作。Linux 对每种信号都规定了默认操作。</li>
+</ul>
+<p>对应部分系统定义的信号，Linux 系统都规定了一些默认操作作为信号的响应处理，如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/2.png" class title="图片描述">
+
+<p>一个完整的信号生命周期可以分为 3 个重要阶段，这 3 个阶段由 4 个重要事件来刻画的；信号产生、信号在进程中注册、信号在进程中注销、执行信号处理函数。这里信号的产生、注册、注销等是指信号的内部实现机制，而不是信号的函数实现(不受我们的掌控)。因此信号注册与否与后面讲到的发送信号函数（如 <code>kill()</code> 等）及信号安装函数（如 <code>signal()</code> 等）无关，只与信号值有关。</p>
+<p>相邻两个事件的时间间隔构成信号生命周期的一个阶段，如下图.注意这里的信号处理有多种方式，一般是由内核完成的，当然也可以由用户进程来完成。如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/3.png" class title="图片描述">
+
+<p>信号的处理包括信号的发送、捕捉和处理，它们有各自相对应的常见函数：</p>
+<ul>
+<li>发生信号的函数: <code>kill()</code>、<code>raise()</code></li>
+<li>捕捉信号的函数: <code>alarm()</code>、<code>pause()</code></li>
+<li>处理信号的函数: <code>signal()</code>、<code>sigaction()</code></li>
+</ul>
+<h2 id="0x03-Linux-信号相关-API-函数介绍"><a href="#0x03-Linux-信号相关-API-函数介绍" class="headerlink" title="0x03 Linux 信号相关 API 函数介绍"></a>0x03 Linux 信号相关 API 函数介绍</h2><p>前面其实已经提到了很多 Linux 信号机制相关的函数。下面就分别镜像讲解和介绍。</p>
+<p><code>kill()</code> 函数同咱们的 <code>kill</code> 系统命令一样（但不能真的认为 <code>kill()</code> 就是 <code>kill</code>），可以发送信号给进程或进程组（实际上，<code>kill</code> 系统命令只是 <code>kill()</code> 函数的一个用户接口）。这里需要注意的是，<code>kill()</code> 函数不仅可以终止进程（实际上是通过发出 <code>SIGKILL</code> 信号终止），也可以向进程发送其他信号。具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">kill</span><span class="params">(<span class="type">pid_t</span> pid, <span class="type">int</span> sig)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    - pid：要发送信号的进程号</span></span><br><span class="line"><span class="comment">        0   信号被发送给所有和当前进程在同一进程组的进程号</span></span><br><span class="line"><span class="comment">        -1  信号发给所有的进程表中的进程（除了进程号最大的进程之外）</span></span><br><span class="line"><span class="comment">        &lt;-1 信号发送给进程组好为 -pid 的每一个进程</span></span><br><span class="line"><span class="comment">    - sig：信号</span></span><br><span class="line"><span class="comment">返回值</span></span><br><span class="line"><span class="comment">    成功：0 失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>与 <code>kill()</code> 函数不同的是，<code>raise()</code> 函数允许进程向自身发送信号。具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">raise</span><span class="params">(<span class="type">int</span> sig)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数</span></span><br><span class="line"><span class="comment">    - sig：信号</span></span><br><span class="line"><span class="comment">返回值</span></span><br><span class="line"><span class="comment">    成功：0 失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>除了上面的信号发送函数，Linux 还定义了两个信号捕捉函数用来接收信号 <code>alarm()</code> 和 <code>pause()</code> 。</p>
+<p><code>alarm()</code> 也称为闹钟函数，它可以在进程中设置一个定时器，当定时器指定的时间到时，它就向进程发送 <code>SIGALARM</code> 信号。要注意的是，一个进程只能有一个闹钟时间，如果在调用 <code>alarm()</code> 之前已设置过闹钟时间，则任何以前的闹钟时间都被新值所代替。具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">int</span> <span class="title function_">alarm</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> seconds)</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数</span></span><br><span class="line"><span class="comment">    seconds：指定秒数，系统经过 seconds 后会向该进程发送 SIGALRM 信号</span></span><br><span class="line"><span class="comment">返回值</span></span><br><span class="line"><span class="comment">    成功：如果调用此 alarm() 前已经设置好闹钟时间，则返回上一个闹钟剩余时间，否则返回 0</span></span><br><span class="line"><span class="comment">    失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p><code>pause()</code> 函数用于将调用进程挂起直至捕捉到信号为止。这个函数很常用，通常可以用于判断信号是否已到。具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">pause</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">返回值</span></span><br><span class="line"><span class="comment">    出错返回 -1，并设置 errno</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>Linux 信号处理的方法主要有以下两种：</p>
+<ul>
+<li>使用 <code>signal()</code> 函数</li>
+<li>使用信号集函数组</li>
+</ul>
+<p>使用 <code>signal()</code> 函数处理时，只需指出要处理的信号和处理函数即可。它主要用于前 32 种非实时信号的处理，不支持信号传递信息。Linux 还支持一个更健壮更新的信号处理函数呢，它就是 <code>sigaction()</code>，Unix 环境编程等书籍其实都是推荐使用这个函数。具体函数介绍如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="title function_">void</span> <span class="params">(*<span class="type">sighandler_t</span>)</span><span class="params">(<span class="type">int</span>)</span>;</span><br><span class="line"><span class="type">sighandle_t</span> <span class="title function_">signal</span><span class="params">(<span class="type">int</span> signum, <span class="type">sighandler_t</span> handler)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    signum：指定信号代码</span></span><br><span class="line"><span class="comment">    handler：SIG_IGN - 忽略该信号</span></span><br><span class="line"><span class="comment">            SIG_DFL - 采用系统默认方式处理信号</span></span><br><span class="line"><span class="comment">            自定义的信号处理函数指针</span></span><br><span class="line"><span class="comment">返回值：</span></span><br><span class="line"><span class="comment">    成功：之前的信号处理配置  失败；-1</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span>&#123;</span></span><br><span class="line">    <span class="type">void</span> (*sa_handler)(<span class="type">int</span> signo);  <span class="comment">//函数指针，指定信号处理函数，可以是 SIG_DFL（默认处理方式）和 SIG_IGN（忽略信号）</span></span><br><span class="line">    <span class="type">sigset_t</span> sa_mask;   <span class="comment">//信号集，指定在处理中屏蔽哪些信号</span></span><br><span class="line">    <span class="type">int</span> sa_flags;   <span class="comment">//信号标志位，包含对信号处理的各个选择项</span></span><br><span class="line">    <span class="type">void</span> (*sa_restore)(<span class="type">void</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigaction</span><span class="params">(<span class="type">int</span> signum, <span class="type">const</span> <span class="keyword">struct</span> sigaction *act, <span class="keyword">struct</span> sigaction *oldact)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    signum  信号代码，可以是除了 SIGKILL SIGSTOP 之外的任何一个特定有效的信号</span></span><br><span class="line"><span class="comment">    act     执行结构体 sigaction 的一个实例指针，指定对特定信号的处理</span></span><br><span class="line"><span class="comment">    oldact  保存原来对相应信号的处理</span></span><br><span class="line"><span class="comment">返回值：</span></span><br><span class="line"><span class="comment">    成功：0 失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>使用信号集函数组处理信号时设计一系列的函数，这些函数按照先后的调用次序可分为以下几大模块：创建信号集、注册信号处理函数及检测信号。</p>
+<p>其中，创建信号集主要用于处理用户感兴趣的一些信号，其函数包括以下几个：</p>
+<ul>
+<li><code>sigemptyset()</code>: 将信号集初始化为空</li>
+<li><code>sigfillset()</code>: 将信号集初始化为包含所有已定义的信号集</li>
+<li><code>sigaddset()</code>: 将指定信号加入到信号集中</li>
+<li><code>sigdelset()</code>: 将指定信号从信号集中删除</li>
+<li><code>sigismember()</code>: 查询指定信号是否在信号集中</li>
+</ul>
+<p>注册信号处理函数主要用于决定进程如何处理信号。这里要注意的是，信号集里的信号并不是真正可以处理的信号，只有当信号的状态处于非阻塞状态时才会真正起作用。因此，首先使用 <code>sigprocmask()</code> 函数检测并更改信号屏蔽字（信号屏蔽字是用来指定当前被阻塞的一组信号，它们不会被进程接收），然后使用 <code>sigaction()</code> 函数来定义进程接收到特定信号后的行为。</p>
+<p>检测信号是信号处理的后续步骤，因为被阻塞的信号不会传递给进程，所以这些信号就处于“未处理”状态（也就是进程不清除它的存在）。<code>sigaction()</code> 函数允许进程检测“未处理”信号，并进一步决定对它们做何处理。</p>
+<p>具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigemptyset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigfillset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigaddset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigdelset</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigismember</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">int</span> signum)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    set：信号集</span></span><br><span class="line"><span class="comment">    signum：信号代码</span></span><br><span class="line"><span class="comment">返回值：</span></span><br><span class="line"><span class="comment">    成功：0  失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>sigprocmask()</code> 中，若 <code>set</code> 是一个非空指针，则参数 <code>how</code> 表示函数的操作方式；若 <code>how</code> 为空，则表示忽略此操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigprocmask</span><span class="params">(<span class="type">int</span> how, <span class="type">const</span> <span class="type">sigset_t</span> *<span class="built_in">set</span>, <span class="type">sigset_t</span> *oset)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    how：</span></span><br><span class="line"><span class="comment">        SIG_BLOCK   增加一个信号集到当前进程的阻塞集中</span></span><br><span class="line"><span class="comment">        SIG_UNBLOCK 从当前的阻塞集中删除一个信号集</span></span><br><span class="line"><span class="comment">        SIG_SETMASK 将当前的信号集设置为信号阻塞集</span></span><br><span class="line"><span class="comment">    set：指定信号集</span></span><br><span class="line"><span class="comment">    oset：信号屏蔽字</span></span><br><span class="line"><span class="comment">返回值：</span></span><br><span class="line"><span class="comment">    成功：0 失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigpending</span><span class="params">(<span class="type">sigset_t</span> *<span class="built_in">set</span>)</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">    set：要检测的信号集</span></span><br><span class="line"><span class="comment">返回值：</span></span><br><span class="line"><span class="comment">    成功：0 失败：-1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>处理信号总是遵循下图所示的过程：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/5-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/4.png" class title="图片描述">
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/6-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%80%9A%E4%BF%A1/">6-进程间通信方式之信号量通信</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_%E5%86%85%E5%8A%9F/B_%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\2 跟踪分析Linux内核的启动过程\" title="Linux内核2 跟踪分析Linux内核的启动过程"><span class="title">Linux内核2 跟踪分析Linux内核的启动过程</span></a><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\Readme\" title="Linux 内核分析配套实验"><span class="title">Linux 内核分析配套实验</span></a><a class="item" href="\A_OS\Linux\Linux基础入门\Readme\" title="Linux 基础入门"><span class="title">Linux 基础入门</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\3-操作系统进程控制及进程间通信概述\" title="3-操作系统进程控制及进程间通信概述"><span class="title">3-操作系统进程控制及进程间通信概述</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\1-操作系统概述\" title="Linux操作系统原理剖析——操作系统概述"><span class="title">Linux操作系统原理剖析——操作系统概述</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

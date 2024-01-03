@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>d-Linux 网络基础.md - oone</title>
+
+  
+    <meta name="description" content="概述：Linux 操作系统实际上是一个网络操作系统，系统管理的很大部分工作其实都和网络有关。  TCP&#x2F;IP 协议 Linux 网络配置 基本网络服务 网络安全 Linux 下网络通信基本流程和操作   0x01 TCP&#x2F;IP 协议在信息化设备中，及刷机已经从单一使用发展到了集群使用。越来越多的应用领域需要计算机在一定的地理范围内联合起来进行集群工作，从而促进了计算机和通信技">
+<meta property="og:type" content="article">
+<meta property="og:title" content="d-Linux 网络基础.md">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：Linux 操作系统实际上是一个网络操作系统，系统管理的很大部分工作其实都和网络有关。  TCP&#x2F;IP 协议 Linux 网络配置 基本网络服务 网络安全 Linux 下网络通信基本流程和操作   0x01 TCP&#x2F;IP 协议在信息化设备中，及刷机已经从单一使用发展到了集群使用。越来越多的应用领域需要计算机在一定的地理范围内联合起来进行集群工作，从而促进了计算机和通信技">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/4.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/5.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/6.png">
+<meta property="article:published_time" content="2023-12-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-27T08:25:23.664Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内核">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/1.png">
+  
+  
+  
+  <meta name="keywords" content="Linux,内核">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">d-Linux 网络基础.md</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-TCP-x2F-IP-%E5%8D%8F%E8%AE%AE"><span class="toc-text">0x01 TCP&#x2F;IP 协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E9%85%8D%E7%BD%AELinux%E7%BD%91%E7%BB%9C"><span class="toc-text">0x02 配置Linux网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8DNS"><span class="toc-text">0x03 域名服务器DNS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Apache-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">0x04 Apache 服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E9%82%AE%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">0x05 邮件服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-samba-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">0x06 samba 服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-Linux%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%96%87%E4%BB%B6%E5%AE%89%E5%85%A8"><span class="toc-text">0x07 Linux系统的文件安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-%E7%94%A8%E6%88%B7%E5%8F%A3%E4%BB%A4%E5%AE%89%E5%85%A8"><span class="toc-text">0x08 用户口令安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-%E9%98%B2%E7%81%AB%E5%A2%99%E6%8A%80%E6%9C%AF"><span class="toc-text">0x09 防火墙技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0a-Linux-%E5%B8%B8%E7%94%A8%E7%BD%91%E7%BB%9C%E5%91%BD%E4%BB%A4%E4%BB%8B%E7%BB%8D"><span class="toc-text">0x0a Linux 常用网络命令介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0b-Linux-%E4%B8%8B-TCP-%E9%80%9A%E4%BF%A1%E5%AE%9E%E4%BE%8B"><span class="toc-text">0x0b Linux 下 TCP 通信实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-text">客户端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0c-Linux-%E4%B8%8B-UDP-%E9%80%9A%E4%BF%A1%E5%AE%9E%E4%BE%8B"><span class="toc-text">0x0c Linux 下 UDP 通信实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF-1"><span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-1"><span class="toc-text">客户端</span></a></li></ol></li></ol></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/B_Code/C/HexToByte/"><span class="title">【编解码】Hex与Byte相互转化</span></a><a class="item title" href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/"><span class="title">【开发】查看编译的lib的运行库是什么</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"><span class="title">d-Linux 网络基础.md</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/"><span class="title">c-Linux 设备管理</span></a><a class="item title" href="/A_%E5%86%85%E5%8A%9F/B_%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/"><span class="title">设计模式之行为型模式</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-12-26T16:00:00.000Z">2023-12-27</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>d-Linux 网络基础.md</span></h1>
+<blockquote>
+<p>概述：Linux 操作系统实际上是一个网络操作系统，系统管理的很大部分工作其实都和网络有关。</p>
+<ul>
+<li>TCP&#x2F;IP 协议</li>
+<li>Linux 网络配置</li>
+<li>基本网络服务</li>
+<li>网络安全</li>
+<li>Linux 下网络通信基本流程和操作</li>
+</ul>
+</blockquote>
+<h2 id="0x01-TCP-x2F-IP-协议"><a href="#0x01-TCP-x2F-IP-协议" class="headerlink" title="0x01 TCP&#x2F;IP 协议"></a>0x01 TCP&#x2F;IP 协议</h2><p>在信息化设备中，及刷机已经从单一使用发展到了集群使用。越来越多的应用领域需要计算机在一定的地理范围内联合起来进行集群工作，从而促进了计算机和通信技术的紧密结合，形成了计算机网络。</p>
+<p>在计算机网络中，为了实现计算机之间的相互通信，有许多不同的通信规程和约定，这些规程和约定就是计算机网络协议。这就要求不同的计算机厂商在开发和研制自己的网络系统时需要遵循一个统一的约定。网络标准化组织在 1981 年颁布了开放系统互联参考模型，即 ISO&#x2F;OSI 模型，如下图所示，现在大部分网络协议都是参考这标准设计的。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/1.png" class title="图片描述">
+
+<p>TCP&#x2F;IP 于 20 世纪 70 年代开始研究和开发，现在也广泛用于各种网络中，不论是局域网还是广域网都可以用 TCP&#x2F;IP 协议来构造网络环境。同时 TCP&#x2F;IP 协议也是 Unix、Linux 等操作系统中最重要的网络协议。以 TCP&#x2F;IP 为核心协议的 Internet 更加促进了 TCP&#x2F;IP 的应用和发展。</p>
+<p>从体系结构上来看， TCP&#x2F;IP 协议是 OSI 参考模型七层结构的简化，它只有应用层、传输层、网际层和网络接口层。其中：</p>
+<ul>
+<li>TCP&#x2F;IP 网络接口层对应于 OSI 参考模型的物理层和数据链路层；</li>
+<li>TCP&#x2F;IP 网际层对应于 OSI 参考模型的网络层；</li>
+<li>TCP&#x2F;IP 传输层包含 TCP、UDP 两个协议，对应于 OSI 参考模型的传输层；</li>
+<li>TCP&#x2F;IP 应用层包含了 OSI 参考模型的会话层、表示层、应用层；</li>
+</ul>
+<p>TCP&#x2F;IP 协议是由一组通信协议组成的协议簇，其核心部分包括传输层协议（TCP 和 UDP）、网络层协议（IP）和网络接口层，这三层部分的协议内容都在操作系统内核中实现。而应用层协议，如 FTP、HTTP 等协议都是通过网络编程接口与核心协议打交道，整个协议簇是一种分层结构，下层为上层服务，不同层次之间通过一些接口通信。</p>
+<ol>
+<li>以太网</li>
+</ol>
+<p>1980 年 9 月由美国 Xerox、Intel、DEC 公司合作第一次公布了 Ethernet 的物理层和数据链路层的技术规范，成为世界上第一个局域网工业标准。IEEE 802.3 国际标准是在 Ethernet 标准的基础上制定的。</p>
+<p>以太网工作起来就像一个总线系统，每一台机器都通过一个分接器挂在一根很长的电缆上。为了让机器识别到自己生，每块以太网卡都有一个由制造商唯一分配的地址 <code>MAC</code> 地址。当一块以太网卡想要同另一块以太网卡对话时，它将向整个以太网电缆发送信息，其中包括自己的 <code>MAC</code> 地址和接收者的 <code>MAC</code> 地址。两块以太网卡试图在同一时间发送数据时，便会产生冲突。解决这种冲突的办法就是两台计算机取消这次发送各自等待一段随机时间再发送数据的尝试。</p>
+<p>允许 Linux 和 TCP&#x2F;IP 在以太网地址和 IP 地址间进行连接的是地址解析协议（<code>ARP</code>）缓存。当一台 Linux 机器开始在以太网上发消息时，它会通过 <code>ARP</code> 询问子网上其他机器的 <code>MAC</code> 地址。</p>
+<ol>
+<li>IP 协议</li>
+</ol>
+<p>IP 协议位于 TCP&#x2F;IP 协议簇的第三层，是 TCP&#x2F;IP 协议的传输系统，也是整个 TCP&#x2F;IP 协议簇的核心。 IP 协议负责数据报在计算机之间的寻址，决定数据传送到哪里以及出现网络故障时如何更换路由。IP 不保证传送的可靠性，在主机资源不足的情况下，它可能丢弃某些数据包，同时 IP 也不会检查数据链路层丢弃的报文。</p>
+<p>1）IP 地址。TCP&#x2F;IP 网络要进行通信，每一台主机都要预先分配一个唯一的 32 位地址作为该主机的标识符，这个主机必须使用该地址进行所有通信活动，这个地址也称为 IP 地址。IP 地址通常由网络标识 ID 和主机标识两部分组成，可以标识互联网络中任何一个网络中的任何主机。网络标识也称为网络地址，用于辨别子网，同一子网上的所有 TCP&#x2F;IP 主机的网络 ID 都相同。主机标识也称为主机地址，用于辨别每一个网络中的主机。IP 地址格式如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/2.png" class title="图片描述">
+
+<p>其中，网络 ID 是大于 1 位的二进制数，主机 ID 也是大于 1 位的二进制数。如计算中心网关地址 132.111.002.001 分解成协议所认识的地址就是：网络 ID（132.111）和主机 ID（002.001）</p>
+<p>IP 地址分类如下：</p>
+<ul>
+<li>A 类地址：网络类别字段占 1 位，即第 0 位为 <code>0</code>，表示是 A 类地址，第 1<del>7 位表示网络地址，第 8</del>31 位表示主机地址。它所表示的范围为 0.0.0.0~127.255.255.255，即能够表示 126 个网络地址，16387064 个主机地址。A 类地址通常用于超大型网络场合。</li>
+<li>B 类地址：网络类别字段占 2 位，即第 0、1 位为 <code>1 0</code> ，表示 B 类地址，第 2<del>15 位表示网络地址，第 16</del>31 位表示主机地址，它所能表示的范围为 128.0.0.0~191.255.255.255，即能够表示 16256 个网络地址，64576 个主机地址。B 类地址通常用于大型网络的场合。</li>
+<li>C 类地址：网络类别字段占 3 位，即第 0、1、2 位为 <code>110</code> ，表示 C 类地址，第 3<del>23 位表示网络地址，第 24</del>31 位表示主机地址。它所能表示的范围 192.0.0.0~192.233.255.255，即能够表示 2064512 个网络地址，254 个主机地址。C 类地址通常用于校园网或企业网。</li>
+<li>此外，还有 D 类和 E 类 IP 地址。 D 类地址用于多址广播地址，供特殊协议向选定的节点发送信息用。E 类地址暂时保留。</li>
+</ul>
+<p>2）子网掩码。通常将一个较大网络分为多个较小的网络，每个小网络使用不同的网络 ID ，这样的小网络称为子网。</p>
+<p>在网络通信时，若想要找到子网，需要定义子网掩码。子网掩码与 IP 地址一样也是一个 32 位的值，将它与主机的 IP 地址做按位 “与” 运算，可以屏蔽一部分 IP 地址，从而确定出这个网络地址。子网掩码可概括两个功能：用于区分网络地址和主机地址；用于将网络分割为多个子网。</p>
+<ol>
+<li>TCP 协议</li>
+</ol>
+<p>TCP 协议是一种面向连接的、可靠的传输层协议。面向连接是指一次正常的 TCP 传输需要通过在 TCP 客户端和 TCP 服务端之间建立特定的虚电路连接来完成，这个过程通常称为“三次握手”，可靠的传输协议可避免数据传输错误。TCP 协议可以支持许多高层协议，它对高层协议的数据结构没有任何要求，对于 TCP 来说只是将这些传输的数据结构作为一种连续的数据流。</p>
+<ol>
+<li>UDP 协议</li>
+</ol>
+<p>UDP 协议也是常用的传输层协议，提供非面向连接的、不可靠的数据流传输服务。这种服务不确定报文是否到达，不对报文排序，也不进行流量控制，因此 UDP 报文可能出现丢失、重复和失序等现象。与 TCP 相同的特点，UDP 协议也可以通过端口号支持多路复用功能。UDP 是一种简单的协议机制，通信开销小，效率高，适合对于可靠性要求不高当需要快捷、低延迟通信的应用场合。</p>
+<h2 id="0x02-配置Linux网络"><a href="#0x02-配置Linux网络" class="headerlink" title="0x02 配置Linux网络"></a>0x02 配置Linux网络</h2><p>在 Linux 系统中，TCP&#x2F;IP 网络是通过若干文本文件进行配置的，通过了解和修改这些配置文件就能够完成 Linux 联网功能。下面将逐个介绍 Linux 网络配置相关的文件。</p>
+<ol>
+<li>&#x2F;etc&#x2F;HOSTNAME 文件</li>
+</ol>
+<p>该文件包含系统的主机名称和完全的域名，如：<code>linux.cic.tsinghua.edu.cn</code>（Linux 为主机名，cic.tsinghua.edu.cn 为域名）</p>
+<ol>
+<li>&#x2F;etc&#x2F;host.conf 文件</li>
+</ol>
+<p>该文件指定如何解析主机名。Linux 通过解析器库获得主机名对应的 IP 地址，内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">order <span class="built_in">bind</span>,hosts    <span class="comment"># 指定主机名查询顺序，这里优先使用 DNS 解析域名，然后查询 /etc/hosts 文件</span></span><br><span class="line">multi on    <span class="comment"># 表示 /etc/hosts 文件中指定的主机可以有多个地址</span></span><br><span class="line">nospoof on  <span class="comment"># 指不允许对该服务器进行 IP 欺骗</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;services 文件</li>
+</ol>
+<p>&#x2F;etc&#x2F;services 文件中包含了服务名和端口号之间的映射，不少系统程序要使用这个文件，内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tcpmux 1/tcp    <span class="comment">#TCP port service multiplexer</span></span><br><span class="line"><span class="built_in">echo</span> 7/tcp</span><br><span class="line"><span class="built_in">echo</span> 7/udp</span><br><span class="line">discard 9/tcp sink null</span><br><span class="line">discard 9/udp sink null</span><br><span class="line">systatll/tcp <span class="built_in">users</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;sysconfig&#x2F;network 文件</li>
+</ol>
+<p>该文件用来指定服务器上的网络配置信息，包含控制与网络有关的文件和守护程序行为的参数，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NETWORKING=<span class="built_in">yes</span>      <span class="comment">#网络是否被配置</span></span><br><span class="line">HOSTNAME=machine1</span><br><span class="line">DOMAINNAME=cic.tsinghua.edu.cn  <span class="comment"># 分配给机器的域名</span></span><br><span class="line">GATEWAY=210.34.6.2  <span class="comment">#网关的 IP 地址</span></span><br><span class="line">FORWARD_IPV4=<span class="built_in">yes</span>    <span class="comment">#是否开启 IP 转发功能</span></span><br><span class="line">GATEWAYDEV=eth0     <span class="comment">#gw-dev表示网关的设备名</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-ethN 文件</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DEVICE=<span class="string">&quot;eth0&quot;</span></span><br><span class="line">IPADDR=<span class="string">&quot;192.168.2.1&quot;</span></span><br><span class="line">NETMASK=<span class="string">&quot;255.255.255.9&quot;</span></span><br><span class="line">NETWORK=<span class="string">&quot;192.168.2.0&quot;</span></span><br><span class="line">BROADCAST=<span class="string">&quot;192.168.2.255&quot;</span></span><br><span class="line">ONBOOT=<span class="string">&quot;yes&quot;</span></span><br><span class="line">BOOTPROTO=<span class="string">&quot;none&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;hosts 文件</li>
+</ol>
+<p>&#x2F;etc&#x2F;hosts 文件包含了 IP 地址和主机名之间的映射，还包括主机名的别名。IP 地址的设计使计算机容易识别，但却很难记住它们，为了解决这个问题，创建了 &#x2F;etc&#x2F;hosts 文件，内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 machanel localhost.localdomain localhost</span><br><span class="line">192.168.1.100 machine7</span><br><span class="line">192.168.1.101 otherpc otheralias</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;resolv.conf 文件</li>
+</ol>
+<p>该文件是由 DNS 客户端解析器（resolver 一个根据主机名解析 IP 地址的库）使用的配置文件，它包含主机的域名搜索顺序和 DNS 服务器的地址。示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">search cic.tsinghua.edu.cn</span><br><span class="line">nameserver 166.111.4.5</span><br><span class="line">nameserver 166.111.8.28</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>&#x2F;etc&#x2F;init.d&#x2F;network 主机地址、子网掩码和网关</li>
+</ol>
+<p>这个文件声明了 IP 地址、掩码、网络、广播地址和默认路由器的变量。示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IPADDR=192.168.1.100</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">NETWORK=192.168.1.0</span><br><span class="line">BROADCAST=192.168.1.255</span><br><span class="line">GATEWAY=192.168.1.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-域名服务器DNS"><a href="#0x03-域名服务器DNS" class="headerlink" title="0x03 域名服务器DNS"></a>0x03 域名服务器DNS</h2><p>连接 TCP&#x2F;IP 的每个网络接口用一个唯一的 32 位的 IP 地址标识，但由于数字比较复杂，难以记忆，而且没有形象性，因而发明了域名系统，在这种情况下，可以使用易于理解和较为形象的名称作为一台计算机的标识。大多数情况下，数字地址和域名地址可以交替使用，但无论用数字地址或是域名进行网络应用时，总是以 IP 地址为基础进行的。在网络进行连接前，系统必须将域名地址转换成 IP 地址，这就是 DNS 的任务。</p>
+<p>大多数 DNS 服务器都使用 Bind。DNS 提供了从名字到 IP 地址的映射关系，这种映射关系不必是一一映射，一个 IP 可以有多个域名，一个域名也可以对应多个 IP。</p>
+<h2 id="0x04-Apache-服务器"><a href="#0x04-Apache-服务器" class="headerlink" title="0x04 Apache 服务器"></a>0x04 Apache 服务器</h2><p>Web 服务器是互联网上人马使用最多的一种服务器，它已经成了当今社会不可缺少的一种信息传播方式。目前市场上最流行的运行于 Linux 上的 Web 服务器是 Apache 服务器。</p>
+<p>纵观 Apache，它为网络管理员提供了丰富多彩的功能，包括目录索引、目录别名、内容协商、可配置的 HTTP 错误报告、CGI 程序的 SetUID 执行、子进程资源管理、服务器端图像映射、重写 URL、URL 拼写检查以及联机手册 man 等。</p>
+<h2 id="0x05-邮件服务器"><a href="#0x05-邮件服务器" class="headerlink" title="0x05 邮件服务器"></a>0x05 邮件服务器</h2><p>自从加州大学伯克利分校 U.C Berkeley 完成 sendmail 的最初版本以来，<code>sendmail</code> 受到了业界长久的重视，从 1983 年的 V5 版本一直到 1993 年改写的 V8 版本，都受到了人们的尊重。</p>
+<p>sendmail 为 Linux 提供 SMTP 连接所需的服务，它对邮件信息进行分析并把它传送到目的地。sendmail 采用开放源代码的开发方式编写，其所需源码都可以免费得到并自由发布。它只提供了邮件路由功能，将发送留给管理员可以选择的本地代理。</p>
+<h2 id="0x06-samba-服务器"><a href="#0x06-samba-服务器" class="headerlink" title="0x06 samba 服务器"></a>0x06 samba 服务器</h2><p>可以把 <code>samba</code> 当成是一个局域网络上的 file&#x2F;printer sever，它可以提供文件系统、打印机或其他信息，并与 <code>samba sever</code> 在同一个子网域的 <code>samba client</code> 共享。</p>
+<p><code>samba</code> 是用来实现 SMB 的一种软件，它的工作原理是让 NETBIOS 和 SMB 这两个协议运行于 TCP&#x2F;IP 通信协议之上，并使用 NETBEUI 协议让 Linux 计算机可以在网络上被其他计算机看到。所以，通过 samba 能够使得 不同系统的计算机可以在网络上进行沟通和共享文件。</p>
+<h2 id="0x07-Linux系统的文件安全"><a href="#0x07-Linux系统的文件安全" class="headerlink" title="0x07 Linux系统的文件安全"></a>0x07 Linux系统的文件安全</h2><p>Linux 文件系统是由文件和目录组成的树形结构，每个文件目录包括文件类型、文件的存取权限、文件名、文件所有者、文件大小、文件建立及修改的日期等内容。任何一项内容遭受未授权的修改，文件的安全性都将遭受到破坏。保护文件系统的安全性应该从以下几个方面入手：</p>
+<ul>
+<li>文件存取权限的设置：文件属性决定了文件的被访问权限。</li>
+<li>设置用户 ID 和同组用户 ID 许可：用户 ID 许可设置和同组用户 ID 许可设置只给予可执行的目标文件。</li>
+</ul>
+<h2 id="0x08-用户口令安全"><a href="#0x08-用户口令安全" class="headerlink" title="0x08 用户口令安全"></a>0x08 用户口令安全</h2><p>每个 Linux 的用户都拥有一个账号，通过登录到这个账号才能有限制地使用系统，而保护自身文件安全的唯一屏障就是口令，一旦这道屏障被破坏，整个系统的安全便无法得到保证。</p>
+<p>Linux 系统中的 <code>/etc/passwd</code> 文件包含了全部系统需要知道的关于每个用户的信息。</p>
+<h2 id="0x09-防火墙技术"><a href="#0x09-防火墙技术" class="headerlink" title="0x09 防火墙技术"></a>0x09 防火墙技术</h2><ol>
+<li>防火墙的概念</li>
+</ol>
+<p>防火墙是一个矛盾统一体，它既要限制信息的流通，又要保持信息的流通。因此，根据网络安全性总体需求，防火墙可以遵循以下两种基本原则之一实现：</p>
+<ul>
+<li>一切未被允许的都是禁止的</li>
+<li>一切未被禁止的都是允许的</li>
+</ul>
+<p>由于以上两种防火墙原则在安全性和可使用性上各有侧重，很多防火墙系统唉两者之间都采用了一定的折中。</p>
+<ol>
+<li>防火墙的分类</li>
+</ol>
+<p>根据不同的防范方式和侧重点，防火墙主要分为分组过滤型和代理服务型。它们在网络性能、安全性和应用透明性等方面各有利弊。</p>
+<p>1）分组过滤型防火墙。分组过滤型防火墙只是根据数据包的内容来判断是否允许数据包的传输。通常在网路层上通过对分组中的 IP 地址、TCP&#x2F;UDP 端口号以及协议状态等字段的检查来决定是否转发一个分组。</p>
+<p>分组过滤型防火墙的基本原理：</p>
+<ul>
+<li>根据网络安全策略，在防火墙中事先设置分组过滤规则</li>
+<li>根据分组过滤规则，对经过防火墙的分组流进行检查</li>
+<li>分组过滤规则一定要按顺序排列。当一个分组到达时，按规则的排列顺序依次运用每个规则对分组进行检查。一旦分组与一个规则相匹配，则不再向下检查其他规则</li>
+<li>如果一个分组与一个拒绝转发的规则相匹配，则该分组将被禁止通过</li>
+<li>如果一个分组与一个允许转发的规则相匹配，则该分组将被允许通过</li>
+<li>如果一个分组不与任何规则相匹配，则该分组将被禁止通过，这是遵循 “一切未被允许的都是禁止的”原则</li>
+</ul>
+<h2 id="0x0a-Linux-常用网络命令介绍"><a href="#0x0a-Linux-常用网络命令介绍" class="headerlink" title="0x0a Linux 常用网络命令介绍"></a>0x0a Linux 常用网络命令介绍</h2><p>计算机网络的主要优点是能够实现资源和信息的共享，并且用户可以远程访问信息，Linux 提供了一组强有力的网络命令来为用户服务，这些工具能够帮助用户登录到远程计算机上，传输文件和执行远程命令等。</p>
+<ol>
+<li><code>ftp</code> 命令</li>
+</ol>
+<p><code>ftp</code> 命令是标准文件传输协议的用户接口。能够运行用户传输 ASCII 文件和二进制文件。</p>
+<ol>
+<li><code>telnet</code> 命令</li>
+</ol>
+<p>用户使用 <code>telnet</code> 命令进行远程登陆。该命令运行用户使用 <code>telnet</code> 协议在远程计算机之间进行通信，用户可以通过网络在远程计算机上登录，就像登录到本地机器上执行命令一样。如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/3.png" class title="图片描述">
+
+<ol>
+<li><code>rlogin</code> 命令</li>
+</ol>
+<p><code>rlogin</code> 是 remote login 的缩写。该命令与 <code>telnet</code> 命令类似，允许用户启动远程系统上的交互命令会话。如下图所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/4.png" class title="图片描述">
+
+<ol>
+<li><code>rsh</code> 命令</li>
+</ol>
+<p><code>rsh</code> 是 remote shell 的缩写。该命令在指定的远程主机上启动了一个 shell ，并执行用户在 <code>rsh</code> 命令行中指定的命令。如果用户没有给出要执行的命令，<code>rsh</code> 就用 <code>rlogin</code> 命令使用户登录到远程机上。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/5.png" class title="图片描述">
+
+<ol>
+<li><code>rcp</code> 命令</li>
+</ol>
+<p><code>rcp</code> 其实就通常使用的 <code>scp</code> 命令，是 remote file copy 的缩写。该命令用于在计算机之间复制文件。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/6.png" class title="图片描述">
+
+<h2 id="0x0b-Linux-下-TCP-通信实例"><a href="#0x0b-Linux-下-TCP-通信实例" class="headerlink" title="0x0b Linux 下 TCP 通信实例"></a>0x0b Linux 下 TCP 通信实例</h2><h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//出错调用函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">error_handle</span><span class="params">(std::string opt, std::string message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//根据errno值获取失败原因并打印到终端</span></span><br><span class="line">    <span class="built_in">perror</span>(opt.<span class="built_in">c_str</span>());</span><br><span class="line">    std::cout &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> serv_sock;</span><br><span class="line">    <span class="type">int</span> client_sock;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> serv_addr;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> client_addr;</span><br><span class="line"></span><br><span class="line">    <span class="type">socklen_t</span> client_addr_size;</span><br><span class="line">    <span class="type">char</span> message[] = <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断参数数量，Usage: &lt;port&gt;， 需要在命令行输入服务器接收消息的端口号</span></span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">2</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Usage : &quot;</span> &lt;&lt; argv[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &lt;prot&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建socket 套接字</span></span><br><span class="line">    serv_sock = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(serv_sock &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;socket&quot;</span>, <span class="string">&quot;socket() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化套接字结构体</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = <span class="built_in">htonl</span>(INADDR_ANY);<span class="comment">//选择当前任意网卡</span></span><br><span class="line">    serv_addr.sin_port = <span class="built_in">htons</span>(<span class="built_in">atoi</span>(argv[<span class="number">1</span>]));<span class="comment">//设置接收消息的端口号</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//绑定端口</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">bind</span>(serv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;serv_addr, <span class="built_in">sizeof</span>(serv_addr)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;bind&quot;</span>, <span class="string">&quot;bind() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//监听端口，设置等待队列数量为5</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">listen</span>(serv_sock, <span class="number">5</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;listen&quot;</span>, <span class="string">&quot;listen() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//打印输出等待连接</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Waiting Client....&quot;</span> &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    client_addr_size = <span class="built_in">sizeof</span>(client_addr);</span><br><span class="line">    <span class="comment">//等待接收客户端建立连接</span></span><br><span class="line">    client_sock = <span class="built_in">accept</span>(serv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;client_sock, &amp;client_addr_size);</span><br><span class="line">    <span class="keyword">if</span>(client_sock &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;accept&quot;</span>, <span class="string">&quot;accept() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//accept() 成功建立连接后，服务器就会得到客户端的 IP 地址和端口号。</span></span><br><span class="line">    <span class="comment">//打印客户端 IP 和端口号</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Client IP : &quot;</span> &lt;&lt; <span class="built_in">inet_ntoa</span>(client_addr.sin_addr) &lt;&lt; <span class="string">&quot; , port : &quot;</span> &lt;&lt; <span class="built_in">ntohs</span>(client_addr.sin_port) &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//向客户端发送 &quot;hello world&quot; 消息，使用write 标准IO接口就可以</span></span><br><span class="line">    <span class="built_in">write</span>(client_sock, message, <span class="built_in">sizeof</span>(message));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//关闭TCP连接</span></span><br><span class="line">    <span class="built_in">close</span>(client_sock);</span><br><span class="line">    <span class="comment">//关闭socket套接字</span></span><br><span class="line">    <span class="built_in">close</span>(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//出错调用函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">error_handle</span><span class="params">(std::string opt, std::string message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//根据errno值获取失败原因并打印到终端</span></span><br><span class="line">    <span class="built_in">perror</span>(opt.<span class="built_in">c_str</span>());</span><br><span class="line">    std::cout &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> sock;<span class="comment">//socket套接字</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> serv_addr;<span class="comment">//服务器套接字结构体</span></span><br><span class="line">    <span class="type">char</span> message[<span class="number">64</span>];<span class="comment">//用于接收服务器消息的缓冲区</span></span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断当前参数数量，需要命令行参数 &lt;IP&gt; &lt;port&gt;</span></span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Usage : &quot;</span> &lt;&lt; argv[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &lt;IP&gt; &lt;port&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建socket 套接字</span></span><br><span class="line">    sock = <span class="built_in">socket</span>(PF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(sock &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;socket&quot;</span>, <span class="string">&quot;socket() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化服务器套接字结构体参数，设置对方的IP地址和端口号</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(serv_addr));</span><br><span class="line">    serv_addr.sin_family = AF_INET;</span><br><span class="line">    serv_addr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_addr.sin_port = <span class="built_in">htons</span>(<span class="built_in">atoi</span>(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//与服务器建立连接</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">connect</span>(sock, (<span class="keyword">struct</span> sockaddr*)&amp;serv_addr, <span class="built_in">sizeof</span>(serv_addr)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;connect&quot;</span>, <span class="string">&quot;connect() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//读取服务器发送来的消息</span></span><br><span class="line">    str_len = <span class="built_in">read</span>(sock, message, <span class="built_in">sizeof</span>(message) <span class="number">-1</span>);</span><br><span class="line">    <span class="keyword">if</span>(str_len &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//read() 读取数据失败</span></span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;read&quot;</span>, <span class="string">&quot;read() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将读取到的输出打印出来</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Recv Message : &quot;</span> &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//关闭socket 套接字</span></span><br><span class="line">    <span class="built_in">close</span>(sock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x0c-Linux-下-UDP-通信实例"><a href="#0x0c-Linux-下-UDP-通信实例" class="headerlink" title="0x0c Linux 下 UDP 通信实例"></a>0x0c Linux 下 UDP 通信实例</h2><h3 id="服务端-1"><a href="#服务端-1" class="headerlink" title="服务端"></a>服务端</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 128</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//出错调用函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">error_handle</span><span class="params">(std::string opt, std::string message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//根据errno值获取失败原因并打印到终端</span></span><br><span class="line">    <span class="built_in">perror</span>(opt.<span class="built_in">c_str</span>());</span><br><span class="line">    std::cout &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> serv_sock;</span><br><span class="line">    <span class="type">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line">    <span class="type">socklen_t</span> client_adr_sz;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> serv_adr, client_adr;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//因为服务器程序使用时通过命令行参数指定接收消息的端口号，</span></span><br><span class="line">    <span class="comment">//所以当参数数量少于需求 2 时，程序结束并报错</span></span><br><span class="line">    <span class="keyword">if</span>(argc != <span class="number">2</span>)&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Usage : &quot;</span> &lt;&lt; argv[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &lt;port&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建socket 套接字，sock 用于后面发送和接收数据</span></span><br><span class="line">    serv_sock = <span class="built_in">socket</span>(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(serv_sock == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;socket&quot;</span>, <span class="string">&quot;UDP socket creation error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化套接字结构体，初始化服务器套接字结构体中的 IP 地址和端口号</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="built_in">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = <span class="built_in">htonl</span>(INADDR_ANY);</span><br><span class="line">    serv_adr.sin_port = <span class="built_in">htons</span>(<span class="built_in">atoi</span>(argv[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将socket套接字绑定固定端口进行消息接收</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">bind</span>(serv_sock, (<span class="keyword">struct</span> sockaddr*)&amp;serv_adr, <span class="built_in">sizeof</span>(serv_adr)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;bind&quot;</span>, <span class="string">&quot;bind() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//UDP 方式不需要进行 listen 和 accept 操作，直接就可以通过 recvfrom 函数去接收套接字中收到的数据。</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//清空接收消息数据的缓存区</span></span><br><span class="line">        <span class="built_in">memset</span>(message, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">        <span class="comment">//计算客户端结构体大小，用于接收客户端数据结构</span></span><br><span class="line">        client_adr_sz = <span class="built_in">sizeof</span>(client_adr);</span><br><span class="line">        <span class="comment">//recvfrom() 调用不仅收到对方发送来的数据，还通过最后两个参数返回了对方的 IP 地址和端口号信息，用于返回数据使用。</span></span><br><span class="line">        str_len = <span class="built_in">recvfrom</span>(serv_sock, message, BUF_SIZE, <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr*)&amp;client_adr, &amp;client_adr_sz);</span><br><span class="line">        <span class="comment">//将收到的信息打印出来</span></span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Recv Message : &quot;</span> &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line">        <span class="comment">//通过recvfrom 返回的发送方的IP地址和端口号信息，使用 sendto 将收到的信息再次发送回去。</span></span><br><span class="line">        <span class="built_in">sendto</span>(serv_sock, message, str_len, <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr*)&amp;client_adr, client_adr_sz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//结束程序后关闭socket套接字</span></span><br><span class="line">    <span class="built_in">close</span>(serv_sock);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端-1"><a href="#客户端-1" class="headerlink" title="客户端"></a>客户端</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BUF_SIZE 128</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//出错调用函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">error_handle</span><span class="params">(std::string opt, std::string message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//根据errno值获取失败原因并打印到终端</span></span><br><span class="line">    <span class="built_in">perror</span>(opt.<span class="built_in">c_str</span>());</span><br><span class="line">    std::cout &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> sock;</span><br><span class="line">    <span class="type">char</span> message[BUF_SIZE];</span><br><span class="line">    <span class="type">int</span> str_len;</span><br><span class="line">    <span class="type">socklen_t</span> adr_sz;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> serv_adr, from_adr;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//因为客户端程序使用时通过命令行参数指定IP地址和端口号，</span></span><br><span class="line">    <span class="comment">//所以当参数数量少于需求 3 时，程序结束并报错</span></span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Usage : &quot;</span> &lt;&lt; argv[<span class="number">0</span>] &lt;&lt; <span class="string">&quot; &lt;IP&gt; &lt;port&gt;&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建socket 套接字，sock 用于后面发送和接收数据</span></span><br><span class="line">    sock = <span class="built_in">socket</span>(PF_INET, SOCK_DGRAM, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(sock &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">error_handle</span>(<span class="string">&quot;socket&quot;</span>, <span class="string">&quot;socket() error.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化套接字结构体，初始化服务器套接字结构体中的 IP 地址和端口号</span></span><br><span class="line">    <span class="built_in">memset</span>(&amp;serv_adr, <span class="number">0</span>, <span class="built_in">sizeof</span>(serv_adr));</span><br><span class="line">    serv_adr.sin_family = AF_INET;</span><br><span class="line">    serv_adr.sin_addr.s_addr = <span class="built_in">inet_addr</span>(argv[<span class="number">1</span>]);</span><br><span class="line">    serv_adr.sin_port = <span class="built_in">htons</span>(<span class="built_in">atoi</span>(argv[<span class="number">2</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//从标准输入获取发送数据，保存到message缓存区</span></span><br><span class="line">        std::cin &gt;&gt; message;</span><br><span class="line">        <span class="comment">//判断如果输入是 &#x27;q&#x27; 或者 &#x27;Q&#x27; 则表示退出客户端程序</span></span><br><span class="line">        <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(message, <span class="string">&quot;q\n&quot;</span>) || !<span class="built_in">strcmp</span>(message, <span class="string">&quot;Q\n&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//退出</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//发送消息</span></span><br><span class="line">        <span class="built_in">sendto</span>(sock, message, <span class="built_in">strlen</span>(message), <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr*)&amp;serv_adr, <span class="built_in">sizeof</span>(serv_adr));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//清空接收数组</span></span><br><span class="line">        <span class="built_in">memset</span>(message, <span class="number">0</span>, BUF_SIZE);</span><br><span class="line">        <span class="comment">//计算返回套接字结构体字节长度</span></span><br><span class="line">        adr_sz = <span class="built_in">sizeof</span>(from_adr);</span><br><span class="line">        <span class="comment">//接收UDP返回数据</span></span><br><span class="line">        str_len = <span class="built_in">recvfrom</span>(sock, message, BUF_SIZE, <span class="number">0</span>, (<span class="keyword">struct</span> sockaddr*)&amp;from_adr, &amp;adr_sz);</span><br><span class="line">        <span class="comment">//在接收数据尾部添加&#x27;0&#x27;结束符</span></span><br><span class="line">        message[str_len + <span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//将接收数据打印输出</span></span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Recv Message : &quot;</span> &lt;&lt; message &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/">b-Linux 系统文件管理</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/">3-操作系统进程控制及进程间通信概述</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\2 跟踪分析Linux内核的启动过程\" title="Linux内核2 跟踪分析Linux内核的启动过程"><span class="title">Linux内核2 跟踪分析Linux内核的启动过程</span></a><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\Readme\" title="Linux 内核分析配套实验"><span class="title">Linux 内核分析配套实验</span></a><a class="item" href="\A_OS\Linux\Linux基础入门\Readme\" title="Linux 基础入门"><span class="title">Linux 基础入门</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\3-操作系统进程控制及进程间通信概述\" title="3-操作系统进程控制及进程间通信概述"><span class="title">3-操作系统进程控制及进程间通信概述</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\1-操作系统概述\" title="Linux操作系统原理剖析——操作系统概述"><span class="title">Linux操作系统原理剖析——操作系统概述</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

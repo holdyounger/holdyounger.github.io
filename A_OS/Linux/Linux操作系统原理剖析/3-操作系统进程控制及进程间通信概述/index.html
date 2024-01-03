@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>3-操作系统进程控制及进程间通信概述 - oone</title>
+
+  
+    <meta name="description" content="概述：知识点  Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式   0x01 临界资源两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3-操作系统进程控制及进程间通信概述">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：知识点  Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式   0x01 临界资源两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/4.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/5.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/6.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/7.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/8.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/9.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/10.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/11.png">
+<meta property="article:published_time" content="2023-12-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-27T03:11:11.974Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内核">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/1.png">
+  
+  
+  
+  <meta name="keywords" content="Linux,内核">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">3-操作系统进程控制及进程间通信概述</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E4%B8%B4%E7%95%8C%E8%B5%84%E6%BA%90"><span class="toc-text">0x01 临界资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E4%B8%B4%E7%95%8C%E5%8C%BA"><span class="toc-text">0x02 临界区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5"><span class="toc-text">0x03 进程的互斥与同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Linux%E5%AE%9E%E7%8E%B0%E8%BF%9B%E7%A8%8B%E4%BA%92%E6%96%A5%E5%92%8C%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6"><span class="toc-text">0x04 Linux实现进程互斥和同步机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E9%94%81%E6%9C%BA%E5%88%B6"><span class="toc-text">0x05 锁机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E4%BF%A1%E5%8F%B7%E9%87%8F%E6%9C%BA%E5%88%B6"><span class="toc-text">0x06 信号量机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E5%9E%8B%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">整型信号量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E5%9E%8B%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">记录型信号量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AND-%E5%9E%8B%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">AND 型信号量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9B%86"><span class="toc-text">信号量集</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-text">0x07 进程间通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-%E7%AE%A1%E9%81%93"><span class="toc-text">0x08 管道</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E5%90%8D%E7%AE%A1%E9%81%93%E5%8F%8A%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">无名管道及系统调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1%E5%AE%9E%E9%AA%8C"><span class="toc-text">管道通信实验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E5%90%8D%E7%AE%A1%E9%81%93%E5%8F%8A%E5%85%B6%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">有名管道及其系统调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E5%90%8D%E7%AE%A1%E9%81%93%E5%AE%9E%E9%AA%8C"><span class="toc-text">有名管道实验</span></a></li></ol></li></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/B_Code/C/HexToByte/"><span class="title">【编解码】Hex与Byte相互转化</span></a><a class="item title" href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/"><span class="title">【开发】查看编译的lib的运行库是什么</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/"><span class="title">d-Linux 网络基础.md</span></a><a class="item title" href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/"><span class="title">c-Linux 设备管理</span></a><a class="item title" href="/A_%E5%86%85%E5%8A%9F/B_%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/"><span class="title">设计模式之行为型模式</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div><div id="post-meta">发布于&nbsp;<time datetime="2023-12-25T16:00:00.000Z">2023-12-26</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>3-操作系统进程控制及进程间通信概述</span></h1>
+<blockquote>
+<p>概述：知识点</p>
+<ul>
+<li>Linux 临界资源概述</li>
+<li>Linux 进程同步与互斥</li>
+<li>Linux 进程间通信概述</li>
+<li>Linux 进程间通信之管道方式</li>
+</ul>
+</blockquote>
+<h2 id="0x01-临界资源"><a href="#0x01-临界资源" class="headerlink" title="0x01 临界资源"></a>0x01 临界资源</h2><p>两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。</p>
+<p>举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没用进行限制使用导致的。</p>
+<h2 id="0x02-临界区"><a href="#0x02-临界区" class="headerlink" title="0x02 临界区"></a>0x02 临界区</h2><p>不论是硬件资源还是软件资源，多个进程必须互斥访问而不能同时访问，一旦同时访问就会出现问题。每个进程中访问临界资源的那段代码称为临界区。所以，如果能够保证各个进程在进入各自临界区是互斥的，那么就可以实现各个进程对临界资源的访问是互斥的。因此，每个进程在进入临界区之前，应该先对欲访问的临界资源进行检查，检查当前临界资源是否有进程在进行访问，如果当前存在进程访问（即占用临界资源），则当前该进程不能进入临界区；如果此刻没有其他进程正在访问和使用临界资源，则当前进程可以进入临界区对临界资源进行访问和使用，并设置正在访问标识来告诉其他进程此时临界资源正在被使用。（这样的操作就类似火车上的男女共用的单独卫生间，当有人在使用时，红灯亮起告诉所有人正在使用，当无人使用时绿灯亮起，表示当前所有人都可以进入）</p>
+<p>进程在进入临界区前需要检查临界资源使用情况，能够访问临界资源后需要设置正在访问标识。在经常访问资源完成后退出临界资源的访问后，需要将访问标识恢复原样，这部分的代码称为退出区。进程中除了进入区、退出区、临界区，其余部分的代码称为剩余区，于是一个访问临界资源的进程可以被封为如下部分组成：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">进入区</span><br><span class="line">临界区</span><br><span class="line">退出区</span><br><span class="line">剩余区</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x03-进程的互斥与同步"><a href="#0x03-进程的互斥与同步" class="headerlink" title="0x03 进程的互斥与同步"></a>0x03 进程的互斥与同步</h2><ol>
+<li>进程互斥 进程互斥是指多个进程不能同时使用同一个临界资源，即两个或两个以上进程必须互斥地使用临界资源或者不能同时进入临界区。这是由于各个进程共享某些资源引起的。</li>
+<li>进程同步 进程同步是指有协作关系的进程之间不断地调整它们之间的相对执行过程，以保证临界资源在不同进程中执行的顺序和合理利用。</li>
+</ol>
+<h2 id="0x04-Linux实现进程互斥和同步机制"><a href="#0x04-Linux实现进程互斥和同步机制" class="headerlink" title="0x04 Linux实现进程互斥和同步机制"></a>0x04 Linux实现进程互斥和同步机制</h2><p>Linux 操作系统下对于进程的互斥和同步控制主要有以下这三种方式：</p>
+<ul>
+<li>锁机制</li>
+<li>信号量机制</li>
+<li>信号量集</li>
+</ul>
+<h2 id="0x05-锁机制"><a href="#0x05-锁机制" class="headerlink" title="0x05 锁机制"></a>0x05 锁机制</h2><p>Linux 锁机制其实就是一种实现互斥的软件方式，即提供一对进程共享的锁变量，在进入临界区之前首先测试锁变量的状态，通过锁的状态了解到临界资源是否被占用。临界资源可用，则设置锁变量；临界资源被占用，则会根据锁的不同选择睡眠等待、自旋等待或者返回资源占用状态等。主要操作流程演示如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#加锁</span></span><br><span class="line">Lock w:</span><br><span class="line">&#123;</span><br><span class="line">    访问临界资源</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#访问完毕，开锁</span></span><br><span class="line">UnLock w;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-信号量机制"><a href="#0x06-信号量机制" class="headerlink" title="0x06 信号量机制"></a>0x06 信号量机制</h2><p>在早先提出的一种广义锁机制或称为计数锁的同步机制，既能解决互斥又能解决同步，是一种非常有效的同步工具，后来加以改进形成了信号量同步机制。</p>
+<p>申请和释放临界资源的方式通过 <code>wait()</code> 操作和 <code>signal()</code> 操作完成，有时候也称为 P 操作（荷兰语 Passeren 首字母）和 V 操作（Verhoong 的首字母）。</p>
+<p>信号量也被叫做信号灯，是在信号量同步机制中用于实现进程的同步和互斥的有效数据结构。我们可以为每一类资源设置一个信号量，信号量有很多种类型的数据结构，如整型信号量、记录型信号量、AND 型信号量以及信号量集等。</p>
+<h4 id="整型信号量"><a href="#整型信号量" class="headerlink" title="整型信号量"></a>整型信号量</h4><p>整型信号量是信号量中最简单的类型，也是各种信号量类型中必须包含的类型。整型信号量的数值表示当前系统中可用的该类临界资源的数量。</p>
+<p>如设置了整型信号量 s ，则 s 值的意义为：</p>
+<ul>
+<li><code>s&gt;0</code> ，表示系统中空闲的该类临界资源的个数；</li>
+<li><code>s=0</code> ，表示系统中该类临界资源干好全部被占用，而且没有进程在等待临界资源；</li>
+<li><code>s&lt;0</code> ，s 的绝对值表示当前系统中等待该临界资源的进程个数；</li>
+</ul>
+<p><code>wait(S)</code> 和 <code>Signal(S)</code> 可以简单被描述成如下的代码执行方式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//wait(S)</span></span><br><span class="line">    <span class="keyword">while</span>(s &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//进程等待</span></span><br><span class="line">    &#125;</span><br><span class="line">    s = s - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Signal(S)</span></span><br><span class="line">    <span class="comment">//发送信号</span></span><br><span class="line">    s = s + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="记录型信号量"><a href="#记录型信号量" class="headerlink" title="记录型信号量"></a>记录型信号量</h4><p>记录型信号量的数据结构由两部分组成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semaphone</span>&#123;</span></span><br><span class="line">    <span class="type">int</span> s;<span class="comment">//整型信号</span></span><br><span class="line">    <span class="built_in">list</span> *l;<span class="comment">//进程链表</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semaphone</span> <span class="title">S</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个结构中，<code>s</code> 的值表示系统中可用的该类临界资源的数量，而 <code>l</code> 为进程链表指针，指向等待该资源的 PCB 队列。具体的操作如下图所示：</p>
+
+
+<p>在记录型信号量机制中，s 的初值表示系统中该类资源的可用数目，因而又被成为资源信号量，每次对它进行 <code>wait()</code> 操作，即申请该类一个单位的临界资源，描述为 <code>s=s-1</code> ，当 <code>s&gt;=0</code> 条件满足时，表示在没用做减一操作前 <code>s&gt;=1</code> ，因此本进程可以继续执行；当 <code>s&gt;=0</code> 条件不满足时，表示操作前系统就没有空闲的该资源，因此进程应该调用 <code>block</code> 将该进程的 PCB 插入由指针 l 指向的阻塞队列。因此，该机制遵循了“让权等待”。</p>
+<p>s 的绝对值表示在该信号量链表中已阻塞等待进程的数目。对信号量的每次 <code>signal()</code> 操作表示执行进程释放一个单位的该类临界资源，因此操作 <code>s=s+1</code> 表示资源数目加一。如果加一操作后发现 <code>s&lt;=0</code> 条件依然成立，这表示该信号链表中仍然有等待资源被阻塞的经常，所以还需要调用 <code>wakeup</code> 将第一个等待进程唤醒，其余进程继续等待；若 <code>s&lt;=0</code> 不成立，则表示系统中没用等待该类资源的进程，因此本进程只需要释放它所占用的该类资源继续执行即可。</p>
+<h4 id="AND-型信号量"><a href="#AND-型信号量" class="headerlink" title="AND 型信号量"></a>AND 型信号量</h4><p>AND 同步机制的基本思想是将进程在整个运行过程中需要的所有资源，一次性全部分配给进程，待进程使用完成后再一起释放，只要有一个资源尚未分配给进程，其他所有可能分配的资源都不会分配给它。具体描述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Swait(S1,S2,...,Sn)</span><br><span class="line">    <span class="keyword">if</span> S1&gt;=<span class="number">1</span> and S2 &gt;=<span class="number">1</span> ... and Sn &gt;=<span class="number">1</span> then</span><br><span class="line">        <span class="keyword">for</span> i: =<span class="number">1</span> to n <span class="keyword">do</span></span><br><span class="line">            Si:=Si<span class="number">-1</span>;</span><br><span class="line">        endfor</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        [将该进程放入阻塞队列]</span><br><span class="line">    endif</span><br><span class="line">Ssignal(S1,S2,...,Sn)</span><br><span class="line">    <span class="keyword">for</span> i:=<span class="number">1</span> to n <span class="keyword">do</span></span><br><span class="line">        Si = Si + <span class="number">1</span>;</span><br><span class="line">        唤醒所有 Si 不满足而进入阻塞队列的进程</span><br><span class="line">    endfor</span><br></pre></td></tr></table></figure>
+
+<h4 id="信号量集"><a href="#信号量集" class="headerlink" title="信号量集"></a>信号量集</h4><p>如果某进程一次需要 N 个某类资源时，就需要进行 N 次 <code>wait()</code> 操作，这使得系统效率非常低并且可能造成死锁。</p>
+<p>信号量集机制的基本思想是在 AND 型信号量集的基础上进行扩充，进程对信号量 Si 的测试值为 ti （用于信号量判断），占用值为 di （用于信号量的增减）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Swait(S1,S2,...,Sn)</span><br><span class="line">Ssignal(S1,d1;S2,d2;...;Sn,dn)</span><br></pre></td></tr></table></figure>
+
+<p>一般“信号量集”的几种特定情况如下：</p>
+<ul>
+<li><code>Swait(S,d,d)</code> 表示每次申请 d 个资源，当少于 d 时不进行分配</li>
+<li><code>Swait(S,1,1)</code> 表示互斥信号量</li>
+<li><code>Swait(S,1,0)</code> 作为一个可控开关（当 <code>S&gt;=1</code> 时允许多个进程进入临界区；当 <code>S==0</code> 时禁止任何进程进入临界区）</li>
+<li>“信号量集”未必成对使用 <code>Swait()</code> 和 <code>Ssignal()</code>，如一起申请，但可以不一起释放</li>
+</ul>
+<h2 id="0x07-进程间通信"><a href="#0x07-进程间通信" class="headerlink" title="0x07 进程间通信"></a>0x07 进程间通信</h2><p>我们应该都知道了，进程是一个程序的一次执行，是系统资源分配的最小单元。这里所说的进程一般是指运行在用户态的进程，而由于处于用户态的不同进程间是彼此隔离的，但是它们很可能需要相互发送一些信息，好让对方知道自己的进度等情况，像这样进程间传递信息就叫进程间通信。</p>
+<p>Linux 进程间通信的方式有以下几种（这是固定的）：</p>
+<ul>
+<li>管道(Pipe)及有名管道(Named Pipe): 管道可用于具有”血缘”关系进程间(也就是父子进程或者兄弟进程)的通信。有名管道除具有管道所具有的功能外，还允许无”血缘”关系进程间的通信。</li>
+<li>信号(Signal): 信号是在软件层次上对中断机制的一种模拟，它是比较复杂的通信方式，用于通知进程有某事件发生。</li>
+<li>信号量(Semaphore): 主要作为进程之间及同一进程的不同线程之间的同步和互斥手段。</li>
+<li>共享内存(Shared Memory): 可以说这是最有效的进程间通信方式。它使得多个进程可以访问同一块内存空间，不同进程可以及时看到对方进程中对共享内存中数据的更新。这种通信方式需要依靠某种同步机制，如互斥锁和信号量等。</li>
+<li>消息队列(Messge Queue): 消息队列是消息的链表，包括 <code>Posix 消息队列</code> 和 <code>System V 消息队列</code>。它克服了前两种通信方式中信息量有限的缺点，具有写权限的进程可以按照一定的规则向消息队列中添加消息;对消息队列具有读权限的进程则可以从消息队列中读取消息。</li>
+<li>套接字(Socket): 这个绝对是一种更为一般的进程间通信机制，它可用于网络中不同机器之间的进程间通信，目前经常遇到的网络编程就会用到套接字通信。</li>
+</ul>
+<h2 id="0x08-管道"><a href="#0x08-管道" class="headerlink" title="0x08 管道"></a>0x08 管道</h2><p>管道是 Linux 中进程间通信的一种方式，它把一个程序的输出直接连接到另一个程序的输入(其实我更愿意将管道比喻为农村浇地的管子)。Linux 的管道主要包括两种：无名管道和有名管道。这一节主要讲无名管道，首先介绍以下这两种管道。</p>
+<ol>
+<li>无名管道</li>
+</ol>
+<p>无名管道是 Linux 中管道通信的一种原始方法，如下图所示，它具有以下特点：</p>
+<ul>
+<li>它只能用于具有亲缘关系的进程之间的通信（也就是父子进程或者兄弟进程之间）；</li>
+<li>它是一个半双工的通信模式，具有固定的读端和写端；</li>
+<li>管道也可以看成是一种特殊的文件，对于它的读写也可以使用普通的 read()、write() 等函数。但它不是普通的文件，并不属于其他任何文件系统并且只存在于内存中。</li>
+</ul>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/1.png" class title="图片描述">
+
+<ol>
+<li>有名管道(FIFO)</li>
+</ol>
+<p>有名管道是对无名管道的一种改进，如下图所示，它具有以下特点：</p>
+<ul>
+<li>它可以使互不相关的两个进程间实现彼此通信；</li>
+<li>该管道可以通过路径名来指出，并且在文件系统中是可见的。在建立了管道之后，两个进程就可以把它当做普通文件一样进行读写操作，使用非常方便；</li>
+<li><code>FIFO</code> 严格地遵循先进先出规则，对管道及 <code>FIFO</code> 的读总是从开始处返回数据，对它们的写则是把数据添加到末尾，它们不支持如 <code>lseek()</code> 等文件定位操作。</li>
+</ul>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/2.png" class title="图片描述">
+
+<h4 id="无名管道及系统调用"><a href="#无名管道及系统调用" class="headerlink" title="无名管道及系统调用"></a>无名管道及系统调用</h4><ol>
+<li>管道创建与管道说明</li>
+</ol>
+<p>管道是基于文件描述符的通信方式，当一个管道建立时，它会创建两个文件描述符 <code>fd[0]</code> 和 <code>fd[1]</code>，其中 <code>fd[0]</code> 固定用于读管道，而 <code>fd[1]</code> 固定用于写管道，如下图所示，这样就构成了一个半双工的通道。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/3.png" class title="图片描述">
+
+<p>管道关闭时只需要将这两个文件描述符关闭即可，可使用普通的 <code>close()</code> 函数逐个关闭各个文件描述符。</p>
+<ol>
+<li>管道创建函数</li>
+</ol>
+<p>创建管道可以用 <code>pipe()</code> 函数实现，具体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span> <span class="comment">//所需头文件</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">pipe</span><span class="params">(<span class="type">int</span> fd[<span class="number">2</span>])</span> <span class="comment">//函数原型</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">函数参数：fd[2] 管道的两个文件描述符，函数调用之后可以直接操作这两个文件描述符</span></span><br><span class="line"><span class="comment">返回值：0 - 成功，-1 - 出错</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>管道读写说明</li>
+</ol>
+<p>用 <code>pipe()</code> 创建的管道两端处于同一个进程中，由于管道主要是用于在不同的进程间通信的，因此，在实际应用中没有太大意义。实际上，通常先是创建一个管道，再调用 <code>fork()</code> 函数创建一个子进程，该子进程会继承父进程所创建的管道，这时，父子进程管道的文件描述符对应关系如下图:</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/4.png" class title="图片描述">
+
+<p>此时的关系看似非常复杂，实际上却已经给不同进程之间的读写创造了很好的条件。父子进程分别拥有自己的读写通道，为了实现父子进程之间的读写，只需把无关的读端或写端的文件描述符关闭即可。将父进程的写端 <code>fd[1]</code> 和子进程的读端 <code>fd[0]</code> 关闭，则父子进程之间就建立起一条“子进程写入父进程读取”的通道。</p>
+<p>同样，也可以将父进程的读端 <code>fd[0]</code> 和子进程的写端 <code>fd[1]</code> 关闭，则父子进程之间就建立起一条“父进程写入子进程读取”的通道。</p>
+<p>另外，父进程还可以创建多个子进程，各个子进程都继承了相应的 <code>fd[0]</code> 和 <code>fd[1]</code> ，此时，只需要关闭相应的端口就可以建立各子进程之间的的通道。</p>
+<ol>
+<li>管道读写注意点</li>
+</ol>
+<ul>
+<li>只有在管道的读端存在时，向管道写入数据才有意义。否则，向管道写入数据的进程将收到内核传来的 SIGPIPE 信号(通常为 Broken pipe 错误)。</li>
+<li>向管道写入数据时，Linux 将不保证写入的原子性，管道缓冲区一有空闲区域，写进程就会试图向管道写入数据。如果读进程不读取管道缓冲区中的数据，那么写进程将会一直阻塞。</li>
+<li>父子进程在运行时，它们的先后次序并不能保证。因此，为了保证父子进程已经关闭了相应的文件描述符，可在两个进程中调用 sleep()函数。当然，最好还是采用进程之间的同步与互斥机制。</li>
+</ul>
+<h4 id="管道通信实验"><a href="#管道通信实验" class="headerlink" title="管道通信实验"></a>管道通信实验</h4><p>下面，我们通过一个小的实例代码来学习进程如何通过管道来通信的。在 VS code 窗口中创建新的文件 <code>pipe.c</code> ，然后添加如下代码内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_DATA_LEN    128</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> DELAY_TIME      3</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid;</span><br><span class="line">    <span class="type">int</span> pipe_fd[<span class="number">2</span>];</span><br><span class="line">    <span class="type">char</span> buf[MAX_DATA_LEN];</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span> data[] = <span class="string">&quot;Pipe Demo Program&quot;</span>;</span><br><span class="line">    <span class="type">int</span> real_read;</span><br><span class="line">    <span class="type">int</span> real_write;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">void</span> *)buf, <span class="number">0</span>, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">    <span class="keyword">if</span>(pipe(pipe_fd) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;pepe create error\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//子进程，关闭写描述符，通过sleep(3)等待父进程关闭相应的读描述符</span></span><br><span class="line">        close(pipe_fd[<span class="number">1</span>]);</span><br><span class="line">        sleep(DELAY_TIME);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//子进程读取管道内容</span></span><br><span class="line">        real_read = read(pipe_fd[<span class="number">0</span>], buf, MAX_DATA_LEN);</span><br><span class="line">        <span class="keyword">if</span>(real_read &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Child progress : read %d bytes from the pipe : &#x27;%s&#x27; \n&quot;</span>, real_read, buf);</span><br><span class="line">        &#125;</span><br><span class="line">        close(pipe_fd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//父进程，关闭读描述符，并通过睡眠3秒等待子进程关闭对应的写描述符</span></span><br><span class="line">        close(pipe_fd[<span class="number">0</span>]);</span><br><span class="line">        sleep(DELAY_TIME);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//写管道内容</span></span><br><span class="line">        real_write = write(pipe_fd[<span class="number">1</span>], data, <span class="built_in">strlen</span>(data));</span><br><span class="line">        <span class="keyword">if</span>(real_write != <span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Parent progress : write %d bytes to the pipe : &#x27;%s&#x27; \n&quot;</span>, real_write, data);</span><br><span class="line">        &#125;</span><br><span class="line">        close(pipe_fd[<span class="number">1</span>]);</span><br><span class="line">        waitpid(pid, <span class="literal">NULL</span>, <span class="number">0</span>); <span class="comment">//等待子进程结束</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加完成后，如下图：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/5.png" class title="图片描述">
+
+<p>在 VS Code 平台下的终端窗口中输入以下命令进行编译和运行，观察程序最终结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc pipe.c -o pipe</span><br><span class="line">./pipe</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/6.png" class title="图片描述">
+
+<h4 id="有名管道及其系统调用"><a href="#有名管道及其系统调用" class="headerlink" title="有名管道及其系统调用"></a>有名管道及其系统调用</h4><p>有名管道是对无名管道的一种改进，它具有以下特点：</p>
+<ul>
+<li>它可以使互不相关的两个进程间实现彼此通信；</li>
+<li>该管道可以通过路径名来指出，并且在文件系统中是可见的。在建立了管道之后，两个进程就可以把它当做普通文件一样进行读写操作，使用非常方便；</li>
+<li><code>FIFO</code> 严格地遵循先进先出规则，对管道及 <code>FIFO</code> 的读总是从开始处返回数据，对它们的写则是把数据添加到末尾，它们不支持如 <code>lseek()</code> 等文件定位操作。</li>
+</ul>
+<p>有名管道的创建可以使用函数 <code>mkfifo()</code>，该函数类似与文件中的 <code>open()</code> 操作，可以指定管道的路径和打开的模式。同时还可以在终端窗口使用命令来创建有名管道。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mknod</span> [管道名] p</span><br></pre></td></tr></table></figure>
+
+<p>在管道创建成功后，就可以使用 <code>open()</code>、<code>write()</code> 和 <code>read()</code> 这些函数了。与普通文件的开发设置一样，对于为读而打开的管道可在 <code>open()</code> 中设置 <code>O_RDONLY</code>，对于为写而打开的管道可在 <code>open()</code> 中设置 <code>O_WRONLY</code>，在这里与普通文件不同的是阻塞问题。由于普通文件在读写时不会出现阻塞问题，而在管道的读写中却有阻塞的可能，这里的非阻塞标志可以在 <code>open()</code> 函数中设定为 <code>O_NONBLOCK</code>。</p>
+<p>下面分别对阻塞打开和非阻塞打开的读写进行说明：</p>
+<ol>
+<li>对于读进程：</li>
+</ol>
+<ul>
+<li>若该管道是阻塞打开，且当前 <code>FIFO</code> 内没有数据，则对读进程而言将一直阻塞到有数据写入。</li>
+<li>若该管道是非阻塞打开，则不论 <code>FIFO</code> 内是否有数据，读进程都会立即执行读操作。即如果 <code>FIFO</code> 内没有数据，则读函数将立刻返回 0。</li>
+</ul>
+<ol>
+<li>对于写进程</li>
+</ol>
+<ul>
+<li>若该管道是阻塞打开，则写操作将一直阻塞到数据可以被写入。</li>
+<li>若该管道是非阻塞打开而不能写入全部数据，则读操作进行部分写入或者调用失败。</li>
+</ul>
+<p>对于 <code>mkfifo()</code> 函数介绍如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/state.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//函数原型</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">mkfifo</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *filename, <span class="type">mode_t</span> mode)</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">参数：</span></span><br><span class="line"><span class="comment">- filename: 要创建的管道，包含路径</span></span><br><span class="line"><span class="comment">- mode: O_RDONLY:读管道</span></span><br><span class="line"><span class="comment">        O_WRONLY:写管道</span></span><br><span class="line"><span class="comment">        O_RDWR:读写管道</span></span><br><span class="line"><span class="comment">        O_NONBLOCK:非阻塞</span></span><br><span class="line"><span class="comment">        O_CREAT:如果该文件不存在，那么就创建一个新的文件，并用第三个参数为其设置权限</span></span><br><span class="line"><span class="comment">        O_EXECL：如果使用O_CREAT时文件存在，那么可返回错误消息。这个参数可测试文件是否存在</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">返回值：成功返回 0 ，失败返回 -1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="有名管道实验"><a href="#有名管道实验" class="headerlink" title="有名管道实验"></a>有名管道实验</h4><p>对于有名管道的使用就不需要像无名管道那样使用 <code>fork()</code> 创建子进程来进行通信，有名管道是可以在没有亲属关系的进程之间进行通信的。所以在这个实验中，我们将要编写两个程序，通过执行这两个进程在工作过程中使用 <code>fifo</code> 通信来进行实验。这两个程序一个负责向管道种写数据，一个负责读数据。写数据的程序为 <code>fifo_write.c</code> ，读数据的代码文件为 <code>fifo_read.c</code>，具体如下：</p>
+<p>在 VS Code 平台下创建 <code>fifo_write.c</code> 文件，如下图：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/7.png" class title="图片描述">
+
+<p>添加以下内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FIFO_NAME    <span class="string">&quot;/tmp/demo_fifo&quot;</span>    <span class="comment">/* 有名管道名称 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_BUFFER_SIZE     PIPE_BUF     <span class="comment">/* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="type">char</span> buff[MAX_BUFFER_SIZE];</span><br><span class="line">    <span class="type">int</span> nwrite;</span><br><span class="line"></span><br><span class="line">    fd = open(FIFO_NAME, O_WRONLY);</span><br><span class="line">    <span class="keyword">if</span>(fd == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Open fifo file error\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//从键盘获取输入的字符，将数据存入 buff</span></span><br><span class="line">        <span class="built_in">memset</span>(buff, <span class="number">0</span>, MAX_BUFFER_SIZE);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;请输入需要向 FIFO 中发送的数据：(q/Q 退出)\n&quot;</span>);</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, buff);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 判断退出条件 */</span></span><br><span class="line">        <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(buff, <span class="string">&quot;q&quot;</span>) || !<span class="built_in">strcmp</span>(buff, <span class="string">&quot;Q&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;[%d] write fifo 程序退出....&quot;</span>, getpid());</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        nwrite = write(fd, buff, <span class="built_in">strlen</span>(buff)+<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span>(nwrite &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Write &#x27;%s&#x27; to FIFO\n&quot;</span>, buff);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Write FIFO error...\n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 VS Code 平台下创建 <code>fifo_read.c</code> 文件，如图：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/8.png" class title="图片描述">
+
+<p>添加内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;limits.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FIFO_NAME    <span class="string">&quot;/tmp/demo_fifo&quot;</span>    <span class="comment">/* 有名管道名称 */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAX_BUFFER_SIZE     PIPE_BUF     <span class="comment">/* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> fd;</span><br><span class="line">    <span class="type">char</span> buff[MAX_BUFFER_SIZE];</span><br><span class="line">    <span class="type">int</span> nread;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 判断 FIFO 文件是否存在，如果不存在则创建 */</span></span><br><span class="line">    <span class="keyword">if</span>(access(FIFO_NAME, F_OK) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>((mkfifo(FIFO_NAME, <span class="number">0666</span>) &lt; <span class="number">0</span>) &amp;&amp; (errno != EEXIST))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Cannot create fifo file\n&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fd = open(FIFO_NAME, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span>(fd == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Open fifo file error\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//从键盘获取输入的字符，将数据存入 buff</span></span><br><span class="line">        <span class="built_in">memset</span>(buff, <span class="number">0</span>, MAX_BUFFER_SIZE);</span><br><span class="line">        nread = read(fd, buff, MAX_BUFFER_SIZE);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(buff, <span class="string">&quot;q&quot;</span>) || !<span class="built_in">strcmp</span>(buff, <span class="string">&quot;Q&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;[%d] read fifo 程序退出....&quot;</span>, getpid());</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(nread &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Read &#x27;%s&#x27; from FIFO\n&quot;</span>, buff);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;Read FIFO error...\n&quot;</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写完代码后，在终端通过 <code>gcc</code> 进行编译，在执行的时候分为两个终端窗口来执行，首先执行管道读程序 <code>fifo_read</code>，然后在另一个窗口中启动管道写进程 <code>fifo_write</code>，具体结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc fifo_read.c -o fifo_read</span><br><span class="line">gcc fifo_write.c -o fifo_write</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/9.png" class title="图片描述">
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/10.png" class title="图片描述">
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/11.png" class title="图片描述">
+
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/d-Linux%20%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">d-Linux 网络基础.md</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/4-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">4-进程间通信方式之消息队列</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\2 跟踪分析Linux内核的启动过程\" title="Linux内核2 跟踪分析Linux内核的启动过程"><span class="title">Linux内核2 跟踪分析Linux内核的启动过程</span></a><a class="item" href="\A_OS\Linux\Linux内核分析配套实验\Readme\" title="Linux 内核分析配套实验"><span class="title">Linux 内核分析配套实验</span></a><a class="item" href="\A_OS\Linux\Linux基础入门\Readme\" title="Linux 基础入门"><span class="title">Linux 基础入门</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\2-Linux内核及进程介绍\" title="Linux内核及进程概述"><span class="title">Linux内核及进程概述</span><span class="excerpt">
+概述：本章知识点
+
+Linux 内核结构
+Linux 进程概述
+Linux 系统对进程的创建、切换、结束操作
+
+</span></a><a class="item" href="\A_OS\Linux\Linux操作系统原理剖析\1-操作系统概述\" title="Linux操作系统原理剖析——操作系统概述"><span class="title">Linux操作系统原理剖析——操作系统概述</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
