@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【Linux防火墙】iptables - oone</title>
+
+  
+    <meta name="description" content="概述：随着网络的逐渐普及，人们对其的需求越来越强，各种服务，平台应运而生，而平台与服务在公网的暴露也增加了受攻击的风险，而 Linux 中的最重要的守护神 iptables 的地位也显得越来越重要。本实验将带大家初识 iptables。当然学习本实验之前有一定的网络基础知识能够帮助理解。 实验涉及的知识点  iptables 的发展 iptables 的结构 iptables 的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Linux防火墙】iptables">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：随着网络的逐渐普及，人们对其的需求越来越强，各种服务，平台应运而生，而平台与服务在公网的暴露也增加了受攻击的风险，而 Linux 中的最重要的守护神 iptables 的地位也显得越来越重要。本实验将带大家初识 iptables。当然学习本实验之前有一定的网络基础知识能够帮助理解。 实验涉及的知识点  iptables 的发展 iptables 的结构 iptables 的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/4.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/5.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/6.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/7.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/8.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/9.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/10.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/11.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/12.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/13.png">
+<meta property="article:published_time" content="2024-01-16T06:22:10.861Z">
+<meta property="article:modified_time" content="2024-01-21T01:55:17.283Z">
+<meta property="article:author" content="mingming">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/1.png">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【Linux防火墙】iptables</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-iptables-%E7%9A%84%E5%8F%91%E5%B1%95"><span class="toc-text">0x01 iptables 的发展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-iptables-%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-text">0x02 iptables 的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-filter%E8%A1%A8%E7%9A%84%E8%AE%A4%E8%AF%86"><span class="toc-text">0x03 filter表的认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-NAT%E8%A1%A8%E7%9A%84%E8%AE%A4%E8%AF%86"><span class="toc-text">0x04 NAT表的认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-mangle%E8%A1%A8%E7%9A%84%E8%AE%A4%E8%AF%86"><span class="toc-text">0x05 mangle表的认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-raw-%E8%A1%A8%E7%9A%84%E8%AE%A4%E8%AF%86"><span class="toc-text">0x06 raw 表的认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-text">0x07 数据包的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-iptables-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">0x08 iptables 的使用</span></a></li></ol></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/A_OS/Windows/cmd/bcdedit/"><span class="title">【windows】【cmd】cdedit 用法整理</span></a><a class="item title" href="/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E4%BD%BF%E7%94%A8winsock2/"><span class="title">【Windows】使用 winsock2 相关函数</span></a><a class="item title" href="/B_Code/Qt/QWin/Qt%E7%AA%97%E5%8F%A3%E9%80%82%E9%85%8D%E7%B3%BB%E7%BB%9F%E7%BC%A9%E6%94%BE/"><span class="title">Qt窗口适配系统缩放</span></a><a class="item title" href="/B_Code/Qt/Qt%20Win%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5/"><span class="title">Qt在Win系统上的消息通知</span></a><a class="item title" href="/A_OS/Windows/cmd/netsh%E7%94%A8%E6%B3%95%E6%95%B4%E7%90%86/"><span class="title">【一文搞懂】【WIN】【CMD】netsh用法整理</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/">Linux防火墙</a></div><div id="post-meta">发布于&nbsp;<time datetime="2024-01-16T06:22:10.861Z">2024-01-16</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>【Linux防火墙】iptables</span></h1>
+<blockquote>
+<p>概述：随着网络的逐渐普及，人们对其的需求越来越强，各种服务，平台应运而生，而平台与服务在公网的暴露也增加了受攻击的风险，而 Linux 中的最重要的守护神 iptables 的地位也显得越来越重要。本实验将带大家初识 iptables。当然学习本实验之前有一定的网络基础知识能够帮助理解。</p>
+<p>实验涉及的知识点</p>
+<ul>
+<li>iptables 的发展</li>
+<li>iptables 的结构</li>
+<li>iptables 的使用</li>
+</ul>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="0x01-iptables-的发展"><a href="#0x01-iptables-的发展" class="headerlink" title="0x01 iptables 的发展"></a>0x01 iptables 的发展</h2><p>上个实验中我们了解到，防火墙也就是工作在主机或者网络边缘，对进出的报文按事先设定的规则进行检查，并对匹配的数据包做出处理的一组硬件或者是软件，设置软硬件的结合体。</p>
+<p>而在 Linux 的中的防火墙当然也就是那么一组软件对数据包的处理，Linux 中的防火墙主要是进行一些包的过滤，而这套防火墙也不是一开始便如此的强大，是这样的一个发展过程：</p>
+<ul>
+<li>Linux内核2.0： ipfwadm</li>
+<li>Linux内核2.2： ipchains</li>
+<li>Linux内核2.4： iptables</li>
+</ul>
+<p>而为什么随着内核版本的升级，我们的使用的防火墙也在不断地变化，首先 ipchains 相较于 ipfwadm 有这样一些优势：</p>
+<ul>
+<li>Qos（Quality of service）的支持</li>
+<li>ipchains 是树形结构的链，而 ipfwadm 是线性的结构，树形结构能够做到在自己拥有链的情况下再去接受其他跳转过来的链</li>
+<li>ipchains 比 ipfwadm 在配置上更加的灵活</li>
+<li>ipchains 可以明确地过滤任何的 ip 协议，不仅仅是 TCP、UDP、ICMP</li>
+</ul>
+<p>　</p>
+<p>而 iptables 之所以能够替代 ipchains 是因为它具有以下一些优势：</p>
+<ul>
+<li>可以追踪有状态的 IPV4 的协议与应用</li>
+<li>可以追踪有状态的 IPV6 的协议</li>
+<li>能够做到 NAT 的 一对多与多对多</li>
+<li>内建的 PORTFW 功能</li>
+</ul>
+<p>若想了解很多的信息可以在<a target="_blank" rel="external nofollow noopener noreferrer" href="http://tldp.docs.sk/howto/linux-ip-masquerade/kernel-2.4.x-requirements.html">这里</a>看到</p>
+<p>iptables 就是目前工作于较新版（内核版本高过2.4的） Linux 内核中的强大的数据包过滤的软件，它主要是由两部分组成</p>
+<ul>
+<li>iptalbes：主要工作于用户空间，为用户提供了一个编辑规则的接口。</li>
+<li>netfilter：主要工作于内核空间，是内核的一部分，由一些过滤表组成。</li>
+</ul>
+<p>netfilter 工作于系统的内核空间，最底层的工作，所以真正令过滤规则生效的并不是 iptables 而是 netfilter，而 iptables 工作在 netfilter之上，是一个让用户编写规则的工具。</p>
+<p>netfilter&#x2F;iptables 是 Rusty Russell 在1998年就开始写的一个项目，netfilter 是 Linux 内核中的一个框架，因 Linux 拥有高模块化的内核，所以 Linux 很多功能都以模块形式存在，而模块化的设计最大的优点在于“弹性”，我们可以通过Linux的模块管理工具，随心所欲地将模块载入内存与移除内存，因此 Netfilter 也是以模块的形式存在于 Linux 中。，采用极度模块化的设计，使其的拥有更好的扩充性以及很强的灵活性，提供一种特定的方式实现定制的模块，允许各种网络相关的操作。iptables 这个应用层的程序便是调用它的接口实现规则的修改。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/1.png" class title="3-2-1"> （此图来源于：[维基百科](https://en.wikipedia.org/wiki/Netfilter))
+
+<h2 id="0x02-iptables-的结构"><a href="#0x02-iptables-的结构" class="headerlink" title="0x02 iptables 的结构"></a>0x02 iptables 的结构</h2><p>Netfilter 所设置的规则是存放在内存中的，而 iptables 通过 Netfilter 放出的内核接口 ip_tables 来对存放在内存中的 Netfilter 配置表进行修改。这个配置表主要由 tables、chains、target 组成。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/2.png" class title="3-3-1"> 此图片来源于http://byrev.space/free/wp-content/uploads/sites/3/iptables-linux.png
+
+<p>其中表主要有这四张：</p>
+<ul>
+<li>filter表</li>
+<li>NAT表</li>
+<li>mangle表</li>
+<li>raw表</li>
+</ul>
+<p>每个表中可以用的 chains 不全相同，当然 iptables 支持新建 chains，而 chains 是 Netfilter 框架中制定的对数据包的 Hook Point，Hook Point 是一个数据包通过网卡流经系统内核相应的位置时会对数据包的流向做出一定的修改，在系统上存在5个 Hook Point 的挂载点</p>
+<ul>
+<li>PREROUTING</li>
+<li>INPUT</li>
+<li>OUTPUT</li>
+<li>FORWARD</li>
+<li>POSTROUTING</li>
+</ul>
+<p>target 中大部分是通用的，当然有部分是特定使用的，这里只列举常用的几种规则，更多的规则大家可以使用 man 来查看</p>
+<ul>
+<li>ACCEPT：一旦包满足了指定的匹配条件，就会通过，并且不会再去匹配当前链中的其他规则或同一个表内的其他规则，但它还要通过其他表中的链</li>
+<li>DROP：一旦包满足了指定的匹配条件，将会把该包丢弃，也就是说包的生命到此结束，不会再向前走一步，效果就是包被阻塞了。不会返回任何的消息</li>
+<li>REJECT和DROP基本一样，一旦包满足了指定的匹配条件，将会把该包丢弃，但是它除了阻塞包之外，还向发送者返回错误信息。</li>
+<li>SNAT：一旦包满足了指定的匹配条件，源网络地址转换</li>
+<li>DNAT：一旦包满足了指定的匹配条件，目的网络地址转换</li>
+<li>MASQUERADE和SNAT的作用相同，区别在于它不需要指定–to-source</li>
+<li>REDIRECT：一旦包满足了指定的匹配条件，转发数据包一另一个端口</li>
+<li>RETURN：一旦包满足了指定的匹配条件，使数据包返回上一层</li>
+<li>MIRROR：颠倒IP头部中的源目地址，然后再转发包</li>
+</ul>
+<h2 id="0x03-filter表的认识"><a href="#0x03-filter表的认识" class="headerlink" title="0x03 filter表的认识"></a>0x03 filter表的认识</h2><p>其中 filter 表的主要作用就是对数据包的过滤，访问控制（相类似的有思科自己开发的 ACL）。该表下有三个规则链：</p>
+<ul>
+<li>INPUT 链：INPUT 针对那些从外进入本地，也就是目的地是本地的包</li>
+<li>FORWARD 链：FORWARD 针对所有不是本地产生的并且目的地不是本地(即本机只是负责转发)的包</li>
+<li>OUTPUT 链：OUTPUT 是用来针对所有本地生成的包</li>
+</ul>
+<p>在内核中使用 iptables_filter 这个模块，在代码中各模块都是相对独立的初始化，此模块的初始化在源码 <code>net/ipv4/netfilter/iptable_filter.c –&gt;iptable_filter_init</code> 中，我们可以在 <code>filter</code> 的初始化函数 <code>iptables_filter_init</code> 中我们可以看到注册 <code>Hook point</code> 的函数接口 <code>nf_register_hooks</code> 中是这样写的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">static struct nf_hook_ops ipt_ops[] __read_mostly = &#123;</span><br><span class="line">    #这是注册的INPUT的链</span><br><span class="line">    &#123;</span><br><span class="line">        .hook        = ipt_local_in_hook,</span><br><span class="line">        .owner        = THIS_MODULE,</span><br><span class="line">        .pf        = NFPROTO_IPV4,</span><br><span class="line">        .hooknum    = NF_INET_LOCAL_IN,</span><br><span class="line">        .priority    = NF_IP_PRI_FILTER,</span><br><span class="line">    &#125;,</span><br><span class="line">    #这是注册的FORWARD的链</span><br><span class="line">    &#123;</span><br><span class="line">        .hook        = ipt_hook,</span><br><span class="line">        .owner        = THIS_MODULE,</span><br><span class="line">        .pf        = NFPROTO_IPV4,</span><br><span class="line">        .hooknum    = NF_INET_FORWARD,</span><br><span class="line">        .priority    = NF_IP_PRI_FILTER,</span><br><span class="line">    &#125;,</span><br><span class="line">    #这里注册的是OUTPUT的链</span><br><span class="line">    &#123;</span><br><span class="line">        .hook        = ipt_local_out_hook,</span><br><span class="line">        .owner        = THIS_MODULE,</span><br><span class="line">        .pf        = NFPROTO_IPV4,</span><br><span class="line">        .hooknum    = NF_INET_LOCAL_OUT,</span><br><span class="line">        .priority    = NF_IP_PRI_FILTER,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>并且最终的调用的代码中也都调用到了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/* Returns one of the generic firewall policies, like NF_ACCEPT. */</span><br><span class="line">unsigned int</span><br><span class="line">ipt_do_table(struct sk_buff *skb,</span><br><span class="line">         unsigned int hook,</span><br><span class="line">         const struct net_device *in,</span><br><span class="line">         const struct net_device *out,</span><br><span class="line">         struct xt_table *table)</span><br></pre></td></tr></table></figure>
+
+<p>由此我们了解到在 <code>filter</code> 初始化的时候便是只注册了三个 <code>Hook point</code>，当然我们可以修改源码做自己定制化的 <code>filter</code>，这里便不再过多地深入了，有兴趣的同学可以去 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.netfilter.org/">netfilter 的官网</a>下载源码研究研究</p>
+<h2 id="0x04-NAT表的认识"><a href="#0x04-NAT表的认识" class="headerlink" title="0x04 NAT表的认识"></a>0x04 NAT表的认识</h2><p>其中 <code>NAT</code>（Network Address Translation） 表主要用于修改数据包的报头的 <code>IP</code> 地址、端口号等信息。可以实现数据包伪装、平衡负载、端口转发和透明代理。该表包含三个链：</p>
+<blockquote>
+<p><strong>NAT</strong> 是一种把内部网络的 ip 地址转换为合法的公网 ip 地址，当私有网主机和公共网主机通信的IP包经过NAT网关时，将 IP 包中的源IP或目的 IP 在私有 IP 和 NAT 的公共 IP 之间进行转换。能够有效的解决公网地址不足的问题，在一定程度上起到安全的作用</p>
+</blockquote>
+<ul>
+<li><code>PREROUTING</code> 链：作用是在包刚刚到达本机时，路由之前改变它的目的地址</li>
+<li><code>OUTPUT</code> 链：改变本地产生的包的目的地址</li>
+<li><code>POSTROUTING</code> 链：在包就要离开防火墙之前改变其源地址</li>
+</ul>
+<p>我们可以通过这样一张图来了解到 Header 中的信息什么样的，NAT 具体修改的内容</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/3.png" class title="3-3.2">
+
+<p>NAT 分为三种类型</p>
+<ul>
+<li>静态 NAT（static NAT）：ip 地址在转换时是一种一对一的关系</li>
+<li>动态 NAT（dynamic NAT 或者叫 pooled NAT）： ip 地址在转换时是一种多对多的关系</li>
+<li>NPAT（Network Address Port Translation）：网络地址端口转换在 ip 地址的层面上来说是属于一种多对一的关系</li>
+</ul>
+<blockquote>
+<p><strong>NPAT</strong>是把内部地址映射到外部网络的一个IP地址的不同端口上，，但是这里虽然是将多个内网 ip 地址转换为一个公网地址，但是这里的地址是公网地址+端口号的形式，而不是简单的一个公网地址。</p>
+</blockquote>
+<p>在 iptables 中我们比较常用 NPAT 的形式，而 NPAT 又细分为以下的两种：</p>
+<ul>
+<li>源 NAT（SNAT，Source NAT）修改数据包的源地址。源NAT改变数据流的第一个数据包的来源地址，数据包伪装就是一具SNAT的例子。</li>
+<li>目的 NAT（DNAT，Destination NAT）修改数据包的目的地址。它是改变第一个数据包的目的地地址，如平衡负载、端口转发和透明代理就是属于 DNAT。</li>
+</ul>
+<p>若是要做 SNAT 的数据包需要添加到 POSTROUTING 链中。要做 DNAT 的数据包需要添加到 PREROUTING 链中。直接从本地出站的信息包的规则被添加到 OUTPUT 链中。</p>
+<p>因为 SNAT 是修改的源地址，然后通过发送出去，给其他的网络设备解读，所以必须在发送出去之前进行 SNAT。所以数据包是送往 POSTROUTING 链，并且匹配了规则，则执行 DNAT 或 REDIRECT 目标。便可在路由之后修改源地址了。</p>
+<p>因为 DNAT 是修改的目的地址，然后通过路由转发出去，为了使数据包得到正确路由，必须在路由之前进行 DNAT。所以数据包是送往 PREROUTING 链，并且匹配了规则，则执行 DNAT 或 REDIRECT 目标。便可在路由之前修改目的地址了。</p>
+<blockquote>
+<p><strong>路由</strong>是内核检查数据包的报头信息</p>
+</blockquote>
+<p>但是 NAT 也不是完美的，它也是有缺陷的，如我们在使用 VPN 的时候便是对数据的加密，而若是数据包的信息被修改过，该包将被丢弃，所以需要 NAT 穿透技术，感兴趣的可以更深入的研究。</p>
+<h2 id="0x05-mangle表的认识"><a href="#0x05-mangle表的认识" class="headerlink" title="0x05 mangle表的认识"></a>0x05 mangle表的认识</h2><p>其中 mangle 表主要用于修改数据包的 TOS（Type Of Service，服务类型，根据不同的服务质量。来选择经过路由的路径）、TTL（Time To Live，生存周期，每经过一个路由器将减1，mangle 可以修改此值设定TTL要被增加的值，这个选项可以使我们的防火墙更加隐蔽，而不被 trace-routes 发现等等）以及为数据包设置 Mark 标记（特殊标记，用来做高级路由，以使不同的包能使用不同的队列要求，等等），Qos(Quality Of Service，服务质量)调整以及策略路由等应用，由于 TOS，Qos 类似的方式需要相应的路由设备支持，所以应用并不广泛。这里不做过多的讲解，这个表中包含五个规则链：PREROUTING，POSTROUTING，INPUT，OUTPUT，FORWARD。</p>
+<h2 id="0x06-raw-表的认识"><a href="#0x06-raw-表的认识" class="headerlink" title="0x06 raw 表的认识"></a>0x06 raw 表的认识</h2><p>raw 表是自1.2.9以后版本的 iptables 新增的表，主要用于决定数据包是否被状态跟踪机制处理。在匹配数据包时，raw 表的规则要优先于其他表。包含两条规则链：OUTPUT、PREROUTING</p>
+<h2 id="0x07-数据包的状态"><a href="#0x07-数据包的状态" class="headerlink" title="0x07 数据包的状态"></a>0x07 数据包的状态</h2><p>iptables中数据包被跟踪连接有4种不同状态：</p>
+<ul>
+<li>NEW：该包想要开始一个连接（重新连接或将连接重定向）</li>
+<li>RELATED：该包是属于某个已经建立的连接所建立的新连接。例如：–icmp-type 0 ( ping 应答) 就是–icmp-type 8 (ping 请求)所RELATED出来的。</li>
+<li>ESTABLISHED ：只要发送并接到应答，一个数据连接从NEW变为 ESTABLISHED ,而且该状态会继续匹配这个连接的后续数据包。</li>
+<li>INVALID：数据包不能被识别属于哪个连接或没有任何状态比如内存溢出，收到不知属于哪个连接的 ICMP 错误信息，一般应该 DROP 这个状态的任何数据。</li>
+</ul>
+<p>我们对每一张表以及每一个链都有了一个大体上的认识，我们可以通过这样一张表了解到我们的数据包在我们的内核中是怎样的一个前进的过程，到底要经过多少次审核，多少个关卡</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/4.png" class title="3-3.5">
+
+<p>从这张图中我们可以了解到每个数据包的进与出都会经历这样的一个流程</p>
+<ol>
+<li>当有数据包进入网卡时，数据包首先到 <code>PREROUTING</code> 链中，若是有表对应的表匹配，首先应该是到 <code>raw</code> 中，然后到 <code>mangle</code> 中最后到 <code>NAT</code> 的 <code>PREROUTING</code> 链中，上文我们也提过<code>PREROUTING</code> 链中我们有机会在到内核的路由模块之前修改数据包的目的 <code>IP</code> ，然后内核的”路由模块”根据数据包目的 IP 以及内核中的路由表判断往哪里转发(注意，这个时候数据包的目的地址有可能已经被我们修改过了)</li>
+<li>若是该数据包的目的地址就是本机的地址，也就是该数据包就是发送给本地的，那么就会进入 <code>INPUT</code> 链，而进入 <code>INPUT</code> 链首先到 <code>mangle</code> 表中看看，然后到 <code>filter</code> 表中看看。通过之后便会发给本地的相应的程序</li>
+<li>本地相应的程序若是做出响应，产生新的数据包往外发送，数据包将进入到 <code>OUTPUT</code> 链，而在 <code>OUTPUT</code> 链中与 <code>INPUT</code> 链匹配表的顺序相同，依旧是首先查看 <code>raw</code> 表，然后查看 <code>mangle</code> 表，查看 <code>NAT</code>表 ，最后查看 <code>filter</code> 表，若是该数据包还能继续前进将会被发送到 <code>POSTROUTING</code> 链中。</li>
+<li>若是之前该数据包的目的地址并不是本机，只是把这里当中转站的话，就会将该数据包发给 <code>FORWARD</code> 链，在 <code>FORWARD</code> 链中，依旧先查看 <code>mangle</code> 表，然后查看 <code>filter</code> 表，若是该包还能进去前进则将进入 <code>POSTROUTING</code> 链中</li>
+<li>在 <code>POSTROUTING</code> 链中首先查看 <code>mangle</code> 表，然后查看 <code>NAT</code> 表，因为他们可以在最后发送出去之前修改数据包中的源地址。</li>
+<li>通过这些的层层把关，最后数据包便可以从网卡发送出去了</li>
+</ol>
+<p>从数据包在内核中的走向我们可以得出以下几点，也是我们需要着重注意的几点：</p>
+<ul>
+<li><code>iptables</code> 中匹配规则的表示有顺序的，我们可以得出优先级的顺序是 <code>raw 表&gt; mangle 表&gt; NAT 表&gt; filter 表</code></li>
+<li><code>iptables</code> 中的表里面的链的规则也是有匹配顺序的，优先级的顺序是 <code>PREROUTING &gt; INPUT FORWARD OUTPUT POSTROUTING</code></li>
+</ul>
+<p>我们在使用 <code>iptables</code> 的时候特别应该注意我们的规则顺序，在一个表中的规则是从上到下的读取，而一经查看到匹配的规则，便不会继续往下读取匹配，所以我们时常会遇到我们写了规则之后似乎并没有生效的情况便是这样。</p>
+<h2 id="0x08-iptables-的使用"><a href="#0x08-iptables-的使用" class="headerlink" title="0x08 iptables 的使用"></a>0x08 iptables 的使用</h2><p>说得再多，我们得不到实际的效果，我们也不会有特别深刻的理解，我们来实际的使用一次</p>
+<p>首先我们可以使用这样的一个命令来查看当前 iptables 中已经写下的规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -nL</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/5.png" class title="3-4-1">
+
+<p>从结果中我们可以看到分布在每条链中的已经写入的规则，若我们还想到跟详细的结果可以使用这样的一个命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -nvL --line</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/6.png" class title="3-4-2">
+
+<ul>
+<li>第一列 <code>num</code> 显示了该规则在该链中的顺序位置</li>
+<li>第二列 <code>pkts</code> 显示了该规则处理的数据包数</li>
+<li>第三列 <code>bytes</code> 显示了该规则处理的字节数，</li>
+<li>第四列 <code>target</code> 显示了该规则所做的行为，</li>
+<li>第五列 <code>port</code> 匹配的端口</li>
+<li>第六列 <code>opt</code> 是 <code>TCP</code> 协议头部中 <code>options</code> 的一部分，并不是重点，我们可以不必关注，有兴趣的也可以通过<a target="_blank" rel="external nofollow noopener noreferrer" href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Protocol_operation">维基百科</a>深入了解</li>
+<li>第七列、第八列 <code>in</code>、<code>out</code> 分别表示对从网卡进入与出去的限制 ip 的匹配条件</li>
+<li>第九列、第十列 <code>source</code>、<code>destination</code> 表示对包中分析得出的数据源地址与数据的目的地址的匹配</li>
+</ul>
+<p>我们还可以通过一种方式来查看已经生效的规则，这种方式查看到的是我们直接插入的规则，而不是像以上两个命令经过分析后的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables-save</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/7.png" class title="3-4-3">
+
+<p>当然 iptables-save 有一个参数 <code>-t</code> 可以指定我们要保存的表，到某个文件中去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#在执行该命令之前请先用sudo su 切换到 root 用户</span><br><span class="line">iptables-save -t filter &gt; filter.bak</span><br><span class="line"></span><br><span class="line">cat filter.bak</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/8.png" class title="3-4-4">
+
+<p>上我们我们提到过，<code>iptables</code> 是一个可调用内核接口来对存放在内存中的 <code>Netfilter</code> 配置表进行修改、编辑的一个工具，既然是修改的内存中的配置表，所以我们并不需要重启防火墙什么的，修改后的规则会立即生效。</p>
+<p>我们再来回顾一下在编写规则时我们需要书写哪些参数：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/9.png" class title="3-4-5">
+
+<p>我们可以做这么一个例子，将所有访问我们 <code>80</code> 端口的数据包全部丢掉</p>
+<p>首先我们来验证 <code>80</code> 端口是开发的，可以访问的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#首先本实验环境没有装 apache 服务我们需要安装一下，然后启动服务</span><br><span class="line"></span><br><span class="line">sudo apt-get install apache2</span><br><span class="line">sudo service apache2 start</span><br><span class="line"></span><br><span class="line">netstat -lunpt | grep 80</span><br><span class="line"></span><br><span class="line">#尝试看我们能否访问该页面，若返回值为 200 则为成功访问</span><br><span class="line">curl -I localhost</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/10.png" class title="3-4-6">
+
+<p>然后我们来添加这么一条规则，并查看他是否写入了规则表当中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -t filter -I INPUT -p tcp --dport 80 -j DROP</span><br><span class="line"></span><br><span class="line">#仅仅只是查看 INPUT 链是否加入了这条规则</span><br><span class="line">sudo iptables -nvL INPUT</span><br><span class="line"></span><br><span class="line">#然后我们再来尝试一次，能否查看到该网页</span><br><span class="line">curl localhost</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/11.png" class title="3-4-7">
+
+<p>是得不到，但是为什么会一直停留在那里，是因为我们是用的 <code>DROP</code> 将所有来访问该页面的数据包丢掉，不给任何返回，响应，而 ~却很钟情的一直等待着服务端的响应。若我们将 <code>DROP</code> 行为改成 <code>REJECT</code> 的话，就会有返回信息说这个端口无法访问。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#删除我们之前添加的规则，这里没有添加 -t 的参数</span><br><span class="line">#是因为不指明该参数，系统默认为修改 filter 表</span><br><span class="line">sudo iptables -D INPUT -p tcp --dport 80 -j DROP</span><br><span class="line"></span><br><span class="line">#添加拒绝的规则</span><br><span class="line">sudo iptables -I INPUT -p tcp --dport 80 -j REJECT</span><br><span class="line"></span><br><span class="line">#再次验证</span><br><span class="line">curl localhost</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/12.png" class title="3-4-6">
+
+<p>通过上面的例子大家可以看到 <code>iptables</code> 已经修改便会立即生效，在修改规则的时候我们会用到各种参数，下面列出一些常用的参数</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-t</td>
+<td>制定我们修改或者添加的规则是放入那个表，若是没有指定默认为 filter 表</td>
+</tr>
+<tr>
+<td>-A</td>
+<td>表示我们添加的这个规则追加在表的最后面，append</td>
+</tr>
+<tr>
+<td>-I</td>
+<td>表示我们指定位置插入当前的这个规则，insert，指定的位置写在链后面 ，若是没有指定则默认值为1，也就是将该规则添加在指定表的指定链的第一位</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>删除某条规则，delete，后面可以指明具体的规则，如上面的例子，也可以指定位置，位置同样是放在链的后面</td>
+</tr>
+<tr>
+<td>-F</td>
+<td>清除所有的规则，若是后面有跟上链，便只删除该链下的所有规则</td>
+</tr>
+<tr>
+<td>-L</td>
+<td>显示规则链中已有的条目</td>
+</tr>
+<tr>
+<td>-N</td>
+<td>创建新的用户自定义规则链</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>指定要匹配的数据包协议类型,如上文我们使用的tcp</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>指定要匹配的数据包源ip地址</td>
+</tr>
+<tr>
+<td>-i&lt;网络接口&gt;</td>
+<td>指定数据包进入本机的网络接口</td>
+</tr>
+<tr>
+<td>-o&lt;网络接口&gt;</td>
+<td>指定数据包要离开本机所使用的网络接口</td>
+</tr>
+<tr>
+<td>-j&lt;目标&gt;</td>
+<td>指定要跳转的目标；</td>
+</tr>
+</tbody></table>
+<p>如上文中我们删除一条规则的时候使用的是 -D 后面加具体的规则，其实我们还可以这样去删</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#查看我们要删除的规则所在的链与位置</span><br><span class="line">sudo iptables -nvL --line</span><br><span class="line"></span><br><span class="line">#删除指定位置的规则</span><br><span class="line">sudo iptables -D INPUT 1</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/13.png" class title="3-4-7">
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Windows/AD/%E3%80%90AD%E3%80%91RootDSE/">【AD】RootDSE</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/">【Linux防火墙】TCP Wrappers</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux防火墙\TCP Wrappers\" title="【Linux防火墙】TCP Wrappers"><span class="title">【Linux防火墙】TCP Wrappers</span><span class="excerpt">
+概述：TCP wrappers 是 Linux 中两大防护措施的其中之一，这层保护通过定义哪些主机允许或不允许连接到网络服务上来实现。TCP Wrappers为多种不同的服务提供访问把关，通过本实验我们将初试TCP wrappers...</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>

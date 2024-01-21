@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://gcore.jsdelivr.net">
+  <link rel="preconnect" href="https://gcore.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【Linux防火墙】TCP Wrappers - oone</title>
+
+  
+    <meta name="description" content="概述：TCP wrappers 是 Linux 中两大防护措施的其中之一，这层保护通过定义哪些主机允许或不允许连接到网络服务上来实现。TCP Wrappers为多种不同的服务提供访问把关，通过本实验我们将初试TCP wrappers的使用。 实验涉及的知识点 Tcp wrappers的认识 Tcp wrappers的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Linux防火墙】TCP Wrappers">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：TCP wrappers 是 Linux 中两大防护措施的其中之一，这层保护通过定义哪些主机允许或不允许连接到网络服务上来实现。TCP Wrappers为多种不同的服务提供访问把关，通过本实验我们将初试TCP wrappers的使用。 实验涉及的知识点 Tcp wrappers的认识 Tcp wrappers的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/13.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/1.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/2.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/3.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/4.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/5.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/6.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/7.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/8.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/9.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/10.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/11.png">
+<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/12.png">
+<meta property="article:published_time" content="2024-01-16T06:15:17.596Z">
+<meta property="article:modified_time" content="2024-01-21T01:55:26.909Z">
+<meta property="article:author" content="mingming">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/13.png">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+
+
+  
+</head>
+
+<body>
+  
+
+
+
+
+  <div class="l_body" id="start">
+    <aside class="l_left" layout="post">
+    
+
+  
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.4/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div>
+
+<nav class="menu dis-select"><a class="nav-item" href="/readme/">主页</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/more/">更多</a></nav>
+</header>
+
+
+<div class="widgets">
+<widget class="widget-wrapper search"><div class="widget-body"><div class="search-wrapper" id="search"><form class="search-form"><input type="text" class="search-input" id="search-input" data-filter="/blog/" placeholder="文章搜索"><svg t="1670596976048" class="icon search-icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200"><path d="M938.2 832.6L723.8 618.1c-2.5-2.5-5.3-4.4-7.9-6.4 36.2-55.6 57.3-121.8 57.3-193.1C773.3 222.8 614.6 64 418.7 64S64 222.8 64 418.6c0 195.9 158.8 354.6 354.6 354.6 71.3 0 137.5-21.2 193.2-57.4 2 2.7 3.9 5.4 6.3 7.8L832.5 938c14.6 14.6 33.7 21.9 52.8 21.9 19.1 0 38.2-7.3 52.8-21.8 29.2-29.1 29.2-76.4 0.1-105.5M418.7 661.3C284.9 661.3 176 552.4 176 418.6 176 284.9 284.9 176 418.7 176c133.8 0 242.6 108.9 242.6 242.7 0 133.7-108.9 242.6-242.6 242.6" p-id="2677"/></svg></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div></div></widget>
+
+
+<widget class="widget-wrapper toc single" id="data-toc"><div class="widget-header cap dis-select"><span class="name">【Linux防火墙】TCP Wrappers</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%B6%89%E5%8F%8A%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">实验涉及的知识点</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-TCP-Wrappers-%E7%9A%84%E8%AE%A4%E8%AF%86"><span class="toc-text">0x01 TCP Wrappers 的认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-TCP-Wrappers-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">0x02 TCP Wrappers 的使用</span></a></li></div></div></widget>
+
+<widget class="widget-wrapper recent"><div class="widget-header cap theme dis-select"><span class="name">最近更新</span></div><div class="widget-body related-posts fs14"><a class="item title" href="/A_OS/Windows/cmd/bcdedit/"><span class="title">【windows】【cmd】cdedit 用法整理</span></a><a class="item title" href="/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E4%BD%BF%E7%94%A8winsock2/"><span class="title">【Windows】使用 winsock2 相关函数</span></a><a class="item title" href="/B_Code/Qt/QWin/Qt%E7%AA%97%E5%8F%A3%E9%80%82%E9%85%8D%E7%B3%BB%E7%BB%9F%E7%BC%A9%E6%94%BE/"><span class="title">Qt窗口适配系统缩放</span></a><a class="item title" href="/B_Code/Qt/Qt%20Win%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5/"><span class="title">Qt在Win系统上的消息通知</span></a><a class="item title" href="/A_OS/Windows/cmd/netsh%E7%94%A8%E6%B3%95%E6%95%B4%E7%90%86/"><span class="title">【一文搞懂】【WIN】【CMD】netsh用法整理</span></a></div></widget>
+
+
+
+
+</div>
+
+
+    </aside>
+    <div class="l_main">
+      
+
+      
+
+
+
+<div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a><span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/">Linux防火墙</a></div><div id="post-meta">发布于&nbsp;<time datetime="2024-01-16T06:15:17.596Z">2024-01-16</time></div></div>
+
+<article class="md-text content post">
+<h1 class="article-title"><span>【Linux防火墙】TCP Wrappers</span></h1>
+<blockquote>
+<p>概述：TCP wrappers 是 Linux 中两大防护措施的其中之一，这层保护通过定义哪些主机允许或不允许连接到网络服务上来实现。TCP Wrappers为多种不同的服务提供访问把关，通过本实验我们将初试TCP wrappers的使用。</p>
+<h4 id="实验涉及的知识点"><a href="#实验涉及的知识点" class="headerlink" title="实验涉及的知识点"></a>实验涉及的知识点</h4><ul>
+<li>Tcp wrappers的认识</li>
+<li>Tcp wrappers的使用</li>
+</ul>
+</blockquote>
+<span id="more"></span>
+
+
+
+<h2 id="0x01-TCP-Wrappers-的认识"><a href="#0x01-TCP-Wrappers-的认识" class="headerlink" title="0x01 TCP Wrappers 的认识"></a>0x01 TCP Wrappers 的认识</h2><p>Tcp Wrapper 是由 Wietse Venema 编写的，其创作出这个程序的主要原因是监视 Eindhoven 大学数学和计算机科学系的Unix工作站上的黑客活动，Wietse Venema一直维护这个程序到1995年；2001年6月1日，在其自己的BSD风格的许可证下发布。</p>
+<p>Tcp Wrapper 是一个基于主机的网络访问控制的程序，用于过滤对类 Unix 系统（如 Linux 或 BSD ）的网络访问。</p>
+<p>当一个系统或者主机在公开网络中充当服务器时,这个系统就可能成为被攻击的目标.对网络服务进行访问控制 是一件很重要的事情。像 Telnet、SSH、FTP、POP 和 SMTP 等很多服务都会用到 TCP Wrapper,它被设计为一个介于外来服务请求和服务回应的中间处理</p>
+<p>它的基本过程是这样的：当服务器或主机接收到一个外来服务请求的时候，先由TCP Wrapper 来对请求进行分析处理，TCP Wrapper 会根据请求所需要的服务和对这个服务所设定的规则来判断请求方是否有权限，如果有，TCP Wrapper 会把这个请求按照配置文件所设定的规则转交给相应的守护进程去处理，同时记录这个请求动作。</p>
+<p>TCP Wrappers虽然能对 TCP 协议的报文做过滤动作，但是并不是所有的 TCP 协议报文 TCP Wrappers 都可以过滤掉。只有该服务链接到TCP Wrappers的函式库才可以使用TCP Wrappers进行报文过滤。</p>
+<p>因为 TCP Wrapper 的功能主要来自于 libwrap.a这个静态库，它是一个服务库。像 xinetd、sshd 和 portmap 等许多服务编译时都依赖于 libwrap.so 这个动态链接库，其他的网路服务甚至你自己编写的服务都可以加上这个编译选项来提供 TCP Wrapper 的功能。</p>
+<p>我们可以使用这样一个命令来确定我们要过滤的服务是否链接到了libwrap 这个函数库中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ldd /path/service_name |grep libwrap</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">例如</span></span><br><span class="line">ldd /usr/sbin/sshd | grep libwrap</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">若是不知道程序的所在位置可以这样</span></span><br><span class="line">ldd $(which sshd) | grep libwrap</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-TCP-Wrappers-的使用"><a href="#0x02-TCP-Wrappers-的使用" class="headerlink" title="0x02 TCP Wrappers 的使用"></a>0x02 TCP Wrappers 的使用</h2><p>要决定一个客户是否被允许连接一项服务,TCP Wrappers会参考以下两个文件：</p>
+<ul>
+<li>&#x2F;etc&#x2F;hosts.allow</li>
+<li>&#x2F;etc&#x2F;hosts.deny</li>
+</ul>
+<p>当一个TCP Wrappers接收到一个客户请求时,它会运行以下几个步骤:</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/13.png" class title="2-3-1"> （此图的来源：http://images.slideplayer.com/12/3366547/slides/slide_75.jpg)
+
+<ol>
+<li><p>检查 <code>/etc/hosts.allow</code>.TCP会绕服务会循序地解释&#x2F;etc&#x2F;hosts.allow文件并应用第一个为这个服务所指定的规则.如果找到了一个匹配的规则,则允许连接.如果找不到匹配的规则,就会进行下一个步骤。</p>
+</li>
+<li><p>检查 <code>/etc/hosts.deny</code>.TCP会绕的服务会循序地来解释&#x2F;etc&#x2F;hosts.deny文件.如果找到一个匹配的规则,则拒绝这个连接.如果找不到匹配的规则,则允许连接到这个服务。</p>
+</li>
+<li><p>若是没有匹配的规则便进入服务</p>
+<p>在使用 TCP Wrappers 保护网络服务时应该考虑以下几个要点:</p>
+</li>
+</ol>
+<ul>
+<li>hosts.allow 或 hosts.deny 的配置改变会立即生效。</li>
+<li>两个规则文件是有读取顺序的，hosts.allow中的规则会先被读取应用,hosts.deny中的规则后读取,如果访问一项服务在hosts.allow中设置为允许,那么在hosts.deny中同一项服务的拒绝访问设置则不会生效</li>
+<li>规则文件内的读取也是有顺序的，每个文件中的各项规则是由上到下被读取的,第一个匹配的规则生效。因此,规则的排列顺序也很重要。</li>
+</ul>
+<p>我们可以通过下图看到，hosts.allow 的配置文件，默认的文档给予了我们一些例子</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/1.png" class title="2-3-2">
+
+<p>通过例子我们可以看出这个配置文件是有语法格式的。首先空行或以井号(#)开始的行会被忽略</p>
+<p>每条规则都使用以下基本格式来对网络服务的访问进行控制:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;daemon list&gt;: &lt;client list&gt; [: &lt;option&gt;: &lt;option&gt;: ...]</span><br><span class="line"></span><br><span class="line">#动作可有可无</span><br><span class="line">服务程序列表： 客户机地址立标 [:执行的动作]</span><br></pre></td></tr></table></figure>
+
+<p>列表中存在多个服务或者主机的时候用 <code>,</code>逗号分隔开。</p>
+<p>例如我们要TCP Wrappers监测 10.3.1.1 这台主机向我们的 ssh 的守护进程发出链接，就拒绝掉，那么我们就把下面这条命令写在 hosts.deny 这个文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sshd : 10.3.1.1</span><br></pre></td></tr></table></figure>
+
+<p>我们来做这么一个实验来证明 Tcp wrappers 是起作用的</p>
+<p>首先我们可以看到本地的 ssh 服务是开启的，并且实验能够正常地使用 ssh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#我们可以看到 ssh 的守护进程正在运行中</span><br><span class="line">ps -ef | grep sshd</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/2.png" class title="2-3-3">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#尝试连接我们本地的22号端口，也是成功的</span><br><span class="line">telnet localhost 22</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/3.png" class title="2-3-4">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#这是最直接的证明方式，直接ssh我们的本地，密码为 shiyanlou</span><br><span class="line">ssh shiyanlou@localhost</span><br><span class="line"></span><br><span class="line">#然后我们可以通过top的第一栏看到，当前存在的用户有两个，说明我们成功登入了</span><br><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/4.png" class title="2-3-5">
+
+<p>用了这么多的方式我们证明了，ssh 是没有问题的。然后我们通过这个命令将规则写入 hosts.deny中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts.deny </span><br><span class="line"></span><br><span class="line">#这是需要写入的规则</span><br><span class="line">sshd: localhost</span><br></pre></td></tr></table></figure>
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/5.png" class title="2-3-6">
+
+<p>这时候我们再来尝试连接 ssh 服务，就用以上的三种方式，可以看到 sshd 并没有停止服务，还在运行中，但是 telnet、ssh 都没有办法连接上去</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/6.png" class title="2-3-7">
+
+<p>若我们将 hosts.deny中的规则删除掉亦或者是注释掉，再尝试一次肯定是没有问题的。</p>
+<p>在 hosts.deny 与 hosts.allow 的语法是支持通配符的，通配符有以下这些</p>
+<table>
+<thead>
+<tr>
+<th>通配符</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ALL</td>
+<td>完全匹配,可以用在守护进程列表和客户列表中</td>
+</tr>
+<tr>
+<td>LOCAL</td>
+<td>与任何不包括点(.)的主机匹配,也就是localhost本机</td>
+</tr>
+<tr>
+<td>KNOWN</td>
+<td>与任何带有已知主机名和主机地址匹配</td>
+</tr>
+<tr>
+<td>UNKNOWN</td>
+<td>与任何带有未知主机名和主机地址匹配</td>
+</tr>
+<tr>
+<td>PARANOID</td>
+<td>与任何带有主机名和主机地址不相匹配的主机匹配</td>
+</tr>
+</tbody></table>
+<p>比如还是上面的例子</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/7.png" class title="2-3-8">
+
+<p>上文提到过，我们的规则是有读取顺序的，如我们在 hosts.allow 中加入 <code>ssh: LOCAL</code> 我们会发现 ssh 会是成功的，hosts.deny 中的那条规则对本机并没有生效。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/8.png" class title="2-3-9">
+
+<p>模式可以用在访问规则的客户领域里,能够更有效率地匹配我们想要匹配的用户，这里只列举常用的方式，需要更深入学习的可以使用 man 命令查看</p>
+<ol>
+<li>主机名以点(.)开始,如果在一个主机名的开始放置一个圆点,那么就与所有共享这个主机名中列出的相同组成部分的主机匹配.如: <code>.simplecloud.com</code> 适用于匹配 <code>simplecloud.com</code> 域名内的所有主机.</li>
+<li>IP地址以点(.)结束,如果在一个IP地址的末尾放置一个点,那么就与最后一个点前同一个网段的所有主机匹配.如: <code>192.168.</code> 适用于 <code>192.168.x.x</code> 网络内的任何主机.</li>
+</ol>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/9.png" class title="2-3-10">
+
+<ol>
+<li><code>IP地址/子网掩码</code>,这样的格式来控制某个网段的地址的访问.如: <code>192.168.1.0 /255.255.255.0</code> 适用于地址区间从<code>192.168.1.0</code> 到 <code>192.168.1.255</code> 的所有主机.</li>
+<li>[IPv6地址] 的地址也是可以读取的</li>
+<li>星号(*)，星号与shell中的通配符作用相同</li>
+</ol>
+<p>我们还可以使用这个动作来执行一些 shell 命令</p>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>spawn</td>
+<td>开启一个shell执行你指定的命令</td>
+</tr>
+<tr>
+<td>twist</td>
+<td>替换访问者的请求成我们指定的命令</td>
+</tr>
+</tbody></table>
+<p>如图中，我们若是在 hosts.deny 中这样写，会有这要的反馈效果，我们可以了解到是谁试图攻击我们，想登陆我们的主机了，然后可以封掉他的 IP。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/10.png" class title="图片描述">
+
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/11.png" class title="图片描述">
+
+<p>同样我们可以尝试一下 twist 的使用，在 &#x2F;etc&#x2F;hosts.deny 中写下这个命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sshd : localhost : twist /bin/echo &quot;Hello，attacker，You are prohibited from accessing this service!!&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们用 telnet 来尝试链接他，会得到这样的结果：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/TCP%20Wrappers/12.png" class title="2-3-12">
+
+<p>在其中我们可以用到这样的一些参数，这里只列举了常用的一些参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%a</td>
+<td>客户端的ip地址</td>
+</tr>
+<tr>
+<td>%A</td>
+<td>服务端的ip地址</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>守护进程的名字</td>
+</tr>
+<tr>
+<td>%h</td>
+<td>客户端的主机名</td>
+</tr>
+<tr>
+<td>%H</td>
+<td>服务端的主机名</td>
+</tr>
+<tr>
+<td>%p</td>
+<td>守护进程的pid</td>
+</tr>
+<tr>
+<td>%u</td>
+<td>客户端的用户名</td>
+</tr>
+</tbody></table>
+<p>本实验只是粗略的了解与尝试 TCP wrappers，在实际的生产环境中 xinetd 与 TCP wrappers 是黄金搭档，也同样能够做到防止 DOS 攻击，与客户端交换，控制连接数等等的高级功能。若想更加地深入的学习，大家可以多看看 man，与网上查查资料。</p>
+
+
+
+<div class="article-footer reveal fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section></div>
+
+</article>
+
+<div class="related-wrap reveal" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/">【Linux防火墙】iptables</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/">【Linux防火墙】攻击与防御</a></div></section></div>
+
+
+<div class="related-wrap reveal" id="related-posts">
+    <section class="header">
+      <div class="title cap theme">您可能感兴趣的文章</div>
+    </section>
+    <section class="body">
+    <div class="related-posts"><a class="item" href="\A_OS\Linux\Linux防火墙\iptables\" title="【Linux防火墙】iptables"><span class="title">【Linux防火墙】iptables</span><span class="excerpt">
+概述：随着网络的逐渐普及，人们对其的需求越来越强，各种服务，平台应运而生，而平台与服务在公网的暴露也增加了受攻击的风险，而 Linux 中的最重要的守护神 iptables 的地位也显得越来越重要。本实验将带大家初识 iptable...</span></a></div></section></div>
+
+
+
+
+
+      
+<footer class="page-footer reveal fs12"><hr><div class="text"><p>本站由 <a href="/">@anonymity</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar">Stellar</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+
+      <div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg class="icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15301"><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 2.3 26.8 24.6 47.5 51.6 47.6h416.5v4z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15302"/><path d="M566.407 808.3c26.9-0.1 49.3-20.8 51.6-47.6-1.9-27.7-23.9-49.7-51.6-51.6h-412.6c-28.2-1.4-52.6 19.5-55.5 47.6 1.9 27.7 23.9 49.7 51.6 51.6h416.5z m309.3-249.9c26.9-0.1 49.3-20.8 51.6-47.6-2.2-26.8-24.6-47.5-51.6-47.6h-721.9c-27.7-2.8-52.5 17.4-55.3 45.1-0.1 0.8-0.1 1.7-0.2 2.5 0.9 27.2 23.6 48.5 50.7 47.6H875.707z m-103.1-245.9c26.9-0.1 49.3-20.8 51.6-47.6-0.4-28.3-23.2-51.1-51.5-51.6h-618.9c-29.5-1.1-54.3 21.9-55.5 51.4v0.2c1.4 27.8 25.2 49.2 53 47.8 0.8 0 1.7-0.1 2.5-0.2h618.8z" p-id="15303"/></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class="scripts">
+    <script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.19.0';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.19.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://gcore.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"codeblock":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.css","js":"https://unpkg.com/swiper@8.4.5/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://gcore.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://gcore.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://gcore.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js","css":"https://gcore.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css","selector":".swiper-slide img"});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
