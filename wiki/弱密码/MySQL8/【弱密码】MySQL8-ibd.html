@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.3" theme-name="Stellar" theme-version="1.26.3">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.4" theme-name="Stellar" theme-version="1.26.4">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://example.com/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd/INDEX_System_Records.png">
 <meta property="og:image" content="http://example.com/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd/INDEX_Page_Directory.png">
 <meta property="article:published_time" content="2023-11-21T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-01-23T08:31:25.971Z">
+<meta property="article:modified_time" content="2024-02-06T07:24:27.659Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -49,7 +49,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.26.3">
+  <link rel="stylesheet" href="/css/main.css?v=1.26.4">
 
   
     <link rel="shortcut icon" href="/images/avator.png">
@@ -62,7 +62,7 @@
 </head>
 <body>
 
-
+<div class="l_cover wiki"><article class="cover-wrap md-text"><div class="preview cover"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/images/project/mysql8.png"></div><div class="cover-title"><span>MySQL 相关研究</span></div><div class="description">MySQL 弱口令研究，涉及源码、插件、认证策略等</div><div class="start-wrap"><a class="button start gradient" href="#start">开始使用</a></div></article></div><hr>
 
 <div class="l_body content tech" id="start" layout="wiki"><aside class="l_left"><div class="sidebar-container sidebar-blur">
 
@@ -77,7 +77,7 @@
 </div>
 <div class="widgets">
 
-<widget class="widget-wrapper toc multi" id="data-toc" collapse="false"><div class="widget-body fs14"><div class="doc-tree active"><a class="doc-tree-link active" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd.html#start"><span class="toc-text">【弱密码】MySQL8-Innodb</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%8E%A8%E8%8D%90"><span class="toc-text">相关文章推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IBD%E6%96%87%E4%BB%B6"><span class="toc-text">IBD文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IBD-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-text">IBD 文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B5"><span class="toc-text">页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#INDEX-Header"><span class="toc-text">INDEX Header</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#System-records-infimum-and-supermum"><span class="toc-text">System records: infimum and supermum</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#User-records"><span class="toc-text">User records</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-page-directory"><span class="toc-text">The page directory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Free-Space"><span class="toc-text">Free Space</span></a></li></ol></li></ol></li></ol></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8%20%E6%96%B9%E6%A1%88%E9%A2%84%E7%A0%94%E5%8F%8A%E8%AF%B4%E6%98%8E.html"><span class="toc-text">【弱密码】MySQL8 方案预研及说明</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AF%86%E7%A0%81Function.html"><span class="toc-text">【弱密码】MySQL8-密码Function</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-Connection_control-plugin.html"><span class="toc-text">【弱密码】MySQL8-Connection_control-plugin</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-plugin.html"><span class="toc-text">【弱密码】MySQL8-Authentication-plugin</span></a></div></div></widget>
+<widget class="widget-wrapper toc multi" id="data-toc" collapse="false"><div class="widget-body fs14"><div class="doc-tree active"><a class="doc-tree-link active" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd.html#start"><span class="toc-text">【弱密码】MySQL8-Innodb</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%8E%A8%E8%8D%90"><span class="toc-text">相关文章推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IBD%E6%96%87%E4%BB%B6"><span class="toc-text">IBD文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IBD-%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-text">IBD 文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B5"><span class="toc-text">页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#INDEX-Header"><span class="toc-text">INDEX Header</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#System-records-infimum-and-supermum"><span class="toc-text">System records: infimum and supermum</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#User-records"><span class="toc-text">User records</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-page-directory"><span class="toc-text">The page directory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Free-Space"><span class="toc-text">Free Space</span></a></li></ol></li></ol></li></ol></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AE%89%E8%A3%85%E5%8F%8A%E6%8F%92%E4%BB%B6%E6%9C%BA%E5%88%B6.html"><span class="toc-text">【弱密码】MySQL8 安装及插件导出</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AF%86%E7%A0%81Function.html"><span class="toc-text">【弱密码】MySQL8-密码Function</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-Connection_control-plugin.html"><span class="toc-text">【弱密码】MySQL8-Connection_control-plugin</span></a></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-plugin.html"><span class="toc-text">【弱密码】MySQL8-Authentication-plugin</span></a></div></div></widget>
 
 <widget class="widget-wrapper post-card"><div class="widget-header dis-select"><span class="name">更多：安全</span></div><div class="widget-body"><a class="item wiki" href="/wiki/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E5%9F%BA%E7%BA%BF%E6%A3%80%E6%9F%A5%E9%A1%B9.html"><span class="title">windows安全开发</span><span class="excerpt">有关于windows安全开发、攻防、取证等</span></a></div></widget>
 </div>
@@ -88,9 +88,12 @@
 
 
 
-<div class="bread-nav fs12"><div class="left"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<div class="article banner top">
+  <div class="content">
+    
+<div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
 <span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki">文档</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd.html">MySQL8</a></div>
-<div id="post-meta"><span class="author">更新于：</span><time datetime="2024-01-23T08:31:25.971Z">2024-01-23</time></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">更新于：<time datetime="2024-02-06T07:24:27.659Z">2024-02-06</time></span></div></div>
 
   <div class="right ghrepo stellar-ghinfo-api" api="https://api.github.com/repos/">
     <a class="repo-link bold" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/">
@@ -107,7 +110,16 @@
     </a>
   </div>
   </div>
-<article class="md-text content"><h1 class="article-title"><span>【弱密码】MySQL8-Innodb</span></h1><blockquote>
+
+    
+    <div class="bottom">
+      <div class="text-area">
+        <h1 class="text title"><span>【弱密码】MySQL8-Innodb</span></h1>
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><blockquote>
 <p>概述：MySQL8 ibd文件详解。MySQL8 的InnoDB以及相关文件 <code>.ibd</code> 数据文件的一系列说明文章都可在 jeremy cole 的个人网站上看到，本文仅对其 InnoDB 方面的文章简单翻译和说明。</p>
 <p>原文链接：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jcole.us/innodb/">InnoDB – Jeremy Cole</a></p>
 </blockquote>
@@ -211,12 +223,12 @@
 <p>页面目录只是一个动态大小的 16 位偏移指针数组，指向页面内的记录。作者暂时还没有展开细讲。</p>
 <h4 id="Free-Space"><a href="#Free-Space" class="headerlink" title="Free Space"></a>Free Space</h4><p>内存位于用户记录（向上增长）和页目录（向下增长）的空间就是闲置空间。一旦用户空间和页目录相遇，也就是闲置空间也被占用，就代表当前页已满。</p>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">接下来阅读</div><a href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8%20%E6%96%B9%E6%A1%88%E9%A2%84%E7%A0%94%E5%8F%8A%E8%AF%B4%E6%98%8E.html">【弱密码】MySQL8 方案预研及说明</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">接下来阅读</div><a href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AE%89%E8%A3%85%E5%8F%8A%E6%8F%92%E4%BB%B6%E6%9C%BA%E5%88%B6.html">【弱密码】MySQL8 安装及插件导出</a></div></section></div>
 
 
 
 
-<footer class="page-footer fs12"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.3">Stellar 1.26.3</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.4">Stellar 1.26.4</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="float-panel mobile-only blur" style="display:none">
   <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
@@ -375,7 +387,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.26.3" async></script>
+<script src="/js/main.js?v=1.26.4" async></script>
 
 <!-- optional -->
 

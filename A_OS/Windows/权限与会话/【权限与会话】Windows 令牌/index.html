@@ -1,0 +1,405 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.4" theme-name="Stellar" theme-version="1.26.4">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【权限与会话】Windows 令牌 - oone</title>
+
+  
+    <meta name="description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【权限与会话】Windows 令牌">
+<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-02-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-02-07T10:18:01.906Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="令牌">
+<meta property="article:tag" content="token">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="windows,令牌,token">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.26.4">
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+  
+</head>
+<body>
+
+<div class="l_body content tech" id="start" layout="post"><aside class="l_left"><div class="sidebar-container sidebar-blur">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" class="icon search-icon" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="探索" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+<widget class="widget-wrapper toc single" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C"><span class="toc-text">0x01 初始令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">初始令牌的创建过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%E5%92%8C%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C"><span class="toc-text">授权令牌和模拟令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%EF%BC%88Delegation-Token%EF%BC%89"><span class="toc-text">授权令牌（Delegation Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C%EF%BC%88Impersonation-Token%EF%BC%89"><span class="toc-text">模拟令牌（Impersonation Token）</span></a></li></ol></li></ol></div></div></widget>
+
+
+
+
+
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title active" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/"><span class="title">【权限与会话】Windows 令牌</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/"><span class="title">【COM】异步通知 ExecNotificationQueryAsync 的使用问题</span></a><a class="item title" href="/A_OS/Windows/API/%E3%80%90WINAPI%E3%80%91%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%90%8D/"><span class="title">【WINAPI】获取系统当前用户名</span></a><a class="item title" href="/A_OS/Windows/AD/%E3%80%90AD%E3%80%91%E5%9F%9F/"><span class="title">【AD】AD域</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91Tools/"><span class="title">【RPC】Tools</span></a><a class="item title" href="/A_OS/Windows/API/VirtualProtect/"><span class="title">VirtualProtect 函数</span></a><a class="item title" href="/A_OS/Windows/API/%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%9F%9F%E5%90%8D/"><span class="title">【WINAPI】系统获取系统主机域名</span></a><a class="item title" href="/A_OS/Windows/API/%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6/"><span class="title">【API】删除文件夹下所有文件</span></a><a class="item title" href="/A_OS/Windows/%E6%9C%8D%E5%8A%A1/RemoteRegistry/"><span class="title">【服务】Retmote Registry 服务</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    
+<div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/">权限与会话</a></div>
+<div class="flex-row" id="post-meta"><span class="text created"><time datetime="2024-02-06T16:00:00.000Z">2024-02-07</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-02-07T10:18:01.906Z">2024-02-07</time></span></div></div>
+</div>
+
+    
+    <div class="bottom">
+      <div class="text-area">
+        <h1 class="text title"><span>【权限与会话】Windows 令牌</span></h1>
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><blockquote>
+<p>概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。</p>
+</blockquote>
+<span id="more"></span>
+
+<h2 id="0x01-初始令牌"><a href="#0x01-初始令牌" class="headerlink" title="0x01 初始令牌"></a>0x01 初始令牌</h2><p>初始令牌也称访问令牌，是描述进程或线程的安全上下文的对象。令牌中的信息包括与进程或线程关联的用户帐户的标识和特权信息。</p>
+<p>当用户登录时，系统通过将<strong>用户密码与安全数据库</strong>（如域认证中的NTDS或本地认证中的SAM文件）中存储的信息进行比较来验证用户密码。</p>
+<p>如果密码经过验证，则系统将生成<strong>访问令牌</strong>。代表该用户执行的每个进程都有此访问令牌的副本。（通常我们在输入密码登陆进入Windows界面时就是一个生成访问令牌的过程）当线程与安全对象进行交互或尝试执行需要特权的系统任务时，系统使用访问令牌来标识用户。</p>
+<p>访问令牌包含以下信息：</p>
+<pre class="mermaid">flowchart LR
+    A[访问令牌] --> 用户所在组SID
+    A --> C[用户账户的安全描述符 SID]
+    A --> D["标识当前登录会话(logon session)的登录SID"]
+    A --> E["特权（privilege）:用户或用户组拥有的特权列表"]
+    A --> F["其他数据"]</pre>
+
+<p>Access Token的组成</p>
+<ol>
+<li>用户账户的安全标识符(SID)</li>
+<li>用户所属的组的SID</li>
+<li>用于标识当前登陆会话的登陆SID</li>
+<li>用户或用户组所拥有的权限列表</li>
+<li>所有者SID</li>
+<li>主要组的SID</li>
+<li>访问控制列表</li>
+<li>访问令牌的来源</li>
+<li>令牌是主要令牌还是模拟令牌</li>
+<li>限制SID的可选列表</li>
+<li>目前的模拟等级</li>
+<li>其他统计的数据</li>
+</ol>
+<h3 id="初始令牌的创建过程"><a href="#初始令牌的创建过程" class="headerlink" title="初始令牌的创建过程"></a>初始令牌的创建过程</h3><p>Windows Access Token 创建过程，可以参考下 《深入解析 Windows 操作系统 第6版》第六章第8节相关描述</p>
+<ol>
+<li><p>登录主要分为两种形式，一种是非交互式的，一种是交互式的</p>
+<ul>
+<li><p>非交互式的，用户在输入用户名和密码后，由 <code>WinLogon</code> 调用 LSASS 中的相关函数（<code>LasLogonUser</code>）传递登录信息给认证包	</p>
+</li>
+<li><p>对于交互式登录，Windows使用两个标准的认证包∶ <code>Kerberos</code> 和 <code>MSV1_0</code></p>
+</li>
+</ul>
+</li>
+<li><p>认证通过后，LSASS 在本地策略中查找该用户有哪些允许的访问，包括交互方式、网络方式、批方式或服务方式，如果当前所请求的登录不符合数据库中允许</p>
+<p>的访问方式，则此次登录被终止。如果当前请求的登录是允许的，则 LSASS 会加入一些额外的安全ID(SID)，然后在策略数据库中查找用户所有SID的已经被授予的权限，并且把这些特权加入到用户的访问令牌中。</p>
+</li>
+<li><p>当 LSASS 已经积累了所有这些必要的信息时，会调用执行体来创建 &#x3D;&#x3D;访问令牌&#x3D;&#x3D;。执行体</p>
+<ul>
+<li>为交互式登录或服务方式登录创建一个主访问令牌</li>
+<li>为网络方式登录创建一个模仿令牌</li>
+</ul>
+<p>创建成功后， LSASS 复制此令牌，创建一个可将此令牌传递给 WinLogon 的句柄，然后关闭自身句柄。</p>
+</li>
+</ol>
+<p>综上就是 Windows 初始令牌的创建过程。</p>
+<blockquote>
+<p>之后，则是通过 WinLogon 中的令牌创建进程、线程。 进程持有一个主令牌，线程则使用的模拟令牌。</p>
+</blockquote>
+<h2 id="授权令牌和模拟令牌"><a href="#授权令牌和模拟令牌" class="headerlink" title="授权令牌和模拟令牌"></a>授权令牌和模拟令牌</h2><p>访问令牌（Access Token）是Windows操作系统用描述进程或者线程安全上下文的一个对象。</p>
+<p>Windows下有两种类型的Token令牌：授权令牌和模拟令牌。</p>
+<p><em>注：两种令牌会在系统重启或者关机后才会全部清除，不然将会一直在内存中存留。也就是说，如果机器不关机或者重启的话，就会存在散落的令牌。在系统注销后，具有授权令牌的用户会变为模拟令牌Impersonation Token，但依然有效。默认情况下，当前用户只能看到当前用户自己和比自己权限低的所有访问令牌。</em></p>
+<p>每个进程都有一个主要令牌，用于描述与该进程关联的用户帐户的安全上下文。默认情况下，当进程的线程与安全对象进行交互时，系统使用主令牌。<br>此外，线程可以模拟客户端帐户。模拟允许线程使用客户端的安全上下文与安全对象进行交互。模拟客户端的线程同时具有主令牌和模拟令牌。（出现这种情况是因为服务操作是在寄宿进程中执行，在默认的情况下，服务操作是否具有足够的权限访问某个资源（比如文件）取决于执行寄宿进程Windows帐号的权限设置，而与作为客户端的Windows帐号无关。在有多情况下，我们希望服务操作执行在基于客户端的安全上下文中执行，以解决执行服务进行的帐号权限不足的问题。简单来说就是我们希望不同客户端来访问服务时，服务可以模拟客户端的身份去访问服务，而不是用自己的主进程Token身份去访问。）</p>
+<h3 id="授权令牌（Delegation-Token）"><a href="#授权令牌（Delegation-Token）" class="headerlink" title="授权令牌（Delegation Token）"></a>授权令牌（Delegation Token）</h3><p>也叫主令牌，是由 Windows 内核创建并分配给进程的默认访问令牌，每一个进程有一个主令牌，它描述了与当前进程相关的用户帐户的安全上下文。用于交互式登录（如rdp登录访问）。</p>
+<h3 id="模拟令牌（Impersonation-Token）"><a href="#模拟令牌（Impersonation-Token）" class="headerlink" title="模拟令牌（Impersonation Token）"></a>模拟令牌（Impersonation Token）</h3><p>所在进程的主令牌会自动附加到当前的线程上，作为线程的安全上下文。而线程可以运行在另一个非主令牌的访问令牌下执行，而这个令牌被称为模拟令牌。用于非交互式的会话（利用WMI进行远程访问）。</p>
+
+<div class="article-footer fs14">
+    <section id="references">
+      <div class="header"><span>参考资料</span></div>
+      <div class="body">
+        <ul>
+        <li class="post-title">
+          <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://mp.weixin.qq.com/s/nGTBl8BEWH6Rb_oWnXZdFQ">原创 Paper | 利用 SSPI 数据报上下文 bypassUAC</a></p>
+
+        </li>
+        
+        <li class="post-title">
+          <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/shadow20080578/article/details/121811919">Windows操作系统—-安全机制—-Token_windows token-CSDN博客</a></p>
+
+        </li>
+        
+        <li class="post-title">
+          <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/entra/identity-platform/access-tokens">Microsoft 标识平台中的访问令牌 - Microsoft identity platform | Microsoft Learn</a></p>
+
+        </li>
+        </ul>
+      </div>
+    </section>
+    
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/">【COM】异步通知 ExecNotificationQueryAsync 的使用问题</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.4">Stellar 1.26.4</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg t="1705412886951" class="icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8331" width="200" height="200"><path d="M638.72 970.666667h-256c-118.186667 0-198.272-25.002667-251.946667-78.72S52.053333 758.186667 52.053333 640V384c0-118.186667 25.002667-198.272 78.72-251.946667S264.533333 53.333333 382.72 53.333333h256c118.186667 0 198.272 25.002667 251.946667 78.72S969.386667 265.813333 969.386667 384v256c0 118.186667-25.002667 198.272-78.72 251.946667S756.906667 970.666667 638.72 970.666667z m-256-853.333334c-100.096 0-165.802667 19.2-206.72 59.946667S116.053333 283.904 116.053333 384v256c0 100.096 19.072 165.802667 59.946667 206.72S282.624 906.666667 382.72 906.666667h256c100.096 0 165.802667-19.072 206.72-59.946667S905.386667 740.096 905.386667 640V384c0-100.096-19.072-165.802667-59.946667-206.72S738.816 117.333333 638.72 117.333333z" p-id="8332"/><path d="M638.72 970.666667a32 32 0 0 1-32-32V85.333333a32 32 0 0 1 32-32 32 32 0 0 1 32 32v853.333334a32 32 0 0 1-32 32zM340.053333 653.226667a31.914667 31.914667 0 0 1-22.613333-9.386667 32 32 0 0 1 0-45.269333L404.053333 512 317.44 425.386667a32 32 0 0 1 0-45.226667 32 32 0 0 1 45.226667 0l109.226666 109.226667a32 32 0 0 1 0 45.269333L362.666667 643.84a31.914667 31.914667 0 0 1-22.613334 9.386667z" p-id="8333"/></svg>
+  </button>
+</div>
+<div class="main-mask" onclick="sidebar.toggle()"></div></div></div><div class="scripts">
+<script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.26.3';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.3';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js","memos":"/js/plugins/memos.js","marked":"/js/plugins/marked.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js","transition":"fade"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@10.3/swiper-bundle.min.css","js":"https://unpkg.com/swiper@10.3/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.bootcdn.net/ajax/libs/scrollReveal.js/4.0.9/scrollreveal.min.js","distance":"16px","duration":800,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","flying_pages":"https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js","css":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css","selector":null});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied","toast":"复制成功"});
+  }
+</script>
+
+<!-- required -->
+<script src="/js/main.js?v=1.26.4" async></script>
+
+<!-- optional -->
+
+
+
+
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@v9/dist/mermaid.min.js"></script>
+<script>
+  var mermaid_config = {
+    startOnLoad: true,
+    theme:
+      "auto" == "auto" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "neutral",
+    logLevel: 3,
+    themeVariables: {
+      darkMode: true
+    },
+    flowchart: {
+      useMaxWidth: false,
+      htmlLabels: true,
+      curve: "linear"
+    },
+    gantt: {
+      axisFormat: "%Y/%m/%d"
+    },
+    sequence: {
+      actorMargin: 50
+    }
+  }
+  if (window.mermaid) {
+    mermaid.initialize(mermaid_config);
+  }
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
