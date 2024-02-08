@@ -19,15 +19,15 @@
   <title>【权限与会话】Windows 令牌 - oone</title>
 
   
-    <meta name="description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。">
+    <meta name="description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。 工具推荐：diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【权限与会话】Windows 令牌">
 <meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。">
+<meta property="og:description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。 工具推荐：diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-02-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-02-07T10:18:01.906Z">
+<meta property="article:modified_time" content="2024-02-08T03:30:36.804Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="windows">
 <meta property="article:tag" content="令牌">
@@ -69,7 +69,7 @@
 </div>
 <div class="widgets">
 
-<widget class="widget-wrapper toc single" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C"><span class="toc-text">0x01 初始令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">初始令牌的创建过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%E5%92%8C%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C"><span class="toc-text">授权令牌和模拟令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%EF%BC%88Delegation-Token%EF%BC%89"><span class="toc-text">授权令牌（Delegation Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C%EF%BC%88Impersonation-Token%EF%BC%89"><span class="toc-text">模拟令牌（Impersonation Token）</span></a></li></ol></li></ol></div></div></widget>
+<widget class="widget-wrapper toc single" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C"><span class="toc-text">0x01 初始令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E4%BB%A4%E7%89%8C%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">初始令牌的创建过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%E5%92%8C%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C"><span class="toc-text">0x02 授权令牌和模拟令牌</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E4%BB%A4%E7%89%8C%EF%BC%88Delegation-Token%EF%BC%89"><span class="toc-text">授权令牌（Delegation Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C%EF%BC%88Impersonation-Token%EF%BC%89"><span class="toc-text">模拟令牌（Impersonation Token）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E6%A8%A1%E6%8B%9F%E4%BB%A4%E7%89%8C"><span class="toc-text">为什么使用模拟令牌</span></a></li></ol></li></ol></div></div></widget>
 
 
 
@@ -77,7 +77,7 @@
 
 
 
-<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title active" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/"><span class="title">【权限与会话】Windows 令牌</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/"><span class="title">【COM】异步通知 ExecNotificationQueryAsync 的使用问题</span></a><a class="item title" href="/A_OS/Windows/API/%E3%80%90WINAPI%E3%80%91%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%90%8D/"><span class="title">【WINAPI】获取系统当前用户名</span></a><a class="item title" href="/A_OS/Windows/AD/%E3%80%90AD%E3%80%91%E5%9F%9F/"><span class="title">【AD】AD域</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91Tools/"><span class="title">【RPC】Tools</span></a><a class="item title" href="/A_OS/Windows/API/VirtualProtect/"><span class="title">VirtualProtect 函数</span></a><a class="item title" href="/A_OS/Windows/API/%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%9F%9F%E5%90%8D/"><span class="title">【WINAPI】系统获取系统主机域名</span></a><a class="item title" href="/A_OS/Windows/API/%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6/"><span class="title">【API】删除文件夹下所有文件</span></a><a class="item title" href="/A_OS/Windows/%E6%9C%8D%E5%8A%A1/RemoteRegistry/"><span class="title">【服务】Retmote Registry 服务</span></a></div></widget>
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title active" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/"><span class="title">【权限与会话】Windows 令牌</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><a class="item title" href="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/"><span class="title">【COM】异步通知 ExecNotificationQueryAsync 的使用问题</span></a><a class="item title" href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/Privilege%20constants/"><span class="title">【Windows】权限(Privilege Constants)</span></a><a class="item title" href="/A_OS/Windows/API/%E3%80%90WINAPI%E3%80%91%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%90%8D/"><span class="title">【WINAPI】获取系统当前用户名</span></a><a class="item title" href="/A_OS/Windows/AD/%E3%80%90AD%E3%80%91%E5%9F%9F/"><span class="title">【AD】AD域</span></a><a class="item title" href="/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91Tools/"><span class="title">【RPC】Tools</span></a><a class="item title" href="/A_OS/Windows/API/VirtualProtect/"><span class="title">VirtualProtect 函数</span></a><a class="item title" href="/A_OS/Windows/API/%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%9F%9F%E5%90%8D/"><span class="title">【WINAPI】系统获取系统主机域名</span></a><a class="item title" href="/A_OS/Windows/API/%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6/"><span class="title">【API】删除文件夹下所有文件</span></a><a class="item title" href="/A_OS/Windows/%E6%9C%8D%E5%8A%A1/RemoteRegistry/"><span class="title">【服务】Retmote Registry 服务</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
@@ -91,7 +91,7 @@
     
 <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/">Windows</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/">权限与会话</a></div>
-<div class="flex-row" id="post-meta"><span class="text created"><time datetime="2024-02-06T16:00:00.000Z">2024-02-07</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-02-07T10:18:01.906Z">2024-02-07</time></span></div></div>
+<div class="flex-row" id="post-meta"><span class="text created"><time datetime="2024-02-06T16:00:00.000Z">2024-02-07</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-02-08T03:30:36.804Z">2024-02-08</time></span></div></div>
 </div>
 
     
@@ -104,6 +104,7 @@
   </div>
   </div><article class="md-text content"><blockquote>
 <p>概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。</p>
+<p>工具推荐：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/diversenok/TokenUniverse">diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.</a></p>
 </blockquote>
 <span id="more"></span>
 
@@ -137,7 +138,7 @@
 <ol>
 <li><p>登录主要分为两种形式，一种是非交互式的，一种是交互式的</p>
 <ul>
-<li><p>非交互式的，用户在输入用户名和密码后，由 <code>WinLogon</code> 调用 LSASS 中的相关函数（<code>LasLogonUser</code>）传递登录信息给认证包	</p>
+<li><p>非交互式的，用户在输入用户名和密码后，由 <code>WinLogon</code> 调用 LSASS(Local Security Authority Subsystem Service) 中的相关函数（<code>LasLogonUser</code>）传递登录信息给认证包	</p>
 </li>
 <li><p>对于交互式登录，Windows使用两个标准的认证包∶ <code>Kerberos</code> 和 <code>MSV1_0</code></p>
 </li>
@@ -158,12 +159,16 @@
 <blockquote>
 <p>之后，则是通过 WinLogon 中的令牌创建进程、线程。 进程持有一个主令牌，线程则使用的模拟令牌。</p>
 </blockquote>
-<h2 id="授权令牌和模拟令牌"><a href="#授权令牌和模拟令牌" class="headerlink" title="授权令牌和模拟令牌"></a>授权令牌和模拟令牌</h2><p>访问令牌（Access Token）是Windows操作系统用描述进程或者线程安全上下文的一个对象。</p>
+<h2 id="0x02-授权令牌和模拟令牌"><a href="#0x02-授权令牌和模拟令牌" class="headerlink" title="0x02 授权令牌和模拟令牌"></a>0x02 授权令牌和模拟令牌</h2><p>访问令牌（Access Token）是Windows操作系统用描述进程或者线程安全上下文的一个对象。</p>
 <p>Windows下有两种类型的Token令牌：授权令牌和模拟令牌。</p>
-<p><em>注：两种令牌会在系统重启或者关机后才会全部清除，不然将会一直在内存中存留。也就是说，如果机器不关机或者重启的话，就会存在散落的令牌。在系统注销后，具有授权令牌的用户会变为模拟令牌Impersonation Token，但依然有效。默认情况下，当前用户只能看到当前用户自己和比自己权限低的所有访问令牌。</em></p>
-<p>每个进程都有一个主要令牌，用于描述与该进程关联的用户帐户的安全上下文。默认情况下，当进程的线程与安全对象进行交互时，系统使用主令牌。<br>此外，线程可以模拟客户端帐户。模拟允许线程使用客户端的安全上下文与安全对象进行交互。模拟客户端的线程同时具有主令牌和模拟令牌。（出现这种情况是因为服务操作是在寄宿进程中执行，在默认的情况下，服务操作是否具有足够的权限访问某个资源（比如文件）取决于执行寄宿进程Windows帐号的权限设置，而与作为客户端的Windows帐号无关。在有多情况下，我们希望服务操作执行在基于客户端的安全上下文中执行，以解决执行服务进行的帐号权限不足的问题。简单来说就是我们希望不同客户端来访问服务时，服务可以模拟客户端的身份去访问服务，而不是用自己的主进程Token身份去访问。）</p>
 <h3 id="授权令牌（Delegation-Token）"><a href="#授权令牌（Delegation-Token）" class="headerlink" title="授权令牌（Delegation Token）"></a>授权令牌（Delegation Token）</h3><p>也叫主令牌，是由 Windows 内核创建并分配给进程的默认访问令牌，每一个进程有一个主令牌，它描述了与当前进程相关的用户帐户的安全上下文。用于交互式登录（如rdp登录访问）。</p>
 <h3 id="模拟令牌（Impersonation-Token）"><a href="#模拟令牌（Impersonation-Token）" class="headerlink" title="模拟令牌（Impersonation Token）"></a>模拟令牌（Impersonation Token）</h3><p>所在进程的主令牌会自动附加到当前的线程上，作为线程的安全上下文。而线程可以运行在另一个非主令牌的访问令牌下执行，而这个令牌被称为模拟令牌。用于非交互式的会话（利用WMI进行远程访问）。</p>
+<hr>
+<p><em>注：两种令牌会在系统重启或者关机后才会全部清除，不然将会一直在内存中存留。也就是说，如果机器不关机或者重启的话，就会存在散落的令牌。在系统注销后，具有授权令牌的用户会变为模拟令牌 Impersonation Token，但依然有效。默认情况下，当前用户只能看到当前用户自己和比自己权限低的所有访问令牌。</em></p>
+<p>每个进程都有一个主要令牌，用于描述与该进程关联的用户帐户的安全上下文。默认情况下，当进程的线程与安全对象进行交互时，系统使用主令牌。<br>此外，线程可以模拟客户端帐户。模拟允许线程使用客户端的安全上下文与安全对象进行交互。模拟客户端的线程同时具有主令牌和模拟令牌。（出现这种情况是因为服务操作是在寄宿进程中执行，在默认的情况下，服务操作是否具有足够的权限访问某个资源（比如文件）取决于执行寄宿进程Windows帐号的权限设置，而与作为客户端的Windows帐号无关。在有多情况下，我们希望服务操作执行在基于客户端的安全上下文中执行，以解决执行服务进行的帐号权限不足的问题。简单来说就是我们希望不同客户端来访问服务时，服务可以模拟客户端的身份去访问服务，而不是用自己的主进程Token身份去访问。）</p>
+<h3 id="为什么使用模拟令牌"><a href="#为什么使用模拟令牌" class="headerlink" title="为什么使用模拟令牌"></a>为什么使用模拟令牌</h3><p>使用模拟令牌有助于实现权限分离。即使进程本身可能拥有较高的权限，但通过模拟令牌，可以以较低权限的用户身份执行一些敏感操作，从而减小潜在的安全风险。</p>
+<p>除权限分离以外，Windows 令牌机制带来了单点登录和访问控制等众多好处。</p>
+<p>管理员登录时，将为用户创建两个单独的访问令牌：标准用户访问令牌和管理员访问令牌。标准用户访问令牌包含与管理员访问令牌相同的特定于用户的信息，但删除了管理员的 Windows 特权和 SID。此外，执行 explorer.exe 也通过标准令牌来显示桌面，而 explorer.exe 是父进程，所有其他用户启动的进程都从中继承其访问令牌。因此，除非用户批准应用程序使用完整的管理访问令牌，否则所有应用程序都会以标准用户身份运行。</p>
 
 <div class="article-footer fs14">
     <section id="references">
