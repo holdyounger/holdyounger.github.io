@@ -1,0 +1,698 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.8" theme-name="Stellar" theme-version="1.26.8">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>【.Net】可执行文件结构分析（翻译） - oone</title>
+
+  
+    <meta name="description" content="概述：.Net 可执行文件结构分析（翻译）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【.Net】可执行文件结构分析（翻译）">
+<meta property="og:url" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：.Net 可执行文件结构分析（翻译）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/NETInfo.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/smaple_pe.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-6.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240322101133647.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240411173115834.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/start_function-1530x404.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/full_start_metadata-1530x676.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-1.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-4.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/string-1530x425.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/manifest-1530x835.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header_function-1530x833.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header-1-1530x426.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-2.png">
+<meta property="og:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/instructions.gif">
+<meta property="article:published_time" content="2024-03-19T03:26:50.783Z">
+<meta property="article:modified_time" content="2024-04-12T06:45:42.635Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/NETInfo.png">
+  
+  
+  
+  <meta name="keywords" content="C#">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.26.8">
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+  
+</head>
+<body>
+
+<div class="l_body content tech" id="start" layout="post"><aside class="l_left"><div class="sidebar-container sidebar-blur">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avator.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="探索" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+<widget class="widget-wrapper toc single" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span></div><div class="widget-body fs14"><div class="doc-tree active"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#NET-%E6%A1%86%E6%9E%B6"><span class="toc-text">.NET 框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NET%E5%A8%81%E8%83%81%E7%8E%AF%E5%A2%83"><span class="toc-text">.NET威胁环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NET-%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C"><span class="toc-text">.NET 编译和运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91-%E6%89%98%E7%AE%A1%E4%BB%A3%E7%A0%81"><span class="toc-text">编译 - 托管代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BA%93-%E9%80%9A%E7%94%A8%E8%AF%AD%E8%A8%80%E8%BF%90%E8%A1%8C%E5%BA%93-The-Common-Language-Runtime-CLR"><span class="toc-text">运行时库 - 通用语言运行库(The Common Language Runtime,CLR)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E6%89%98%E7%AE%A1%E5%87%BD%E6%95%B0"><span class="toc-text">非托管函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E6%89%98%E7%AE%A1%E5%87%BD%E6%95%B0%E7%A4%BA%E4%BE%8B"><span class="toc-text">非托管函数示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NET-%E7%A8%8B%E5%BA%8F%E9%9B%86"><span class="toc-text">.NET 程序集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NET-%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%88%86%E6%9E%90"><span class="toc-text">.NET 可执行文件格式分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Metadata"><span class="toc-text">Metadata</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E5%94%AF%E4%B8%80%E6%A0%87%E8%AF%86%EF%BC%88Metadata-Unique-Identidier-ID%EF%BC%89"><span class="toc-text">元数据唯一标识（Metadata  Unique Identidier,ID）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA%E4%BE%8B"><span class="toc-text">元数据表示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Manifest%EF%BC%88%E6%B8%85%E5%8D%95%EF%BC%89"><span class="toc-text">Manifest（清单）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NET-%E6%B8%85%E5%8D%95%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="toc-text">.NET 清单文件内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-text">函数体结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E4%BD%93%E7%A4%BA%E4%BE%8B"><span class="toc-text">函数体示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E5%BD%95"><span class="toc-text">附录</span></a></li></ol></div></div></widget>
+
+
+
+
+
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E7%95%85%E6%8D%B7%E9%80%9A/%E3%80%90QVD-2023-13612%E3%80%91%E7%95%85%E6%8D%B7%E9%80%9AT+%20SQL%E6%B3%A8%E5%85%A5/"><span class="title">【QVD-2023-13612】畅捷通T+ SQL 注入漏洞</span></a><a class="item title" href="/A_OS/Windows/API/%E5%AE%89%E5%85%A8%E5%8A%A0%E8%BD%BDDLL/"><span class="title">【API】 安全加载DLL</span></a><a class="item title" href="/C_OpenSource/libssh2/"><span class="title">【libssh2】 Windows 下 libssh2 编译步骤</span></a><a class="item title" href="/A_OS/Windows/DeskBand/%E3%80%90Win%E3%80%91DeskBand%20%E6%89%AB%E7%9B%B2/"><span class="title">【WIN】DeskBand 扫盲</span></a><a class="item title" href="/A_OS/Windows/%E6%89%B9%E5%A4%84%E7%90%86/%E3%80%90%E6%89%B9%E5%A4%84%E7%90%86%E3%80%91%E8%8E%B7%E5%8F%96uac%E6%9D%83%E9%99%90/"><span class="title">【批处理】获取 UAC 权限</span></a><a class="item title" href="/G_%E5%B7%A5%E5%85%B7/%E3%80%90%E5%B7%A5%E5%85%B7%E3%80%91SFTP%E5%B7%A5%E5%85%B7/"><span class="title">【工具】SFTP 工具分享</span></a><a class="item title active" href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/"><span class="title">【.Net】可执行文件结构分析（翻译）</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><a class="item title" href="/A_OS/Windows/Visual%20Studio/%E6%96%87%E4%BB%B6%E5%86%85%E7%BD%AE%E5%BC%95%E5%85%A5/"><span class="title">【Visual Studio】内置引入文件</span></a><a class="item title" href="/A_OS/Windows/AD/%E3%80%90AD%E3%80%91%E7%94%A8%E6%88%B7%E5%B1%9E%E6%80%A7/"><span class="title">【AD】用户属性</span></a><a class="item title" href="/B_Code/Python/%E3%80%90POC%E3%80%91pocsuite%20%E7%94%A8%E6%B3%95/"><span class="title">【POC】pocsuite 用法</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    
+<div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/B-Code/">B_Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/B-Code/CSharp/">CSharp</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2024-03-19T03:26:50.783Z">2024-03-19</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-04-12T06:45:42.635Z">2024-04-12</time></span></div></div>
+</div>
+
+    
+    <div class="bottom">
+      <div class="text-area">
+        <h1 class="text title"><span>【.Net】可执行文件结构分析（翻译）</span></h1>
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><blockquote>
+<p>概述：.Net 可执行文件结构分析（翻译）</p>
+</blockquote>
+<span id="more"></span>
+
+<p>[toc]</p>
+<h2 id="NET-框架"><a href="#NET-框架" class="headerlink" title=".NET 框架"></a>.NET 框架</h2><p>.NET 软件开发框架和生态系统是由微软在2002年首次发布。旨在提供一个可控的编程环境并且可以在基于Windows操作系统上进行开发、安装和执行。随着 .NET 的发展，.NET5 之后开始支持跨平台开发，并且支持多语言（C#、VB.NET和F#）。</p>
+<p>.NET 框架包含了一个名为 Framenwork Class Library（FCL） 的大型类库，为开发人员提供了从数据访问到加密以及 XML 解析等一系列线程可用、经过测试和优化的功能。由于广泛的支持和托管运行环境使得 .Net 需要更多人工干预的语言和框架。将以上特性结合起来，可以创建一个在桌面、前端、移动设备创建一些列应用程序的高效环境。</p>
+<h2 id="NET威胁环境"><a href="#NET威胁环境" class="headerlink" title=".NET威胁环境"></a>.NET威胁环境</h2><p>相比于 C&#x2F;C++，由于 .NET 用户友好的开发过程、丰富的功能集、以及平滑的 Windows 集成，恶意软件开发人员可能更喜欢 .NET 框架。但是，像 dnSpy 这样的工具使得逆向恶意软件变的很简单，促使了创造这些恶意软件的人使用模糊方法，使得分析更加困难。另外，.NET 的能力是的恶意软件改变其行为或者隐藏使其更难以检测和逆向。虽然 C&#x2F;C++ 允许对系统资源进行更精细的控制，以至于其可能会导致更谨慎和更高效的恶意软件，但是这需要对系统内部工作原理有更深入地了解。这就使得 .NET 更加有吸引力了，因为追求开发速度和易用性的 .NET 是一个更有吸引力选择。</p>
+<p>.NET 威胁环境持续演变，攻击者经常利用适应性强且被广泛采用的 .NET 框架来精心编制和部署各种复杂的威胁。这个框架支撑了许多网络攻击，比如臭名昭著的 Locky 和 Killnet。凭据窃取程序和英航特洛伊木马程序（如CryptoClippy）同样也是基于 .NET 的威胁。此外，用 .NET 编写的破坏性 Wipers 正在不断增加。DoubleZero 以及最近发现的 Hatef Wiper 就是这种趋势的例证。</p>
+<p>此外，.Net 在创建远程访问特洛伊木马（RATs）方面也发挥了重要的作用。例如 QuasarRAT 和 NanoCore，它们因其丰富的功能集以及易于修改和混淆而在地下圈子广受赞誉。此外，.NET 是创建恶意软件加载器的常用工具，这些加载器可以谨慎地安装和执行其他类型的恶意软件。</p>
+<h2 id="NET-编译和运行"><a href="#NET-编译和运行" class="headerlink" title=".NET 编译和运行"></a>.NET 编译和运行</h2><h3 id="编译-托管代码"><a href="#编译-托管代码" class="headerlink" title="编译 - 托管代码"></a>编译 - 托管代码</h3><p>托管语言（C#、F#或VB.NET） 的执行由运行库控制。当合适的语言编译器编译源代码时，输出中间语言（Intermediate Language，IL），也被成为 MSIL(Microsoft Intermediate Language)，托管代码（Managed Code）或者公共中间语言（Common Intermediate Language，CIL）。</p>
+<p>举例说明，当在 .NET 框架下编译 C# 代码时，C# 编译器（csc.exe）的输出是一个 .NET 程序集，该程序集可以是独立程序的可执行文件，也可以是可重用库的动态链接库（DLL）。</p>
+<p>这与编译非托管语言（比如 C&#x2F;C++）不同，在非托管语言中，源代码直接转换为机器码。然后托管代码打包到一个程序集中，并附带一个包含所需元数据的清单。</p>
+<p>托管代码的优美之处在于可移植性和灵活性；同样的程序集可以在 .NET 支持的任何平台上运行，而无需重新编译。此外，托管代码允许跨语言继承代码访问安全性。它提供了后期绑定支持的优势，从而可以在运行时进行解析并调用函数。托管代码和程序集结构提供的这种级别的抽象是 .NET 框架的多功能行和强大功能的基石，使其开发人员能更安全、更易管理、更适时地去开发应用程序。</p>
+<p>下图演示了 .NET 中的编译和执行过程，以 C# 作为演示，但适应于所有的 .NET 语言。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/NETInfo.png" class title=".NET compilation and execution for malware analysis">
+
+<h3 id="运行时库-通用语言运行库-The-Common-Language-Runtime-CLR"><a href="#运行时库-通用语言运行库-The-Common-Language-Runtime-CLR" class="headerlink" title="运行时库 - 通用语言运行库(The Common Language Runtime,CLR)"></a>运行时库 - 通用语言运行库(The Common Language Runtime,CLR)</h3><p>通用运行时库是管理 .NET 程序执行的微软 .NET 框架中的一个重要组件。它本质上是提供运行 .NET 应用程序所需的各种服务的执行引擎，而不管这些应用程序是用什么变成语言编写的。</p>
+<p>当一个 .NET 二进制文件被执行时， CLR 开始设置执行环境，但不会立马去把所有的托管语言翻译为原始的机器码。实时编译（Just-In-Time）会在被调用的时候将托管代码转换为机器码。这确保了在特定硬件上的高效执行。此外，.NET Core 和 .NET 5+ 中的  NGEN 和 AOT 编译技术可以在执行托管代码前将其预编译为本机代码，从而进一步提高了性能。</p>
+<p>CLR 的功能超出了应用程序的执行范围；它提供了诸如内存管理、异常处理、垃圾回收、类型安全检查和安全性等关键服务。由 CLR 协调的内存管理抽象了开发人员手动分配和释放内存的需要，显著减少了内存泄漏和相关错误。提供自动的垃圾回收来管理对象生命周期，通过释放应用程序不再使用的对象来回收内存。</p>
+<p>此外，CLR 强制执行严格的类型安全并确保应用程序不会尝试执行不安全或未经验证的操作。它在 .NET 的安全体系结构中也发挥着重要作用，提供代码访问安全性（Code Access Security,CAS），其根据分配给应用程序的信任级别控制程序可以访问那些资源。总体来说，CLR 创建了一个高级别的环境，可以有效减少传统变成语言所需的香醋多低级编程任务，实现了更快的开发周期、更高的生产力和更安全可靠的应用程序。这使得 CLR 成为 .NET 生态系统不可或缺的组件。</p>
+<h3 id="非托管函数"><a href="#非托管函数" class="headerlink" title="非托管函数"></a>非托管函数</h3><p>.NET 框架中的非托管函数是指在 CLR 的托管环境之外运行的代码。这些函数通常用 C 或 C++ 等语言编写，并直接编译成机器特定的代码，绕过 CLR 的管理。这也意味着上述的一些特征如内存管理、垃圾回收等功能是托管环境固有的功能不适用于这些非托管函数。它们主要用于互相操作的目的，允许 .NET 应用程序利用不是与 .NET 程序兼容语言编写的遗留代码或者外部库。当需要使用现有的非 .NET 库或者调用系统级别的 API 时，只能通过非托管代码访问。</p>
+<p>然而，这带来了额外的复杂性和责任，因为开发人员必须手动处理内存泄漏和错误处理，增加了内存泄漏和安全漏洞等问题的可能性。在恶意软件分析的上下文中，了解非托管函数至关重要，因为它们可用于执行绕过托管环境的某校保护措施的代码，从而在分析和检测中带来不一般的挑战。</p>
+<h3 id="非托管函数示例"><a href="#非托管函数示例" class="headerlink" title="非托管函数示例"></a>非托管函数示例</h3><p>要创建使用非托管代码创建一个简单的 .NET 应用程序，可以使用 C# 中的平台调用服务（Platform Invocation Services, PInvoke）。PInvoke 允许托管代码从动态链接库（DLL）中调用非托管函数。</p>
+<p>如下所示为：从 user32.dll 中调用 <code>MessageBox</code> 函数，<code>user32.dll</code> 是一个标准的Windows库。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> System.Runtime.InteropServices;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Importing the MessageBox function from user32.dll</span></span><br><span class="line"></span><br><span class="line">    [<span class="meta">DllImport(<span class="string">&quot;user32.dll&quot;</span>, CharSet = CharSet.Unicode)</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="built_in">int</span> <span class="title">MessageBox</span>(<span class="params">IntPtr hWnd, String text, String caption, <span class="built_in">uint</span> type</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Calling the MessageBox function - this is an unmanaged function call</span></span><br><span class="line"></span><br><span class="line">        MessageBox(<span class="keyword">new</span> IntPtr(<span class="number">0</span>), <span class="string">&quot;Hello, World!&quot;</span>, <span class="string">&quot;Message Box&quot;</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单说明一下上述代码：</p>
+<ol>
+<li>首先从 <code>user32.dll</code> 中使用 <code>DllImport</code> 属性导入 <code>MessageBox</code> 函数。 这一步非常关键，主要是告诉 CLR 这个函数是一个外部函数，而非 .NET 运行时库函数。</li>
+<li><code>MessageBox</code> 的声明与 user32.dll 中的非托管函数一致。</li>
+<li>在 <code>Main</code> 函数中， 调用 <code>MessageBox</code> 函数， 参数包括一个窗口句柄（示例传递的 <code>IntPtr(0)</code>）、一个文本（<code>Hello, World!</code>）、一个窗口标题（<code>Message Box</code>）、以及一个消息框类型参数 （0，0 指最简单的只有一个确认按钮的窗口）。</li>
+<li>当程序被运行，将在屏幕上显示一个窗口。</li>
+</ol>
+<h3 id="NET-程序集"><a href="#NET-程序集" class="headerlink" title=".NET 程序集"></a>.NET 程序集</h3><p>.NET 程序集是 .NET 应用程序的基本构成，用作一个或多个代码模块或资源文件的集合。生成的程序集的内容包括以下三个部分：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/dotnet/standard/managed-code#intermediate-language--execution">Intermediate Language, IL</a>：IL 是一个与 CPU 无关的指令集，它使相同的程序集能够在 .NET 框架支持的不同平台上执行。</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/dotnet/standard/metadata-and-self-describing-components">Metadata</a>：它描述了由 CLR 管理的结构元素，如程序集、类型（类、接口、枚举、结构体），方法等等。这包括调试、垃圾回收、安全属性所需的信息以及运行库管理代码所需的详细信息。</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/dotnet/standard/assembly/manifest">Manifest</a>: 是描述程序集本身的元数据的特定部分。它包括程序集的名称、版本、区域性，还可能包括唯一标识程序集的强名称。元数据描述程序集内的内从，而清单文件提供程序集整体的高级别概述，以确保程序集与其所依赖的其他正确版本的程序集交互。</li>
+</ul>
+<h2 id="NET-可执行文件格式分析"><a href="#NET-可执行文件格式分析" class="headerlink" title=".NET 可执行文件格式分析"></a>.NET 可执行文件格式分析</h2><p>在这一部分，将对 .NET 内层进程分析。作者使用一个示例（The Notorious SubBurst）来演示所涉及到的概念，以便于能理解。</p>
+<p>示例：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://analyze.intezer.com/files/32519b85c0b422e4656de6e6c41878e95fd95026267daab4215ee59c107d6c77?_gl=1*1s5gddk*_gcl_au*MTMzNzUwNTcyNi4xNzEwNDk3NjQx">Malicious SUNBURST b91ce2fa41029f6955bff20079468448 - Intezer</a></p>
+<p>文件hash: 32519b85c0b422e4656de6e6c41878e95fd95026267daab4215ee59c107d6c77</p>
+<p>使用到的工具有 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/dnSpy/dnSpy">dnSpy</a>、 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/icsharpcode/ILSpy">ILSpy</a>、 和 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.winitor.com/download">PEStudio</a> 。(这里建议大家实际操作去打开一个 C# dll 查看一下)</p>
+<p>（由于企业邮箱的缘故，我没法拿到样本进行展示，看看原作者的分析内容吧）</p>
+<p>在 .NET 程序集上下文的运行时标头指定了由 CLR 使用的 PE 文件格式中的基本元素，包含了 CLR 正确执行该 .NET 程序集所需的元数据和关键详细信息。该运行时标头是 PE 文件标头中的第 15 个数据目录条目，也被成为 CLR 运行时标头（CLR 头）。</p>
+<p>数据目录是 PE 文件中的索引或目录，列出了重要部分，并提供了各个部分的位置和大小，这个结构提供对 PE 文件不同部分的高效访问，例如导入和导出表、资源、CLR 运行时头等。</p>
+<p>如下所示条目描述了运行时标头的相对虚拟地址及其大小，从而将 CLR 引导到此标头来管理 .NET 程序集在加载时如何执行。</p>
+<p>截图的第15个条目表是 .NET 的入口。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/smaple_pe.png" class title="PeStudio 分析的 .NET 文件">
+
+<p>接下来的部分，作者主要介绍了 PE 结构、元数据头。</p>
+<p>元数据头管理了文件内容。它提供了一个分类目录来列出每一块数据的大小、以及偏移量。当 CLR 或者如 dnSpy 或者 ILDasm 这些工具需要访问一段元数据的时候，它会查询元数据头以找到合适的文件流。然后，它导航到该流中的正确位置以读取数据。接下来，就是分析说明 .NET 元数据头中的各个关键字。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-6.png" class title="img">
+
+<ul>
+<li><p>Signature: 签名、所有的.NET元数据头签名都是 BSJB (0x42534a42)</p>
+</li>
+<li><p>GUID：长度为 128bits 的唯一标识</p>
+</li>
+<li><p>IL-Only：这个标志指明程序集只包含中间语言（IL）代码，而不包含特定于CPU的本机代码。PE 可以同时包含托管代码和非托管代码。</p>
+</li>
+<li><p>32-bit-required: 设置这个标志时，表示程序需要32位运行库，即使运行在64为操作系统上。它通常用于依赖于32为本机依赖项或32位运行时的特定行为的程序集。</p>
+</li>
+<li><p>Strong Name Signed: 强签名。指示程序集是否已使用强签名。强命名涉及使用公钥&#x2F;私钥对程序集进行签名，提供唯一标识并确保程序集未被篡改。</p>
+</li>
+<li><p>流（Streams）是指包含特定类型的元数据的结构化数据段，.NET 程序集元数据的关键流包括：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240322101133647.png" class title="image-20240322101133647">
+
+<ul>
+<li>#~（Tilde）Stream：主元数据块包含元数据表。这些表存储有关程序集中定义的类型、方法、字段、参数和其他元素的信息。波浪线数据块是根据 CLI 规范定义的元数据表模式构造的。</li>
+<li>#Strings Stream: 这个数据块存储元数据使用的字符串，比如类型名称、方法名称和字段名称。元数据表（#~数据块中）的引用指向了当前数据流中实际字符串的偏移量。</li>
+<li>#US(User Strings) Stream: 这个数据块保存程序集中使用的文本字符串值，如代码中的字符串变量或字符串常量的默认值。元数据引用这些字符串，特别是在加载字符串文字的指令中。</li>
+<li>#GUID Stream: 包含程序集使用的GUID。此数据块中的每个条目都是一个GUID，用于标识元数据的某些方面，如模块版本的ID(MVID)。</li>
+<li>#Blob Stream: “Binary Large Object” 数据块。存储用于各种情况的二进制数据，比如字段的默认值、方法签名、属性签名和封送处理信息。元数据表中的项引用此数据块以获取详细的二进制信息。</li>
+<li>#Pdb Stream: 可选数据块，包括元数据和 IL 代码与源文件以及和文件相关联的调试信息。</li>
+</ul>
+</li>
+</ul>
+<p>在不同的 .NET 程序集查看到的内容可能不太一样，ILSpy 会展示 元数据 的各个组成部分，dnSpy 则会解析为一个 PE 文件。</p>
+<h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><p>Metadata 在 .NET 中就是一组描述程序结构及其特点的二进制数据。包含了代码中定义的类型（类、接口、枚举等），成员定义（方法、属性、字段、事件）引用类型和成员以及程序集本身的信息。</p>
+<p>在存储次描述性信息的 PE 文件中，元数据被划分为几个表，统称为元数据表。每个表都遵循一个特定的模式，该模式概述其包括的数据结构和性质。以下是可以在元数据表中能找到的一些关键类型的信息：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240411173115834.png" class title="image-20240411173115834">
+
+<p><strong>定义表（Definition Table）：</strong>包含有关在当前程序集中定义的代码的信息。包括以下几个表：</p>
+<ul>
+<li>类型定义表（<em>TypeDef Table</em>）： 源代码中定义的每个类或接口的详细信息，包括哦其名称、可见性、基类型以及它包含的方法或属性。主要范畴包括：<ul>
+<li>类型名：类型的名称</li>
+<li>命名空间：该类型所属的命名空间</li>
+<li>基础类型：Typedef、TypeRef 或 TypeSpec 表的索引，指示类型的基类。</li>
+<li>标志位：描述类型属性（可视化，抽象&#x2F;封装状态，等）</li>
+</ul>
+</li>
+<li>方法定义表（<em>MethodDef Table</em>）：每个方法的详细信息，包括其名称、签名（参数和返回类型）以及与其相关的 IL 代码。主要关键词为以下几个：<ul>
+<li>名称：方法名</li>
+<li>签名：指向方法名称的 blob 索引，其中包括方法的调用约定、返回类型和参数。</li>
+<li>相对虚拟地址（RVA）：相对虚拟地址，指向方法实现在PE文件中位置。</li>
+</ul>
+</li>
+<li>关键字定义表（<em>FieldDef Table</em>）: 描述每一个关键字（类成员变量），包括名称和类型，关键字如下所示：<ul>
+<li>名称：关键字名称</li>
+<li>签名，指向关键字的类型签名的 blob 索引</li>
+<li>标志位：指定字段属性，如可见性、静态&#x2F;实例，和仅初始化（只读）。</li>
+</ul>
+</li>
+</ul>
+<p>**引用表(Reference Tables)**：包含程序集外部但又程序集引用的代码信息，包含以下内容：</p>
+<ul>
+<li>类型引用表（<em>TypeRef Table</em>）: 当前程序集引用的其他程序集中定义的类型的信息</li>
+<li>成员引用表（<em>MemberRef Table</em>）：描述定义在其他模块或程序集的成员（方法、属性等）</li>
+</ul>
+<p><strong>清单元数据表（Manifest Metadata Table）</strong>：描述程序集本身，包含以下内容：</p>
+<ul>
+<li>程序集表（<em>Assembly Table</em>）：关于程序集本身的一些信息，如名字，版本，已经强强签名校验。</li>
+<li>应用程序集表（<em>AssemblyRef Table</em>）：描述当前程序集依赖的其他程序集，包括他们的名称、版本、公钥（如何是强名称的）</li>
+</ul>
+<p><strong>模块表（<em>Module Table</em>）</strong>：关于当前模块的一些信息，如模块名、用于标识唯一性的GUID</p>
+<p><strong>自定义属性表（<em>CustomAttribute Table</em>）</strong>：包含程序集中用于不同元素的自定义属性的详细信息。</p>
+<p><strong>事件表和属性表（<em>Event Table and Property Table</em>）</strong>：描述在类型中声明的事件和属性。</p>
+<p><strong>参数表（<em>Param Table</em>）</strong>：关于各函数参数的信息。</p>
+<p><strong>独立签名表（<em>StandAlonesig Table</em>）</strong>：独立签名可用于封装类型或方法签名。</p>
+<p><strong>常量表（Constant Table）</strong>：存储代码中定义的常量。</p>
+<p>这些表对于 CLR 的操作至关重要，因为它们提供了执行程序集所需的上下文信息。在运行时读取他们以执行各种任务，如类型实例化、方法调用、安全验证等。</p>
+<p>这些元数据表以高度优化的二进制格式编码，运行时可以有效地处理这些格式。通过反射，还可以以编程方式访问元数据，并且允许 .NET 应用程序在运行时检查自己跌结构或其他程序集的结构。这种内省能力支持 .NET 框架支持一系列动态编程。</p>
+<h4 id="元数据唯一标识（Metadata-Unique-Identidier-ID）"><a href="#元数据唯一标识（Metadata-Unique-Identidier-ID）" class="headerlink" title="元数据唯一标识（Metadata  Unique Identidier,ID）"></a>元数据唯一标识（Metadata  Unique Identidier,ID）</h4><p>元数据标记是 CLR 用于引用程序集的元数据表中的元数据元素的唯一标识符。这些表的每个条目都被分配了一个元数据标记，作为对该特定条目的稳定引用。</p>
+<p>元数据标记对于 CLR 与已编译代码进行交互至关重要，因为它们为运行时库提供了有效的标识和访问元数据的方法。PE文件中的每个类型、成员、签名或其他元数据描述符都具有相应的标记。</p>
+<p>在 dnSpy 中，每个方法在其声明之上都包含一个注释，信息包括令牌、RID、RVA 和文件偏移量。如下所示屏幕截图：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image.png" class title="img">
+
+<p>看一些各个字段的含义：</p>
+<ol>
+<li>标记（Token）: 元数据标记的高字节（big-endian）指定元数据的类型，以便于运行时识别。它指示令牌引用的元数据中的那个表（TypeDef、TypeRef、MethodDef等）。有关令牌类型的值得我更多信息可以参见附录A。</li>
+<li>行索引（Row Index,RID）：元数据标记的其余24位用于索引相关的元数据表。它们指示可以在哪里找到此元素的实际元数据的行号。由于每个表可以有数百万个条目，因此24位允许有足够范围的索引。</li>
+<li>相对虚拟地址（RVA）: 相对虚拟地址是函数实体（编译的 IL 代码）相对于程序被加载到内存的基地址的地址。例如，0x00023B28 意味着该函数的 IL 代码从加载模块的基地址的内存偏移大小。CLR 使用 RVA 在运行时定位并执行函数代码。在 PE 文件的上下文中，该文件的格式用于windows平台的 .NET 程序集，当文件加载到内存后，RVA 被广泛用于引用文件的各个部分。</li>
+<li>文件偏移（File Offset）: 这个值表示当前函数的 IL 代码在 .NET 程序集（.dll 或 .exe 文件）中的实际位置。0x00021D28 表示从文件开始到函数代码开始的位置的偏移量（以字节为单位）。这对于直接对程序集文件进行二进制分析或操作非常有用，因为它能准确的告诉你在文件中哪里可以找到该方法的代码。</li>
+</ol>
+<p>元数据标记的结构在运行时解析引用提高了 CLR 的性能。例如，当 JIT 编译器需要将 IL 编译成本机代码时，它使用元数据标记来查找方法签名、类型信息等。元数据令牌系统还支持 CLR 的动态特性，比如反射。它允许有效地执行各种运行时服务，如类型安全、安全检查和跨语言互操作性。</p>
+<h4 id="元数据表示例"><a href="#元数据表示例" class="headerlink" title="元数据表示例"></a>元数据表示例</h4><p>如下所示为 SolarWinds 恶意软件的启动函数。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/start_function-1530x404.png" class title="dnSpy 中 Start 函数中的token和RID字段">
+
+<p>标记的高位（0x6）值为6，对应元数据表6，即方法定义表（MethodDef Table）。标记的下半部分是 0x5FA，是其在 MethodDef Table 中的条目号。如下所示：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/full_start_metadata-1530x676.png" class title="img">
+
+<p>检查 Start 函数的元数据的下半部分，值 0x00058D66 是从可执行文件开始的偏移量，偏移量（0x1EC15）的值在 字符串流（#String stream） 中，它将包含方法名称：Start。如下所示是在 dnSpy 的 Hex 编辑器中的数据：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-1.png" class title="img">
+
+<p>字符串流中偏移量的值如上所示。dnSpy 会自动检测字符串的值。</p>
+<p>要查看 String 流中的数据，需要执行以下操作：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-4.png" class title="img">
+
+<p>在新窗口中，转到偏移量（相对于 字符串流基地址）并查看我们正在寻找的字符串 - Start。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/string-1530x425.png" class title="Start 字符串在Strings Stream 中的偏移">
+
+<h3 id="Manifest（清单）"><a href="#Manifest（清单）" class="headerlink" title="Manifest（清单）"></a>Manifest（清单）</h3><p>.NET 清单是 .NET 程序集的关键部分，描述程序集中的元素如何彼此关联。它嵌入在每个程序集中，无论它是静态的还是动态的，并且包含程序集操作所需的基本数据，包括其版本要求、安全标识、范围定义以及对资源和类的引用的解析。</p>
+<p>.NET 清单的主要功能是提供全面的元数据描述，以便于组件的识别、版本控制和依赖管理。它确保程序集是自描述的，有助于解析类型引用并将这些引用映射到包含其声明和实现的文件。这对于维护版本控制以及确保不同程序集合依赖它们的组件之间的兼容性尤为关键。</p>
+<h4 id="NET-清单文件内容"><a href="#NET-清单文件内容" class="headerlink" title=".NET 清单文件内容"></a>.NET 清单文件内容</h4><p>清单包括对程序集的标识和操作至关重要的各种信息：</p>
+<ul>
+<li>程序集名称：指定程序集名称的文本字符串</li>
+<li>版本号：包括主版本号和次版本号，以及修订版本号和构建版本号，供通用语言运行库用于执行版本策略。</li>
+<li>语言及区域信息：指定程序集支持的语言和区域，对于包含区域性语言特定信息的附属程序集尤为重要。</li>
+<li>程序集中的文件列表：包括程序集中包含的每个文件及其名称的散列，以确保完整性和程序集的完整性。</li>
+<li>类型应用信息：运行时用于将类型引用映射到其声明和实现的文件，这对类型安全性和正确性至关重要。</li>
+<li>引用程序集信息：列出当前程序集静态引用的其他程序集，包括它们的名称、元数据（如版本号、语言、操作系统）以及如果有强命名时的公钥</li>
+</ul>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/manifest-1530x835.png" class title="img">
+
+<h3 id="函数体结构"><a href="#函数体结构" class="headerlink" title="函数体结构"></a>函数体结构</h3><p>.NET 函数体结构可以编码为 “Tiny” 格式和 “Fat”格式，根据函数的复杂性和需求，每种格式用于不同的目的。在 Tiny 头和 Fat 头之间的选择是有 .NET 编译器基于所编译函数的复杂性决定的。</p>
+<p>Tiny 头（The Tiny header）是两种格式中较简单的一种。当一个方法满足特定的条件时，就会使用这个header：</p>
+<ul>
+<li>函数体小于 64 bytes</li>
+<li>堆栈深度不会超过8槽（堆栈上的每个条目都有一个槽，与条目的大小无关）</li>
+<li>不包含本地变量或结构化异常处理程序（SEH）</li>
+</ul>
+<p>Tiny 头更加紧凑，并且针对小型函数进行了优化。</p>
+<p>Tiny 头是一个单字节长度，下面的 2 bits 设置为 <code>0x2</code>（二进制 10），表示它是一个 Tiny 头，剩下的 6 bits 表示函数提的大小。这种紧凑的格式允许有效地存储小型函数体，减少了简单方法的元数据开销。</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size(Bits)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Header Flag</td>
+<td>2</td>
+<td>在 Tiny 头中总是被设置为 <code>10</code>(二进制)</td>
+</tr>
+<tr>
+<td>Method Size</td>
+<td>6</td>
+<td>指定函数体的大小（以字节为单位，最大为 63 bytes）</td>
+</tr>
+</tbody></table>
+<p>Fat 头（The Fat header）用户更复杂的函数主题，超过了 Tiny 头的限制：</p>
+<ul>
+<li>Fat 头用于不符合 Tiny 头标准的较大函数</li>
+<li>它提供了其他信息，比如方法的局部变量和 SEH</li>
+<li>当一个函数的大小或者复杂度超过了 Tiny 头的显示，就会使用 Fat 头。</li>
+</ul>
+<p>Fat 头更大，由多个字段组成，包括一个标志字段，用于指示方法函数体的其他特征（例如异常处理或局部变量初始化）。</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size(Bits)</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Flags</td>
+<td>2</td>
+<td>指定函数图的属性，包括是否存在局部变量、初始局部变量等。最低位（0x3）在设置为 1 时表示 Fat 头。</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>2</td>
+<td>4 byte 大小的头。包括整个头部的大小，不仅仅是函数体的大小</td>
+</tr>
+<tr>
+<td>MaxStack</td>
+<td>2</td>
+<td>方法执行期间操作数堆栈上任何点上的最大项数</td>
+</tr>
+<tr>
+<td>CodeSize</td>
+<td>4</td>
+<td>函数体 IL 代码的大小（byte）</td>
+</tr>
+<tr>
+<td>LocalVarsigTok</td>
+<td>4</td>
+<td>用于局部变量签名的元数据标记，仅当方法具有局部变量时才显示</td>
+</tr>
+<tr>
+<td>MoreSections</td>
+<td>N</td>
+<td>例如异常处理子句的附件部分，如果在标志中指定，则显示。</td>
+</tr>
+</tbody></table>
+<p>想看更多字段说明，可以看 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.ntcore.com/files/dotnetformat.htm#:~:text=the%20Method%20format.-,Methods,-Every%20method%20contained">The .NET File Format</a></p>
+<h4 id="函数体示例"><a href="#函数体示例" class="headerlink" title="函数体示例"></a>函数体示例</h4><p>如下所示为 <code>DeleteDiscoveryProfileInternal</code> 函数：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header_function-1530x833.png" class title="img">
+
+<p>点击偏移量（或 RVA）将会条传到 HEX 窗口中函数的头部：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header-1-1530x426.png" class title="img">
+
+<p>在这里，我们可以看到 dnSpy 在鼠标悬停在头部字节上时突出显示了头部字段。函数的内容-指令跟在头部后面，在 dnSpy 中表示为 image_core_ilmethod_fat.instruction[]。为了更好的理解和查看指令的值（操作码），我们将在 IDA 中打开恶意软件：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-2.png" class title="IDA解析的函数">
+
+<p>我们可以看到左边是每个操作妈的值，遵循 dnSpy 中的前两条指令：</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/instructions.gif" class title="img">
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在对 .NET 可执行文件结构的初步探索中，我们已经深入研究了 .NET 框架的复杂性，强调了其合法开发和恶意软件创建的双重用途。通过剖析 .NET 编译、运行以及元数据和程序集的复杂细节，我们已经为理解 .NET 程序函数如何执行以及如何为恶意目的操作它们奠定了基础。随着你深入研究 .NET 恶意软件逆向工程技术，你会发现这对你有效分析和对抗基于 .NET 威胁的恶意软件非常有效。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p>标记类型表</p>
+<table>
+<thead>
+<tr>
+<th>Token Type</th>
+<th>Value(Hex)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Module</td>
+<td>0x00</td>
+<td>References a module definition. 引用模块定义</td>
+</tr>
+<tr>
+<td>TypeRef</td>
+<td>0x01</td>
+<td>References a type in another module. 引用另一个模块类型</td>
+</tr>
+<tr>
+<td>TypeDef</td>
+<td>0x02</td>
+<td>Defines a type within the module.</td>
+</tr>
+<tr>
+<td>FieldDef</td>
+<td>0x04</td>
+<td>Defines a field within a type.</td>
+</tr>
+<tr>
+<td>MethodDef</td>
+<td>0x06</td>
+<td>Defines a method within a type.</td>
+</tr>
+<tr>
+<td>ParamDef</td>
+<td>0x08</td>
+<td>Defines a parameter for a method.</td>
+</tr>
+<tr>
+<td>InterfaceImpl</td>
+<td>0x09</td>
+<td>Defines interface implementations for a type.</td>
+</tr>
+<tr>
+<td>MemberRef</td>
+<td>0x0A</td>
+<td>References a field or method in another module.</td>
+</tr>
+<tr>
+<td>CustomAttribute</td>
+<td>0x0C</td>
+<td>Defines a custom attribute.</td>
+</tr>
+<tr>
+<td>Permission</td>
+<td>0x0E</td>
+<td>Defines declarative security permissions.</td>
+</tr>
+<tr>
+<td>Signature</td>
+<td>0x11</td>
+<td>Defines a standalone signature.</td>
+</tr>
+<tr>
+<td>Event</td>
+<td>0x14</td>
+<td>Defines an event within a type.</td>
+</tr>
+<tr>
+<td>Property</td>
+<td>0x17</td>
+<td>Defines a property within a type.</td>
+</tr>
+<tr>
+<td>ModuleRef</td>
+<td>0x1A</td>
+<td>References an external module.</td>
+</tr>
+<tr>
+<td>TypeSpec</td>
+<td>0x1B</td>
+<td>Specifies a type using a signature.</td>
+</tr>
+<tr>
+<td>Assembly</td>
+<td>0x20</td>
+<td>Defines assembly metadata.</td>
+</tr>
+<tr>
+<td>AssemblyRef</td>
+<td>0x23</td>
+<td>References another assembly.</td>
+</tr>
+<tr>
+<td>File</td>
+<td>0x26</td>
+<td>Defines an external file associated with the assembly.</td>
+</tr>
+<tr>
+<td>ExportedType</td>
+<td>0x27</td>
+<td>Defines a type exported from another assembly.</td>
+</tr>
+<tr>
+<td>ManifestResource</td>
+<td>0x28</td>
+<td>Defines an embedded resource.</td>
+</tr>
+<tr>
+<td>GenericParam</td>
+<td>0x2A</td>
+<td>Defines a generic parameter for a type or method.</td>
+</tr>
+<tr>
+<td>MethodSpec</td>
+<td>0x2B</td>
+<td>Specifies a method instantiation for a generic method.</td>
+</tr>
+<tr>
+<td>GenericParamConstraint</td>
+<td>0x2C</td>
+<td>Specifies constraints on a generic parameter.</td>
+</tr>
+</tbody></table>
+
+<div class="article-footer fs14">
+    <section id="references">
+      <div class="header"><span>参考资料</span></div>
+      <div class="body">
+        <ul>
+        <li class="post-title">
+          <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://intezer.com/blog/incident-response/intro-to-malware-net-executable-file/">.NET Malware 101: Analyzing the .NET Executable File Structure</a></p>
+
+        </li>
+        </ul>
+      </div>
+    </section>
+    
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/B_Code/Python/%E3%80%90POC%E3%80%91pocsuite%20%E7%94%A8%E6%B3%95/">【POC】pocsuite 用法</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/C_OpenSource/libssh2/">【libssh2】 Windows 下 libssh2 编译步骤</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.8">Stellar 1.26.8</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+<div class="main-mask" onclick="sidebar.toggle()"></div></div></div><div class="scripts">
+<script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.26.3';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.3';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js","memos":"/js/plugins/memos.js","marked":"/js/plugins/marked.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js","transition":"fade"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@10.3/swiper-bundle.min.css","js":"https://unpkg.com/swiper@10.3/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.bootcdn.net/ajax/libs/scrollReveal.js/4.0.9/scrollreveal.min.js","distance":"16px","duration":800,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","flying_pages":"https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js","css":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css","selector":null});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied","toast":"复制成功"});
+  }
+</script>
+
+<!-- required -->
+<script src="/js/main.js?v=1.26.8" async></script>
+
+<!-- optional -->
+
+
+
+
+
+
+<!-- inject -->
+
+</div></body></html>
