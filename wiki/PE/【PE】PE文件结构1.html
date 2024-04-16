@@ -1,0 +1,662 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.8" theme-name="Stellar" theme-version="1.26.8">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#f8f8f8">
+  
+  <title>PE 文件结构说明及解析：【PE】PE文件结构1 - oone</title>
+
+  
+    <meta name="description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析）">
+<meta property="og:type" content="website">
+<meta property="og:title" content="【PE】PE文件结构1">
+<meta property="og:url" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/pe.png">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109153335507.png">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109154333707.png">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109155516699.png">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109164320229.png">
+<meta property="og:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231110171825757.png">
+<meta property="article:published_time" content="2024-04-16T04:00:13.029Z">
+<meta property="article:modified_time" content="2024-04-16T04:00:13.029Z">
+<meta property="article:author" content="mingming">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/pe.png">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.26.8">
+
+  
+    <link rel="shortcut icon" href="/images/avator.png">
+  
+
+  
+
+  
+  
+</head>
+<body>
+
+
+
+<div class="l_body content tech" id="start" layout="wiki"><aside class="l_left"><div class="sidebar-container sidebar-blur">
+
+
+<header class="header"><div class="logo-wrap"><div class="icon"><img no-lazy class="icon" src="https://img.shields.io/badge/PE-blue" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></div><a class="title" href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841.html"><div class="main" ff="title">PE 文件结构说明及解析</div><div class="sub cap">Windows PE 文件结构说明和解析</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" data-filter="/wiki/PE/" placeholder="在 windows 中搜索..."></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item active" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+<widget class="widget-wrapper toc multi" id="data-toc" collapse="false"><div class="widget-body fs14"><div class="doc-tree active"><a class="doc-tree-link active" href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841.html#start"><span class="toc-text">【PE】PE文件结构1</span><svg class="active-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M21 11.098v4.993c0 3.096 0 4.645-.734 5.321c-.35.323-.792.526-1.263.58c-.987.113-2.14-.907-4.445-2.946c-1.02-.901-1.529-1.352-2.118-1.47a2.225 2.225 0 0 0-.88 0c-.59.118-1.099.569-2.118 1.47c-2.305 2.039-3.458 3.059-4.445 2.945a2.238 2.238 0 0 1-1.263-.579C3 20.736 3 19.188 3 16.091v-4.994C3 6.81 3 4.666 4.318 3.333C5.636 2 7.758 2 12 2c4.243 0 6.364 0 7.682 1.332C21 4.665 21 6.81 21 11.098" opacity=".5"/><path fill="currentColor" d="M9 5.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5z"/></svg></a><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-PE%E7%BB%93%E6%9E%84"><span class="toc-text">0x02 PE结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOS%E5%A4%B4"><span class="toc-text">DOS头</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MZ%E5%A4%B4%E9%83%A8"><span class="toc-text">MZ头部</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DOS%E5%AD%98%E6%A0%B9%EF%BC%88DOS-stub%EF%BC%89"><span class="toc-text">DOS存根（DOS stub）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PE%E5%A4%B4"><span class="toc-text">PE头</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PE%E6%A0%87%E8%AF%86-Signature"><span class="toc-text">PE标识 Signature</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B4-FileHeader"><span class="toc-text">文件头 FileHeader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E9%80%89%E5%A4%B4-OptionalHeader"><span class="toc-text">可选头 OptionalHeader</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E8%A1%A8"><span class="toc-text">节表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E8%A1%A8%E6%95%B0%E6%8D%AE"><span class="toc-text">节表数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03"><span class="toc-text">0x03</span></a></li></ol></div><div class="doc-tree"><a class="doc-tree-link" href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%846-%E5%BC%82%E5%B8%B8%E8%A1%A8(Exception).html"><span class="toc-text">【PE】PE文件结构6-异常表(Exception)</span></a></div></div><div class="widget-header dis-select"><span class="name">...</span></div><div class="widget-body fs14"><div class="doc-tree"><a class="doc-tree-link" href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8.html"><span class="toc-text">【PE】PE文件结构12-TLS表</span></a></div></div></widget>
+
+<widget class="widget-wrapper post-card"><div class="widget-header dis-select"><span class="name">更多：windows</span></div><div class="widget-body"><a class="item wiki" href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.NET%20%E8%B0%83%E8%AF%95.html"><span class="title">windows调试技术</span><span class="excerpt">有关于windows调试技术，包括但不限于Windbg、sCode、调试命令</span></a><a class="item wiki" href="/wiki/Homework-c-language/index.html"><span class="title">HomeWork-c-language</span><span class="excerpt">HomeWork-c-language 学习笔记</span></a><a class="item wiki" href="/wiki/windows/index.html"><span class="title">Windows - 有饭吃的操作系统</span><span class="excerpt">有关于windows，包括但不限于用法、原理、安全……</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    
+<div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" id="menu" href="/wiki">文档</a><span class="sep"></span><a class="cap breadcrumb" id="proj" href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841.html">PE 文件结构说明及解析</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">更新于：<time datetime="2024-04-16T04:00:13.029Z">2024-04-16</time></span></div></div>
+
+  <div class="right ghrepo stellar-ghinfo-api" api="https://api.github.com/repos/">
+    <a class="repo-link bold" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/">
+      <svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="user-select:none;overflow:visible"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+      <span type="text"></span>
+    </a>
+    <a class="repo-link" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com//stargazers">
+      <svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="user-select:none;overflow:visible"><path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/></svg>
+      <span type="text" id="stargazers_count">0</span><span>stars</span>
+    </a>
+    <a class="repo-link" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com//forks">
+      <svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="user-select:none;overflow:visible"><path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+      <span type="text" id="forks_count">0</span><span>forks</span>
+    </a>
+  </div>
+  </div>
+
+    
+    <div class="bottom">
+      <div class="text-area">
+        <h1 class="text title"><span>【PE】PE文件结构1</span></h1>
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><blockquote>
+<p>概述：PE文件结构基础认识之DOS头和PE头（以 <code>rpcrt4.dll</code> 为例分析）</p>
+</blockquote>
+<span id="more"></span>
+
+
+
+<h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>PE(Portable Executable)，即可移植的执行体。</p>
+<ul>
+<li><p>Linux平台：ELF（Executable and Linking Format）文件结构。</p>
+</li>
+<li><p>Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。</p>
+</li>
+</ul>
+<h2 id="0x02-PE结构"><a href="#0x02-PE结构" class="headerlink" title="0x02 PE结构"></a>0x02 PE结构</h2><p>PE 结构是由<strong>若干个复杂的结构体组合</strong>而成的，不是单单的一个结构体那么简单，它的结构就像文件系统的结构是由多个结构体组成的。PE结构 包含的结构体有 <strong>DOS 头、PE 标识、文件头、可选头、目录结构、节表</strong>等。如下图所示：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/pe.png" alt="pe"></p>
+<h3 id="DOS头"><a href="#DOS头" class="headerlink" title="DOS头"></a>DOS头</h3><p>DOS头中声明用的寄存器(我们可以看到e_ss、e_sp、e_ip、e_cs还是16位的寄存器)，所以在32位&#x2F;64为系统中用到的只有两个成员了（第一个和最后一个）。无论是32位还是64位PE文件，其文件的头部必定是DOS头。大小为 &#x3D;&#x3D;40H(64字节)&#x3D;&#x3D;。相关结构如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WORD 为2字节</span></span><br><span class="line"><span class="comment">// DWORD 为4字节</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_IMAGE_DOS_HEADER</span> &#123;      <span class="comment">// DOS .EXE header(※Magic DOS signature MZ(4Dh 5Ah):MZ标记)</span></span><br><span class="line">    WORD   e_magic;                     <span class="comment">// Magic number</span></span><br><span class="line">    WORD   e_cblp;                      <span class="comment">// Bytes on last page of file</span></span><br><span class="line">    WORD   e_cp;                        <span class="comment">// Pages in file</span></span><br><span class="line">    WORD   e_crlc;                      <span class="comment">// Relocations</span></span><br><span class="line">    WORD   e_cparhdr;                   <span class="comment">// Size of header in paragraphs</span></span><br><span class="line">    WORD   e_minalloc;                  <span class="comment">// Minimum extra paragraphs needed</span></span><br><span class="line">    WORD   e_maxalloc;                  <span class="comment">// Maximum extra paragraphs needed</span></span><br><span class="line">    WORD   e_ss;                        <span class="comment">// Initial (relative) SS value</span></span><br><span class="line">    WORD   e_sp;                        <span class="comment">// Initial SP value</span></span><br><span class="line">    WORD   e_csum;                      <span class="comment">// Checksum</span></span><br><span class="line">    WORD   e_ip;                        <span class="comment">// Initial IP value</span></span><br><span class="line">    WORD   e_cs;                        <span class="comment">// Initial (relative) CS value</span></span><br><span class="line">    WORD   e_lfarlc;                    <span class="comment">// File address of relocation table</span></span><br><span class="line">    WORD   e_ovno;                      <span class="comment">// Overlay number</span></span><br><span class="line">    WORD   e_res[<span class="number">4</span>];                    <span class="comment">// Reserved words</span></span><br><span class="line">    WORD   e_oemid;                     <span class="comment">// OEM identifier (for e_oeminfo)</span></span><br><span class="line">    WORD   e_oeminfo;                   <span class="comment">// OEM information; e_oemid specific</span></span><br><span class="line">    WORD   e_res2[<span class="number">10</span>];                  <span class="comment">// Reserved words</span></span><br><span class="line">    LONG   e_lfanew;                    <span class="comment">// File address of new exe header</span></span><br><span class="line">  &#125; IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;</span><br></pre></td></tr></table></figure>
+
+<p>DOS 头又分为两部分，&#x3D;&#x3D;MZ头部&#x3D;&#x3D; 和 &#x3D;&#x3D;DOS存根&#x3D;&#x3D;。</p>
+<h4 id="MZ头部"><a href="#MZ头部" class="headerlink" title="MZ头部"></a>MZ头部</h4><ul>
+<li><p><strong>MZ文件头</strong>：IMAGE_DOS_HEADER 结构体，其大小占64个字节，并且该结构中的最后一个LONG类型<code>e_lfanew</code>成员指向PE文件头的位置为中的PE文件头标志的地址。<br>DOS头中有两个重要的成员，分别是 <code>e_magic</code> 和 <code>e_lfanew</code>，如PE文件结构说明一图所示：</p>
+<ul>
+<li><code>e_magic</code>：对应 MZ标识(固定值) ，也就是 <code>0x5A4D</code></li>
+<li><code>e_lfanew</code>: 指pe的偏移量，对应的PE数据块的基地址</li>
+</ul>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109153335507.png" alt="MZ头部"></p>
+</li>
+</ul>
+<h4 id="DOS存根（DOS-stub）"><a href="#DOS存根（DOS-stub）" class="headerlink" title="DOS存根（DOS stub）"></a>DOS存根（DOS stub）</h4><p>DOS头(<code>IMAGE_DOS_HEADER</code>)和PE头(<code>IMAGE_NT_HEADERS</code>)中间的空余位置是一些垃圾值以及编译器填充的一些 *The is program cannot be run in DOS mode.*或 <em>This program must be run under Win32</em> 等信息。这些信息就是 DOS存根。DOS存根实际上是一段<strong>汇编代码</strong>。用于在DOS环境下启动PE文件时输出一些上述文本。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109154333707.png" alt="DOS stub"></p>
+<blockquote>
+<p>在pe文件利用的时候，我们可以把payload写入到当前区域，诸如存放我们的shellcode，在读取时，获取dos头字节数，减去MZ头字节数，即为dos存根字节大小。然后拿去操作加载shellcode等。</p>
+</blockquote>
+<h3 id="PE头"><a href="#PE头" class="headerlink" title="PE头"></a>PE头</h3><p>在MS-DOS头下main，就是PE头，PE头是PE相关结构NT映像头（<code>IMAGE_NT_HEADER</code>）的简称，其中包含许多PE装载器用到的重要字段。PE头又分为标准PE头和可选PE头，其同为NT结构的成员：</p>
+<p><code>IMAGE_NT_HEADER</code>数据结构定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NT头</span></span><br><span class="line"><span class="comment">//pNTHeader = dosHeader + dosHeader-&gt;e_lfanew;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_NT_HEADERS</span>&#123;</span></span><br><span class="line">    <span class="number">0x00</span> DWORD Signature;   <span class="comment">//PE文件标识:ASCII的&quot;PE\0\0&quot;</span></span><br><span class="line">    <span class="number">0x04</span> _IMAGE_FILE_HEADER FileHeader;</span><br><span class="line">    <span class="number">0x18</span> _IMAGE_OPTIONAL_HEADER OptionalHeader;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>根据DOS头的<code>e_lfanew</code>成员我们就可以找到NT头，NT头的第一个成员<code>Signature</code>是<code>PE\0\0</code>（0X50 0X45 0X00 0X00四字节的签名），后两个成员则分别是标准PE头<code>FileHeader</code>（<code>_IMAGE_FILE_HEADER</code>）和<code>OptionalHeader</code>可选PE头（<code>_IMAGE_OPTIONAL_HEADER</code>）。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109155516699.png" alt="PE头"></p>
+<h4 id="PE标识-Signature"><a href="#PE标识-Signature" class="headerlink" title="PE标识 Signature"></a>PE标识 Signature</h4><p>将文件标识为 PE 映像的 4 字节签名。字节为<code>PE\0\0</code>。这个字段是PE文件的标志字段，通常设置成 <code>00004550h</code>，其ASCII码为 <code>PE00</code>，这个字段是PE文件头的开始，前面的<code>DOS_HEADER</code>结构中的字段<code>e_lfanew</code>字段就是指向这里。</p>
+<h4 id="文件头-FileHeader"><a href="#文件头-FileHeader" class="headerlink" title="文件头 FileHeader"></a>文件头 FileHeader</h4><p>文件头结构体为 <code>_IMAGE_FILE_HEADER</code>，见<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_file_header">IMAGE_FILE_HEADER (winnt.h) - Win32 apps | Microsoft Learn</a>。结构体成员变量如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_IMAGE_FILE_HEADER</span> &#123;</span><br><span class="line">    WORD Machine;			<span class="comment">//运行平台</span></span><br><span class="line">    WORD NumberOfSections;	<span class="comment">//文件的区块数目</span></span><br><span class="line">    DWORD TimeDateStamp;	<span class="comment">//文件创建的用时间戳标识的日期</span></span><br><span class="line">    DWORD PointerToSymbolTable;		<span class="comment">//指向符号表（用于调试）</span></span><br><span class="line">    DWORD NumberOfSymbols;			<span class="comment">//符号表中符号的个数</span></span><br><span class="line">    WORD SizeOfOptionalHeader;		<span class="comment">//IMAGE_OPTIONAL_HEADER32结构大小</span></span><br><span class="line">    WORD Characteristics;			<span class="comment">//文件属性</span></span><br><span class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;</span><br></pre></td></tr></table></figure>
+
+<p>参照上述结构体，分析一下 <code>rpcrt4.dll</code> 的 FileHeader 成员。</p>
+<p>PE头存储内容如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Offset      0  1  2  3  4  5  6  7   8  9  A  B  C  D  E  F</span><br><span class="line"></span><br><span class="line">000000E0                            50 45 00 00 4C 01 06 00           PE  L   </span><br><span class="line">000000F0   77 7B 41 86 00 00 00 00  00 00 00 00 E0 00 02 21   w&#123;A?       ? !</span><br></pre></td></tr></table></figure>
+
+<p>现在有数据也知道结构体，可以根据存储的内容知道 <code>rpcrt4.dll</code> 的一些信息了（地址是由低位向高位增长的，这里直接复制粘贴了，读者知道这回事就行）</p>
+<table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>Machine</th>
+<th>NumberOfSections</th>
+<th>TimeDateStamp</th>
+<th>PointerToSymbolTable</th>
+<th>NumberOfSymbols</th>
+<th>SizeOfOptionalHeader</th>
+<th>Characteristics</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>大小</td>
+<td>WORD</td>
+<td>WORD</td>
+<td>DWORD</td>
+<td>DWORD</td>
+<td>DWORD</td>
+<td>WORD</td>
+<td>WORD</td>
+</tr>
+<tr>
+<td>值</td>
+<td>4C 01</td>
+<td>06 00</td>
+<td>77 7B 41 86</td>
+<td>00 00 00 00</td>
+<td>00 00 00 00</td>
+<td>E0 00</td>
+<td>02 21</td>
+</tr>
+<tr>
+<td>说明</td>
+<td>0x014C 表示当前体系结构类型为 x86</td>
+<td>当前PE文件的节数，当前所示有 6 个</td>
+<td>当前PE文件的时间戳</td>
+<td>符号表的偏移量（以字节为单位），如果没有 COFF 符号表，则为 0</td>
+<td>符号表中的符号数，当前为 0</td>
+<td>可选文件头大小，当前所示有 224 个</td>
+<td>图像的特征 0x2102</td>
+</tr>
+<tr>
+<td>补充</td>
+<td>机器标识</td>
+<td>标识区块的数目，关于区块后面会详细讲</td>
+<td>指的就是PE文件创建的事件，这个时间是指从1970年1月1日到创建该文件的所有的秒数</td>
+<td></td>
+<td></td>
+<td>紧跟着IMAGE_FILE_HEADER后面的数据大小，这也是一个数据结构，它叫做IMAGE_OPTIONAL_HEADER,其大小依赖于是64位还是32位文件。32位文件值通常是00EOh，对于64位值通常为00F0h</td>
+<td>普通EXE文件这个字段值为010fh，DLL文件这个字段一般是0210h</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>最后一个参数图像特征 <code>Characteristics</code> 的值 0x2102 的说明</p>
+<ul>
+<li>0x2000 该图像是一个DLL文件，虽然是可执行文件，但不能直接运行</li>
+<li>0x0100 计算机支持32位</li>
+<li>0x0002 该文件是可执行文件，（没有未解析的外部引用）</li>
+</ul>
+</blockquote>
+<h4 id="可选头-OptionalHeader"><a href="#可选头-OptionalHeader" class="headerlink" title="可选头 OptionalHeader"></a>可选头 OptionalHeader</h4><p>可选PE头紧接着标准PE头，其大小在标准PE头中给出：大小为 <code>E0H</code> 即224字节。<code>_IMAGE_OPTIONAL_HEADER</code>结构如下所示：</p>
+<blockquote>
+<p>WinNT.h 中的实际 <strong>结构IMAGE_OPTIONAL_HEADER32命名</strong> ， <strong>IMAGE_OPTIONAL_HEADER</strong> 定义为 <strong>IMAGE_OPTIONAL_HEADER32</strong>。 但是，如果定义了 <strong>_WIN64</strong> ，则 <strong>IMAGE_OPTIONAL_HEADER</strong> 定义为 <strong>IMAGE_OPTIONAL_HEADER64</strong>。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span>    <span class="title class_">_IMAGE_OPTIONAL_HEADER</span> </span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Standard      fields. </span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">/*+0x00*/</span>         WORD     Magic;                       <span class="comment">// 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）</span></span><br><span class="line">	<span class="comment">/*+0x02*/</span>         BYTE     MajorLinkerVersion;          <span class="comment">// 链接程序的主版本号</span></span><br><span class="line">	<span class="comment">/*+0x03*/</span>         BYTE     MinorLinkerVersion;          <span class="comment">// 链接程序的次版本号</span></span><br><span class="line">	<span class="comment">/*+0x04*/</span>         DWORD    SizeOfCode;                  <span class="comment">// 所有含代码的节的总大小</span></span><br><span class="line">	<span class="comment">/*+0x08*/</span>         DWORD    SizeOfInitializedData;       <span class="comment">// 所有含已初始化数据的节的总大小</span></span><br><span class="line">	<span class="comment">/*+0x0c*/</span>         DWORD    SizeOfUninitializedData;     <span class="comment">// 所有含未初始化数据的节的大小</span></span><br><span class="line">	<span class="comment">/*+0x10*/</span>         DWORD    AddressOfEntryPoint;         <span class="comment">// 程序执行入口RVA</span></span><br><span class="line">	<span class="comment">/*+0x14*/</span>         DWORD    BaseOfCode;                  <span class="comment">// 代码的区块的起始RVA</span></span><br><span class="line">	<span class="comment">/*+0x18*/</span>         DWORD    BaseOfData;                  <span class="comment">// 数据的区块的起始RVA</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// NT additional fields.  以下是属于NT结构增加的领域。</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">/*+0x1c*/</span>         DWORD    ImageBase;                   <span class="comment">// *程序的首选装载地址</span></span><br><span class="line">	<span class="comment">/*+0x20*/</span>         DWORD    SectionAlignment;            <span class="comment">// *内存中的区块的对齐大小</span></span><br><span class="line">	<span class="comment">/*+0x24*/</span>         DWORD    FileAlignment;               <span class="comment">// *文件中的区块的对齐大小</span></span><br><span class="line">	<span class="comment">/*+0x28*/</span>         WORD     MajorOperatingSystemVersion; <span class="comment">// 要求操作系统最低版本号的主版本号</span></span><br><span class="line">	<span class="comment">/*+0x2a*/</span>         WORD     MinorOperatingSystemVersion; <span class="comment">// 要求操作系统最低版本号的副版本号</span></span><br><span class="line">	<span class="comment">/*+0x2c*/</span>         WORD     MajorImageVersion;           <span class="comment">// 可运行于操作系统的主版本号</span></span><br><span class="line">	<span class="comment">/*+0x2e*/</span>         WORD     MinorImageVersion;           <span class="comment">// 可运行于操作系统的次版本号</span></span><br><span class="line">	<span class="comment">/*+0x30*/</span>         WORD     MajorSubsystemVersion;       <span class="comment">// 要求最低子系统版本的主版本号</span></span><br><span class="line">	<span class="comment">/*+0x32*/</span>         WORD     MinorSubsystemVersion;       <span class="comment">// 要求最低子系统版本的次版本号</span></span><br><span class="line">	<span class="comment">/*+0x34*/</span>         DWORD    Win32VersionValue;           <span class="comment">// 莫须有字段，不被病毒利用的话一般为0</span></span><br><span class="line">	<span class="comment">/*+0x38*/</span>         DWORD    SizeOfImage;                 <span class="comment">// 映像装入内存后的总尺寸</span></span><br><span class="line">	<span class="comment">/*+0x3c*/</span>         DWORD    SizeOfHeaders;               <span class="comment">// 所有头+区块表的尺寸大小</span></span><br><span class="line">	<span class="comment">/*+0x40*/</span>         DWORD    CheckSum;                    <span class="comment">// 映像的校检和</span></span><br><span class="line">	<span class="comment">/*+0x44*/</span>         WORD     Subsystem;                   <span class="comment">// 可执行文件期望的子系统</span></span><br><span class="line">	<span class="comment">/*+0x46*/</span>         WORD     DllCharacteristics;          <span class="comment">// DllMain()函数何时被调用，默认为0</span></span><br><span class="line">	<span class="comment">/*+0x48*/</span>         DWORD    SizeOfStackReserve;          <span class="comment">// 初始化时的栈大小</span></span><br><span class="line">	<span class="comment">/*+0x4c*/</span>         DWORD    SizeOfStackCommit;           <span class="comment">// 初始化时实际提交的栈大小</span></span><br><span class="line">	<span class="comment">/*+0x50*/</span>         DWORD    SizeOfHeapReserve;           <span class="comment">// 初始化时保留的堆大小</span></span><br><span class="line">	<span class="comment">/*+0x54*/</span>         DWORD    SizeOfHeapCommit;            <span class="comment">// 初始化时实际提交的堆大小</span></span><br><span class="line">	<span class="comment">/*+0x58*/</span>         DWORD    LoaderFlags;                 <span class="comment">// 与调试有关，默认为0 </span></span><br><span class="line">	<span class="comment">/*+0x5c*/</span>         DWORD    NumberOfRvaAndSizes;         <span class="comment">// 下边数据目录的项数，这个字段自Windows NT发布以来，一直是16</span></span><br><span class="line">	<span class="comment">/*+0x60*/</span>         IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];	<span class="comment">// *数据目录表</span></span><br><span class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述共计 31 个字段，常用的一般是加<code>*</code>的几个。这里还是简单的按照内存和结构体一一对应分析看下。</p>
+<p>内存如下所示：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109164320229.png" alt="OptionalHeader 内存块"></p>
+<table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>大小</th>
+<th>值</th>
+<th>说明</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Magic</td>
+<td>WORD</td>
+<td>0B 01</td>
+<td>映像文件的状态，0x01 标识当前是可执行映像</td>
+<td></td>
+</tr>
+<tr>
+<td>MajorLinkerVersion</td>
+<td>BYTE</td>
+<td>0E</td>
+<td>链接器的主要版本号，当前是 14</td>
+<td></td>
+</tr>
+<tr>
+<td>MinorLinkerVersion</td>
+<td>BYTE</td>
+<td>14</td>
+<td>链接器的次要版本号，当前是 20</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfCode</td>
+<td>DWORD</td>
+<td>00 C2 0A 00</td>
+<td>如果有多个代码节，则为代码节的大小（以字节为单位）或所有此类节的总和。</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfInitializedData</td>
+<td>DWORD</td>
+<td>00 EA 00 00</td>
+<td>初始化的数据节的大小。代码节的大小或所有此类节的总和</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfUninitializedData</td>
+<td>DWORD</td>
+<td>00 00 00 00</td>
+<td>未初始化数据节的大小</td>
+<td></td>
+</tr>
+<tr>
+<td>AddressOfEntryPoint</td>
+<td>DWORD</td>
+<td>50 D3 03 00</td>
+<td>指向入口点函数的指针</td>
+<td></td>
+</tr>
+<tr>
+<td>BaseOfCode</td>
+<td>DWORD</td>
+<td>00 10 00 00</td>
+<td>指向代码部分的开头的指针</td>
+<td></td>
+</tr>
+<tr>
+<td>BaseOfData</td>
+<td>DWORD</td>
+<td>00 E0 0A 00</td>
+<td>指向数据部分开头（相对于图像基数）的指针。</td>
+<td></td>
+</tr>
+<tr>
+<td>ImageBase</td>
+<td>DWORD</td>
+<td>00 00 F8 4E</td>
+<td>图像加载到内存中的第一个字节的首选地址。 此值是 64K 字节的倍数。 DLL 的默认值为 0x10000000。 应用程序的默认值为 0x00400000，0x00010000 Windows CE除外。</td>
+<td></td>
+</tr>
+<tr>
+<td>SectionAlignment</td>
+<td>DWORD</td>
+<td>00 10 00 00</td>
+<td>内存中加载的节的对齐方式（以字节为单位）。 此值必须大于或等于 <strong>FileAlignment</strong> 成员。 默认值是系统的页大小。</td>
+<td></td>
+</tr>
+<tr>
+<td>FileAlignment</td>
+<td>DWORD</td>
+<td>00 02 00 00</td>
+<td>图像文件中各部分的原始数据的对齐方式（以字节为单位）。 该值应为介于 512 和 64K 之间的幂 (（含) ）。 默认值为 512。 如果 <strong>SectionAlignment</strong> 成员小于系统页面大小，则此成员必须与 <strong>SectionAlignment</strong> 相同。</td>
+<td></td>
+</tr>
+<tr>
+<td>MajorOperatingSystemVersion</td>
+<td>WORD</td>
+<td>0A 00</td>
+<td>所需操作系统的主版本号。 0x0A 为 10</td>
+<td></td>
+</tr>
+<tr>
+<td>MinorOperatingSystemVersion</td>
+<td>WORD</td>
+<td>00 00</td>
+<td>所需操作系统的次要版本号。</td>
+<td></td>
+</tr>
+<tr>
+<td>MajorImageVersion</td>
+<td>WORD</td>
+<td>0A 00</td>
+<td>映像的主版本号。</td>
+<td></td>
+</tr>
+<tr>
+<td>MinorImageVersion</td>
+<td>WORD</td>
+<td>00 00</td>
+<td>映像的次要版本号。</td>
+<td></td>
+</tr>
+<tr>
+<td>MajorSubsystemVersion</td>
+<td>WORD</td>
+<td>0A 00</td>
+<td>子系统的主版本号。</td>
+<td></td>
+</tr>
+<tr>
+<td>MinorSubsystemVersion</td>
+<td>WORD</td>
+<td>00 00</td>
+<td>子系统的次要版本号。</td>
+<td></td>
+</tr>
+<tr>
+<td>Win32VersionValue</td>
+<td>DWORD</td>
+<td>00 00 00 00</td>
+<td>此成员是保留的，必须为 0。</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfImage</td>
+<td>DWORD</td>
+<td>00 F0 0B 00</td>
+<td>图像的大小（以字节为单位），包括所有标头。 必须是 <strong>SectionAlignment</strong> 的倍数。</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfHeaders</td>
+<td>DWORD</td>
+<td>00 04 00 00</td>
+<td>以下项的组合大小，舍入为 <strong>FileAlignment</strong> 成员中指定的值的倍数。</td>
+<td></td>
+</tr>
+<tr>
+<td>CheckSum</td>
+<td>DWORD</td>
+<td>3B 06 0C 00</td>
+<td>映像文件校验和。 以下文件在加载时进行验证：所有驱动程序、在启动时加载的任何 DLL，以及加载到关键系统进程中的任何 DLL。</td>
+<td></td>
+</tr>
+<tr>
+<td>Subsystem</td>
+<td>WORD</td>
+<td>03 00</td>
+<td>运行此映像所需的子系统。 定义了以下值。 0x03 标识 windows 字符膜片式用户界面（CUI）系统</td>
+<td></td>
+</tr>
+<tr>
+<td>DllCharacteristics</td>
+<td>WORD</td>
+<td>40 41</td>
+<td>图像的 DLL 特征。 定义了以下值。</td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfStackReserve</td>
+<td>DWORD</td>
+<td>00 00 04 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfStackCommit</td>
+<td>DWORD</td>
+<td>00 10 00 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfHeapReserve</td>
+<td>DWORD</td>
+<td>00 00 10 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SizeOfHeapCommit</td>
+<td>DWORD</td>
+<td>00 10 00 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>LoaderFlags</td>
+<td>DWORD</td>
+<td>00 00 00 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NumberOfRvaAndSizes</td>
+<td>DWORD</td>
+<td>10 00 00 00</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES]</td>
+<td>IMAGE_DATA_DIRECTORY</td>
+<td>16个指针地址，大小为 80H</td>
+<td>这个是一个指针类型，指向 IMAGE_DATA_DIRECTORY 结构的指针。会根据传入的索引号返回不同指向的结构体</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>最后一个成员变量结构体如下所示，详见<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_data_directory">IMAGE_DATA_DIRECTORY (winnt.h) - Win32 apps | Microsoft Learn</a>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">_IMAGE_DATA_DIRECTORY</span>&#123;</span><br><span class="line">    DWORD   VirtualAddress;</span><br><span class="line">    DWORD   Size;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//占用16*8 = 128Byte = 80H = E0H(可选PE头默认大小) - 60H(前面所有成员固定占用大小)</span></span><br></pre></td></tr></table></figure>
+
+<p>关于最后一个成员变量，可枚举的 <code>IMAGE_NUMBEROF_DIRECTORY_ENTRIES</code> 索引总共有15个，外加一个保留指针。也就是说，在 <strong>DataDirectory</strong> 位置存放了 16 个指针。可以参考之前的PE头对照一下，剩下的PE内存刚好存放了 16 个指针，参考 PE 块的总大小，剩下的部分大小也刚好为 $80h$ 。</p>
+<p>$ 16 * 8 &#x3D; 128 &#x3D; 80H$</p>
+<p>如下图所示：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231110171825757.png" alt="DataDirectory 内存"></p>
+<h3 id="节表"><a href="#节表" class="headerlink" title="节表"></a>节表</h3><p>下篇文章记录</p>
+<h3 id="节表数据"><a href="#节表数据" class="headerlink" title="节表数据"></a>节表数据</h3><p>下篇文章记录</p>
+<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h2><p>补充一段代码，演示简单获取 Section 各个段的信息</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ULONGLONG <span class="title">FindSignatureCode::operator</span><span class="params">()</span><span class="params">(CString <span class="keyword">module</span>, std::vector&lt;ULONG&gt; signatureCodes)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	DBGTRACE;</span><br><span class="line">	<span class="keyword">if</span> (signatureCodes.<span class="built_in">size</span>() == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ULONGLONG							addr = <span class="number">0</span>;</span><br><span class="line">	DWORD								cbSize;</span><br><span class="line">	HMODULE*							pHmodule = <span class="literal">NULL</span>;</span><br><span class="line">	ModuleSectionInfo_T					ModuleSectionInfo;</span><br><span class="line"></span><br><span class="line">	HANDLE  hModuleSnap = ::<span class="built_in">CreateToolhelp32Snapshot</span>(TH32CS_SNAPMODULE, <span class="built_in">GetCurrentProcessId</span>()); 	<span class="comment">// 模块快照句柄</span></span><br><span class="line">	MODULEENTRY32 me32 = &#123; <span class="number">0</span> &#125;;  <span class="comment">// 模块入口</span></span><br><span class="line">	me32.dwSize = <span class="built_in">sizeof</span>(MODULEENTRY32);  <span class="comment">// 申请空间</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 打印模块名</span></span><br><span class="line">	<span class="keyword">while</span> (::<span class="built_in">Module32Next</span>(hModuleSnap, &amp;me32)) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">module</span>.<span class="built_in">CompareNoCase</span>(me32.szModule) == <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">Debug_Run</span>(<span class="string">L&quot;Find Module(%s)&quot;</span>, me32.szModule);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ULONGLONG ulModuleBase = (ULONGLONG)me32.modBaseAddr;</span><br><span class="line">	ULONGLONG ulModuleSize = (ULONGLONG)me32.modBaseSize;</span><br><span class="line"></span><br><span class="line">	HANDLE hProcess = <span class="built_in">OpenProcess</span>(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, <span class="built_in">GetCurrentProcessId</span>());</span><br><span class="line">	CHAR* szBuffer = <span class="keyword">new</span> CHAR[ulModuleSize];</span><br><span class="line">	<span class="built_in">ZeroMemory</span>(szBuffer, ulModuleSize);</span><br><span class="line">	SIZE_T sReadSize = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">ReadProcessMemory</span>(hProcess, (LPCVOID)ulModuleBase, szBuffer, ulModuleSize, &amp;sReadSize))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">size_t</span> offset = <span class="number">0</span>; offset &lt; ulModuleSize - signatureCodes.<span class="built_in">size</span>() * <span class="number">4</span>; offset++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">for</span> (; i &lt; signatureCodes.<span class="built_in">size</span>(); i++)</span><br><span class="line">			&#123;</span><br><span class="line">				ULONGLONG ReadMem = (*(ULONG*)(szBuffer + offset + (i * <span class="number">4</span>)));</span><br><span class="line">				ULONGLONG SigCode = signatureCodes[i];</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (SigCode != ReadMem)</span><br><span class="line">				&#123;</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">				&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (i == signatureCodes.<span class="built_in">size</span>())</span><br><span class="line">			&#123;</span><br><span class="line">				addr = (ulModuleBase + offset);</span><br><span class="line">				<span class="built_in">Debug_Run</span>(<span class="string">L&quot;Found Signature Code:%lld&quot;</span>, addr);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">Debug_Error</span>(<span class="string">L&quot;ReadProcessMemory Failed %d&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> 0</span></span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">EnumProcessModulesEx</span>(hpro, <span class="literal">NULL</span>, <span class="number">0</span>, &amp;cbSize, LIST_MODULES_ALL)) <span class="keyword">goto</span> End;</span><br><span class="line">	pHmodule = (HMODULE*)<span class="built_in">malloc</span>(cbSize);</span><br><span class="line">	<span class="keyword">if</span> (pHmodule == <span class="literal">NULL</span>) <span class="keyword">goto</span> End;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">EnumProcessModulesEx</span>(hpro, pHmodule, cbSize, &amp;cbSize, LIST_MODULES_ALL)) <span class="keyword">goto</span> End;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (ULONG i = <span class="number">0</span>; i &lt; cbSize / <span class="built_in">sizeof</span>(*pHmodule); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">GetModulePdataSection</span>(hpro, me32.hModule, );</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// 0</span></span></span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">if</span>(!<span class="built_in">GetModulePdataSection</span>(hProcess, me32.hModule, &amp;ModuleSectionInfo)) <span class="keyword">goto</span> End;</span><br><span class="line"></span><br><span class="line">	VOID PTR_T PTR_T	pCandidate;</span><br><span class="line">	PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY	pRuntimeEntry;</span><br><span class="line">	PUNWIND_INFO	pUnWindInfo;</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(push)</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(disable:4305)</span></span><br><span class="line">	pCandidate = (VOID PTR_T PTR_T)ModuleSectionInfo.pBase;</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(pop)</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">ReadProcessMemory</span>(hProcess, pCandidate, &amp;pRuntimeEntry, <span class="built_in">sizeof</span>(VOID PTR_T), <span class="literal">NULL</span>))	<span class="keyword">goto</span> End;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i = pRuntimeEntry-&gt;BeginAddress; i &lt; pRuntimeEntry-&gt;EndAddress; i += <span class="built_in">sizeof</span>(VOID PTR_T))</span><br><span class="line">			<span class="built_in">Debug_Run</span>(<span class="string">L&quot;RUNTIME_FUNCTION-%d: %p&quot;</span>,i , (VOID PTR_T)i);</span><br><span class="line"></span><br><span class="line">		pUnWindInfo = (PUNWIND_INFO)pRuntimeEntry-&gt;UnwindInfoAddress;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">CloseHandle</span>(hProcess);</span><br><span class="line">	<span class="built_in">CloseHandle</span>(hModuleSnap);</span><br><span class="line">End:</span><br><span class="line">	<span class="keyword">return</span> addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>GetModulePdataSection 的实现</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">FindSignatureCode::GetModulePdataSection</span><span class="params">(HANDLE hProcess, VOID * pModule, ModuleSectionInfo_T * pModuleSectionInfo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	IMAGE_DOS_HEADER		ImageDosHeader;</span><br><span class="line">	IMAGE_NT_HEADERS		ImageNtHeaders;</span><br><span class="line">	IMAGE_SECTION_HEADER*	pImageSectionHeader;</span><br><span class="line">	UINT					SectionIdx;</span><br><span class="line">	IMAGE_SECTION_HEADER	ImageSectionHeader;</span><br><span class="line">	UCHAR*					pBase = (UCHAR*)pModule;</span><br><span class="line">	BOOL					bResult = FALSE;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">ReadProcessMemory</span>(hProcess, pBase, &amp;ImageDosHeader, <span class="built_in">sizeof</span>(ImageDosHeader), <span class="literal">NULL</span>)) <span class="keyword">goto</span> End;</span><br><span class="line">	<span class="keyword">if</span> (ImageDosHeader.e_magic != IMAGE_DOS_SIGNATURE) <span class="keyword">goto</span> End;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="built_in">ReadProcessMemory</span>(hProcess, pBase + ImageDosHeader.e_lfanew, &amp;ImageNtHeaders, <span class="built_in">sizeof</span>(ImageNtHeaders), <span class="literal">NULL</span>)) <span class="keyword">goto</span> End;</span><br><span class="line">	<span class="keyword">if</span> (ImageNtHeaders.Signature != IMAGE_NT_SIGNATURE) <span class="keyword">goto</span> End;</span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// For 64bits, add the size of IMAGE_NT_HEADERS64 to its own base to get the base of the IMAGE_SECTION_HEADER table</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _WIN64</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(push)</span></span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(disable:4127)</span></span><br><span class="line">	<span class="keyword">if</span> (SQLPLUGIN_IS_WOW64 == TRUE) pImageSectionHeader = (IMAGE_SECTION_HEADER*)((UINT_PTR)pBase + ImageDosHeader.e_lfanew + <span class="built_in">sizeof</span>(IMAGE_NT_HEADERS));</span><br><span class="line"><span class="meta">#<span class="keyword">pragma</span> <span class="keyword">warning</span>(pop)</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>		</span></span><br><span class="line">		pImageSectionHeader = (IMAGE_SECTION_HEADER*)((UINT_PTR)pBase + ImageDosHeader.e_lfanew + <span class="built_in">sizeof</span>(IMAGE_NT_HEADERS32));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (SectionIdx = <span class="number">0</span>; SectionIdx &lt; ImageNtHeaders.FileHeader.NumberOfSections; SectionIdx++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">ReadProcessMemory</span>(hProcess, &amp;pImageSectionHeader[SectionIdx], &amp;ImageSectionHeader, <span class="built_in">sizeof</span>(ImageSectionHeader), <span class="literal">NULL</span>)) <span class="keyword">goto</span> End;</span><br><span class="line">		<span class="type">const</span> <span class="type">char</span>* SectionName = (<span class="type">const</span> <span class="type">char</span>*)ImageSectionHeader.Name;</span><br><span class="line">		<span class="keyword">if</span> (<span class="built_in">strncmp</span>(SectionName, gSQLPluginPDataSectionName, <span class="built_in">sizeof</span>(gSQLPluginPDataSectionName)) == <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			pModuleSectionInfo-&gt;pBase = pBase + ImageSectionHeader.VirtualAddress;</span><br><span class="line">			pModuleSectionInfo-&gt;Size = ImageSectionHeader.Misc.VirtualSize;</span><br><span class="line">			bResult = TRUE;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">End:</span><br><span class="line">	<span class="keyword">return</span> (bResult);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相关结构体如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">char</span>	gSQLPluginPDataSectionName[] = <span class="string">&quot;.pdata&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_ModuleSectionInfo_T</span> &#123;</span><br><span class="line">	VOID*	pBase;</span><br><span class="line">	UINT	Size;</span><br><span class="line">&#125;ModuleSectionInfo_T;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _WIN64</span></span><br><span class="line"><span class="comment">// See http://msdn.microsoft.com/en-us/library/ddssxxy8.aspx</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_UNWIND_INFO</span> &#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> Version : <span class="number">3</span>;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> Flags : <span class="number">5</span>;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> SizeOfProlog;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> CountOfCodes;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> FrameRegister : <span class="number">4</span>;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> FrameOffset : <span class="number">4</span>;</span><br><span class="line">	ULONG ExceptionHandler;</span><br><span class="line">&#125; UNWIND_INFO, *PUNWIND_INFO;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">接下来阅读</div><a href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%846-%E5%BC%82%E5%B8%B8%E8%A1%A8(Exception).html">【PE】PE文件结构6-异常表(Exception)</a></div></section></div>
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.8">Stellar 1.26.8</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="float-panel mobile-only blur" style="display:none">
+  <button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+<div class="main-mask" onclick="sidebar.toggle()"></div></div></div><div class="scripts">
+<script type="text/javascript">
+  const stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = stellar.config.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.version = '1.26.3';
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.26.3';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+    root : '/',
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js'
+  };
+
+  if ('local_search') {
+    stellar.search = {};
+    stellar.search.service = 'local_search';
+    if (stellar.search.service == 'local_search') {
+      let service_obj = Object.assign({}, {"field":"all","path":"/search.json","content":true,"sort":"-date"});
+      stellar.search[stellar.search.service] = service_obj;
+    }
+  }
+
+  // stellar js
+  stellar.plugins.stellar = Object.assign({"sites":"/js/plugins/sites.js","friends":"/js/plugins/friends.js","ghinfo":"/js/plugins/ghinfo.js","timeline":"/js/plugins/timeline.js","linkcard":"/js/plugins/linkcard.js","fcircle":"/js/plugins/fcircle.js","weibo":"/js/plugins/weibo.js","memos":"/js/plugins/memos.js","marked":"/js/plugins/marked.js"});
+
+  stellar.plugins.marked = Object.assign("https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js");
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js","transition":"fade"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper@10.3/swiper-bundle.min.css","js":"https://unpkg.com/swiper@10.3/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.bootcdn.net/ajax/libs/scrollReveal.js/4.0.9/scrollreveal.min.js","distance":"16px","duration":800,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","flying_pages":"https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.fancybox = Object.assign({"enable":true,"js":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js","css":"https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css","selector":null});
+  }
+  if ('false' == 'true') {
+    stellar.plugins.heti = Object.assign({"enable":false,"css":"https://unpkg.com/heti@0.9.2/umd/heti.min.css","js":"https://unpkg.com/heti@0.9.2/umd/heti-addon.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.copycode = Object.assign({"enable":true,"js":"/js/plugins/copycode.js","default_text":"Copy","success_text":"Copied","toast":"复制成功"});
+  }
+</script>
+
+<!-- required -->
+<script src="/js/main.js?v=1.26.8" async></script>
+
+<!-- optional -->
+
+
+
+
+
+
+<!-- inject -->
+
+</div></body></html>
