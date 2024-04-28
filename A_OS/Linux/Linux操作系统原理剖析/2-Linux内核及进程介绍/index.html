@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -54,7 +54,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -125,7 +125,7 @@
 </ul>
 <p>另外，为了更简单理解 Linux 操作系统的功能原理，我们选择早期版本的 Linux 内核作为代码参考，这样可能有效避免很多代码结构优化的代码内容的干扰。目前主流研究 Linux 内核的早期版本都选择的是 Linux 0.12 版本，因为这一版本的整体代码量大约仅有 2 万行，并且在这一版本中的 Linux 内核的大部分主要功能已经都齐全了，后期的 Linux 内核主要完善各个功能协调、硬件适配、平台适配等等方面（最新的 Linux 6.1 版本代码量已经突破 2700 万行）</p>
 <p>Linux 内核对于操作系统来说其实是单内核模式，这样对于操作系统所提供的服务流程主要为：应用主程序使用指定的参数值执行系统调用指令（ <code>int 0x80</code> )，使得 CPU 从用户态切换到了内核态，然后操作系统根据具体的参数值调用特定的服务程序，而这些服务程序在完成了对应的执行操作后，操作系统再次使得 CPU 从内核态切换回到用户态，从而返回到应用程序中继续执行。因此，可以将 Linux 内核简单概括为三个层次：调用服务程序的主程序层、执行系统调用的服务层和支持系统调用的底层函数。具体如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/0.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/0.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x02-Linux-内核结构及任务管理功能"><a href="#0x02-Linux-内核结构及任务管理功能" class="headerlink" title="0x02 Linux 内核结构及任务管理功能"></a>0x02 Linux 内核结构及任务管理功能</h2><p>Linux 内核其实主要由 5 个模块构成，分别是：</p>
 <ul>
@@ -136,11 +136,11 @@
 <li>网络接口模块</li>
 </ul>
 <p>这几个模块之间的依赖关系如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/1.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/1.png" class title="图片描述" data-fancybox="true">
 
 <p>由上图能够看出来，所有的模块都与进程调度模块存在依赖关系。因为它们都需要依靠进程调度模块完成程序的挂起（暂停）或者进行运行的状态管理。通常，一个模块会在等待硬件操作期间挂起，在操作完成过后继续执行。</p>
 <p>结合 Linux 0.12 内核源代码，可以将内核中的主要模块绘制成如下图所示的框图结构：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/2.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/2.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x03-进程的定义"><a href="#0x03-进程的定义" class="headerlink" title="0x03 进程的定义"></a>0x03 进程的定义</h2><p>进程是操作系统中最基本、最重要的概念之一。进程的概念最早是 20 世纪 60 年代初期由 MIT （美国麻省理工学院）研制的 multics 系统和 IBN 的 TSS&#x2F;360 系统中命名的。从那时候开始，操作系统中有了进程的概念：</p>
 <ul>
@@ -219,7 +219,7 @@
 <li><code>p_isptr</code> 是指向比自己早创建的相邻进程的指针</li>
 </ul>
 <p>以上这四个指针的关系如下图所示，通过这样的成员指针数据，内核很容易就能通过一个进程的任务结构获取到其他与这个进程有关系的进程的任务结构对象。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/3.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/3.png" class title="图片描述" data-fancybox="true">
 
 <h4 id="uid-、-euid-、-suid-、-gid-、-egid-、-sgid"><a href="#uid-、-euid-、-suid-、-gid-、-egid-、-sgid" class="headerlink" title="uid 、 euid 、 suid 、 gid 、 egid 、 sgid"></a><code>uid</code> 、 <code>euid</code> 、 <code>suid</code> 、 <code>gid</code> 、 <code>egid</code> 、 <code>sgid</code></h4><p>这几个成员字段都属于进程用户相关标识号，其中：</p>
 <ul>
@@ -248,11 +248,11 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/self/limits</span><br></pre></td></tr></table></figure>
 
 <p>显示结果如下：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/4.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/4.png" class title="图片描述" data-fancybox="true">
 
 <h4 id="其他字段"><a href="#其他字段" class="headerlink" title="其他字段"></a>其他字段</h4><p>这个结构体中其他字段也都是用来描述进程在执行过冲中的一些状态会用到的值，具体的内容等到我们用到的时候再来描述，这里就不再一一叙述了。</p>
 <h2 id="0x07-进程运行状态"><a href="#0x07-进程运行状态" class="headerlink" title="0x07 进程运行状态"></a>0x07 进程运行状态</h2><p>一个进程在生存期内，可以处于不同的状态并且相互转换，这样的状态称为进程状态。进程的当前状态保存在刚刚我们描述过的字段 <code>state</code> 中。当进程正在等待系统中的资源而处于等待状态时，称为睡眠等待状态。在 Linux 系统中，睡眠等待状态分为可中断和不可中断的等待状态。进程具体状态转换关系如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/5.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/5.png" class title="图片描述" data-fancybox="true">
 
 <p>其中，需要重点描述几个不同的进程运行状态：</p>
 <ul>
@@ -267,7 +267,7 @@
 <p>其中，内核移动程序到 0 号进程中去执行这个过程宏 <code>move_to_user_mode (include/asm/system.h)</code> 完成，它将 <code>main.c</code> 程序执行流从内核态移动到了用户态的进程 0 中继续运行。在移动之前，系统在对调度程序的初始化过程（<code>sched_init()</code>）中，首先对进程 0 的运行环境进行设置，其中包括人工预先设置好的进程 0 的数据结构各字段的值（<code>include/linux/sched.h</code>）、在全局描述符表中添入进程 0 的任务状态段（<code>TSS</code>）描述符和局部描述符表（<code>LDT</code>）的段描述符，并把它们分别加载到任务寄存器 <code>tr</code> 和局部描述符表寄存器 <code>ldr</code> 中。</p>
 <p>内核初始化是一个特殊的过程，内核初始化代码其实就是进程 0 的代码。从进程 0 数据结构中设置的初始数据可以知道，进程 0 的代码段和数据段的基地址都是 0 ，段最大字节长度限制在 640KB 。与之相比较，内核代码的代码段和数据段的基地址也都是 0 ，而段长度限制为 16MB ，因此进程 0 的代码段和数据段是包含在内核代码段和数据段中。内核初始程序 <code>main.c</code> 就是进程 0 的代码，只是在真正成为进程 0 之前，系统正在以内核态特权级 0 运行着 <code>main.c</code> 程序。</p>
 <p>宏 <code>move_to_user_mode</code> 的功能就是把运行特权级从内核态的 0 级变换成用户态的 3 级，但是仍然继续执行原来的代码指令流。在变换当前程序到 0 号进程的过程中，宏 <code>move_to_user_mode</code> 使用了中断返回指令造成特权级改变的方法。使用这种方法进行控制权转移是由 CPU 保护机制造成的。 CPU 允许低级别代码通过调用门或中断、陷阱门来调用或转移到高级别代码中运行，但反之则不行。因此内核采用这种模拟 <code>IRET</code> 返回低级别代码的方式。该方法的主要思想是在堆栈中构筑中断返回指令需要的内容，把返回地址的段选择符设置成任务 0 代码段选择符，之后执行中断返回指令 <code>iret</code> 将导致 CPU 从特权级 0 跳转到外层的特权级 3 上运行。具体如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/6.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/6.png" class title="图片描述" data-fancybox="true">
 
 <p>宏 <code>move_to_user_mode</code> 首先往内核堆栈中压入进程 0 堆栈端（即数据段）选择符和内核堆栈指针，然后压入标志寄存器内容，最后压入进程 0 代码段选择符和执行中断返回后需要执行的下一条指令的偏移地址。该偏移位置是 <code>iret</code> 后的下一条指令。</p>
 <p>当执行 <code>iret</code> 指令时， CPU 把返回地址送入 CS:EIP 中，同时弹出堆栈中标志寄存器内容。由于 CPU 判断出目的代码段的特权级为 3 ，与当前内核态的 0 级不同，于是 CPU 会把堆栈中的堆栈段选择符和堆栈指针弹出到 SS:ESP 中。由于特权级发生了变化，段寄存器 DS 、 ES 、 FS 以及 GS 的值变得无效，此时 CPU 会把这些段寄存器清零，因此在执行了 <code>iret</code> 指令后需要重新加载这些寄存器。这之后，系统就开始以特权级 3 运行在进程 0 的代码上，所使用的用户态堆栈还是原来移动之前使用的堆栈，而内核态的堆栈则被指定为其任务数据结构所在的页面的顶端开始（ <code>PAGE_SIZE + (long)&amp;init_task</code> ）。之后在创建新进程时，需要复制进程 0 的任务数据结构，包括用户堆栈指针，因此要求进程 0 的用户态堆栈在创建进程 1 之前保持“干净”状态。</p>
@@ -279,7 +279,7 @@
 <p>随后，如果父进程中有文件是打开的，则应该将对应文件的打开次数加 1 。紧接着在 GDT 中设置新任务的 TSS 和 LDT 描述符项，其中基地址信息指向新进程任务结构中的 <code>tss</code> 和 <code>ldt</code> ，最后再将新任务设置成可运行状态并返回新进程号。</p>
 <p>这里尤其需要注意：创建一个新进程和加载运行一个执行程序文件是两个不同的概念。当创建子进程时，它完全是复制了父进程的代码段和数据区，并会在其中执行子进程部分的代码。而执行存储设备上的程序时，一般会在子进程中运行 <code>exec()</code> 系统调用来进行操作。在进入 <code>exec()</code> 后，子进程原来的代码区和数据区都会被清除掉（释放掉），然后将该进程运行新程序时，由于此时内核还没有从存储设备上将该程序代码加载近来，所以 CPU 会立刻产生代码页面不存在的异常（<code>Fault</code>），此时内存管理程序就会从存储设备上找到对应程序代码加载到内存中，然后 CPU 重新执行引起异常的指令，此时新程序的代码才真正被执行起来。</p>
 <p>整体流程如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/7.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/7.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x0a-进程调度"><a href="#0x0a-进程调度" class="headerlink" title="0x0a 进程调度"></a>0x0a 进程调度</h2><p>在 Linux 内核中，进程调度主要是为了选择系统中即将要运行的进程，通过调度来回切换进程运行能够给人感觉上多进程同步运行的效果。这种选择运行机制是多任务操作系统的基础，可以将 Linux 内核的调度程序看作在所有处于运行状态的进程之间分配 CPU 运行时间的管理代码。通过前面对 Linux 系统的描述可以知道 Linux 进程是抢占式的，不过被抢占的进程仍然处于 TAK_RUNNING 状态，只不过暂时没有被 CPU 运行。进程的抢占发生在进程处于用户态执行阶段，在内核态执行时是不能够被抢占的。</p>
 <p>为了能够使得进程有效地使用系统资源，又能使进程有较快的响应时间，就需要对进程的切换调度采用一定的调度策略。</p>
@@ -290,10 +290,10 @@
 <p>通过这样的方式，正在睡眠的进程被唤醒时就会具有较高的时间片值 <code>counter</code> ，然后通过 <code>schedule()</code> 函数重新扫描进程数组中所有处于 <code>TASK_RUNNING</code> 状态的进程，并重复上述过程，直到选择出下一个切换执行的进程，最后调用 <code>switch_to()</code> 宏来执行实际的切换进程操作。</p>
 <p>如果此时没有其他进程可以运行，则系统会选择 0 号进程运行，在 Linux 0.12 版本内核中，进程 0 会调用 <code>pause()</code> 将自己设置成可中断的睡眠状态并再次调用 <code>schedule()</code> ，不过在调度进程运行时，<code>schedule()</code> 并不在意进程 0 处于什么状态，只要系统空闲就会调用 0 号进程运行。</p>
 <p>具体流程图下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/8.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/8.png" class title="图片描述" data-fancybox="true">
 
 <h4 id="进程切换"><a href="#进程切换" class="headerlink" title="进程切换"></a>进程切换</h4><p>每当选择出一个新的可执行的进程时， <code>schedule()</code> 函数就会调用定义在 Linux 内核源代码中的 <code>include/asm/system.h</code> 中的 <code>switch_to()</code> 宏执行实际进程切换操作。该宏会把 CPU 的当前进程状态（上下文）替换成新进程的状态。在进行切换之前，<code>switch_to()</code> 宏会先检查要切换到的进程是否就是当前进程，如果是则调出流程（什么也不做），直接退出；否则，就先将内核全局变量 <code>current</code> 设置成新任务的指针，然后长跳转到新任务的任务状态段 <code>TSS</code> 组成的地址处，造成 CPU 执行任务切换操作。此时，CPU 会把所有寄存器的状态保存到当前任务寄存器 <code>TR</code> 中 <code>TSS</code> 段选择符所指向的当前进程任务数据结构的 <code>tss</code>结构中，然后把新任务状态段选择符所指向的新任务数据结构中 <code>tss</code> 结构中的寄存器信息恢复到 CPU 中，系统就正式开始执行新的进程。这个过程如下图所描述：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/9.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/2-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/9.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x0b-终止进程"><a href="#0x0b-终止进程" class="headerlink" title="0x0b 终止进程"></a>0x0b 终止进程</h2><p>当一个进程结束了运行或在半途中止了运行，那么 Linux 内核就需要释放这个进程所占用的系统资源，这包括进程运行时打开的文件、申请的内存等。</p>
 <p>当一个用户程序调用 <code>exit()</code> 系统调用时，就会执行内核函数 <code>do_exit()</code> ，这个函数首先会释放进程代码段和数据段占用的内存页面，关闭进程当前打开着的所有文件，对进程使用的当前工种目录、根目录和运行程序的 i 节点进行同步操作。如果进程还存在有子进程，这会让 <code>init</code> 进程作为所有子进程的父进程。如果进程是一个会话头进程并且有控制终端，则释放控制终端，并向属于该会话的所有进程发送挂断信号 <code>SIGHUP</code> ，这通常会终止该会话中的所有进程，然后把进程状态设置为僵死状态 <code>TASK_ZOMBIE</code> ，并向其原父进程发送 <code>SIGCHLD</code> 信号，通知其某个子进程已经终止。最后调用 <code>do_exit()</code> 函数去执行其他进程，由此可见在进程被终止时，它的任务数据结构仍然保留着，因为其父进程还需要使用其中的信息。</p>
@@ -314,7 +314,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -555,7 +555,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -652,12 +652,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -50,7 +50,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -62,7 +62,7 @@
 </head>
 <body>
 
-<div class="l_cover wiki"><article class="cover-wrap md-text"><div class="preview cover"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/images/project/mysql8.png"></div><div class="cover-title"><span>MySQL 相关研究</span></div><div class="description">MySQL 弱口令研究，涉及源码、插件、认证策略等</div><div class="start-wrap"><a class="button start gradient" href="#start">开始使用</a></div></article></div><hr>
+<div class="l_cover wiki"><article class="cover-wrap md-text"><div class="preview cover"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/images/project/mysql8.png" data-fancybox="true"></div><div class="cover-title"><span>MySQL 相关研究</span></div><div class="description">MySQL 弱口令研究，涉及源码、插件、认证策略等</div><div class="start-wrap"><a class="button start gradient" href="#start">开始使用</a></div></article></div><hr>
 
 <div class="l_body s:aa content tech" id="start" layout="wiki"><aside class="l_left"><div class="leftbar-container">
 
@@ -120,10 +120,10 @@
 <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.jcole.us/2013/01/03/the-basics-of-innodb-space-file-layout/">The basics of InnoDB space file layout – Jeremy Cole</a></p>
 <p>IBD 主要以 <code>spaces</code> (空间也称作 <code>tablespace</code>) 作为 MySQL 存储的上下文，在 InnoDB 中，对于每一个 MySQL表，都增加了表空间文件，也就是 <code>.ibd</code> 文件，也即“file per table”，比如你创建了一个表 <code>test_user</code>，对应的就会创建一个 <code>test_user.ibd</code> 文件，本篇文章以翻译和记录为主描述 <code>.ibd</code> 文件的文件结构。</p>
 <h3 id="IBD-文件结构"><a href="#IBD-文件结构" class="headerlink" title="IBD 文件结构"></a>IBD 文件结构</h3><p>IBD文件的的主体结构如下所示，分为3部分：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/Basic_Page_Overview.png" alt="Basic_Page_Overview">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/Basic_Page_Overview.png" alt="Basic_Page_Overview" data-fancybox="true">
 
 <p>每一个 ibd 文件都有一个38字节的头和8字节的尾。头部包含了一个页面的基础信息，决定了页面其余部分的结构，这一点和PE文件结构基本上一致，文件尾为文件检验和。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/FIL_Header_and_Trailer.png" alt="FIL Header/Trailer">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/FIL_Header_and_Trailer.png" alt="FIL Header/Trailer" data-fancybox="true">
 
 <p>文件头和文件尾包含了一下结构（乱序）：</p>
 <ul>
@@ -142,20 +142,20 @@
 </ol>
 <p>对于每一个 Page，都为其分配了一个 32bit 的整型数字，称作”变异量”，实际上是每个页面与空间开头的偏移量（对于多文件的表空间，不一定是文件）。基于此可知，page0 位于文件偏移0的位置，page10位于文件偏移16384的位置，以此类推。（引申一下 InnoDB 的数据限额，最大允许 64TiB 的容量，也就是 $2^{32} * 1024 Kib &#x3D; 64 TiB$）。</p>
 <p>每个表空间的第一页都是文件头的page。一个数据文件由很多个页组成，标准的数据页（INDEX page）组成结构如下所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Page_Overview.png" alt="INDEX_Page_Overview">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Page_Overview.png" alt="INDEX_Page_Overview" data-fancybox="true">
 
 <p>关于页的结构各部分描述如下所示：</p>
 <ul>
 <li>FIL Header: 文件头，所有页面类型通用部分，索引页有别于其他页的地方是其结构中的 <code>privious page</code> 和 <code>next page</code> 指向了同一级的索引。</li>
 <li>INDEX Header: 保存了很多和索引页以及记录管理相关的字段，后文详述。</li>
 <li>FSEG Header: FSEG头包含指向次索引所使用的文件段的指针。未被使用的索引页的 FSEG 是被0填充的。</li>
-<li>System Records: 在每个页中，InnoDB 都有两个行记录，一个是 <code>infinum</code>，一个是 <code>supremum</code>。这两个记录在页面中的位置是固定的，可以根据页面的自己偏移量直接找到这两个字段。<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/image-20231124100637766.png" alt="System Records"></li>
+<li>System Records: 在每个页中，InnoDB 都有两个行记录，一个是 <code>infinum</code>，一个是 <code>supremum</code>。这两个记录在页面中的位置是固定的，可以根据页面的自己偏移量直接找到这两个字段。<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/image-20231124100637766.png" alt="System Records" data-fancybox="true"></li>
 <li>User records: 真正存储用户数据的区域。每条记录都有一个不定长的表头和实际的数据。表头中包含了下一条记录的指针，该指针按升序记录了下一条记录的偏移量，整体构成一个单链表。</li>
 <li>Free Space: 未使用空间</li>
 <li>Page Directory: 页目录从 FIL Header 到 FIL Trailer 记录了每一个页的中一些记录的指针（每个页面的第4到第8条记录）。</li>
 </ul>
 <h4 id="INDEX-Header"><a href="#INDEX-Header" class="headerlink" title="INDEX Header"></a>INDEX Header</h4><p>在每一个索引页中，INDEX Header 都有一个固定的长度和如下所示的结构：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Header.png" alt="INDEX_Header">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Header.png" alt="INDEX_Header" data-fancybox="true">
 
 <p>INDEX Header 中字段：</p>
 <ul>
@@ -182,7 +182,7 @@
 <p>由于系统记录和用户记录的Next指针总是指向 Header 中的第一个字段，因此从这个指针向后读取，就可以非常高效的读取一整个页面而不用解析可变长的数据记录。</p>
 </blockquote>
 <h4 id="System-records-infimum-and-supermum"><a href="#System-records-infimum-and-supermum" class="headerlink" title="System records: infimum and supermum"></a>System records: infimum and supermum</h4><p>每一个索引页都包含两个系统记录，<code>infimum</code> 和 <code>supermum</code>, 存储在固定的位置（依次 偏移位置 99 和 112）。结构如下所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_System_Records.png" alt="INDEX_System_Records">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_System_Records.png" alt="INDEX_System_Records" data-fancybox="true">
 
 <p>两个系统记录前都有一个典型的记录头，并且 <code>infimum</code> 和 <code>supremum</code> 是这两个系统记录的唯一值。只需要关注系统记录前的记录头即可。</p>
 <ul>
@@ -204,7 +204,7 @@
 <li>如果 <code>next record</code> 指针指向 NULL，则退出，如果没有，则继续跟踪 <code>next page</code>，然后执行步骤2。</li>
 </ol>
 <h4 id="The-page-directory"><a href="#The-page-directory" class="headerlink" title="The page directory"></a>The page directory</h4><p>页目录开始于文件尾，然后“向下”扩展到用户记录。页目录包含了一个指向 4-8条记录的指针。此外还包含了一个 infimum 和 supremum 的入口地址。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Page_Directory.png" alt="INDEX_Page_Directory">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【弱密码】MySQL8-ibd/INDEX_Page_Directory.png" alt="INDEX_Page_Directory" data-fancybox="true">
 
 <p>页面目录只是一个动态大小的 16 位偏移指针数组，指向页面内的记录。作者暂时还没有展开细讲。</p>
 <h4 id="Free-Space"><a href="#Free-Space" class="headerlink" title="Free Space"></a>Free Space</h4><p>内存位于用户记录（向上增长）和页目录（向下增长）的空间就是闲置空间。一旦用户空间和页目录相遇，也就是闲置空间也被占用，就代表当前页已满。</p>
@@ -214,7 +214,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -451,7 +451,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -548,12 +548,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

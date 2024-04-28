@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -61,7 +61,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -127,7 +127,7 @@
 <p>这与编译非托管语言（比如 C&#x2F;C++）不同，在非托管语言中，源代码直接转换为机器码。然后托管代码打包到一个程序集中，并附带一个包含所需元数据的清单。</p>
 <p>托管代码的优美之处在于可移植性和灵活性；同样的程序集可以在 .NET 支持的任何平台上运行，而无需重新编译。此外，托管代码允许跨语言继承代码访问安全性。它提供了后期绑定支持的优势，从而可以在运行时进行解析并调用函数。托管代码和程序集结构提供的这种级别的抽象是 .NET 框架的多功能行和强大功能的基石，使其开发人员能更安全、更易管理、更适时地去开发应用程序。</p>
 <p>下图演示了 .NET 中的编译和执行过程，以 C# 作为演示，但适应于所有的 .NET 语言。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/NETInfo.png" class title=".NET compilation and execution for malware analysis">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/NETInfo.png" class title=".NET compilation and execution for malware analysis" data-fancybox="true">
 
 <h3 id="运行时库-通用语言运行库-The-Common-Language-Runtime-CLR"><a href="#运行时库-通用语言运行库-The-Common-Language-Runtime-CLR" class="headerlink" title="运行时库 - 通用语言运行库(The Common Language Runtime,CLR)"></a>运行时库 - 通用语言运行库(The Common Language Runtime,CLR)</h3><p>通用运行时库是管理 .NET 程序执行的微软 .NET 框架中的一个重要组件。它本质上是提供运行 .NET 应用程序所需的各种服务的执行引擎，而不管这些应用程序是用什么变成语言编写的。</p>
 <p>当一个 .NET 二进制文件被执行时， CLR 开始设置执行环境，但不会立马去把所有的托管语言翻译为原始的机器码。实时编译（Just-In-Time）会在被调用的时候将托管代码转换为机器码。这确保了在特定硬件上的高效执行。此外，.NET Core 和 .NET 5+ 中的  NGEN 和 AOT 编译技术可以在执行托管代码前将其预编译为本机代码，从而进一步提高了性能。</p>
@@ -161,16 +161,16 @@
 <p>数据目录是 PE 文件中的索引或目录，列出了重要部分，并提供了各个部分的位置和大小，这个结构提供对 PE 文件不同部分的高效访问，例如导入和导出表、资源、CLR 运行时头等。</p>
 <p>如下所示条目描述了运行时标头的相对虚拟地址及其大小，从而将 CLR 引导到此标头来管理 .NET 程序集在加载时如何执行。</p>
 <p>截图的第15个条目表是 .NET 的相关信息。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/smaple_pe.png" class title="PeStudio 分析的 .NET 文件">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/smaple_pe.png" class title="PeStudio 分析的 .NET 文件" data-fancybox="true">
 
 <p>接下来的部分，作者主要介绍了 PE 结构、元数据头及之前的关系。</p>
 <p>元数据头管理了文件内容。它提供了一个分类目录来列出每一块数据的大小、以及偏移量。当 CLR 或者如 dnSpy 或者 ILDasm 这些工具需要访问一段元数据的时候，它会查询元数据头以找到合适的文件流。然后，它导航到该流中的正确位置以读取数据。</p>
 <p>接下来，就是分析说明 .NET 元数据头中的各个关键字。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-6.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-6.png" class title="img" data-fancybox="true">
 
 <ul>
 <li><p>Signature: 签名、所有的 .NET 元数据头签名都是 BSJB (0x42534a42)</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240415153157258.png" class title="BSJB 示例">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240415153157258.png" class title="BSJB 示例" data-fancybox="true">
 </li>
 <li><p>GUID：长度为 128bits 的唯一标识</p>
 </li>
@@ -181,7 +181,7 @@
 <li><p>Strong Name Signed: 强签名。指示程序集是否已使用强签名。强命名涉及使用公钥&#x2F;私钥对程序集进行签名，提供唯一标识并确保程序集未被篡改。</p>
 </li>
 <li><p>存储流（Streams）是指包含特定类型的元数据的结构化数据段，.NET 程序集元数据的关键流包括：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240322101133647.png" class title="image-20240322101133647">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240322101133647.png" class title="image-20240322101133647" data-fancybox="true">
 
 <ul>
 <li>#~（Tilde）Stream：主元数据块包含元数据表。这些表存储有关程序集中定义的<u>类型、方法、字段、参数和其他元素</u>的信息。波浪线数据块是根据 CLI 规范定义的元数据表模式构造的。</li>
@@ -196,7 +196,7 @@
 <p>在不同的 .NET 程序集查看到的内容可能不太一样，ILSpy 会展示 元数据 的各个组成部分，dnSpy 则会解析为一个 PE 文件。</p>
 <h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><p>Metadata 在 .NET 中就是一组描述程序结构及其特点的二进制数据。包含了代码中定义的类型（类、接口、枚举等），成员定义（方法、属性、字段、事件）引用类型和成员以及程序集本身的信息。</p>
 <p>在存储次描述性信息的 PE 文件中，元数据被划分为几个表，统称为元数据表。每个表都遵循一个特定的模式，该模式概述其包括的数据结构和性质。以下是可以在元数据表中能找到的一些关键类型的信息：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240411173115834.png" class title="image-20240411173115834">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240411173115834.png" class title="image-20240411173115834" data-fancybox="true">
 
 <p><strong>定义表（Definition Table）：</strong>包含有关在当前程序集中定义的代码的信息。包括以下几个表：</p>
 <ul>
@@ -241,7 +241,7 @@
 <h4 id="元数据唯一标识（Metadata-Unique-Identidier-ID）"><a href="#元数据唯一标识（Metadata-Unique-Identidier-ID）" class="headerlink" title="元数据唯一标识（Metadata  Unique Identidier,ID）"></a>元数据唯一标识（Metadata  Unique Identidier,ID）</h4><p>元数据标记是 CLR 用于引用程序集的元数据表中的元数据元素的唯一标识符。这些表的每个条目都被分配了一个元数据标记，作为对该特定条目的稳定引用。</p>
 <p>元数据标记对于 CLR 与已编译代码进行交互至关重要，因为它们为运行时库提供了有效的标识和访问元数据的方法。PE文件中的每个类型、成员、签名或其他元数据描述符都具有相应的标记。</p>
 <p>在 dnSpy 中，每个方法在其声明之上都包含一个注释，信息包括令牌、RID、RVA 和文件偏移量。如下所示屏幕截图：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image.png" class title="img" data-fancybox="true">
 
 <p>看一些各个字段的含义：</p>
 <ol>
@@ -252,26 +252,26 @@
 </ol>
 <p>元数据标记的结构在运行时解析引用提高了 CLR 的性能。例如，当 JIT 编译器需要将 IL 编译成本机代码时，它使用元数据标记来查找方法签名、类型信息等。元数据令牌系统还支持 CLR 的动态特性，比如反射。它允许有效地执行各种运行时服务，如类型安全、安全检查和跨语言互操作性。</p>
 <h4 id="元数据表示例"><a href="#元数据表示例" class="headerlink" title="元数据表示例"></a>元数据表示例</h4><p>如下所示为 SolarWinds 恶意软件的启动函数。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/start_function-1530x404.png" class title="dnSpy 中 Start 函数中的token和RID字段">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/start_function-1530x404.png" class title="dnSpy 中 Start 函数中的token和RID字段" data-fancybox="true">
 
 <p>标记的高位（0x6）值为6，对应元数据表6，即方法定义表（MethodDef Table）。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240415120242760.png" class title="表流 方法表">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-20240415120242760.png" class title="表流 方法表" data-fancybox="true">
 
 <p>标记的下半部分是 0x5FA，是其在 MethodDef Table 中的条目号。如下所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/full_start_metadata-1530x676.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/full_start_metadata-1530x676.png" class title="img" data-fancybox="true">
 
 <p>检查 Start 函数的元数据的下半部分，值 0x00058D66 是从可执行文件开始的偏移量，偏移量（0x1EC15）的值在 字符串流（#String stream） 中，它将包含方法名称：Start。如下所示是在 dnSpy 的 Hex 编辑器中的数据：</p>
 <blockquote>
 <p>这里找 <code>Start</code> 函数在 #Strings 流中位置时，需要按照 Method 的索引来查找。hex(1530) &#x3D; 0x5FA，前文提到了 Strings 流的组成，所以在查找 <code>Start</code> 方法时，需要中 Strings 流中的方法名开始（Method），索引为 <code>0x5FA</code>。</p>
 </blockquote>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-1.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-1.png" class title="img" data-fancybox="true">
 
 <p>字符串流中偏移量的值如上所示。dnSpy 会自动检测字符串的值。</p>
 <p>要查看 String 流中的数据，需要执行以下操作：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-4.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-4.png" class title="img" data-fancybox="true">
 
 <p>在新窗口中，转到偏移量（相对于 字符串流基地址）并查看我们正在寻找的字符串 - Start。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/string-1530x425.png" class title="Start 字符串在Strings Stream 中的偏移">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/string-1530x425.png" class title="Start 字符串在Strings Stream 中的偏移" data-fancybox="true">
 
 <h3 id="Manifest（清单）"><a href="#Manifest（清单）" class="headerlink" title="Manifest（清单）"></a>Manifest（清单）</h3><p>.NET 清单是 .NET 程序集的关键部分，描述程序集中的元素如何彼此关联。它嵌入在每个程序集中，无论它是静态的还是动态的，并且包含程序集操作所需的基本数据，包括其版本要求、安全标识、范围定义以及对资源和类的引用的解析。</p>
 <p>.NET 清单的主要功能是提供全面的元数据描述，以便于组件的识别、版本控制和依赖管理。它确保程序集是自描述的，有助于解析类型引用并将这些引用映射到包含其声明和实现的文件。这对于维护版本控制以及确保不同程序集合依赖它们的组件之间的兼容性尤为关键。</p>
@@ -284,7 +284,7 @@
 <li>类型应用信息：运行时用于将类型引用映射到其声明和实现的文件，这对类型安全性和正确性至关重要。</li>
 <li>引用程序集信息：列出当前程序集静态引用的其他程序集，包括它们的名称、元数据（如版本号、语言、操作系统）以及如果有强命名时的公钥</li>
 </ul>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/manifest-1530x835.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/manifest-1530x835.png" class title="img" data-fancybox="true">
 
 <h3 id="函数体结构"><a href="#函数体结构" class="headerlink" title="函数体结构"></a>函数体结构</h3><p>.NET 函数体结构可以编码为 “Tiny” 格式和 “Fat”格式，根据函数的复杂性和需求，每种格式用于不同的目的。在 Tiny 头和 Fat 头之间的选择是有 .NET 编译器基于所编译函数的复杂性决定的。</p>
 <p>Tiny 头（The Tiny header）是两种格式中较简单的一种。当一个方法满足特定的条件时，就会使用这个header：</p>
@@ -362,16 +362,16 @@
 </tbody></table>
 <p>想看更多字段说明，可以看 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.ntcore.com/files/dotnetformat.htm#:~:text=the%20Method%20format.-,Methods,-Every%20method%20contained">The .NET File Format</a></p>
 <h4 id="函数体示例"><a href="#函数体示例" class="headerlink" title="函数体示例"></a>函数体示例</h4><p>如下所示为 <code>DeleteDiscoveryProfileInternal</code> 函数：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header_function-1530x833.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header_function-1530x833.png" class title="img" data-fancybox="true">
 
 <p>点击偏移量（或 RVA）将会条传到 HEX 窗口中函数的头部：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header-1-1530x426.png" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/fat_header-1-1530x426.png" class title="img" data-fancybox="true">
 
 <p>在这里，我们可以看到 dnSpy 在鼠标悬停在头部字节上时突出显示了头部字段。函数的内容-指令跟在头部后面，在 dnSpy 中表示为 image_core_ilmethod_fat.instruction[]。为了更好的理解和查看指令的值（操作码），我们将在 IDA 中打开恶意软件：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-2.png" class title="IDA解析的函数">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/image-2.png" class title="IDA解析的函数" data-fancybox="true">
 
 <p>我们可以看到左边是每个操作妈的值，遵循 dnSpy 中的前两条指令：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/instructions.gif" class title="img">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/instructions.gif" class title="img" data-fancybox="true">
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在对 .NET 可执行文件结构的初步探索中，我们已经深入研究了 .NET 框架的复杂性，强调了其合法开发和恶意软件创建的双重用途。通过剖析 .NET 编译、运行以及元数据和程序集的复杂细节，我们已经为理解 .NET 程序函数如何执行以及如何为恶意目的操作它们奠定了基础。随着你深入研究 .NET 恶意软件逆向工程技术，你会发现这对你有效分析和对抗基于 .NET 威胁的恶意软件非常有效。</p>
 <h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p>标记类型表</p>
@@ -527,7 +527,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -768,7 +768,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -865,12 +865,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

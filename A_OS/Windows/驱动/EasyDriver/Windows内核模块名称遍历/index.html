@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -45,7 +45,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -124,7 +124,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;wdm.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_LDR_DATA_TABLE_ENTRY</span></span><br><span class="line">&#123;</span><br><span class="line">    LIST_ENTRY InLoadOrderLinks;</span><br><span class="line">    LIST_ENTRY InMemoryOrderLinks;</span><br><span class="line">    LIST_ENTRY InInitializationOrderLinks;</span><br><span class="line">    PVOID      DllBase;</span><br><span class="line">    PVOID      EntryPoint;</span><br><span class="line">    UINT64    SizeOfImage;</span><br><span class="line">    UNICODE_STRING FullDllName;</span><br><span class="line">    UNICODE_STRING BaseDllName;</span><br><span class="line">&#125;LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">DriverUnload</span><span class="params">(PDRIVER_OBJECT DriverObject)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">DbgPrint</span>(<span class="string">&quot;DriverUnload&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT DriverObject, UNICODE_STRING RegistryPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    NTSTATUS status = STATUS_SUCCESS;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">DbgPrint</span>(<span class="string">&quot;DriverEntry&quot;</span>);</span><br><span class="line"></span><br><span class="line">    DriverObject-&gt;DriverUnload = DriverUnload;</span><br><span class="line"></span><br><span class="line">    PLDR_DATA_TABLE_ENTRY pDection = DriverObject-&gt;DriverSection;    <span class="comment">//获取当前驱动的LDR_DATA_TABLE_ENTRY地址</span></span><br><span class="line"></span><br><span class="line">    PLDR_DATA_TABLE_ENTRY pCurrentDection = pDection;    <span class="comment">//记录当前驱动LDR_DATA_TABLE_ENTRY地址</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">        pDection = pDection-&gt;InLoadOrderLinks.Flink;   <span class="comment">//先查询下一个</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">DbgPrint</span>(<span class="string">&quot;%ws&quot;</span>, pDection-&gt;BaseDllName.Buffer);    <span class="comment">//输出模块名</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">while</span> (pCurrentDection != pDection);    <span class="comment">//遍历到当前驱动LDR_DATA_TABLE_ENTRY地址时，说明查询结束</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>程序输出如下所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/EasyDriver/Windows%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E5%90%8D%E7%A7%B0%E9%81%8D%E5%8E%86/image-20231009111116408.png" class title="image-20231009111116408">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/EasyDriver/Windows%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E5%90%8D%E7%A7%B0%E9%81%8D%E5%8E%86/image-20231009111116408.png" class title="image-20231009111116408" data-fancybox="true">
 
 
 <div class="article-footer fs14">
@@ -142,7 +142,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -383,7 +383,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -480,12 +480,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

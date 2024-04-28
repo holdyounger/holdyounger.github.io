@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -52,7 +52,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -128,28 +128,28 @@
 
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">consent.exe ppid 结构体长度 结构体地址</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231121182817050.png" alt="AiLaunchProcess 入参" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231121182817050.png" alt="AiLaunchProcess 入参" style="zoom:80%;" data-fancybox="true">
 
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231121170659679.png" alt="consent.exe进程的创建" style="zoom:80%;">如上所示可以看到 consent.exe 的命令行传递了三个参数，分别为父进程id，结构体长度和结构体地址。那么基本上可以确定，uac的相关信息就在该结构体中，consent通过读写父进程的地址空间，将用户操作结果写入到对结构体对应的地址中。（这里有兴趣的同学还可以看一下consent.exe的调用流程。)</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231121170659679.png" alt="consent.exe进程的创建" style="zoom:80%;" data-fancybox="true">如上所示可以看到 consent.exe 的命令行传递了三个参数，分别为父进程id，结构体长度和结构体地址。那么基本上可以确定，uac的相关信息就在该结构体中，consent通过读写父进程的地址空间，将用户操作结果写入到对结构体对应的地址中。（这里有兴趣的同学还可以看一下consent.exe的调用流程。)</p>
 <p>查看相关参数解析的部分如下所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127123004671.png" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127123004671.png" style="zoom:80%;" data-fancybox="true">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127123022756.png" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127123022756.png" style="zoom:80%;" data-fancybox="true">
 
 <p>可以看到命令行参数3的结构体对应的是 <code>_CONSENTUI_PARAM_HEADER </code>，目前在网上找不到相关的结构，不过这里都不重要，大致了解这个过程和流程即可。</p>
 <h3 id="consentui-exe-的鉴权与回传"><a href="#consentui-exe-的鉴权与回传" class="headerlink" title="consentui.exe 的鉴权与回传"></a>consentui.exe 的鉴权与回传</h3><p>这里主要观察一下 consent.ui 拿到参数之后是如何工作的，又是如何将获取的权限写回的。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127140622484.png" style="zoom:80%;">在 WinMain 函数结束的地方调用了 NtWriteVirtualMemory 写入了 TargetHandle ，而这个 TargetHandle 就是在 CuiGetTokenForApp 中获取到的管理员 token 句柄。最后又把这个这个句柄写回到了 _CONSENTUI_PARAM_HEADER+7 的位置。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127152220547.png" style="zoom:80%;">
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127140622484.png" style="zoom:80%;" data-fancybox="true">在 WinMain 函数结束的地方调用了 NtWriteVirtualMemory 写入了 TargetHandle ，而这个 TargetHandle 就是在 CuiGetTokenForApp 中获取到的管理员 token 句柄。最后又把这个这个句柄写回到了 _CONSENTUI_PARAM_HEADER+7 的位置。</p>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127152220547.png" style="zoom:80%;" data-fancybox="true">
 
 <h3 id="consentui-的弹窗逻辑"><a href="#consentui-的弹窗逻辑" class="headerlink" title="consentui 的弹窗逻辑"></a>consentui 的弹窗逻辑</h3><p>通过分析找到了决定是否弹窗的关键函数为:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127143824066.png" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127143824066.png" style="zoom:80%;" data-fancybox="true">
 
 <p>如果上述判断需要弹窗的话，最终跳转到 CuiStartBackgroundWindowAndSwitchToSecureDesktop 函数去执行操作。下面就 CuiCheckElevationAutoApprovalMedium 函数展开看一下判断的逻辑。如下所示，在函数内部首先是判断com组件是不是自提升的组件，调用的 CuiIsCOMClassAutoApprovable 并且传入了COM组件的GUID。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144042283.png" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144042283.png" style="zoom:80%;" data-fancybox="true">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144802427.png" style="zoom:80%;">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144802427.png" style="zoom:80%;" data-fancybox="true">
 
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144614856.png" style="zoom:80%;">判断完成之后还需要几次跳转才能到弹窗的函数。以上就是 consent.exe 的弹窗逻辑了。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="./【提权】利用AppInfo RPC服务的UAC Bypass技术详解/image-20231127144614856.png" style="zoom:80%;" data-fancybox="true">判断完成之后还需要几次跳转才能到弹窗的函数。以上就是 consent.exe 的弹窗逻辑了。</p>
 <p>关键点大概就是以上三点，通过 RAiLuanchAdminProcess 创建 consent.exe，consent.exe 通过CuiIsCOMClassAutoApprovable 检查 com组件 权限，CuiStartBackgroundWindowAndSwitchToSecureDesktop 创建界面ui获取权限，NtWriteVirtualMemory 写内存方式写入获取到权限的句柄。</p>
 </article>
 <div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">回顾上一篇</div><a href="/wiki/%E5%AE%89%E5%85%A8/%E6%8F%90%E6%9D%83/%E3%80%90%E6%8F%90%E6%9D%83%E3%80%91%E6%8F%90%E6%9D%83%E6%BC%8F%E6%B4%9E%E5%8F%8A%E6%80%9D%E8%B7%AF%E6%95%B4%E7%90%86.html">【提权】提权漏洞及思路整理</a></div><div class="item" id="next"></div></section></div>
@@ -157,7 +157,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -394,7 +394,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -491,12 +491,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

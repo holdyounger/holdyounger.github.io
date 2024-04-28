@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -51,7 +51,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -121,20 +121,20 @@
 <h2 id="0x02-文件系统与设备驱动程序的接口"><a href="#0x02-文件系统与设备驱动程序的接口" class="headerlink" title="0x02 文件系统与设备驱动程序的接口"></a>0x02 文件系统与设备驱动程序的接口</h2><p>Linux 系统为各类设备分别配置不同的驱动程序，在用户程序中通过该文件操作方式使用设备，如：打开、关闭、读、写等等，由文件系统转入设备驱动程序。</p>
 <p>核心与设备驱动程序的接口是块设备开关表和字符设备开关表。每一种设备类型在表中占用一个表目，包含若干数据项，其中有一项为该类设备驱动程序入口地址，在系统调用时引导核心转向适当的驱动程序接口。</p>
 <p>对设备特殊文件的系统调用，根据文件类型转入块设备开关表或字符设备开关表进行打开、关闭块设备或字符设备的操作。字符设备特殊文件的系统调用 <code>read</code>、<code>write</code> 系统调用则通过高速缓冲模块转向设备驱动模块中的策略过程。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/1.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/1.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x03-设备开关表"><a href="#0x03-设备开关表" class="headerlink" title="0x03 设备开关表"></a>0x03 设备开关表</h2><p>Linux 系统吧块设备和字符设备又分别细分为若干类。如块设备可分为硬盘、软盘、磁带、光盘等，字符设备可分为终端设备、打印机等。为指定一类设备，将设备类从 0 开始顺序编号，称为主设备号；同一类的设备可能有许多，为了指定一台具体设备，需要一个次设备号来标识。因此，在指定一台具体设备时要给出块设备&#x2F;字符设备、主设备号、次设备号。如下图所示:</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/2.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/2.png" class title="图片描述" data-fancybox="true">
 
 <p>设备开关表相当于一个二维矩阵，每一行含有同一类设备的驱动程序入口地址，主设备号与行号一一对应；每一列是完全不同操作（<code>open</code>、<code>close</code>、<code>read</code>、<code>write</code>）的驱动程序入口地址，如下表所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/3.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/3.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x04-磁盘高速缓存读写策略"><a href="#0x04-磁盘高速缓存读写策略" class="headerlink" title="0x04 磁盘高速缓存读写策略"></a>0x04 磁盘高速缓存读写策略</h2><p>对文件系统的一切存取操作都能通过直接从磁盘上读或写来实现，当磁盘 I&#x2F;O 的速度较慢，系统性能较低。为了减少对磁盘的存取频率，Linux 使用了磁盘高速缓存技术。</p>
 <p>Linux 磁盘缓冲管理策略试图把尽可能多的有用数据保存在缓冲区中，磁盘缓冲管理模块位于文件系统和块设备驱动程序之间。当从磁盘中读数据时，文件系统先从磁盘高速缓存中读，如果数据已在高速缓存中，则不必启动磁盘 I&#x2F;O ，如果数据不再高速缓存中，则启动磁盘 I&#x2F;O ，从磁盘读取数据送往高速缓存，进程再冲高速缓存中读取数据。</p>
 <p>当进程向磁盘上写数据时，先往高速缓存中写数据，以便随后读取它时能够直接从高速缓存上读取而不需要启动磁盘读写。Linux 采用“延时写”策略，即如果缓存区还没有写满这不会急于将缓冲区中的数据写到磁盘上，而是在缓冲管理数据结构中对该缓冲区设置延迟写标志，当高速缓存中的数据延迟到必须向磁盘上写的时候再进行写磁盘操作。</p>
 <h2 id="0x05-磁盘缓冲管理的数据结构"><a href="#0x05-磁盘缓冲管理的数据结构" class="headerlink" title="0x05 磁盘缓冲管理的数据结构"></a>0x05 磁盘缓冲管理的数据结构</h2><p>Linux 使用多个内存缓冲区进行磁盘缓冲，为了合理有效地管理和使用这些缓冲区，必须按照一定策略进行管理。管理的依据是缓冲区的相关信息，为了能访问这些信息，必须将其按一定数据结构进行组织。</p>
 <p>首先，给每个缓冲区建立“缓冲首部”来存放该缓冲区的相关信息，如下图所示。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/4.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/4.png" class title="图片描述" data-fancybox="true">
 
 <p>其中内容有：</p>
 <ul>
@@ -143,12 +143,12 @@
 <li>状态 <code>flag</code>：描述了缓冲区的当状态，包括： - 忙标志 <code>BUSY</code>：缓冲区当前是否正忙 - 有效位 <code>AVE</code>：缓冲区包含的数据是否有效 - 延迟写位 <code>DELWR</code>：是否延迟写 - 写标志位 <code>WRITE</code>：是否正在把缓冲区的内容写到磁盘上 - 读标志位 <code>READ</code>：是否从磁盘往缓冲区读取数据信息 - 等待位 <code>WAIT</code>：是否有一个进程正在等待该缓冲区 - 设备缓冲区队列前向指针 <code>b-forw</code> - 设备缓冲区队列后向指针 <code>b-back</code> - 空闲缓冲区队列前向指针 <code>av-forw</code> - 空闲缓冲区队列后向指针 <code>av-back</code></li>
 </ul>
 <p>要对所有缓冲区进行管理，必须将所有缓冲区首部组织成一定的数据结构， Linux 建立了两个缓冲区队列；空闲缓冲区队列和设备缓冲区队列。空闲缓冲区队列如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/5.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/5.png" class title="图片描述" data-fancybox="true">
 
 <p>为了对缓冲区进行分配，把所有空闲缓冲区组织成一个队列，队列中的所有缓冲区的忙标志位 <code>BUSY</code> 均为 0 。该队列是一个双向循环链表。</p>
 <p>对于每类设备都建立一个设备缓冲区队列，由与该类设备有关的所有缓冲区构成。此队列中的所有缓冲区首部的忙标志位 <code>BUSY</code> 均为 1 。该队列同样是一个双向循环链表。</p>
 <p>任何缓冲区首部不是位于空闲缓冲区队列中就是位于设备缓冲区队列中。设备缓冲区队列如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/6.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/6.png" class title="图片描述" data-fancybox="true">
 
 <h2 id="0x06-Linux-磁盘缓冲区管理算法"><a href="#0x06-Linux-磁盘缓冲区管理算法" class="headerlink" title="0x06 Linux 磁盘缓冲区管理算法"></a>0x06 Linux 磁盘缓冲区管理算法</h2><p>Linux 提供的磁盘高速缓冲区不属于任何进程专用，而是由多个进程共享，由操作系统进行统一管理。为了提高使用效率，必须采取适当的管理策略。</p>
 <p>当某进程要从一个磁盘读取数据时，首先需要检查要读取数据的磁盘块是否包含在某缓冲区中，如果不在，则从空闲缓冲区队列中分配给它一个空闲缓冲区；当某进程要将数据写入磁盘时，首先查看一下要写的磁盘块是否在某缓冲区中，如果不在则为这个磁盘块分配一个空闲缓冲区，被分配的空闲缓冲区从空闲缓冲队列中退出并进入对应的设备缓冲区队列，该缓冲区的 <code>BUSY</code> 标志位置一。</p>
@@ -165,7 +165,7 @@
 <li>字符缓冲区</li>
 </ul>
 <p>如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/7.png" class title="图片描述">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/7.png" class title="图片描述" data-fancybox="true">
 
 <p>对字符空闲区的操作是每次送入一个字符或取出一个字符。送入字符再字符缓冲区的尾部进行；取出字符从字符缓冲区的头部进行。随着不断往字符缓冲区中放入字符，最后一个字符的位置会向后推移，直到字符缓冲区的末尾，第一个字符的位置不一定是字符缓冲区的开始位置，随着不断地从缓冲区中取出字符，第一个字符的位置不断后移直到字符缓冲区的末尾。</p>
 <h2 id="0x08-空闲缓冲区的分配与回收"><a href="#0x08-空闲缓冲区的分配与回收" class="headerlink" title="0x08 空闲缓冲区的分配与回收"></a>0x08 空闲缓冲区的分配与回收</h2><p>在一个进程中使用字符设备进行 I&#x2F;O 操作时，文件系统会为该字符设备分配一个空闲缓冲区。分配时会检查空闲缓冲区队列，当队列非空时则直接从队列首部取出一个空闲缓冲区分配给这个字符设备并将其送入该字符设备的设备缓冲区队列，并将指向该缓冲区的指针返回给调用进程；当空闲缓冲区队列为空时，则请求 I&#x2F;O 操作的进程将被阻塞等待直到有空闲缓冲区可用。</p>
@@ -236,14 +236,14 @@
     </section>
     </div>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/">【开发】查看编译的lib的运行库是什么</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/7-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/">【原理剖析】7-进程间通信方式之共享内存</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Windows/%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3/%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E7%9A%84lib%E6%96%87%E4%BB%B6%E8%BF%90%E8%A1%8C%E5%BA%93/">【开发】查看编译的lib的运行库是什么</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/8-Linux%20%E7%BA%BF%E7%A8%8B%E6%A6%82%E8%BF%B0/">【原理剖析】8-Linux 线程概述</a></div></section></div>
 
 
 
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -484,7 +484,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -581,12 +581,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

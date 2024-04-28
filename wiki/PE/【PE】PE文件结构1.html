@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -48,7 +48,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -120,7 +120,7 @@
 </li>
 </ul>
 <h2 id="0x02-PE结构"><a href="#0x02-PE结构" class="headerlink" title="0x02 PE结构"></a>0x02 PE结构</h2><p>PE 结构是由<strong>若干个复杂的结构体组合</strong>而成的，不是单单的一个结构体那么简单，它的结构就像文件系统的结构是由多个结构体组成的。PE结构 包含的结构体有 <strong>DOS 头、PE 标识、文件头、可选头、目录结构、节表</strong>等。如下图所示：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/pe.png" alt="pe"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/pe.png" alt="pe" data-fancybox="true"></p>
 <h3 id="DOS头"><a href="#DOS头" class="headerlink" title="DOS头"></a>DOS头</h3><p>DOS头中声明用的寄存器(我们可以看到e_ss、e_sp、e_ip、e_cs还是16位的寄存器)，所以在32位&#x2F;64为系统中用到的只有两个成员了（第一个和最后一个）。无论是32位还是64位PE文件，其文件的头部必定是DOS头。大小为 &#x3D;&#x3D;40H(64字节)&#x3D;&#x3D;。相关结构如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WORD 为2字节</span></span><br><span class="line"><span class="comment">// DWORD 为4字节</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_IMAGE_DOS_HEADER</span> &#123;      <span class="comment">// DOS .EXE header(※Magic DOS signature MZ(4Dh 5Ah):MZ标记)</span></span><br><span class="line">    WORD   e_magic;                     <span class="comment">// Magic number</span></span><br><span class="line">    WORD   e_cblp;                      <span class="comment">// Bytes on last page of file</span></span><br><span class="line">    WORD   e_cp;                        <span class="comment">// Pages in file</span></span><br><span class="line">    WORD   e_crlc;                      <span class="comment">// Relocations</span></span><br><span class="line">    WORD   e_cparhdr;                   <span class="comment">// Size of header in paragraphs</span></span><br><span class="line">    WORD   e_minalloc;                  <span class="comment">// Minimum extra paragraphs needed</span></span><br><span class="line">    WORD   e_maxalloc;                  <span class="comment">// Maximum extra paragraphs needed</span></span><br><span class="line">    WORD   e_ss;                        <span class="comment">// Initial (relative) SS value</span></span><br><span class="line">    WORD   e_sp;                        <span class="comment">// Initial SP value</span></span><br><span class="line">    WORD   e_csum;                      <span class="comment">// Checksum</span></span><br><span class="line">    WORD   e_ip;                        <span class="comment">// Initial IP value</span></span><br><span class="line">    WORD   e_cs;                        <span class="comment">// Initial (relative) CS value</span></span><br><span class="line">    WORD   e_lfarlc;                    <span class="comment">// File address of relocation table</span></span><br><span class="line">    WORD   e_ovno;                      <span class="comment">// Overlay number</span></span><br><span class="line">    WORD   e_res[<span class="number">4</span>];                    <span class="comment">// Reserved words</span></span><br><span class="line">    WORD   e_oemid;                     <span class="comment">// OEM identifier (for e_oeminfo)</span></span><br><span class="line">    WORD   e_oeminfo;                   <span class="comment">// OEM information; e_oemid specific</span></span><br><span class="line">    WORD   e_res2[<span class="number">10</span>];                  <span class="comment">// Reserved words</span></span><br><span class="line">    LONG   e_lfanew;                    <span class="comment">// File address of new exe header</span></span><br><span class="line">  &#125; IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;</span><br></pre></td></tr></table></figure>
 
@@ -131,11 +131,11 @@
 <li><code>e_magic</code>：对应 MZ标识(固定值) ，也就是 <code>0x5A4D</code></li>
 <li><code>e_lfanew</code>: 指pe的偏移量，对应的PE数据块的基地址</li>
 </ul>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109153335507.png" alt="MZ头部"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109153335507.png" alt="MZ头部" data-fancybox="true"></p>
 </li>
 </ul>
 <h4 id="DOS存根（DOS-stub）"><a href="#DOS存根（DOS-stub）" class="headerlink" title="DOS存根（DOS stub）"></a>DOS存根（DOS stub）</h4><p>DOS头(<code>IMAGE_DOS_HEADER</code>)和PE头(<code>IMAGE_NT_HEADERS</code>)中间的空余位置是一些垃圾值以及编译器填充的一些 *The is program cannot be run in DOS mode.*或 <em>This program must be run under Win32</em> 等信息。这些信息就是 DOS存根。DOS存根实际上是一段<strong>汇编代码</strong>。用于在DOS环境下启动PE文件时输出一些上述文本。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109154333707.png" alt="DOS stub"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109154333707.png" alt="DOS stub" data-fancybox="true"></p>
 <blockquote>
 <p>在pe文件利用的时候，我们可以把payload写入到当前区域，诸如存放我们的shellcode，在读取时，获取dos头字节数，减去MZ头字节数，即为dos存根字节大小。然后拿去操作加载shellcode等。</p>
 </blockquote>
@@ -144,7 +144,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NT头</span></span><br><span class="line"><span class="comment">//pNTHeader = dosHeader + dosHeader-&gt;e_lfanew;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_NT_HEADERS</span>&#123;</span></span><br><span class="line">    <span class="number">0x00</span> DWORD Signature;   <span class="comment">//PE文件标识:ASCII的&quot;PE\0\0&quot;</span></span><br><span class="line">    <span class="number">0x04</span> _IMAGE_FILE_HEADER FileHeader;</span><br><span class="line">    <span class="number">0x18</span> _IMAGE_OPTIONAL_HEADER OptionalHeader;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>根据DOS头的<code>e_lfanew</code>成员我们就可以找到NT头，NT头的第一个成员<code>Signature</code>是<code>PE\0\0</code>（0X50 0X45 0X00 0X00四字节的签名），后两个成员则分别是标准PE头<code>FileHeader</code>（<code>_IMAGE_FILE_HEADER</code>）和<code>OptionalHeader</code>可选PE头（<code>_IMAGE_OPTIONAL_HEADER</code>）。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109155516699.png" alt="PE头"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109155516699.png" alt="PE头" data-fancybox="true"></p>
 <h4 id="PE标识-Signature"><a href="#PE标识-Signature" class="headerlink" title="PE标识 Signature"></a>PE标识 Signature</h4><p>将文件标识为 PE 映像的 4 字节签名。字节为<code>PE\0\0</code>。这个字段是PE文件的标志字段，通常设置成 <code>00004550h</code>，其ASCII码为 <code>PE00</code>，这个字段是PE文件头的开始，前面的<code>DOS_HEADER</code>结构中的字段<code>e_lfanew</code>字段就是指向这里。</p>
 <h4 id="文件头-FileHeader"><a href="#文件头-FileHeader" class="headerlink" title="文件头 FileHeader"></a>文件头 FileHeader</h4><p>文件头结构体为 <code>_IMAGE_FILE_HEADER</code>，见<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_file_header">IMAGE_FILE_HEADER (winnt.h) - Win32 apps | Microsoft Learn</a>。结构体成员变量如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">_IMAGE_FILE_HEADER</span> &#123;</span><br><span class="line">    WORD Machine;			<span class="comment">//运行平台</span></span><br><span class="line">    WORD NumberOfSections;	<span class="comment">//文件的区块数目</span></span><br><span class="line">    DWORD TimeDateStamp;	<span class="comment">//文件创建的用时间戳标识的日期</span></span><br><span class="line">    DWORD PointerToSymbolTable;		<span class="comment">//指向符号表（用于调试）</span></span><br><span class="line">    DWORD NumberOfSymbols;			<span class="comment">//符号表中符号的个数</span></span><br><span class="line">    WORD SizeOfOptionalHeader;		<span class="comment">//IMAGE_OPTIONAL_HEADER32结构大小</span></span><br><span class="line">    WORD Characteristics;			<span class="comment">//文件属性</span></span><br><span class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;</span><br></pre></td></tr></table></figure>
@@ -224,7 +224,7 @@
 
 <p>上述共计 31 个字段，常用的一般是加<code>*</code>的几个。这里还是简单的按照内存和结构体一一对应分析看下。</p>
 <p>内存如下所示：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109164320229.png" alt="OptionalHeader 内存块"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231109164320229.png" alt="OptionalHeader 内存块" data-fancybox="true"></p>
 <table>
 <thead>
 <tr>
@@ -459,7 +459,7 @@
 <p>关于最后一个成员变量，可枚举的 <code>IMAGE_NUMBEROF_DIRECTORY_ENTRIES</code> 索引总共有15个，外加一个保留指针。也就是说，在 <strong>DataDirectory</strong> 位置存放了 16 个指针。可以参考之前的PE头对照一下，剩下的PE内存刚好存放了 16 个指针，参考 PE 块的总大小，剩下的部分大小也刚好为 $80h$ 。</p>
 <p>$ 16 * 8 &#x3D; 128 &#x3D; 80H$</p>
 <p>如下图所示：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231110171825757.png" alt="DataDirectory 内存"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/./%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/image-20231110171825757.png" alt="DataDirectory 内存" data-fancybox="true"></p>
 <h3 id="节表"><a href="#节表" class="headerlink" title="节表"></a>节表</h3><p>下篇文章记录</p>
 <h3 id="节表数据"><a href="#节表数据" class="headerlink" title="节表数据"></a>节表数据</h3><p>下篇文章记录</p>
 <h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h2><p>补充一段代码，演示简单获取 Section 各个段的信息</p>
@@ -477,7 +477,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -714,7 +714,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -811,12 +811,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

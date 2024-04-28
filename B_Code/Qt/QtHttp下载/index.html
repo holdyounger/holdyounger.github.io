@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -46,7 +46,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -99,7 +99,7 @@
   </div><article class="md-text content"><h2 id="QT之HTTP请求下载"><a href="#QT之HTTP请求下载" class="headerlink" title="QT之HTTP请求下载"></a>QT之HTTP请求下载</h2><p>标签： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freesion.com/tag/Qt/">Qt</a> <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freesion.com/tag/HTTP/">HTTP</a></p>
 <h1 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h1><p>最近在研究了一下用Qt 的方法来实现<strong>http下载</strong>，Qt 中的<strong>Http请求</strong>主要用到了<strong>QNetworkAccessManager</strong>、<strong>QNetworkReply</strong>、<strong>QNetworkRequest</strong> 这三块。本篇文章主要叙述如何用Qt 的方法进行HTTP 请求下载文件，能够支持****断点续传****（断点续传即能够手动停止下载，下次可以从已经下载的部分开始继续下载未完成的部分，而没有必要从头开始上传下载），并且实时更新下载信息。整体代码考虑十分周到，对各种情况也做了相应的处理，并且有通俗易懂的注释。好了，代码走起！</p>
 <h1 id="代码之路"><a href="#代码之路" class="headerlink" title="代码之路"></a>代码之路</h1><p>在讲解代码之前先看一下效果图：</p>
-<h3 id="效果："><a href="#效果：" class="headerlink" title="效果："></a>效果：</h3><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/QtHttp%E4%B8%8B%E8%BD%BD/QtHttpDownload.gif" class title="效果">
+<h3 id="效果："><a href="#效果：" class="headerlink" title="效果："></a>效果：</h3><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/QtHttp%E4%B8%8B%E8%BD%BD/QtHttpDownload.gif" class title="效果" data-fancybox="true">
 
 <p>从图中可以看出点击start按钮，进行下载，stop按钮暂停当前下载，close按钮停止当前下载，并删除已经下载的临时文件，并将所有参数重置， 这里界面中下载链接输入框为空是因为我在代码中默认了url，也可以在输入框中输入url进行下载。</p>
 <hr>
@@ -132,7 +132,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -373,7 +373,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -470,12 +470,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

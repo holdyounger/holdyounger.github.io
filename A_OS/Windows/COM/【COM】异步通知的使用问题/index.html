@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -51,7 +51,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -112,7 +112,7 @@
 <h2 id="0x02-dmp分析"><a href="#0x02-dmp分析" class="headerlink" title="0x02 dmp分析"></a>0x02 dmp分析</h2><ol>
 <li><p>报错详情</p>
 <p>（调用 CancelAsyncCall 的进程）主要问题还是访问了空指针导致的，并且是 ecx。是类成员函数调用时出现异常。this 指针为空。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174513878.png" class title="image-20240206174513878">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174513878.png" class title="image-20240206174513878" data-fancybox="true">
 
 
 </li>
@@ -122,24 +122,24 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HRESULT <span class="title">GetChannelCallMgr</span><span class="params">(RPCOLEMESSAGE *pMsg, IUnknown * pStub,</span></span></span><br><span class="line"><span class="params"><span class="function">                          IUnknown *pServer, CRpcChannelBuffer::CServerCallMgr **ppStubBuffer)</span></span></span><br></pre></td></tr></table></figure>
 
 <p>直接看第一个参数 <code>pMsg</code> 。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174442131.png" class title="image-20240206174442131">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174442131.png" class title="image-20240206174442131" data-fancybox="true">
 </li>
 <li><p>查看下调用方</p>
 <p>成员变量 <a href="#reserverd1 变量说明"><code>reserverd1</code></a> 保存了RPC相关信息。 先 <code>dds</code> 再 <code>dt</code> 查看其内容。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174615846.png" class title="image-20240206174615846">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174615846.png" class title="image-20240206174615846" data-fancybox="true">
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174706711.png" class title="image-20240206174706711">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174706711.png" class title="image-20240206174706711" data-fancybox="true">
 
 <p><code>CAsyncCall</code> 的成员可以查看 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/selfrender/Windows-Server-2003/blob/5c6fe3db626b63a384230a1aa6b92ac416b0765f/com/ole32/com/dcomrem/call.hxx#L345">Windows-Server-2003&#x2F;com&#x2F;ole32&#x2F;com&#x2F;dcomrem&#x2F;call.hxx at 5c6fe3db626b63a384230a1aa6b92ac416b0765f · selfrender&#x2F;Windows-Server-2003</a> 中相关源码。</p>
 <p>成员变量 <code>_hRPC</code> 来自于其继承的父类 <code>CMessageCall</code></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">293</span>   <span class="type">handle_t</span>            _hRpc;      <span class="comment">// Call handle (not binding handle).</span></span><br></pre></td></tr></table></figure>
 
 <p><code>_hRpc</code> 记录了调用方的句柄。查看 <code>0x0479ba28</code> 内存，在其附近找到了调用方的 PID 和 TID。如下图所示：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174737821.png" class title="image-20240206174737821">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206174737821.png" class title="image-20240206174737821" data-fancybox="true">
 </li>
 <li><p>看下 PID 对应的进程，如下图所示：</p>
 <p>unsecapp 也就是我们注册的异步通知的通知方。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206173846581.png" class title="image-20240206173846581"></li>
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E5%BC%82%E6%AD%A5%E9%80%9A%E7%9F%A5%E7%9A%84%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/image-20240206173846581.png" class title="image-20240206173846581" data-fancybox="true"></li>
 </ol>
 <h2 id="0x03-问题分析"><a href="#0x03-问题分析" class="headerlink" title="0x03 问题分析"></a>0x03 问题分析</h2><p>基本分析完 dmp 文件之后，可以确定是我们注册的异步通知在程序结束时被调用了，导致 unsecapp 通知过来之后，调用了空指针。</p>
 <p>为什么会出现这种问题，可以看下 unsecapp 的堆栈，上边已经看到了具体的pid和tid，1b34.1b48, 这就直接看线程 1b38 的堆栈就可以了。</p>
@@ -175,7 +175,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -416,7 +416,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -513,12 +513,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -55,7 +55,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -146,10 +146,10 @@
 </ul>
 <p>netfilter 工作于系统的内核空间，最底层的工作，所以真正令过滤规则生效的并不是 iptables 而是 netfilter，而 iptables 工作在 netfilter之上，是一个让用户编写规则的工具。</p>
 <p>netfilter&#x2F;iptables 是 Rusty Russell 在1998年就开始写的一个项目，netfilter 是 Linux 内核中的一个框架，因 Linux 拥有高模块化的内核，所以 Linux 很多功能都以模块形式存在，而模块化的设计最大的优点在于“弹性”，我们可以通过Linux的模块管理工具，随心所欲地将模块载入内存与移除内存，因此 Netfilter 也是以模块的形式存在于 Linux 中。，采用极度模块化的设计，使其的拥有更好的扩充性以及很强的灵活性，提供一种特定的方式实现定制的模块，允许各种网络相关的操作。iptables 这个应用层的程序便是调用它的接口实现规则的修改。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/1.png" class title="3-2-1"> （此图来源于：[维基百科](https://en.wikipedia.org/wiki/Netfilter))
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/1.png" class title="3-2-1" data-fancybox="true"> （此图来源于：[维基百科](https://en.wikipedia.org/wiki/Netfilter))
 
 <h2 id="0x02-iptables-的结构"><a href="#0x02-iptables-的结构" class="headerlink" title="0x02 iptables 的结构"></a>0x02 iptables 的结构</h2><p>Netfilter 所设置的规则是存放在内存中的，而 iptables 通过 Netfilter 放出的内核接口 ip_tables 来对存放在内存中的 Netfilter 配置表进行修改。这个配置表主要由 tables、chains、target 组成。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/2.png" class title="3-3-1"> 此图片来源于http://byrev.space/free/wp-content/uploads/sites/3/iptables-linux.png
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/2.png" class title="3-3-1" data-fancybox="true"> 此图片来源于http://byrev.space/free/wp-content/uploads/sites/3/iptables-linux.png
 
 <p>其中表主要有这四张：</p>
 <ul>
@@ -201,7 +201,7 @@
 <li><code>POSTROUTING</code> 链：在包就要离开防火墙之前改变其源地址</li>
 </ul>
 <p>我们可以通过这样一张图来了解到 Header 中的信息什么样的，NAT 具体修改的内容</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/3.png" class title="3-3.2">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/3.png" class title="3-3.2" data-fancybox="true">
 
 <p>NAT 分为三种类型</p>
 <ul>
@@ -234,7 +234,7 @@
 <li>INVALID：数据包不能被识别属于哪个连接或没有任何状态比如内存溢出，收到不知属于哪个连接的 ICMP 错误信息，一般应该 DROP 这个状态的任何数据。</li>
 </ul>
 <p>我们对每一张表以及每一个链都有了一个大体上的认识，我们可以通过这样一张表了解到我们的数据包在我们的内核中是怎样的一个前进的过程，到底要经过多少次审核，多少个关卡</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/4.png" class title="3-3.5">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/4.png" class title="3-3.5" data-fancybox="true">
 
 <p>从这张图中我们可以了解到每个数据包的进与出都会经历这样的一个流程</p>
 <ol>
@@ -255,12 +255,12 @@
 <p>首先我们可以使用这样的一个命令来查看当前 iptables 中已经写下的规则</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -nL</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/5.png" class title="3-4-1">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/5.png" class title="3-4-1" data-fancybox="true">
 
 <p>从结果中我们可以看到分布在每条链中的已经写入的规则，若我们还想到跟详细的结果可以使用这样的一个命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -nvL --line</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/6.png" class title="3-4-2">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/6.png" class title="3-4-2" data-fancybox="true">
 
 <ul>
 <li>第一列 <code>num</code> 显示了该规则在该链中的顺序位置</li>
@@ -275,32 +275,32 @@
 <p>我们还可以通过一种方式来查看已经生效的规则，这种方式查看到的是我们直接插入的规则，而不是像以上两个命令经过分析后的结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables-save</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/7.png" class title="3-4-3">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/7.png" class title="3-4-3" data-fancybox="true">
 
 <p>当然 iptables-save 有一个参数 <code>-t</code> 可以指定我们要保存的表，到某个文件中去</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#在执行该命令之前请先用sudo su 切换到 root 用户</span><br><span class="line">iptables-save -t filter &gt; filter.bak</span><br><span class="line"></span><br><span class="line">cat filter.bak</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/8.png" class title="3-4-4">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/8.png" class title="3-4-4" data-fancybox="true">
 
 <p>上我们我们提到过，<code>iptables</code> 是一个可调用内核接口来对存放在内存中的 <code>Netfilter</code> 配置表进行修改、编辑的一个工具，既然是修改的内存中的配置表，所以我们并不需要重启防火墙什么的，修改后的规则会立即生效。</p>
 <p>我们再来回顾一下在编写规则时我们需要书写哪些参数：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/9.png" class title="3-4-5">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/9.png" class title="3-4-5" data-fancybox="true">
 
 <p>我们可以做这么一个例子，将所有访问我们 <code>80</code> 端口的数据包全部丢掉</p>
 <p>首先我们来验证 <code>80</code> 端口是开发的，可以访问的</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#首先本实验环境没有装 apache 服务我们需要安装一下，然后启动服务</span><br><span class="line"></span><br><span class="line">sudo apt-get install apache2</span><br><span class="line">sudo service apache2 start</span><br><span class="line"></span><br><span class="line">netstat -lunpt | grep 80</span><br><span class="line"></span><br><span class="line">#尝试看我们能否访问该页面，若返回值为 200 则为成功访问</span><br><span class="line">curl -I localhost</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/10.png" class title="3-4-6">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/10.png" class title="3-4-6" data-fancybox="true">
 
 <p>然后我们来添加这么一条规则，并查看他是否写入了规则表当中</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -t filter -I INPUT -p tcp --dport 80 -j DROP</span><br><span class="line"></span><br><span class="line">#仅仅只是查看 INPUT 链是否加入了这条规则</span><br><span class="line">sudo iptables -nvL INPUT</span><br><span class="line"></span><br><span class="line">#然后我们再来尝试一次，能否查看到该网页</span><br><span class="line">curl localhost</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/11.png" class title="3-4-7">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/11.png" class title="3-4-7" data-fancybox="true">
 
 <p>是得不到，但是为什么会一直停留在那里，是因为我们是用的 <code>DROP</code> 将所有来访问该页面的数据包丢掉，不给任何返回，响应，而 ~却很钟情的一直等待着服务端的响应。若我们将 <code>DROP</code> 行为改成 <code>REJECT</code> 的话，就会有返回信息说这个端口无法访问。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#删除我们之前添加的规则，这里没有添加 -t 的参数</span><br><span class="line">#是因为不指明该参数，系统默认为修改 filter 表</span><br><span class="line">sudo iptables -D INPUT -p tcp --dport 80 -j DROP</span><br><span class="line"></span><br><span class="line">#添加拒绝的规则</span><br><span class="line">sudo iptables -I INPUT -p tcp --dport 80 -j REJECT</span><br><span class="line"></span><br><span class="line">#再次验证</span><br><span class="line">curl localhost</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/12.png" class title="3-4-6">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/12.png" class title="3-4-6" data-fancybox="true">
 
 <p>通过上面的例子大家可以看到 <code>iptables</code> 已经修改便会立即生效，在修改规则的时候我们会用到各种参数，下面列出一些常用的参数</p>
 <table>
@@ -362,7 +362,7 @@
 <p>如上文中我们删除一条规则的时候使用的是 -D 后面加具体的规则，其实我们还可以这样去删</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#查看我们要删除的规则所在的链与位置</span><br><span class="line">sudo iptables -nvL --line</span><br><span class="line"></span><br><span class="line">#删除指定位置的规则</span><br><span class="line">sudo iptables -D INPUT 1</span><br></pre></td></tr></table></figure>
 
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/13.png" class title="3-4-7">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Linux/Linux%E9%98%B2%E7%81%AB%E5%A2%99/iptables/13.png" class title="3-4-7" data-fancybox="true">
 
 <div class="article-footer fs14">
     <section id="license">
@@ -379,7 +379,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -620,7 +620,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -717,12 +717,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {

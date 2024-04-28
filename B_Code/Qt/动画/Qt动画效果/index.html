@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0" theme-name="Stellar" theme-version="1.27.0">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1" theme-name="Stellar" theme-version="1.28.1">
   
   <meta name="generator" content="Hexo 7.1.1">
   <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -46,7 +46,7 @@
     <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.27.0">
+  <link rel="stylesheet" href="/css/main.css?v=1.28.1">
 
   
     <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
@@ -98,7 +98,7 @@
   </div>
   </div><article class="md-text content"><p>[toc]</p>
 <h1 id="动画框架结构"><a href="#动画框架结构" class="headerlink" title="动画框架结构"></a>动画框架结构</h1><p>动画框架由基类 <code>QAbstractAnimation</code> 以及它的两个子类<code> QVariantAnimation</code> 、<code>QAnimationGroup</code> 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationGroup、QSequentialAnimationGroup），完成一个连续的动画。</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%A1%86%E6%9E%B6.png" class title="Qt动画框架">QPropertyAnimation
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%A1%86%E6%9E%B6.png" class title="Qt动画框架" data-fancybox="true">QPropertyAnimation
 
 <p><code>QPropertyAnimation</code> 类能够修改Qt的属性值，如pos、geometry等属性。设置好动画的初值和末值，以及持续的时间后，一个属性动画就基本完成了。</p>
 <h2 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h2><p>通过修改控件的geometry属性可以实现缩放效果，也可以实现位移的动画，该属性的前两个值确定了控件左上角的位置，后两个值确定了控件的大小。</p>
@@ -111,7 +111,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//opacity</span></span><br><span class="line">QGraphicsOpacityEffect *pButtonOpacity = <span class="keyword">new</span> <span class="built_in">QGraphicsOpacityEffect</span>(<span class="keyword">this</span>);</span><br><span class="line">pButtonOpacity-&gt;<span class="built_in">setOpacity</span>(<span class="number">1</span>);</span><br><span class="line">ui-&gt;opasityButton-&gt;<span class="built_in">setGraphicsEffect</span>(pButtonOpacity);</span><br><span class="line"></span><br><span class="line">QPropertyAnimation *pOpacityAnimation1 = <span class="keyword">new</span> <span class="built_in">QPropertyAnimation</span>(pButtonOpacity, <span class="string">&quot;opacity&quot;</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setDuration</span>(<span class="number">1000</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setStartValue</span>(<span class="number">1</span>);</span><br><span class="line">pOpacityAnimation1-&gt;<span class="built_in">setEndValue</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
 <h2 id="动画曲线"><a href="#动画曲线" class="headerlink" title="动画曲线"></a>动画曲线</h2><p>动画还可以设置时间的插值曲线，默认是linear，即线性运动，通过设置QEasingCurve即可。Qt提供了40种已经定义好的曲线（如果有需要也可以自定义曲线）：</p>
-<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%9B%B2%E7%BA%BF.png" class title="Qt动画曲线">
+<img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/Qt%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/Qt%E5%8A%A8%E7%94%BB%E6%9B%B2%E7%BA%BF.png" class title="Qt动画曲线" data-fancybox="true">
 
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pScaleAnimation1-&gt;<span class="built_in">setEasingCurve</span>(QEasingCurve::InOutQuad);</span><br></pre></td></tr></table></figure>
 
@@ -131,7 +131,7 @@
 
 
 
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.27.0">Stellar 1.27.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.28.1">Stellar 1.28.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
@@ -372,7 +372,7 @@
 </script>
 
 <!-- required -->
-<script src="/js/main.js?v=1.27.0" async></script>
+<script src="/js/main.js?v=1.28.1" async></script>
 
 <!-- optional -->
 
@@ -469,12 +469,13 @@
           autoStart: false,
         },
         caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || null
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
         }
       });
     })
   }
-</script><script>
+</script>
+<script>
   window.addEventListener('DOMContentLoaded', (event) => {
     const swiper_api = document.getElementById('swiper-api');
     if (swiper_api != undefined) {
