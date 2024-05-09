@@ -1,0 +1,71 @@
+@startuml
+!theme materia
+skinparam defaultFontName WenQuanYi Micro Hei
+skin rose
+title CreateThreadEx 调用逻辑
+:CreateRemoteThreadEx;
+:检查 dwCreationFlags 是否有效;
+if (检查结果) then (无效)
+  :返回参数无效;
+  end
+else (有效)
+  :格式化参数为 Ring0 做准备;
+  :检查返回值是否正确;
+  if (检查结果) then (错误)
+    :返回错误码;
+    end
+  else (正确)
+    :检查是否存在扩展参数列表;
+    if (检查结果) then (存在)
+      :格式化参数列表为ring0做准备;
+    else
+      :bFlag = 1;
+    endif
+    if (hProcess == -1) then (true)
+    note left
+      调用 CreateThread 时，hProcess 为 -1
+    end note
+    else (false)
+      :拷贝一份进程句柄为 ring0 做准备;
+      :通过进程句柄获取进程PID;
+      if (?获取成功 && 进程ID是不是当前进程ID) then (true)
+        :bFlag = 0;
+        :获取子系统类型;
+        if (获取成功&&系统类型错误) then (true)
+        else (false)
+          label 获取ID
+          if (获取成功) then (true)
+            if (bFlag != 0)then(true)
+              :获取上下文环境，确定启动线程是否挂起;
+            else(false)
+            endif
+            :调用 NtCreateThreadEx 进入内核;
+            if (检查返回值) then (true)
+              if(检查上下文)then(true)
+                :申请栈空间;
+                :激活栈空间;
+              else(false)
+              endif
+              if(根据全局变量判断是否是远程线程)then(true)
+                :加载模块，获取函数地址;
+                :通过线程句柄获取进程ID;
+                if(判断线程是否需要挂起)then(true)
+                else(false)
+                  :Resume 目标线程;
+                endif
+              else(false)
+              endif
+            else(false)
+            endif
+          else (false)
+          endif
+        endif
+      else (false)
+      endif
+    endif
+    :释放资源;
+    :返回线程句柄;
+    end
+  endif
+endif
+@enduml
