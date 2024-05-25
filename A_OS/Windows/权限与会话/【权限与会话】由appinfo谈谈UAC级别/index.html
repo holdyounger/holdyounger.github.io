@@ -105,11 +105,11 @@
 </ul>
 </blockquote>
 <h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>学习 UAC 避免不了 appinfo、consent、RPC 这三个关键点。当然，整个 UAC 的流程也不能只有这三点，还涉及到用户会话、安全策略、ACL、DACL、SACL等等概念。都是需要去了解和深入的。而安全策略我们都知道，有比较多的字段策略都是保存在注册表中的。这里就包括 &#x3D;&#x3D;用户账户控制：管理员批准模式中管理员的提升权限提示的行为&#x3D;&#x3D;</p>
-<style>.xjfemfepzmjb{zoom:50%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152010027.png" class="xjfemfepzmjb lazy" alt="用户账户控制：管理员批准模式中管理员的提升权限提示的行为" data-fancybox="true">
+<style>.kembvvljqoan{zoom:50%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152010027.png" class="kembvvljqoan lazy" alt="用户账户控制：管理员批准模式中管理员的提升权限提示的行为" data-fancybox="true">
 
 
 <h2 id="0x02-UAC-提权中的处理"><a href="#0x02-UAC-提权中的处理" class="headerlink" title="0x02 UAC 提权中的处理"></a>0x02 UAC 提权中的处理</h2><p>从何说起？就是UAC的提权过程中创建 consent 进程的时候。如下图所示，在 <code>AiLaunchConstnUI</code> 函数中，首先根据传入的 <code>CreateFlags</code> 来确定要检查的用户，这里分两种情况，一个管理员用户，一个普通用户。两个字段在注册表中的值所对应的策略和处理是一致的。如下所示，查询的注册表目录为 <code>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System</code></p>
-<style>.djehxuteheny{zoom: 80%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152958819.png" class="djehxuteheny lazy" alt="AiLaunchConesentUI" data-fancybox="true">
+<style>.kepknetbomvc{zoom: 80%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152958819.png" class="kepknetbomvc lazy" alt="AiLaunchConesentUI" data-fancybox="true">
 
 <p>可以看到 <code>ConsentPromptBehavior</code> 策略值也是 UAC 提权中的一个判断点。接下来就 <code>ConsentPromptBehavior</code> 值描述一下。</p>
 <h2 id="0x03-ConsentPromptBehavior"><a href="#0x03-ConsentPromptBehavior" class="headerlink" title="0x03 ConsentPromptBehavior"></a>0x03 ConsentPromptBehavior</h2><p>ConsentPromptBehavior 值对应了五个级别，分别如下表所示：</p>
@@ -409,9 +409,101 @@
     }
   }
 </script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
 
 <!-- required -->
 <script src="/js/main.js?v=1.28.1" async></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
 
 <!-- optional -->
 

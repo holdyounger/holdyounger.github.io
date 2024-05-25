@@ -32,19 +32,19 @@
 <meta property="article:modified_time" content="2023-10-27T01:24:02.500Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="LeetCode">
-<meta property="article:tag" content="矩阵">
-<meta property="article:tag" content="模拟">
 <meta property="article:tag" content="Go">
 <meta property="article:tag" content="C&#x2F;C++">
 <meta property="article:tag" content="数组">
 <meta property="article:tag" content="深度优先搜索">
 <meta property="article:tag" content="动态规划">
+<meta property="article:tag" content="矩阵">
+<meta property="article:tag" content="模拟">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/12/26/ball.jpg">
   
   
   
-  <meta name="keywords" content="LeetCode,矩阵,模拟,Go,C/C++,数组,深度优先搜索,动态规划">
+  <meta name="keywords" content="LeetCode,Go,C/C++,数组,深度优先搜索,动态规划,矩阵,模拟">
 
   <!-- feed -->
   
@@ -388,9 +388,101 @@
     }
   }
 </script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
 
 <!-- required -->
 <script src="/js/main.js?v=1.28.1" async></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
 
 <!-- optional -->
 

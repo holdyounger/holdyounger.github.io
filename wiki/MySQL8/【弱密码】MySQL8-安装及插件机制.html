@@ -131,6 +131,8 @@
 <p>获取</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">m_ptr_mysql_init = (pfn_mysql_init)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_init&quot;</span>);</span><br><span class="line">m_ptr_mysql_options = (pfn_mysql_options)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_options&quot;</span>);</span><br><span class="line">m_ptr_mysql_real_connect = (pfn_mysql_real_connect)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_real_connect&quot;</span>);</span><br><span class="line">m_ptr_mysql_query = (pfn_mysql_query)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_query&quot;</span>);</span><br><span class="line">m_ptr_mysql_real_query = (pfn_mysql_real_query)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_real_query&quot;</span>);</span><br><span class="line">m_ptr_mysql_store_result = (pfn_mysql_store_result)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_store_result&quot;</span>);</span><br><span class="line">m_ptr_mysql_num_fields = (pfn_mysql_num_fields)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_num_fields&quot;</span>);</span><br><span class="line">m_ptr_mysql_fetch_field = (pfn_mysql_fetch_field)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_fetch_field&quot;</span>);</span><br><span class="line">m_ptr_mysql_fetch_row = (pfn_mysql_fetch_row)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_fetch_row&quot;</span>);</span><br><span class="line">m_ptr_mysql_error = (pfn_mysql_error)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_error&quot;</span>);</span><br><span class="line">m_ptr_mysql_close = (pfn_mysql_close)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;mysql_close&quot;</span>);</span><br><span class="line"></span><br><span class="line">m_builtin_caching_sha2_password_plugin = (st_mysql_plugin*)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;builtin_caching_sha2_password_plugin&quot;</span>);</span><br><span class="line">m_builtin_mysql_password_plugin = (st_mysql_plugin*)<span class="built_in">GetProcAddress</span>(hExe, <span class="string">&quot;builtin_mysql_password_plugin&quot;</span>);</span><br></pre></td></tr></table></figure>
 
+
+<div class="article-footer fs14"></div>
 </article>
 <div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">回顾上一篇</div><a href="/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-ibd.html">【弱密码】MySQL8-Innodb</a></div><div class="item" id="next"><div class="note">接下来阅读</div><a href="/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AF%86%E7%A0%81Function.html">【弱密码】MySQL8-密码Function</a></div></section></div>
 
@@ -372,9 +374,101 @@
     }
   }
 </script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
 
 <!-- required -->
 <script src="/js/main.js?v=1.28.1" async></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
 
 <!-- optional -->
 

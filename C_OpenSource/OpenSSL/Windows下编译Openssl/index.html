@@ -115,10 +115,10 @@
 <p>也可以参考官方文档进行编译：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/openssl/openssl/blob/master/NOTES-WINDOWS.md">openssl&#x2F;NOTES-WINDOWS.md at master · openssl&#x2F;openssl</a></p>
 <h2 id="0x04、编译"><a href="#0x04、编译" class="headerlink" title="0x04、编译"></a>0x04、编译</h2><ol>
 <li><p>使用管理员权限打开 vs2017 的开发人员命令提示符</p>
-<style>.vadxjukcwnok{zoom:80%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/C_OpenSource/OpenSSL/Windows%E4%B8%8B%E7%BC%96%E8%AF%91Openssl/image-20230928102731717.png" class="vadxjukcwnok lazy" alt="vs2017 Developer Command Prompt" data-fancybox="true">
+<style>.cjqlqwmpseyq{zoom:80%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/C_OpenSource/OpenSSL/Windows%E4%B8%8B%E7%BC%96%E8%AF%91Openssl/image-20230928102731717.png" class="cjqlqwmpseyq lazy" alt="vs2017 Developer Command Prompt" data-fancybox="true">
 </li>
 <li><p>打开后切换到 openssl 解压目录：</p>
-<style>.gfuvfkhphzxu{zoom:50%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/C_OpenSource/OpenSSL/Windows%E4%B8%8B%E7%BC%96%E8%AF%91Openssl/image-20231010133230852.png" class="gfuvfkhphzxu lazy" alt="openssl解压目录" data-fancybox="true">
+<style>.dkyqszyjighx{zoom:50%;}</style><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/C_OpenSource/OpenSSL/Windows%E4%B8%8B%E7%BC%96%E8%AF%91Openssl/image-20231010133230852.png" class="dkyqszyjighx lazy" alt="openssl解压目录" data-fancybox="true">
 </li>
 <li><p>配置 Perl，参考官方文档配置</p>
 <ul>
@@ -436,9 +436,101 @@
     }
   }
 </script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
 
 <!-- required -->
 <script src="/js/main.js?v=1.28.1" async></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
 
 <!-- optional -->
 
