@@ -1,0 +1,848 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0" theme-name="Stellar" theme-version="1.29.0">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【网络编程】IPv6 - oone</title>
+
+  
+    <meta name="description" content="[toc] IPv6地址格式IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:234">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【网络编程】IPv6">
+<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91IPv6/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[toc] IPv6地址格式IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:234">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.371Z">
+<meta property="article:modified_time" content="2024-08-15T09:19:56.870Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="网络编程">
+<meta property="article:tag" content="IPv6">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="网络编程,IPv6">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.0">
+
+  
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post"><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/A_A%E7%A0%94/%E6%94%BF%E6%B2%BB/%E9%A9%AC%E5%8E%9F/%E3%80%90%E8%80%83%E7%A0%94%E6%94%BF%E6%B2%BB%E3%80%91%E9%A9%AC%E5%8E%9F%E7%AC%94%E8%AE%B0/"><span class="title">【考研政治】马原笔记</span></a><a class="item title" href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/7.5%20%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D/"><span class="title">密钥分配</span></a><a class="item title" href="/A_OS/Windows/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/%E3%80%90win%E3%80%91%E9%80%9A%E8%BF%87PID%E8%8E%B7%E5%8F%96%E7%AB%AF%E5%8F%A3/"><span class="title">【win】通过PID获取端口</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91DDoS%E6%94%BB%E5%87%BB/"><span class="title">【攻击】DDoS攻击</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/"><span class="title">【网安】网络审计</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91Tail%20Call%20Elimination/"><span class="title">【汇编】Tail Call Elimination</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/"><span class="title">【汇编】【实验楼】汇编教程笔记</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%B1%87%E7%BC%96%E5%AF%BC%E8%AF%BB/"><span class="title">【汇编】汇编导读</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/"><span class="title">【汇编】命令整理</span></a><a class="item title" href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E4%BB%A3%E7%90%86/"><span class="title">【.Net】代理</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/B-Code/">B_Code</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/B-Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2023-10-27T01:24:02.371Z">2023-10-27</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-08-15T09:19:56.870Z">2024-08-15</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>【网络编程】IPv6</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>[toc]</p>
+<h1 id="IPv6地址格式"><a href="#IPv6地址格式" class="headerlink" title="IPv6地址格式"></a><strong>IPv6地址格式</strong></h1><p>IPv6的地址长度是128位（bit）。</p>
+<p>将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。</p>
+<p>例如：2000:0000:0000:0000:0001:2345:6789:abcd</p>
+<p>这个地址很长，可以用两种方法对这个地址进行压缩，</p>
+<p>前导零压缩法：</p>
+<p>将每一段的前导零省略，但是每一段都至少应该有一个数字</p>
+<p>例如：2000:0:0:0:1:2345:6789:abcd</p>
+<p>双冒号法：</p>
+<p>如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。</p>
+<p>例如：2000::1:2345:6789:abcd</p>
+<h3 id="单播地址（Unicast-IPv6-Addresses）"><a href="#单播地址（Unicast-IPv6-Addresses）" class="headerlink" title="单播地址（Unicast IPv6 Addresses）"></a><strong>单播地址（<strong><strong>Unicast IPv6 Addresses</strong></strong>）</strong></h3><p>可聚合的全球单播地址（Aggregatable Global Unicast Addresses）</p>
+<p>可在全球范围内路由和到达的，相当于IPv4里面的global addresses。前三个bit是001</p>
+<p>例如：2000::1:2345:6789:abcd</p>
+<p>链路本地地址（Link-Local Addresses）</p>
+<p>用于同一个链路上的相邻节点之间通信，相当于IPv4里面的169.254.0.0&#x2F;16地址。Ipv6的路由器不会转发链路本地地址的数据包。前10个bit是1111 1110 10，由于最后是64bit的interface ID，所以它的前缀总是FE80::&#x2F;64</p>
+<p>例如：FE80::1</p>
+<p>站点本地地址（Site-Local Addresses）</p>
+<p>对于无法访问internet的本地网络，可以使用站点本地地址，这个相当于IPv4里面的private address（10.0.0.0&#x2F;8, 172.16.0.0&#x2F;12, and 192.168.0.0&#x2F;16）。它的前10个bit是1111 1110 11，它最后是16bit的Subnet ID和64bit的interface ID，所以它的前缀是FEC0::&#x2F;48。</p>
+<p>值得注意的是，在RFC3879中，最终决定放弃单播站点本地地址。放弃的理由是，由于其固有的二义性带来的单播站点本地地址的复杂性超过了它们可能带来的好处。它在RFC4193中被ULA取代。</p>
+<p>唯一的本地IPv6单播地址（ULA，Unique Local IPv6 Unicast Address）</p>
+<p>在RFC4193中标准化了一种用来在本地通信中取代单播站点本地地址的地址。ULA拥有固定前缀FD00::&#x2F;8，后面跟一个被称为全局ID的40bit随机标识符。</p>
+<p>未指定地址（Unspecified address）</p>
+<p>0:0:0:0:0:0:0:0 或者::</p>
+<p>当一个有效地址还不能确定，一般用未指定地址作为源地址。未指定地址不能作为一个目标地址来使用。</p>
+<p>回环地址（Loopback address）</p>
+<p>回环地址::1用于标识一个回环接口，可以使一个节点可以给自己发送数据包。相当于IPv4的回环地址127.0.0.1</p>
+<p>兼容IPv4的地址（IPv4-compatible address）</p>
+<p>形如::w.x,y.z，这里的w.x.y.z是IPv4公共地址的十进制点号表示法，用于IPv6&#x2F;IPv4节点们（同时支持）在使用仅支持IPv4的网络上用IPv6的协议进行通信。</p>
+<p>但是事实证明这种技术不是个好主意，RFC4291中废弃了对这类地址的使用。</p>
+<p>IPv4映射地址（IPv4-mapped address）</p>
+<p>形如::FFFF:w.x.y.z，这里的w.x.y.z是IPv4公共地址的十进制点号表示法,用于一个仅支持IPv4的节点表现为一个IPv6的节点</p>
+<p>6over4地址</p>
+<p>[64bit-prefix]:0:0:WWXX:YYZZ,其中的WWXX:YYZZ是w.x.y.z IPv4公共地址的十进制点号表示法，用于一个使用6to4协议的隧道机制的节点。</p>
+<p>6to4地址</p>
+<p>2002:WWXX:YYZZ:[SLA ID]:[Interface ID],用于表示一个使用6to4协议的隧道机制节点。</p>
+<h3 id="多播IPv6地址（Multicast-IPv6-Addresses）"><a href="#多播IPv6地址（Multicast-IPv6-Addresses）" class="headerlink" title="多播IPv6地址（Multicast IPv6 Addresses）"></a><strong>多播IPv6地址（<strong><strong>Multicast IPv6 Addresses</strong></strong>）</strong></h3><p>前8个bit为1111 1111，</p>
+<p>其中FF01::到FF0F::的多播地址是保留专用地址</p>
+<p>FF01::1 节点本地范围所有节点多播地址</p>
+<p>FF02::1 链路本地范围所有节点多播地址</p>
+<p>FF01::2 节点本地范围所有路由器多播地址</p>
+<p>FF02::2 链路本地范围所有路由器多播地址</p>
+<p>FF05::2 站点本地范围所有路由器多播地址</p>
+<h2 id="为-IPv6-划分子网"><a href="#为-IPv6-划分子网" class="headerlink" title="为 IPv6 划分子网"></a>为 IPv6 划分子网</h2><p>在对 IPv6 地址空间进行子网划分时，需要使用子网划分技术，以一种允许将剩余地址空间的摘要和委派路由到 IPv6 Intranet 的不同部分的方式，为 48 位全局地址前缀划分 16 位子网 ID 字段。</p>
+<p>您不需要以任何特定的方式进行子网划分。此处介绍的子网划分技术假定您是通过使用子网 ID 字段的高序位划分其地址空间的可变部分来进行子网划分的。虽然此方法有助于分层寻址和路由，但此方法并不是非用不可。例如，在只有少数子网的小型组织中，您可以通过为子网编号（从 0 开始），轻松地为全局地址创建平面寻址空间。</p>
+<h3 id="对全局地址前缀进行子网划分"><a href="#对全局地址前缀进行子网划分" class="headerlink" title="对全局地址前缀进行子网划分"></a>对全局地址前缀进行子网划分</h3><p>对于全局地址，Internet 编号分配机构 (IANA) 或 ISP 会分配一个前 48 位均为固定位的 IPv6 地址前缀。若要对 48 位全局地址前缀的子网 ID 字段进行子网划分，需要执行一个包含两步的过程：</p>
+<table>
+<thead>
+<tr>
+<th>1.</th>
+<th>确定用于子网划分的位数。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.</td>
+<td>枚举出新的子网网络前缀。</td>
+</tr>
+</tbody></table>
+<p>确定用于子网划分的位数</p>
+<p>用于子网划分的位数决定着您可以分配给您的网络各部分（基于地理区划或部门分类）的新子网网络前缀的可能的数量。在分层路由基础结构中，您必须确定您在层次结构的各层需要的网络前缀数，进而确定各层需要的位数。为层次结构的各层选择的位越多，您拥有的用于枚举层次结构最后一层中的单个子网的位越少。</p>
+<p>例如，您可以实施一个包含两层的层次结构来反映地理&#x2F;部门结构，4 位用于地理层，6 位用于部门层。这一方案允许 16 个地理区域，各个区域中的各个部门只占剩余的子网划分空间的 6 (16 - 6 - 4) 位，或者说每个部门只有 64 (&#x3D;26) 个子网。</p>
+<p>在层次结构中任何给定的层上，许多位已被层次结构中的上一层固定了 (<em>f</em>)，许多位被用来在层次结构中的当前层进行子网划分 (<em>s</em>)，还有许多位留给层次结构中的下一层使用 (<em>r</em>)。下面这个等式始终成立：<em>f</em>+<em>s</em>+<em>r</em> &#x3D; 16。</p>
+<h3 id="枚举子网网络前缀"><a href="#枚举子网网络前缀" class="headerlink" title="枚举子网网络前缀"></a>枚举子网网络前缀</h3><p>根据用于子网划分的位数，您必须列出新的子网网络前缀，您可以使用下面两种主要方法之一：</p>
+<table>
+<thead>
+<tr>
+<th>•</th>
+<th>使用子网 ID 和递增值的十六进制表示形式来枚举新的子网网络前缀。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>•</td>
+<td>使用子网 ID 和递增值的十进制表示形式来枚举新的子网网络前缀。</td>
+</tr>
+</tbody></table>
+<p>这两种方法产生的结果相同，都会生成子网网络前缀的一个枚举列表。</p>
+<p>要使用十六进制方法创建子网网络前缀的枚举列表，请执行以下步骤：</p>
+<table>
+<thead>
+<tr>
+<th>1.</th>
+<th>根据为子网划分选择的位数 <em>s</em> 和进行子网划分的网络前缀的前缀长度 <em>m</em>，计算以下各值：<em>f</em> &#x3D; <em>m</em> - 48<em>f</em> 是子网 ID 中已固定的位的数目。<em>n</em> &#x3D; 2s<em>n</em> 是您将获得的网络前缀的数目。<em>i</em> &#x3D; 216-(f+s) <em>i</em> 是以十六进制表示的各个连续子网 ID 之间的递增值。<em>P</em> &#x3D; <em>m+s**P</em> 是新的子网网络前缀的前缀长度。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.</td>
+<td>创建一个包含 <em>n</em> 行、两列的表。第一列存放网络前缀编号（从 1 开始），第二列存放新的子网网络前缀。</td>
+</tr>
+<tr>
+<td>3.</td>
+<td>将使用新的前缀长度的原始网络前缀放在第一行的第二列中。例如，根据进行子网划分的子网 ID 的十六进制值 <em>F</em>，子网网络前缀为 [48 位前缀]:<em>F</em>::&#x2F;<em>P</em>。</td>
+</tr>
+<tr>
+<td>4.</td>
+<td>将站点本地地址或全局地址的子网 ID 部分中的值加上 <em>i</em>，将结果放在下一行的第二列中。例如，在第二行中，子网前缀为 [48 位前缀]:<em>F</em>+<em>i</em>::&#x2F;<em>P</em>。</td>
+</tr>
+<tr>
+<td>5.</td>
+<td>重复步骤 4，直到您完成该表。</td>
+</tr>
+</tbody></table>
+<p>例如，要对全局地址前缀 3FFE:FFFF:0:C000::&#x2F;51 进行 3 位子网划分，首先计算前缀数量值、递增值和新前缀长度值。起始值是 <em>F</em>&#x3D;0xC000，<em>s</em>&#x3D;3，<em>m</em>&#x3D;51，因此 <em>f</em>&#x3D;51-48&#x3D;3。前缀的数量是 8 (<em>n</em>&#x3D;23)。递增值是 0x400 (<em>i</em>&#x3D;216-(3+3)&#x3D;1024&#x3D;0x400)。新的前缀长度是 54 (<em>P</em>&#x3D;51+3)。</p>
+<p>接下来，构造一个包含 8 行的表，如表 4-12 所示。将 3FFE:FFFF:0:C000::&#x2F;54 放在网络前缀 1 所在的那一行的第二列，然后让网络前缀的子网 ID 部分依次递增 0x400，将结果分别填入后面的各行中。</p>
+<p>下表为使用十六进制技术对 3FFE:FFFF:0:C000::&#x2F;51 进行 3 位子网划分：</p>
+<table>
+<thead>
+<tr>
+<th>网络前缀</th>
+<th>子网网络前缀</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>3FFE:FFFF:0:C000::&#x2F;54</td>
+</tr>
+<tr>
+<td>2</td>
+<td>3FFE:FFFF:0:C400::&#x2F;54</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3FFE:FFFF:0:C800::&#x2F;54</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3FFE:FFFF:0:CC00::&#x2F;54</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3FFE:FFFF:0:D000::&#x2F;54</td>
+</tr>
+<tr>
+<td>6</td>
+<td>3FFE:FFFF:0:D400::&#x2F;54</td>
+</tr>
+<tr>
+<td>7</td>
+<td>3FFE:FFFF:0:D800::&#x2F;54</td>
+</tr>
+<tr>
+<td>8</td>
+<td>3FFE:FFFF:0:DC00::&#x2F;54</td>
+</tr>
+</tbody></table>
+<p>要使用十进制方法创建子网网络前缀的枚举列表，请执行以下步骤：</p>
+<table>
+<thead>
+<tr>
+<th>1.</th>
+<th>根据用于子网划分的位数 <em>s</em>、进行子网划分的网络前缀的前缀长度 <em>m</em> 和进行子网划分的子网 ID 的十六进制值 <em>F</em>，计算以下各值：<em>f</em> &#x3D; <em>m</em> - 48<em>f</em> 是子网 ID 中已固定的位的数目。<em>n</em> &#x3D; 2s<em>n</em> 是您将获得的网络前缀的数目。<em>i</em> &#x3D; 216-(f+s) <em>i</em> 是各个连续子网 ID 之间的递增值。<em>P</em> &#x3D; <em>m</em>+<em>s**P</em> 是新的子网网络前缀的前缀长度。<em>D</em> &#x3D; <em>F</em> 的十进制表示形式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.</td>
+<td>创建一个包含 <em>n</em> 行、三列的表。第一列存放网络前缀编号（从 1 开始），第二列存放新的子网网络前缀的子网 ID 部分的十进制表示形式，第三列存放新的子网网络前缀。</td>
+</tr>
+<tr>
+<td>3.</td>
+<td>将子网 ID 的十进制表示形式 (<em>D</em>) 放在第一行的第一列，将子网前缀 [48 位前缀]:<em>F</em>::&#x2F;<em>P</em> 放在第一行的第二列。</td>
+</tr>
+<tr>
+<td>4.</td>
+<td>用子网 ID 十进制表示形式的值加上 <em>i</em>，将结果放在下一行的第二列。例如，第二行的子网 ID 的十进制表示形式是 <em>D</em>+<em>i</em>。</td>
+</tr>
+<tr>
+<td>5.</td>
+<td>在第三列中，将子网 ID 的十进制表示形式转换为十六进制，并构造前缀 [48 位前缀]:[<em>SubnetID</em>]::&#x2F;<em>P</em>。例如，在第二行中，子网网络前缀为 [48 位前缀]:[<em>D</em>+<em>i</em>（转换为十六进制）]::&#x2F;<em>P</em>。</td>
+</tr>
+<tr>
+<td>6.</td>
+<td>重复步骤 4 和 5，直到您完成该表。</td>
+</tr>
+</tbody></table>
+<p>例如，要对站点本地网络前缀 3FFE:FFFF:0:C000::&#x2F;51 进行 3 位子网划分，首先计算前缀数量值、递增值、新前缀长度值和起始子网 ID 十进制表示形式。我们的起始值是 <em>F</em>&#x3D;0xC000，<em>s</em>&#x3D;3，<em>m</em>&#x3D;51，这样 <em>f</em>&#x3D;51-48&#x3D;3。前缀数量是 8 (<em>n</em>&#x3D;23)。递增值是 1024 (<em>i</em>&#x3D;216-(3+3))。新的前缀长度是 54 (<em>P</em>&#x3D;51+3)。起始子网 ID 的十进制表示形式是 49152 (D&#x3D;0xC000&#x3D;49152)。</p>
+<p>接下来，构造一个包含 8 行的表，如表 4-13 所示。将 49192 放在网络前缀 1 所在的那一行的第一列，将 3FFE:FFFF:0:C000::&#x2F;54 放在该行的第二列。让网络前缀的子网 ID 部分（第四个十六进制块）依次递增 1024，然后将结果转换为十六进制并分别填入后面的各行中。</p>
+<p>下表为使用十进制技术对 3FFE:FFFF:0:C000::&#x2F;51 进行 3 位子网划分：</p>
+<table>
+<thead>
+<tr>
+<th>网络前缀</th>
+<th>子网 ID 的十进制表示形式</th>
+<th>子网网络前缀</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>49192</td>
+<td>3FFE:FFFF:0:C000::&#x2F;54</td>
+</tr>
+<tr>
+<td>2</td>
+<td>50176</td>
+<td>3FFE:FFFF:0:C400::&#x2F;54</td>
+</tr>
+<tr>
+<td>3</td>
+<td>51200</td>
+<td>3FFE:FFFF:0:C800::&#x2F;54</td>
+</tr>
+<tr>
+<td>4</td>
+<td>52224</td>
+<td>3FFE:FFFF:0:CC00::&#x2F;54</td>
+</tr>
+<tr>
+<td>5</td>
+<td>53248</td>
+<td>3FFE:FFFF:0:D000::&#x2F;54</td>
+</tr>
+<tr>
+<td>6</td>
+<td>54272</td>
+<td>3FFE:FFFF:0:D400::&#x2F;54</td>
+</tr>
+<tr>
+<td>7</td>
+<td>55296</td>
+<td>3FFE:FFFF:0:D800::&#x2F;54</td>
+</tr>
+<tr>
+<td>8</td>
+<td>56320</td>
+<td>3FFE:FFFF:0:DC00::&#x2F;54</td>
+</tr>
+</tbody></table>
+<h3 id="变量长度子网划分"><a href="#变量长度子网划分" class="headerlink" title="变量长度子网划分"></a>变量长度子网划分</h3><p>与 IPv4 相同的是，您可以对 IPv6 地址前缀循环进行子网划分来在组织 Intranet 的各个层次提供路由摘要，定义单个子网的地址前缀可达到 64 位。与 IPv4 不同的是，您无法使用可变长度子网划分来创建不同大小的子网，因为所有 IPv6 子网都使用 64 位网络 ID 和 64 位接口 ID。</p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">【网络编程】IO多路复用</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/">查看浏览器DNS缓存</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0">Stellar 1.29.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+<widget class="widget-wrapper user-card ghuser"><div class="widget-body ds-ghinfo" api="https://api.github.com/users/holdyounger"><div class="avatar"><img no-lazy type="img" id="avatar_url" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></div><p class="username" ff="title" type="text" id="name">&nbsp;</p><p class="bio" type="text" id="bio">&nbsp;</p><div class="buttons"><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=followers"><span class="title" type="text" id="followers">0</span><span class="desc">followers</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=following"><span class="title" type="text" id="following">0</span><span class="desc">following</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=repositories"><span class="title" type="text" id="public_repos">0</span><span class="desc">repos</span></a></div><a class="follow" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger"><svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Follow</a></div></widget>
+
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IPv6%E5%9C%B0%E5%9D%80%E6%A0%BC%E5%BC%8F"><span class="toc-text">IPv6地址格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%92%AD%E5%9C%B0%E5%9D%80%EF%BC%88Unicast-IPv6-Addresses%EF%BC%89"><span class="toc-text">单播地址（Unicast IPv6 Addresses）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%92%ADIPv6%E5%9C%B0%E5%9D%80%EF%BC%88Multicast-IPv6-Addresses%EF%BC%89"><span class="toc-text">多播IPv6地址（Multicast IPv6 Addresses）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA-IPv6-%E5%88%92%E5%88%86%E5%AD%90%E7%BD%91"><span class="toc-text">为 IPv6 划分子网</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E5%85%A8%E5%B1%80%E5%9C%B0%E5%9D%80%E5%89%8D%E7%BC%80%E8%BF%9B%E8%A1%8C%E5%AD%90%E7%BD%91%E5%88%92%E5%88%86"><span class="toc-text">对全局地址前缀进行子网划分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE%E5%AD%90%E7%BD%91%E7%BD%91%E7%BB%9C%E5%89%8D%E7%BC%80"><span class="toc-text">枚举子网网络前缀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E9%95%BF%E5%BA%A6%E5%AD%90%E7%BD%91%E5%88%92%E5%88%86"><span class="toc-text">变量长度子网划分</span></a></li></ol></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+
+<widget class="widget-wrapper timeline"><div class="widget-header dis-select"><span class="name">近期动态</span></div><div class="widget-body fs14"><div class="tag-plugin timeline ds-timeline" api="https://api.github.com/repos/holdyounger/ScopeBlog/issues?per_page=8"></div></div></widget>
+</div></aside><div class="float-panel blur">
+  <button type="button" style="display:none" class="laptop-only rightbar-toggle mobile" onclick="sidebar.rightbar()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type="button" style="display:none" class="mobile-only leftbar-toggle mobile" onclick="sidebar.leftbar()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js`,
+    marked: `https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.0" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"></script><script defer src="https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css`,
+    js: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@v9/dist/mermaid.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme:
+        "" == "auto" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "neutral",
+      logLevel: 3,
+      themeVariables: {
+        darkMode: true
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: "linear"
+      },
+      gantt: {
+        axisFormat: "%Y/%m/%d"
+      },
+      sequence: {
+        actorMargin: 50
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script><script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>

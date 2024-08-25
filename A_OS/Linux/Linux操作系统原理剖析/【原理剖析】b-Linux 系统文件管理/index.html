@@ -1,0 +1,812 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0" theme-name="Stellar" theme-version="1.29.0">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【原理剖析】b-Linux 系统文件管理 - oone</title>
+
+  
+    <meta name="description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【原理剖析】b-Linux 系统文件管理">
+<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-15T09:19:56.243Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="内核">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="Linux,内核">
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.0">
+
+  
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post"><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/A_A%E7%A0%94/%E6%94%BF%E6%B2%BB/%E9%A9%AC%E5%8E%9F/%E3%80%90%E8%80%83%E7%A0%94%E6%94%BF%E6%B2%BB%E3%80%91%E9%A9%AC%E5%8E%9F%E7%AC%94%E8%AE%B0/"><span class="title">【考研政治】马原笔记</span></a><a class="item title" href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/7.5%20%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D/"><span class="title">密钥分配</span></a><a class="item title" href="/A_OS/Windows/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/%E3%80%90win%E3%80%91%E9%80%9A%E8%BF%87PID%E8%8E%B7%E5%8F%96%E7%AB%AF%E5%8F%A3/"><span class="title">【win】通过PID获取端口</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91DDoS%E6%94%BB%E5%87%BB/"><span class="title">【攻击】DDoS攻击</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/"><span class="title">【网安】网络审计</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91Tail%20Call%20Elimination/"><span class="title">【汇编】Tail Call Elimination</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/"><span class="title">【汇编】【实验楼】汇编教程笔记</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%B1%87%E7%BC%96%E5%AF%BC%E8%AF%BB/"><span class="title">【汇编】汇编导读</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/"><span class="title">【汇编】命令整理</span></a><a class="item title" href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E4%BB%A3%E7%90%86/"><span class="title">【.Net】代理</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2023-12-26T16:00:00.000Z">2023-12-27</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-08-15T09:19:56.243Z">2024-08-15</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>【原理剖析】b-Linux 系统文件管理</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><blockquote>
+<p>概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。</p>
+<ul>
+<li>Linux 文件的物理结构</li>
+<li>Linux 文件系统</li>
+<li>Linux 文件目录管理命令</li>
+<li>Linux 操作系统下的软链接和硬链接</li>
+</ul>
+</blockquote>
+<h2 id="0x01-Linux文件的屋里结构"><a href="#0x01-Linux文件的屋里结构" class="headerlink" title="0x01 Linux文件的屋里结构"></a>0x01 Linux文件的屋里结构</h2><p>在 Linux 中根据文件的大小，形成小型、中型、大型和巨型等不同规模的文件，如下图所示：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;1.png)</p>
+<h2 id="0x02-寻址方式"><a href="#0x02-寻址方式" class="headerlink" title="0x02 寻址方式"></a>0x02 寻址方式</h2><ol>
+<li>直接寻址方式</li>
+</ol>
+<p>Linux 系统为了提高对文件的检索速度，采用直接寻址方式。在索引节点中建立 12 个地址项，用来直接存放该文件所在的盘块号，对应的盘块称为直接块。</p>
+<ol>
+<li>一次间接寻址方式</li>
+</ol>
+<p>当文件较大时，Linux 系统提供了一次间接寻址方式。在这种寻址方式中，一次间接地址项中所对应的盘块（间接块）存放的不是文件所在的物理盘块号，而是直接块的块号表。为了通过间接块读取文件数据，需要先读取间接块找到对应的直接块项，然后从直接块中读取数据。</p>
+<ol>
+<li>多次间接寻址方式</li>
+</ol>
+<p>对于大型或巨型的文件，Linux 系统又引入了二次间接寻址和三次间接寻址。二次间接项中存放的是一次间接块号表，三次间接项对应的盘块中放有二次间接块号表。</p>
+<h2 id="0x03-地址转换"><a href="#0x03-地址转换" class="headerlink" title="0x03 地址转换"></a>0x03 地址转换</h2><p>Linux 系统利用地址转换过程将逻辑文件中的字节偏移量转换成文件的物理块号。首先，将字节偏移量转换成文件逻辑块号及块内偏移量，然后将逻辑块号转换成物理块号。</p>
+<ol>
+<li>直接地址</li>
+</ol>
+<p>当文件逻辑盘块号小于 12 时，将逻辑块号转换成物理块号的方法是将文件逻辑块号转换为索引节点的地址项下标，然后从该地址项中就可以直接获得该文件的物理盘块号。</p>
+<ol>
+<li>间接地址</li>
+</ol>
+<p>当计算出的文件逻辑块号大于或等于 12 而小于 268 时，采用一次间接地址方式。将逻辑块号转换为物理块号的方法是从一次间接项中得到一级间接的盘块号，根据该间接块的内容计算一次间接块中的地址下标，即将文件的逻辑块号减去 12 ，从相应下标的地址项中得到物理块号。</p>
+<h2 id="0x04-Linux文件系统"><a href="#0x04-Linux文件系统" class="headerlink" title="0x04 Linux文件系统"></a>0x04 Linux文件系统</h2><p>和普通 Unix 系统意义，Linux 使用树状的文件系统。每个系统都有一个根目录，从这里开始可以遍历整个系统中的所有文件，Linux 文件系统中没有类似 Windows 系统中的驱动器和盘符的概念。</p>
+<h2 id="0x05-Linux文件类型"><a href="#0x05-Linux文件类型" class="headerlink" title="0x05 Linux文件类型"></a>0x05 Linux文件类型</h2><p>Linux 系统下的文件类型主要有：</p>
+<ul>
+<li>普通文件：C 语言元代码、SHELL 脚本、二进制的可执行文件等。分为纯文本和二进制。</li>
+<li>目录文件：目录，存储文件的唯一地方。</li>
+<li>链接文件：指向同一个文件或目录的的文件。</li>
+<li>特殊文件：与系统外设相关的，通常在&#x2F;dev 下面。分为块设备和字符设备。</li>
+</ul>
+<p>在 Linux 系统下可以在终端使用 <code>ls –l</code>、<code>file</code>、<code>stat</code> 几个命令来查看文件的类型等相关信息。如下图所示：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;2.png)</p>
+<h2 id="0x06-Linux-文件存储结构"><a href="#0x06-Linux-文件存储结构" class="headerlink" title="0x06 Linux 文件存储结构"></a>0x06 Linux 文件存储结构</h2><p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code>)一个文件由目录项、inode 和数据块组成。</p>
+<ul>
+<li>目录项：包括文件名和 inode 节点号。</li>
+<li><code>inode</code>：又称文件索引节点，是文件基本信息的存放地和数据块指针存放地。</li>
+<li>数据块：文件的具体内容存放地。</li>
+</ul>
+<p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code> 等)将硬盘分区时会划分出目录块、<code>inode Table</code> 区块和 <code>data block</code> 数据区域。一个文件由一个目录项、<code>inode</code> 和数据区域块组成。<code>Inode</code> 包含文件的属性(如读写属性、<code>owner</code>等，以及指向数据块的指针)，数据区域块则是文件内容。当查看某个文件时，会先从 <code>inode table</code> 中查出文件属性及数据存放点，再从数据块中读取数据。</p>
+<p>如下图所示：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;3.png)</p>
+<p>其中目录项的结构如下(每个文件的目录项存储在改文件所属目录的文件内容里)，如下图所示：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;4.png)</p>
+<p>其中文件的 inode 结构如下（inode 里所包含的文件信息可以通过 <code>stat filename</code> 查看得到）：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;5.png)</p>
+<p>以上只反映大体的结构，linux 文件系统本身在不断发展。但是以上概念基本是不变的。且如 <code>ext2</code>、<code>ext3</code>、<code>ext4</code> 文件系统也存在很大差别，如果要了解可以查看专门的文件系统介绍。</p>
+<h2 id="0x07-软连接、硬链接"><a href="#0x07-软连接、硬链接" class="headerlink" title="0x07 软连接、硬链接"></a>0x07 软连接、硬链接</h2><p>软链接和硬链接是我们常见的两种概念：</p>
+<ul>
+<li>硬链接：是给文件一个副本，同时建立两者之间的链接关系。修改其中一个，与其链接的文件同时被修改。如果删除其中 [color&#x3D;red] 任意一个 [&#x2F;color] 其余的文件将不受影响。</li>
+<li>软链接:也叫符号链接,他只是对源文件在新的位置建立一个“快捷方式（借用一下 <code>wondows</code> 常用词）”，所以，当源文件删除时，符号链接的文件将成为无源之水-&gt;仅仅剩下个文件名了，当然删除这个链接，也不会影响到源文件，但对链接文件的使用、引用都是直接调用源文件的。</li>
+</ul>
+<p>具体关系可以看下图：</p>
+<p>![图片描述](b-Linux 系统文件管理&#x2F;8.png)</p>
+<p>从图上可以看出硬链接和软链接的区别：</p>
+<ul>
+<li>硬链接原文件和新文件的 <code>inode</code> 编号一致。而软链接不一样。</li>
+<li>对原文件删除，会导致软链接不可用，而硬链接不受影响。</li>
+<li>对原文件的修改，软、硬链接文件内容也一样的修改，因为都是指向同一个文件内容的。</li>
+</ul>
+<h2 id="0x08-Linux文件目录管理"><a href="#0x08-Linux文件目录管理" class="headerlink" title="0x08 Linux文件目录管理"></a>0x08 Linux文件目录管理</h2><p>磁盘和文件空间使用命令：</p>
+<ul>
+<li><code>dd</code>：把指定的输入文件复制到指定的输出文件中，并且在复制过程中进行格式转换。</li>
+<li><code>fdisk</code>：创建和维护分区表的程序，它兼容 DOS 类型的分区表、BSD 或者 SUN 类型的磁盘列表。</li>
+<li><code>df</code>：可以显示所有文件系统对 i 节点和磁盘块的使用情况</li>
+<li><code>du</code>：该命令逐级进入指定目录的每一个子目录并显示该目录占用文件系统数据块( 1024 字节)的情况。</li>
+</ul>
+<p>文件目录与管理使用命令：</p>
+<ul>
+<li><code>cd</code>：改变当前工作目录</li>
+<li><code>pwd</code>：显示当前工作目录的全路径名</li>
+<li><code>mkdir</code>：创建目录</li>
+<li><code>rmdir</code>：删除目录</li>
+<li><code>ls</code>：用于显示目录内容，类似 <code>DOS</code> 下的 <code>dir</code> 命令，它的使用权限是所有用户</li>
+<li><code>cp</code>：带目录复制</li>
+<li><code>rm</code>：删除文件或目录</li>
+<li><code>mv</code>：目录更名或搬移</li>
+</ul>
+<p>查看文件内容命令：</p>
+<ul>
+<li><code>cat</code>: <code>cat [file]</code> 查看文件的内容。全称是 concatenate 的意思，将文件内容连续输出到屏幕上。第一行到最后一行显示。</li>
+<li><code>tac</code>: <code>tac [file]</code> 和 <code>cat</code> 刚好相反 是从最后一行到第一行的方式查看。</li>
+</ul>
+<p><code>cat</code> 有个比较不好的地方时当文件比较大时候没办法看清楚，这个时候可以用 <code>more</code> 或者 <code>Less</code> 命令。</p>
+<ul>
+<li><code>more</code>: <code>more [file]</code> 如果使用 <code>grep</code> 或者 <code>find</code> 等命令时，可以配合使用 <code>more</code> 一页一页的查看。如果看到一半想退出，则敲入’q’即可退出。</li>
+<li><code>less</code>: <code>less [file]</code> <code>less</code>比 <code>more</code> 更有弹性，可以上下翻页。</li>
+</ul>
+<p>如果只想读取文件的头几行或者文件的末尾几行，可以用 <code>head</code> 或 <code>tail</code>.</p>
+<ul>
+<li><code>head –n [file]</code>：读取文件的前 n 行。</li>
+<li><code>tail –n [file]</code>：读取文件末尾 n 行。</li>
+</ul>
+<p>以上命令都是用于查看字符文件，二进制文件出来的都是乱码，要看二进制文件的内容，可以用 <code>od</code> 命令,如查看一个 MP3 文件里面的内容: <code>od shijiemori.mp3</code></p>
+<p>文件目录与权限命令：</p>
+<ul>
+<li><code>chmod</code>：修改文件或目录的存取权限</li>
+<li><code>chown</code>：改变文件拥有者</li>
+<li><code>chgrp</code>：改变文件的所属组</li>
+<li><code>umask</code>：用来设定[权限掩码]。[权限掩码]是由 3 个八进制的数字所组成，将现有的存取权限减掉权限掩码后，即可产生建立文件时预设的权限。</li>
+</ul>
+<p>文件查找命令：</p>
+<ul>
+<li><code>which</code>: <code>which [filename]</code> 该命令用于查询通过 PATH 路径到该路径内查找可执行文件。如：Which passwd:查找可执行文件 passwd</li>
+<li><code>whereis</code>: <code>whereis [-bmsu] [keyword]</code> 该命令用于把相关字的文件和目录都列出来。(Linux 会将文件都记录在一个文件数据库里面，该命令式从数据库去查询，所以速度比较快,Linux 每天会更新该数据库)</li>
+<li><code>locate</code>: <code>locate [filename]</code> 该命令用于把相关字的文件和目录都列出来。查找数据特别快，也是通过数据库方式来查询。但是数据库一周更新一次，所以可能有些存在数据查不到。可以去修改配置文件。</li>
+<li><code>find</code>: <code>find [path] [参数] [keyword]</code> 该命令用于在指定路径下查找文件。不是通过数据来查询，所以速度会比较慢。</li>
+</ul>
+<h2 id="0x09-Linux文件系统常见目录描述"><a href="#0x09-Linux文件系统常见目录描述" class="headerlink" title="0x09 Linux文件系统常见目录描述"></a>0x09 Linux文件系统常见目录描述</h2><p>Linux 各种发行版的目录结构基本一致，各个目录简单介绍如下：</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x2F;</td>
+<td>根目录</td>
+</tr>
+<tr>
+<td>&#x2F;bin</td>
+<td>做为基础系统所需要的最基础的命令就是放在这里。比如 ls、cp、mkdir 等命令；功能和&#x2F;usr&#x2F;bin 类似，这个目录中的文件都是可执行的，普通用户都可以使用的命令。</td>
+</tr>
+<tr>
+<td>&#x2F;boot</td>
+<td>Linux 的内核及引导系统程序所需要的文件，比如 vmlinuz initrd.img 文件都位于这个目录中。在一般情况下，GRUB 或 LILO 系统引导管理器也位于这个目录；启动装载文件存放位置，如 kernels,initrd,grub。一般是一个独立的分区。</td>
+</tr>
+<tr>
+<td>&#x2F;dev</td>
+<td>一些必要的设备,声卡、磁盘等。还有如 &#x2F;dev&#x2F;null. &#x2F;dev&#x2F;console &#x2F;dev&#x2F;zero &#x2F;dev&#x2F;full 等。</td>
+</tr>
+<tr>
+<td>&#x2F;etc</td>
+<td>系统的配置文件存放地. 一些服务器的配置文件也在这里；比如用户帐号及密码配置文件；&#x2F;etc&#x2F;opt:&#x2F;opt 对应的配置文件；&#x2F;etc&#x2F;X11:Xwindows 系统配置文件；&#x2F;etc&#x2F;xml:XML 配置文件；……</td>
+</tr>
+<tr>
+<td>&#x2F;home</td>
+<td>用户工作目录，和个人配置文件，如个人环境变量等，所有的账号分配一个工作目录。一般是一个独立的分区。</td>
+</tr>
+<tr>
+<td>&#x2F;lib</td>
+<td>库文件存放地。bin 和 sbin 需要的库文件。类似 windows 的 DLL。</td>
+</tr>
+<tr>
+<td>&#x2F;media</td>
+<td>可拆卸的媒介挂载点，如 CD-ROMs、移动硬盘、U 盘，系统默认会挂载到这里来。</td>
+</tr>
+<tr>
+<td>&#x2F;mnt</td>
+<td>临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，比如有 cdrom 等目录。可以参看 &#x2F;etc&#x2F;fstab 的定义。</td>
+</tr>
+<tr>
+<td>&#x2F;opt</td>
+<td>可选的应用程序包。</td>
+</tr>
+<tr>
+<td>&#x2F;proc</td>
+<td>操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如 cpu、硬盘分区、内存信息等）存放在这里。&#x2F;proc 目录伪装的文件系统 proc 的挂载目录，proc 并不是真正的文件系统，它的定义可以参见 &#x2F;etc&#x2F;fstab 。</td>
+</tr>
+<tr>
+<td>&#x2F;root</td>
+<td>Root 用户的工作目录</td>
+</tr>
+<tr>
+<td>&#x2F;sbin</td>
+<td>和 bin 类似，是一些可执行文件，不过不是所有用户都需要的，一般是系统管理所需要使用得到的。</td>
+</tr>
+<tr>
+<td>&#x2F;tmp</td>
+<td>系统的临时文件，一般系统重启不会被保存。</td>
+</tr>
+<tr>
+<td>&#x2F;usr</td>
+<td>包含了系统用户工具和程序。&#x2F;usr&#x2F;bin：非必须的普通用户可执行命令；&#x2F;usr&#x2F;include：标准头文件； &#x2F;usr&#x2F;lib:&#x2F;usr&#x2F;bin&#x2F; 和 &#x2F;usr&#x2F;sbin&#x2F;的库文件； &#x2F;usr&#x2F;sbin:非必须的可执行文件；&#x2F;usr&#x2F;src:内核源码；&#x2F;usr&#x2F;X11R6:X Window System, Version 11, Release 6.</td>
+</tr>
+<tr>
+<td>&#x2F;srv</td>
+<td>该目录存放一些服务启动之后需要提取的数据</td>
+</tr>
+</tbody></table>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%917-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/">【原理剖析】7-进程间通信方式之共享内存</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%919-%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6%E4%B8%8E%E6%AD%BB%E9%94%81/">【原理剖析】9-处理机调度与死锁.md</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0">Stellar 1.29.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+<widget class="widget-wrapper user-card ghuser"><div class="widget-body ds-ghinfo" api="https://api.github.com/users/holdyounger"><div class="avatar"><img no-lazy type="img" id="avatar_url" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></div><p class="username" ff="title" type="text" id="name">&nbsp;</p><p class="bio" type="text" id="bio">&nbsp;</p><div class="buttons"><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=followers"><span class="title" type="text" id="followers">0</span><span class="desc">followers</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=following"><span class="title" type="text" id="following">0</span><span class="desc">following</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=repositories"><span class="title" type="text" id="public_repos">0</span><span class="desc">repos</span></a></div><a class="follow" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger"><svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Follow</a></div></widget>
+
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Linux%E6%96%87%E4%BB%B6%E7%9A%84%E5%B1%8B%E9%87%8C%E7%BB%93%E6%9E%84"><span class="toc-text">0x01 Linux文件的屋里结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="toc-text">0x02 寻址方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="toc-text">0x03 地址转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">0x04 Linux文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Linux%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">0x05 Linux文件类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-Linux-%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="toc-text">0x06 Linux 文件存储结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E8%BD%AF%E8%BF%9E%E6%8E%A5%E3%80%81%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="toc-text">0x07 软连接、硬链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-Linux%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86"><span class="toc-text">0x08 Linux文件目录管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%B8%B8%E8%A7%81%E7%9B%AE%E5%BD%95%E6%8F%8F%E8%BF%B0"><span class="toc-text">0x09 Linux文件系统常见目录描述</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+
+<widget class="widget-wrapper timeline"><div class="widget-header dis-select"><span class="name">近期动态</span></div><div class="widget-body fs14"><div class="tag-plugin timeline ds-timeline" api="https://api.github.com/repos/holdyounger/ScopeBlog/issues?per_page=8"></div></div></widget>
+</div></aside><div class="float-panel blur">
+  <button type="button" style="display:none" class="laptop-only rightbar-toggle mobile" onclick="sidebar.rightbar()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type="button" style="display:none" class="mobile-only leftbar-toggle mobile" onclick="sidebar.leftbar()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js`,
+    marked: `https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.0" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"></script><script defer src="https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css`,
+    js: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@v9/dist/mermaid.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme:
+        "" == "auto" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "neutral",
+      logLevel: 3,
+      themeVariables: {
+        darkMode: true
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: "linear"
+      },
+      gantt: {
+        axisFormat: "%Y/%m/%d"
+      },
+      sequence: {
+        actorMargin: 50
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script><script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
