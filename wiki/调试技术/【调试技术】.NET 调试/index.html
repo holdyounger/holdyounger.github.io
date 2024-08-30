@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【调试技术】.NET 调试">
+<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.NET%20%E8%B0%83%E8%AF%95/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-22T05:38:58.050Z">
+<meta property="article:modified_time" content="2024-08-30T15:12:08.925Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows&#x2F;windbg">
+<meta property="article:tag" content="dump">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【调试技术】.NET 调试 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【调试技术】.NET 调试"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-22 13:38" pubdate>
+          2024年3月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【调试技术】.NET 调试</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。</p>
+</blockquote>
+<span id="more"></span>
+
+<p>[toc]</p>
+<p>以 C# 如下所示的代码为例：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">namespace</span> <span class="hljs-title">DnrspEngine.Hooks.System</span><br>&#123;<br>    <span class="hljs-keyword">class</span> <span class="hljs-title">Win32Native</span><br> 	&#123;<br>        [<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br>        <span class="hljs-keyword">internal</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SECURITY_ATTRIBUTES</span><br>        &#123;<br>        &#125;<br>         <br>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">static</span> SafeFileHandle <span class="hljs-title">MySafeCreateFile</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> lpFileName, <span class="hljs-built_in">int</span> dwDesiredAccess, FileShare dwShareMode, SECURITY_ATTRIBUTES securityAttrs, FileMode dwCreationDisposition, <span class="hljs-built_in">int</span> dwFlagsAndAttributes, IntPtr hTemplateFile</span>)</span><br>        &#123;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">static</span> SafeFileHandle <span class="hljs-title">PxySafeCreateFile</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> lpFileName, <span class="hljs-built_in">int</span> dwDesiredAccess, FileShare dwShareMode, SECURITY_ATTRIBUTES securityAttrs, FileMode dwCreationDisposition, <span class="hljs-built_in">int</span> dwFlagsAndAttributes, IntPtr hTemplateFile</span>)</span><br>        &#123;<br>        &#125;<br> 	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>命名空间 DnrspEngine.Hooks.System 有一个类 Win32Native。</p>
+<p>调试 .Net 程序前，需要加载 SOS 扩展，SOS (Son of Strike) 是 .NET 调试的扩展，它提供了很多用于调试 .NET 应用程序的命令。首先，你需要加载 SOS 扩展：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.loadby sos clr<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="0x01-查看函数地址"><a href="#0x01-查看函数地址" class="headerlink" title="0x01 查看函数地址"></a>0x01 查看函数地址</h2><p><code>!name2ee</code> 查看类信息，如果不知道有哪些类，可以使用 <a href="#DumpHeap"><code>!DumpHeap</code> 命令</a>，如果要查看具体的对象具有的方法但是又没有源代码时，可以使用 dnSpy 这类的反编译工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs windbg"># 查看类的属性<br>!name2ee mscorelib.dll!Microsoft.Win32.Win32Native<br><br># 输出如下所示<br>0:026&gt; !name2ee mscorlib.dll!Microsoft.Win32.Win32Native<br>Module:      70931000<br>Assembly:    mscorlib.dll<br>Token:       0200000e<br>MethodTable: 709acdcc<br>EEClass:     70a67be8<br>Name:        Microsoft.Win32.Win32Native<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs windbg"># 查看具体的函数<br>!name2ee mscorlib.dll Win32Native.SafeCreateFile // 需要知道函数名<br><br># 输出如下所示<br>0:026&gt; !name2ee mscorlib.dll Win32Native.SafeCreateFile<br>Module:      70931000<br>Assembly:    mscorlib.dll<br>Token:       06000042<br>MethodDesc:  70b9db00<br>Name:        Microsoft.Win32.Win32Native.SafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br>JITTED Code Address: 70d044a0<br></code></pre></td></tr></table></figure>
+
+<p>输出分析，以我当前要使用的字段为主：</p>
+<p>Module: 模块句柄</p>
+<p>MethodTable：方法表。给出了我们对应的类的方法表的地址</p>
+<h3 id="DumpHeap"><a href="#DumpHeap" class="headerlink" title="!DumpHeap"></a>!DumpHeap</h3><p><code>!DumpHeap</code> 命令用于查看当前调试的进程的堆上的对象，略微局限</p>
+<ol>
+<li><strong>-stat</strong>：只输出堆上所有类型对象的统计摘要，包括它们的计数、大小和类型名称。这个选项非常有用，可以快速了解堆上对象的分布情况。</li>
+<li><strong>-nostrings</strong>：排除字符串的输出。当与 <code>-stat</code> 一起使用时，这个选项可以使得输出更加简洁，专注于非字符串类型的对象。</li>
+<li><strong>-gen X</strong>：仅输出属于指定代的对象。在 .NET 中，对象根据它们的生命周期被分配到不同的代（Generation），这个选项允许你查看特定代的对象。</li>
+<li><strong>-min X 和 -max X</strong>：忽略小于或大于指定字节大小的对象。这两个选项可以帮助你过滤掉不感兴趣的小对象或大对象。</li>
+<li><strong>-mt MethodTable</strong>：仅列出具有指定 MethodTable 的对象。MethodTable 是 .NET 中用于描述类型的内部结构。</li>
+<li><strong>-type type</strong>：仅列出类型名为指定子字符串的对象。这个选项允许你按类型名称过滤输出。</li>
+<li><strong>-live</strong>：仅输出仍然存活的对象，即那些还没有被垃圾回收器标记为可回收的对象。</li>
+<li><strong>-dead</strong>：仅输出已死亡的对象，这些对象将在下一次完全垃圾回收（Full GC）中被回收。</li>
+<li><strong>-cache</strong>：将对象保存在内部缓存中以供以后使用，这有助于加快后续扫描堆的速度。</li>
+<li><strong>-lx</strong>：只打印每个堆中的指定数量的项，而不是所有对象。这可以帮助你限制输出的数量。</li>
+<li><strong>-short</strong>：仅打印出对象的地址。这个选项通常与其他命令（如 <code>.foreach</code>）组合使用，用于自动化处理或进一步分析。</li>
+</ol>
+<h2 id="0x02-查看方法有哪些"><a href="#0x02-查看方法有哪些" class="headerlink" title="0x02 查看方法有哪些"></a>0x02 查看方法有哪些</h2><p><code>!dumpmt</code> 查看方法有哪些</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!dumpmt -md %MethodTable% # 查看方法有哪些<br>---------------------------------------<br>!dumpmt -md 00007ffd79054540<br><br># 输出如下所示：<br>0:024&gt; !dumpmt -md 00007ffd79054540<br>EEClass:         00007ffd792da338<br>Module:          00007ffd79051810<br>Name:            DnrspEngine.Hooks.System.Win32Native<br>mdToken:         000000000200000b<br>File:            DnrspEngine, Version=1.0.0.1031, Culture=neutral, PublicKeyToken=null<br>BaseSize:        0x18<br>ComponentSize:   0x0<br>Slots in VTable: 7<br>Number of IFaces in IFaceMap: 0<br>--------------------------------------<br>MethodDesc Table<br>           Entry       MethodDesc    JIT Name<br>00007ffdd5c957a0 00007ffdd579c7a0 PreJIT System.Object.ToString()<br>00007ffdd5d0d2b0 00007ffdd5935560 PreJIT System.Object.Equals(System.Object)<br>00007ffdd5cfaba0 00007ffdd5935588 PreJIT System.Object.GetHashCode()<br>00007ffdd5d0aac0 00007ffdd5935590 PreJIT System.Object.Finalize()<br>00007ffd79159448 00007ffd79054538   NONE DnrspEngine.Hooks.System.Win32Native..ctor()<br>00007ffd792e1440 00007ffd79054518    JIT DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br>00007ffd792e1810 00007ffd79054528    JIT DnrspEngine.Hooks.System.Win32Native.PxySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br></code></pre></td></tr></table></figure>
+
+<p>输出分析：</p>
+<p>可以看到输出内容是比较多的，并且输出了方法表示以及各个方法对应的地址。这里就可以对函数下断点了，以 <code>DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile</code> 为例 （注意只有 JIT 的函数才可以下断点）</p>
+<h2 id="0x03-添加断点"><a href="#0x03-添加断点" class="headerlink" title="0x03 添加断点"></a>0x03 添加断点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!bpmd -md 00007ffd79054518<br><br># 输出如下所示：<br>0:024&gt; !bpmd -md 00007ffd79054518<br>MethodDesc = 00007ffd79054518<br>Setting breakpoint: bp 00007FFD792E1440 [DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)]<br></code></pre></td></tr></table></figure>
+
+<p>分析：</p>
+<p>可以看到断点设置信息，已经函数参数等。等待函数执行就可以触发断点。</p>
+<h2 id="0x04-查看堆栈"><a href="#0x04-查看堆栈" class="headerlink" title="0x04 查看堆栈"></a>0x04 查看堆栈</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!clrstack <br><br># 查看所有线程的堆栈<br>!dumpstack<br>#或者<br>~*e!dumpstack<br><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="添加初始断点"><a href="#添加初始断点" class="headerlink" title="添加初始断点"></a>添加初始断点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:000&gt; sxe ld:clrjit<br><br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\sos.dll<br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\clr.dll<br>0:000&gt; .loadby sos clr  （等同于上面两条命令）<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="0x06-其他命令补充"><a href="#0x06-其他命令补充" class="headerlink" title="0x06 其他命令补充"></a>0x06 其他命令补充</h2><ol>
+<li><p>帮助命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!help<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>清屏</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!cls<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前托管线程已执行时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!runaway<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前线程池情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!threadpool<br></code></pre></td></tr></table></figure></li>
+</ol>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/" class="category-chain-item">调试技术</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/windows-windbg/" class="print-no-link">#windows/windbg</a>
+      
+        <a href="/tags/dump/" class="print-no-link">#dump</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【调试技术】.NET 调试</div>
+      <div>http://example.com/wiki/调试技术/【调试技术】.NET 调试/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E7%95%85%E6%8D%B7%E9%80%9A/%E3%80%90QVD-2023-13612%E3%80%91%E7%95%85%E6%8D%B7%E9%80%9ASQL%E6%B3%A8%E5%85%A5/" title="【QVD-2023-13612】畅捷通T+ SQL 注入漏洞">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【QVD-2023-13612】畅捷通T+ SQL 注入漏洞</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/" title="【.Net】可执行文件结构分析（翻译）">
+                        <span class="hidden-mobile">【.Net】可执行文件结构分析（翻译）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

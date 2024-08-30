@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述： windbg 分析实战，命令输出解析、自定义脚本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【调试技术】分析实战">
+<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述： windbg 分析实战，命令输出解析、自定义脚本">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/image-20231129123908261.png">
+<meta property="article:published_time" content="2024-01-23T06:08:19.514Z">
+<meta property="article:modified_time" content="2024-08-30T15:12:06.931Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="windows">
+<meta property="article:tag" content="windows&#x2F;windbg">
+<meta property="article:tag" content="windbg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/image-20231129123908261.png">
+  
+  
+  
+  <title>【调试技术】分析实战 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【调试技术】分析实战"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-23 14:08" pubdate>
+          2024年1月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          956 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【调试技术】分析实战</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述： windbg 分析实战，命令输出解析、自定义脚本</p>
+</blockquote>
+<span id="more"></span>
+
+<p>[toc]</p>
+<h2 id="【输出分析】调试进程"><a href="#【输出分析】调试进程" class="headerlink" title="【输出分析】调试进程"></a>【输出分析】调试进程</h2><blockquote>
+<p>双机调试下，调试进程要用到 <code>!process</code> 和 <code>.process</code> 命令，进入进程空间后，命令同用户态调试</p>
+</blockquote>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><code class="hljs cmd"><span class="hljs-number">1</span>: kd&gt; !process fffffa800c5c8060 <span class="hljs-number">3</span><br>PROCESS fffffa800c5c8060<br><span class="hljs-function">    SessionId: 0  <span class="hljs-title">Cid</span>: 06<span class="hljs-title">fc</span>    <span class="hljs-title">Peb</span>: 7<span class="hljs-title">fffffd4000</span>  <span class="hljs-title">ParentCid</span>: 025<span class="hljs-title">c</span></span><br><span class="hljs-function">    <span class="hljs-title">DirBase</span>: 1<span class="hljs-title">f8dfb000</span>  <span class="hljs-title">ObjectTable</span>: <span class="hljs-title">fffff8a0020a44e0</span>  <span class="hljs-title">HandleCount</span>: 281.</span><br><span class="hljs-function">    <span class="hljs-title">Image</span>: <span class="hljs-title">svchost.exe</span></span><br><span class="hljs-function">    <span class="hljs-title">VadRoot</span> <span class="hljs-title">fffffa800c5c8570</span> <span class="hljs-title">Vads</span> 128 <span class="hljs-title">Clone</span> 0 <span class="hljs-title">Private</span> 2532. <span class="hljs-title">Modified</span> 992. <span class="hljs-title">Locked</span> 0.</span><br><span class="hljs-function">    <span class="hljs-title">DeviceMap</span> <span class="hljs-title">fffff8a001b400b0</span></span><br><span class="hljs-function">    <span class="hljs-title">Token</span>                             <span class="hljs-title">fffff8a0020ac060</span></span><br><span class="hljs-function">    <span class="hljs-title">ElapsedTime</span>                       00:06:27.486</span><br><span class="hljs-function">    <span class="hljs-title">UserTime</span>                          00:00:00.046</span><br><span class="hljs-function">    <span class="hljs-title">KernelTime</span>                        00:00:00.093</span><br><span class="hljs-function">    <span class="hljs-title">QuotaPoolUsage</span>[<span class="hljs-title">PagedPool</span>]         94704</span><br><span class="hljs-function">    <span class="hljs-title">QuotaPoolUsage</span>[<span class="hljs-title">NonPagedPool</span>]      32760</span><br><span class="hljs-function">    <span class="hljs-title">Working</span> <span class="hljs-title">Set</span> <span class="hljs-title">Sizes</span> (<span class="hljs-title">now</span>,<span class="hljs-title">min</span>,<span class="hljs-title">max</span>)  (4303, 50, 345) (17212<span class="hljs-title">KB</span>, 200<span class="hljs-title">KB</span>, 1380<span class="hljs-title">KB</span>)</span><br><span class="hljs-function">    <span class="hljs-title">PeakWorkingSetSize</span>                4717</span><br><span class="hljs-function">    <span class="hljs-title">VirtualSize</span>                       57 <span class="hljs-title">Mb</span></span><br><span class="hljs-function">    <span class="hljs-title">PeakVirtualSize</span>                   57 <span class="hljs-title">Mb</span></span><br><span class="hljs-function">    <span class="hljs-title">PageFaultCount</span>                    6769</span><br><span class="hljs-function">    <span class="hljs-title">MemoryPriority</span>                    <span class="hljs-title">BACKGROUND</span></span><br><span class="hljs-function">    <span class="hljs-title">BasePriority</span>                      8</span><br><span class="hljs-function">    <span class="hljs-title">CommitCharge</span>                      2766</span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c5d0060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0700  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffffde000</span> <span class="hljs-title">Win32Thread</span>: <span class="hljs-title">fffff900c075cc10</span> <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d96a0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c482060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0704  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffffdc000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c471060</span>  <span class="hljs-title">SynchronizationTimer</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c42d200</span>  <span class="hljs-title">SynchronizationTimer</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c467680</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c48b440</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c47f1f0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c534060</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c556060</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5212f0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5213f0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c41f5d0</span>  <span class="hljs-title">SynchronizationTimer</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c4595d0</span>  <span class="hljs-title">SynchronizationTimer</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c592240</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c593b00</span>  <span class="hljs-title">ProcessObject</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c459550</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c59b400</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3f6810</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5a1120</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5b5120</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c482610</span>  <span class="hljs-title">SynchronizationTimer</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c466060</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c59b060</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3ec2d0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c466240</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c4ad370</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0708  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffffda000</span> <span class="hljs-title">Win32Thread</span>: <span class="hljs-title">fffff900c07cac10</span> <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800cbdf3e0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c4a2060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0714  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff9e000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c4a9110</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c537370</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0718  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff9c000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa80075eb840</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c54c370</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0724  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff9a000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c556140</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c54a060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.072<span class="hljs-title">c</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffffd6000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5386b0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c521370</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c521140</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c54a5b0</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c543760</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c51e060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0734  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff96000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800b2f8600</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5341d0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c556620</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c583780</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5ce280</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800cbcf660</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c41e380</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0754  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff94000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrLpcReply</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c41e748</span>  <span class="hljs-title">Semaphore</span> <span class="hljs-title">Limit</span> 0<span class="hljs-title">x1</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c41f060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.075<span class="hljs-title">c</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff90000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c5b53c0</span>  <span class="hljs-title">QueueObject</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c466300</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0760  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff8e000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3ec060</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800c461060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0764  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff8c000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c41f790</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c41f810</span>  <span class="hljs-title">NotificationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa8007c92060</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.00<span class="hljs-title">a0</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffffd8000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d9500</span>  <span class="hljs-title">QueueObject</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa800780e640</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.19<span class="hljs-title">f0</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff98000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d9500</span>  <span class="hljs-title">QueueObject</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa80078fe650</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.1010  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff92000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d9500</span>  <span class="hljs-title">QueueObject</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa8007ebdb50</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.12<span class="hljs-title">e4</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff8a000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">UserRequest</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Non</span>-<span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800d8a88c0</span>  <span class="hljs-title">SynchronizationEvent</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa8008228b50</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0<span class="hljs-title">e3c</span>  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff88000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d9500</span>  <span class="hljs-title">QueueObject</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">        <span class="hljs-title">THREAD</span> <span class="hljs-title">fffffa8007800b50</span>  <span class="hljs-title">Cid</span> 06<span class="hljs-title">fc</span>.0440  <span class="hljs-title">Teb</span>: 000007<span class="hljs-title">fffff86000</span> <span class="hljs-title">Win32Thread</span>: 0000000000000000 <span class="hljs-title">WAIT</span>: (<span class="hljs-title">WrQueue</span>) <span class="hljs-title">UserMode</span> <span class="hljs-title">Alertable</span></span><br><span class="hljs-function">            <span class="hljs-title">fffffa800c3d9500</span>  <span class="hljs-title">QueueObject</span></span><br></code></pre></td></tr></table></figure>
+
+<p>这是Windows Debugger（WinDbg）中<code>!process</code>命令的输出，提供了关于特定进程的信息。</p>
+<ul>
+<li><p>第一行显示了进程的ID，即<code>fffffa800c5c8060</code>。</p>
+</li>
+<li><p>第二行显示了进程的会话ID，即<code>0</code>。</p>
+</li>
+<li><p>第三行显示了调用进程的ID，即<code>025c</code>。</p>
+</li>
+<li><p>第四行显示了进程在内存中的基地址，即<code>1f8dfb000</code>。</p>
+</li>
+<li><p>第五行显示了进程的对象表，即<code>ffff8a0020a44e0</code>。</p>
+</li>
+<li><p>第六行显示了进程的句柄数，即<code>281</code>。<br>第七行显示了进程的图像，即<code>svchost.exe</code>。</p>
+</li>
+<li><p>第八行显示了进程的虚拟地址根，即<code>ffffa800c5c8570</code>。</p>
+</li>
+<li><p>第九行显示了进程中的VAD（虚拟地址目录）数，即<code>128</code>。</p>
+</li>
+<li><p>第十行显示了进程是否为克隆进程，即<code>0</code>。</p>
+</li>
+<li><p>第十一行显示了进程是否为私有进程，即<code>2532</code>。</p>
+</li>
+<li><p>第十二行显示了进程的修改计数，即<code>992</code>。</p>
+</li>
+<li><p>第十三行显示了进程的锁定计数，即<code>0</code>。</p>
+</li>
+<li><p>第十四行显示了进程的设备映射，即<code>ffff8a001b400b0</code>。</p>
+</li>
+<li><p>第十五行显示了进程的令牌，即<code>ffff8a0020ac060</code>。</p>
+</li>
+<li><p>第十六行显示了进程的运行时间，即<code>00:06:27.486</code>。</p>
+</li>
+<li><p>第十七行显示了进程的用户时间，即<code>00:00:00.046</code>。</p>
+</li>
+<li><p>第十八行显示了进程的内核时间，即<code>00:00:00.093</code>。</p>
+</li>
+<li><p>第十九行显示了进程的配额池使用情况，即<code>94704</code>用于页面池和<code>32760</code>用于非页面池。</p>
+</li>
+<li><p>第二十行显示了进程的工作集大小，即<code>4303</code>用于现在、<code>50</code>用于最小和<code>345</code>用于最大。</p>
+</li>
+<li><p>第二十一行显示了进程的峰值工作集大小，即<code>4717</code>。</p>
+</li>
+<li><p>第二十二行显示了进程的虚拟大小，即<code>57 MB</code>。</p>
+</li>
+<li><p>第二十三行显示了进程的峰值虚拟大小，也是<code>57 MB</code>。</p>
+</li>
+<li><p>第二十四行显示了进程的页面故障次数，即<code>6769</code>。</p>
+</li>
+<li><p>第二十五行显示了进程的内存优先级，即<code>BACKGROUND</code>。</p>
+</li>
+<li><p>第二十六行显示了进程的基本优先级，即<code>8</code>。</p>
+</li>
+<li><p>第二十七行显示了进程的提交量，即<code>2766</code>。</p>
+</li>
+<li><p>最后一部分输出显示了进程的线程。每个线程都用一行表示，包括线程ID、Cid（连接ID）、Teb（线程环境块）和等待类型和等待的对象。</p>
+</li>
+</ul>
+<ol>
+<li><p>查看某个进程</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 查看某个进程<br>!process <span class="hljs-number">0</span> <span class="hljs-number">0</span> 目标进程名 获取目标进程EPROCESS基本信息<br># 例如查看 svchost.exe<br>!process <span class="hljs-number">0</span> <span class="hljs-number">0</span> svchost.exe<br></code></pre></td></tr></table></figure></li>
+<li><p>.process &#x2F;p +EPROCESS信息 切换到目标进程空间</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.process /p 进程地址<br></code></pre></td></tr></table></figure></li>
+<li><p>.reload &#x2F;f &#x2F;user 强制重新加载用户态符号</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.reload /f /user<br></code></pre></td></tr></table></figure></li>
+<li><p>.process &#x2F;i &#x2F;p 目标进程的EPROCESS 侵入式调试</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.process /i /p 进程地址<br></code></pre></td></tr></table></figure></li>
+<li><p>bp 目标API 执行下断点命令</p>
+</li>
+</ol>
+<h2 id="【脚本】遍历大小固定的结构体"><a href="#【脚本】遍历大小固定的结构体" class="headerlink" title="【脚本】遍历大小固定的结构体"></a>【脚本】遍历大小固定的结构体</h2><p>如下所示 00007ffdf4044028 地址存放的是一个 <code>_UNICODE_STRING*</code> 的指针， <code>_UNICODE_STRING</code> 的大小为 0x10。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.<span class="hljs-keyword">for</span> (r $t0=<span class="hljs-number">0</span>;@$t0&lt;<span class="hljs-number">3</span>;r $t0=@$t0+<span class="hljs-number">1</span>)&#123; r $t1=$t0*<span class="hljs-number">0</span>x10; dS <span class="hljs-number">00007</span>ffd`f4044028+$t1 &#125; <br><br># 如果不知道结构体大小是多少，可以使用??命令计算<br>&gt; ??sizeof(nt!_UNICODE_STRING) <br>unsigned int64 <span class="hljs-number">0</span>x10<br></code></pre></td></tr></table></figure>
+
+<p>运行结果如下所示，打印了三个字符串。</p>
+<img src="./【调试技术】分析实战/image-20231129123908261.png" srcset="/img/loading.gif" lazyload alt="image-20231129123908261" style="zoom:80%;">
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/" class="category-chain-item">调试技术</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/windows/" class="print-no-link">#windows</a>
+      
+        <a href="/tags/windows-windbg/" class="print-no-link">#windows/windbg</a>
+      
+        <a href="/tags/windbg/" class="print-no-link">#windbg</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【调试技术】分析实战</div>
+      <div>http://example.com/wiki/调试技术/【调试技术】分析实战/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%90%84%E7%A7%8D%E5%9C%BA%E6%99%AF%E4%B8%8B%E8%B0%83%E8%AF%95%E6%B1%87%E6%80%BB/" title="【windbg】各种场景下的调试情况汇总">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【windbg】各种场景下的调试情况汇总</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90dump%E6%96%87%E4%BB%B6/" title="【调试技术】程序自动生成dump文件">
+                        <span class="hidden-mobile">【调试技术】程序自动生成dump文件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

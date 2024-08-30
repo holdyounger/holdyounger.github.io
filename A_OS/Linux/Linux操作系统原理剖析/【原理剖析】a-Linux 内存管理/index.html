@@ -1,24 +1,25 @@
 
-<!DOCTYPE html><html lang="zh-CN">
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
 
 <head>
-  <meta charset="utf-8">
-  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0" theme-name="Stellar" theme-version="1.29.0">
-  
-  <meta name="generator" content="Hexo 7.1.1">
-  <meta http-equiv="x-dns-prefetch-control" content="on">
-  
-  <meta name="renderer" content="webkit">
-  <meta name="force-rendering" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-  <meta name="HandheldFriendly" content="True">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
-  <meta name="theme-color" content="#f9fafb">
-  
-  <title>【原理剖析】a-Linux 内存管理 - oone</title>
+  <meta charset="UTF-8">
 
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
   
     <meta name="description" content="概述：主要讲述 Linux 操作系统中的内存管理方式及存储器管理的基本概念及原理，从中说明 Linux 操作系统对内存的管理模式以及在 Linux 操作系统中运行的进程的内存管理情况和内存读取、调用的最底层实现方式  Linux 分页管理机制 虚拟内存段的组织与管理 内存的共享和保护 内存空间管理 空闲内存管理 内核态内存的申请与释放 用户态内存的申请与释放 Linux 系统交换空间 存储管理系">
 <meta property="og:type" content="article">
@@ -32,68 +33,251 @@
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="内核">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
   
   
   
-  <meta name="keywords" content="Linux,内核">
+  <title>【原理剖析】a-Linux 内存管理 - oone</title>
 
-  <!-- feed -->
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
   
-    <link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
   
 
-  <link rel="stylesheet" href="/css/main.css?v=1.29.0">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
 
   
-    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
-  
-
-  
-
-  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
 </head>
+
+
 <body>
+  
 
-<div class="l_body s:aa content tech" id="start" layout="post"><aside class="l_left"><div class="leftbar-container">
-
-
-<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">oone</div><div class="sub normal cap">固执无罪，梦想无价</div><div class="sub hover cap" style="opacity:0"> Coding For Knowledge</div></a></div></header>
-
-<div class="nav-area">
-<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewbox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"/><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"/></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
-
-
-<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M5.879 2.879C5 3.757 5 5.172 5 8v8c0 2.828 0 4.243.879 5.121C6.757 22 8.172 22 11 22h2c2.828 0 4.243 0 5.121-.879C19 20.243 19 18.828 19 16V8c0-2.828 0-4.243-.879-5.121C17.243 2 15.828 2 13 2h-2c-2.828 0-4.243 0-5.121.879M8.25 17a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75M9 12.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zM8.25 9A.75.75 0 0 1 9 8.25h6a.75.75 0 0 1 0 1.5H9A.75.75 0 0 1 8.25 9" clip-rule="evenodd"/><path fill="currentColor" d="M5.235 4.058C5 4.941 5 6.177 5 8v8c0 1.823 0 3.058.235 3.942L5 19.924c-.975-.096-1.631-.313-2.121-.803C2 18.243 2 16.828 2 14v-4c0-2.829 0-4.243.879-5.121c.49-.49 1.146-.707 2.121-.803zm13.53 15.884C19 19.058 19 17.822 19 16V8c0-1.823 0-3.059-.235-3.942l.235.018c.975.096 1.631.313 2.121.803C22 5.757 22 7.17 22 9.999v4c0 2.83 0 4.243-.879 5.122c-.49.49-1.146.707-2.121.803z" opacity=".5"/></svg></a><a class="nav-item" title="文档" href="/wiki/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.25 4.48v3.057c0 .111 0 .27.02.406a.936.936 0 0 0 .445.683a.96.96 0 0 0 .783.072c.13-.04.272-.108.378-.159L17 8.005l1.124.534c.106.05.248.119.378.16a.958.958 0 0 0 .783-.073a.936.936 0 0 0 .444-.683c.021-.136.021-.295.021-.406V3.031c.113-.005.224-.01.332-.013C21.154 2.98 22 3.86 22 4.933v11.21c0 1.112-.906 2.01-2.015 2.08c-.97.06-2.108.179-2.985.41c-1.082.286-1.99 1.068-3.373 1.436c-.626.167-1.324.257-1.627.323V5.174c.32-.079 1.382-.203 1.674-.371c.184-.107.377-.216.576-.323m5.478 8.338a.75.75 0 0 1-.546.91l-4 1a.75.75 0 0 1-.364-1.456l4-1a.75.75 0 0 1 .91.546" clip-rule="evenodd"/><path fill="currentColor" d="M18.25 3.151c-.62.073-1.23.18-1.75.336a8.2 8.2 0 0 0-.75.27v3.182l.75-.356l.008-.005a1.13 1.13 0 0 1 .492-.13c.047 0 .094.004.138.01c.175.029.315.1.354.12l.009.005l.749.356V3.647z"/><path fill="currentColor" d="M12 5.214c-.334-.064-1.057-.161-1.718-.339C8.938 4.515 8.05 3.765 7 3.487c-.887-.234-2.041-.352-3.018-.412C2.886 3.007 2 3.9 2 4.998v11.146c0 1.11.906 2.01 2.015 2.079c.97.06 2.108.179 2.985.41c.486.129 1.216.431 1.873.726c1.005.451 2.052.797 3.127 1.034z" opacity=".5"/><path fill="currentColor" d="M4.273 12.818a.75.75 0 0 1 .91-.545l4 1a.75.75 0 1 1-.365 1.455l-4-1a.75.75 0 0 1-.545-.91m.909-4.545a.75.75 0 1 0-.364 1.455l4 1a.75.75 0 0 0 .364-1.455z"/></svg></a><a class="nav-item" title="AboutMe" href="/more/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20 12a8 8 0 1 1-16 0a8 8 0 0 1 16 0" opacity=".5"/><path fill="currentColor" d="M17.712 5.453c1.047-.193 2.006-.259 2.797-.152c.77.103 1.536.393 1.956 1.064c.446.714.312 1.542-.012 2.258c-.33.728-.918 1.499-1.672 2.268c-1.516 1.547-3.836 3.226-6.597 4.697c-2.763 1.472-5.495 2.484-7.694 2.92c-1.095.217-2.098.299-2.923.201c-.8-.095-1.6-.383-2.032-1.075c-.47-.752-.296-1.63.07-2.379c.375-.768 1.032-1.586 1.872-2.403L4 12.416c0 .219.083.71.168 1.146c.045.23.09.444.123.596c-.652.666-1.098 1.263-1.339 1.756c-.277.567-.208.825-.145.925c.072.116.305.305.937.38c.609.073 1.44.018 2.455-.183c2.02-.4 4.613-1.351 7.28-2.772c2.667-1.42 4.85-3.015 6.23-4.423c.694-.707 1.15-1.334 1.377-1.836c.233-.515.167-.75.107-.844c-.07-.112-.289-.294-.883-.374c-.542-.072-1.272-.041-2.163.112L16.87 5.656c.338-.101.658-.17.842-.203"/></svg></a></nav>
-</div>
-<div class="widgets">
-
-
-<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/A_A%E7%A0%94/%E6%94%BF%E6%B2%BB/%E9%A9%AC%E5%8E%9F/%E3%80%90%E8%80%83%E7%A0%94%E6%94%BF%E6%B2%BB%E3%80%91%E9%A9%AC%E5%8E%9F%E7%AC%94%E8%AE%B0/"><span class="title">【考研政治】马原笔记</span></a><a class="item title" href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%20%E7%AC%AC7%E7%89%88%E3%80%8B/%E7%AC%AC7%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/7.5%20%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D/"><span class="title">密钥分配</span></a><a class="item title" href="/A_OS/Windows/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/%E3%80%90win%E3%80%91%E9%80%9A%E8%BF%87PID%E8%8E%B7%E5%8F%96%E7%AB%AF%E5%8F%A3/"><span class="title">【win】通过PID获取端口</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91DDoS%E6%94%BB%E5%87%BB/"><span class="title">【攻击】DDoS攻击</span></a><a class="item title" href="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E7%BD%91%E5%AE%89/%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91%E7%BD%91%E7%BB%9C%E5%AE%A1%E8%AE%A1/"><span class="title">【网安】网络审计</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91Tail%20Call%20Elimination/"><span class="title">【汇编】Tail Call Elimination</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/"><span class="title">【汇编】【实验楼】汇编教程笔记</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%B1%87%E7%BC%96%E5%AF%BC%E8%AF%BB/"><span class="title">【汇编】汇编导读</span></a><a class="item title" href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/"><span class="title">【汇编】命令整理</span></a><a class="item title" href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E4%BB%A3%E7%90%86/"><span class="title">【.Net】代理</span></a></div></widget>
-</div>
-
-</div></aside><div class="l_main" id="main">
-
-
-
-
-
-<div class="article banner top">
-  <div class="content">
-    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
-<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/A-OS/">A_OS</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/">Linux</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/">Linux操作系统原理剖析</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2023-12-26T16:00:00.000Z">2023-12-27</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-08-15T09:19:56.258Z">2024-08-15</time></span></div></div></div>
+  <header>
     
-    <div class="bottom only-title">
-      
-      <div class="text-area">
-        <h1 class="text title"><span>【原理剖析】a-Linux 内存管理</span></h1>
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-      </div>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【原理剖析】a-Linux 内存管理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-27 00:00" pubdate>
+          2023年12月27日 凌晨
+        </time>
+      </span>
     
   </div>
-  </div><article class="md-text content"><blockquote>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【原理剖析】a-Linux 内存管理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
 <p>概述：主要讲述 Linux 操作系统中的内存管理方式及存储器管理的基本概念及原理，从中说明 Linux 操作系统对内存的管理模式以及在 Linux 操作系统中运行的进程的内存管理情况和内存读取、调用的最底层实现方式</p>
 <ul>
 <li>Linux 分页管理机制</li>
@@ -117,7 +301,7 @@
 <p>既然对于用户空间来说访问的内存地址都是连续的 4GB 线性虚拟地址，那么就需要知道 Linux 是如何划分虚拟空间。Linux 采用“按需调页”技术管理虚拟内存。标准 Linux 的虚拟页表分为三级页表，依次为页目录（<code>PGD</code> Page Directory）、中间页目录（<code>PMD</code> Page Middle Directory）和页表（<code>PTE</code> PageTable），如下图所示：</p>
 <p>![图片描述](a-Linux 内存管理&#x2F;1.png)</p>
 <p>在 Intel CPU 上，Linux 的页表结构实际上为两级。IA-32 体系结构的页管理机制中的页目录是 PGD，页表是 PTE，而 PGD 和 PMD 实际上合二为一。在用户进程中用到的与内存管理有关的数据结构是 <code>mm_struct</code> 结构，此结构中包含了用户进程中与存储有关的信息，具体结构定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">　　<span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span>       * <span class="title">mmap</span>;</span> <span class="comment">/* 指向虚拟区间（VMA）链表 */</span></span><br><span class="line">　　<span class="type">rb_root_t</span>                   mm_rb; ／*指向red_black树*/</span><br><span class="line">　　<span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span>       * <span class="title">mmap_cache</span>;</span> <span class="comment">/* 指向最近找到的虚拟区间*/</span></span><br><span class="line">　　<span class="type">pgd_t</span>                       * pgd; ／*指向进程的页目录*/　</span><br><span class="line">　　<span class="type">atomic_t</span>                    mm_users; <span class="comment">/* 用户空间中的有多少用户*/</span></span><br><span class="line">　　<span class="type">atomic_t</span>                    mm_count; <span class="comment">/* 对&quot;struct mm_struct&quot;有多少引用*/</span></span><br><span class="line">　　<span class="type">int</span>                         map_count; <span class="comment">/* 虚拟区间的个数*/</span></span><br><span class="line">　　<span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span>         <span class="title">mmap_sem</span>;</span></span><br><span class="line">　　<span class="type">spinlock_t</span>                  page_table_lock; <span class="comment">/* 保护任务页表和 mm-&gt;rss */</span></span><br><span class="line">　　<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>            <span class="title">mmlist</span>;</span> <span class="comment">/*所有活动（active）mm的链表 */</span></span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               start_code, end_code, start_data, end_data; <span class="comment">/*start_code 代码段起始地址,end_code 代码段结束地址,start_data 数据段起始地址, start_end 数据段结束地址*/</span></span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               start_brk, brk, start_stack; <span class="comment">/*start_brk 和brk记录有关堆的信息, start_brk是用户虚拟地址空间初始化时，堆的结束地址, brk 是当前堆的结束地址, start_stack 是栈的起始地址*/</span></span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               arg_start, arg_end, env_start, env_end; <span class="comment">/*arg_start 参数段的起始地址, arg_end 参数段的结束地址, env_start 环境段的起始地址, env_end 环境段的结束地址*/</span></span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               rss, total_vm, locked_vm;</span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               def_flags;</span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               cpu_vm_mask;</span><br><span class="line">　　<span class="type">unsigned</span> <span class="type">long</span>               swap_address;</span><br><span class="line">　　<span class="type">unsigned</span>                    dumpable:<span class="number">1</span>;</span><br><span class="line">　　<span class="type">mm_context_t</span>                context; <span class="comment">/* Architecture-specific MM context, 是与平台相关的一个结构，对i386 几乎用处不大*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">mm_struct</span></span><br><span class="hljs-class">&#123;</span><br>　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_area_struct</span>       * <span class="hljs-title">mmap</span>;</span> <span class="hljs-comment">/* 指向虚拟区间（VMA）链表 */</span><br>　　<span class="hljs-type">rb_root_t</span>                   mm_rb; ／*指向red_black树*/<br>　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_area_struct</span>       * <span class="hljs-title">mmap_cache</span>;</span> <span class="hljs-comment">/* 指向最近找到的虚拟区间*/</span><br>　　<span class="hljs-type">pgd_t</span>                       * pgd; ／*指向进程的页目录*/　<br>　　<span class="hljs-type">atomic_t</span>                    mm_users; <span class="hljs-comment">/* 用户空间中的有多少用户*/</span><br>　　<span class="hljs-type">atomic_t</span>                    mm_count; <span class="hljs-comment">/* 对&quot;struct mm_struct&quot;有多少引用*/</span><br>　　<span class="hljs-type">int</span>                         map_count; <span class="hljs-comment">/* 虚拟区间的个数*/</span><br>　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rw_semaphore</span>         <span class="hljs-title">mmap_sem</span>;</span><br>　　<span class="hljs-type">spinlock_t</span>                  page_table_lock; <span class="hljs-comment">/* 保护任务页表和 mm-&gt;rss */</span><br>　　<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span>            <span class="hljs-title">mmlist</span>;</span> <span class="hljs-comment">/*所有活动（active）mm的链表 */</span><br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               start_code, end_code, start_data, end_data; <span class="hljs-comment">/*start_code 代码段起始地址,end_code 代码段结束地址,start_data 数据段起始地址, start_end 数据段结束地址*/</span><br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               start_brk, brk, start_stack; <span class="hljs-comment">/*start_brk 和brk记录有关堆的信息, start_brk是用户虚拟地址空间初始化时，堆的结束地址, brk 是当前堆的结束地址, start_stack 是栈的起始地址*/</span><br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               arg_start, arg_end, env_start, env_end; <span class="hljs-comment">/*arg_start 参数段的起始地址, arg_end 参数段的结束地址, env_start 环境段的起始地址, env_end 环境段的结束地址*/</span><br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               rss, total_vm, locked_vm;<br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               def_flags;<br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               cpu_vm_mask;<br>　　<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>               swap_address;<br>　　<span class="hljs-type">unsigned</span>                    dumpable:<span class="hljs-number">1</span>;<br>　　<span class="hljs-type">mm_context_t</span>                context; <span class="hljs-comment">/* Architecture-specific MM context, 是与平台相关的一个结构，对i386 几乎用处不大*/</span><br>&#125;;<br></code></pre></td></tr></table></figure>
 
 <p>每一个进程都有一个页目录，存储该进程所使用的内存页面情况。Linux 按照“按需调页”的原则，只分配必需的内存页面，从而避免了页表过多占用存储空间的情况出现。例如，系统调用 <code>fork</code> 分配内存页面的情况如下：</p>
 <ul>
@@ -134,7 +318,7 @@
 <h2 id="0x02-虚拟内存段的组织与管理"><a href="#0x02-虚拟内存段的组织与管理" class="headerlink" title="0x02 虚拟内存段的组织与管理"></a>0x02 虚拟内存段的组织与管理</h2><p>用户程序总共拥有 4GB 的虚拟空间，但是并不是 4GB 空间都可以让用户进程读写或申请使用。用户进程实际上可以申请的虚拟空间为 0 ~ 3GB 。在用户进程创建时，已由系统调用 <code>fork()</code> 的执行函数 <code>do_fork()</code> 将内核的代码段和数据段映射到 3GB 以后的虚拟空间，供内核态进程访问。所有进程的 3GB~4GB 的虚拟控件的映像都是相同的，并以此方式共享代码段和数据段。</p>
 <p>为了能够以自然的方式管理进程虚拟控件，Linux 定义了虚拟段（<code>vma</code> virtual memory area），一个 <code>vma</code> 段是某个进程的一段连续的虚拟控件，在这段虚拟空间的所有单元拥有相同的特征。例如，属于同一个进程具有相同的访问权限，将同时被锁定、受保护等。</p>
 <p>虚拟段的数据结构如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> &#123;</span></span><br><span class="line">    <span class="comment">/*  第一个缓存行具有VMA树移动的信息*/</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> vm_start;                     <span class="comment">/* Our start address within vm_mm. */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> vm_end;                       <span class="comment">/* The first byte after our end address within vm_mm. */</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">vm_area_struct</span> *<span class="title">vm_next</span>, *<span class="title">vm_prev</span>;</span>   <span class="comment">/* 每个任务的VM区域的链接列表，按地址排序*/</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> <span class="title">vm_rb</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     此VMA左侧最大的可用内存间隙（以字节为单位）。</span></span><br><span class="line"><span class="comment">     在此VMA和vma-&gt; vm_prev之间，</span></span><br><span class="line"><span class="comment">     或者在VMA rbtree中我们下面的一个VMA与其-&gt;vm_prev之间。</span></span><br><span class="line"><span class="comment">     这有助于get_unmapped_area找到合适大小的空闲区域。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> rb_subtree_gap;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 第二个缓存行从这里开始*/</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">vm_mm</span>;</span>    <span class="comment">/* 我们所属的address space*/</span></span><br><span class="line">    <span class="type">pgprot_t</span> vm_page_prot;      <span class="comment">/* 此VMA的访问权限 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> vm_flags;     <span class="comment">/* Flags, see mm.h. */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     对于具有地址空间（address apace）和后备存储(backing store)的区域，</span></span><br><span class="line"><span class="comment">     链接到address_space-&gt;i_mmap间隔树，或者链接到address_space-&gt; i_mmap_nonlinear列表中的vma。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> <span class="title">rb</span>;</span></span><br><span class="line">            <span class="type">unsigned</span> <span class="type">long</span> rb_subtree_last;</span><br><span class="line">        &#125; linear;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">nonlinear</span>;</span></span><br><span class="line">    &#125; shared;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     在其中一个文件页面的COW之后，文件的MAP_PRIVATE vma可以在i_mmap树和anon_vma列表中。</span></span><br><span class="line"><span class="comment">     MAP_SHARED vma只能位于i_mmap树中。</span></span><br><span class="line"><span class="comment">     匿名MAP_PRIVATE，堆栈或brk vma（带有NULL文件）只能位于anon_vma列表中。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">anon_vma_chain</span>;</span>                <span class="comment">/* 由mmap_sem和* page_table_lock序列化*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">anon_vma</span> *<span class="title">anon_vma</span>;</span>                      <span class="comment">/* Serialized by page_table_lock 由page_table_lock序列化*/</span></span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">vm_operations_struct</span> *<span class="title">vm_ops</span>;</span>      <span class="comment">/* 用于处理此结构体的函数指针 */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 后备存储（backing store）的信息: */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span> vm_pgoff;                         <span class="comment">/* 以PAGE_SIZE为单位的偏移量（在vm_file中），*不是* PAGE_CACHE_SIZE*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> * <span class="title">vm_file</span>;</span>                          <span class="comment">/* 我们映射到文件（可以为NULL）*/</span></span><br><span class="line">    <span class="type">void</span> * vm_private_data;                         <span class="comment">/* 是vm_pte（共享内存） */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_area_struct</span> &#123;</span><br>    <span class="hljs-comment">/*  第一个缓存行具有VMA树移动的信息*/</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> vm_start;                     <span class="hljs-comment">/* Our start address within vm_mm. */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> vm_end;                       <span class="hljs-comment">/* The first byte after our end address within vm_mm. */</span><br><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_area_struct</span> *<span class="hljs-title">vm_next</span>, *<span class="hljs-title">vm_prev</span>;</span>   <span class="hljs-comment">/* 每个任务的VM区域的链接列表，按地址排序*/</span><br><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rb_node</span> <span class="hljs-title">vm_rb</span>;</span><br><br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     此VMA左侧最大的可用内存间隙（以字节为单位）。</span><br><span class="hljs-comment">     在此VMA和vma-&gt; vm_prev之间，</span><br><span class="hljs-comment">     或者在VMA rbtree中我们下面的一个VMA与其-&gt;vm_prev之间。</span><br><span class="hljs-comment">     这有助于get_unmapped_area找到合适大小的空闲区域。</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> rb_subtree_gap;<br><br>    <span class="hljs-comment">/* 第二个缓存行从这里开始*/</span><br><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">mm_struct</span> *<span class="hljs-title">vm_mm</span>;</span>    <span class="hljs-comment">/* 我们所属的address space*/</span><br>    <span class="hljs-type">pgprot_t</span> vm_page_prot;      <span class="hljs-comment">/* 此VMA的访问权限 */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> vm_flags;     <span class="hljs-comment">/* Flags, see mm.h. */</span><br><br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     对于具有地址空间（address apace）和后备存储(backing store)的区域，</span><br><span class="hljs-comment">     链接到address_space-&gt;i_mmap间隔树，或者链接到address_space-&gt; i_mmap_nonlinear列表中的vma。</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-class"><span class="hljs-keyword">union</span> &#123;</span><br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>            <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">rb_node</span> <span class="hljs-title">rb</span>;</span><br>            <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> rb_subtree_last;<br>        &#125; linear;<br>        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">nonlinear</span>;</span><br>    &#125; shared;<br><br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     在其中一个文件页面的COW之后，文件的MAP_PRIVATE vma可以在i_mmap树和anon_vma列表中。</span><br><span class="hljs-comment">     MAP_SHARED vma只能位于i_mmap树中。</span><br><span class="hljs-comment">     匿名MAP_PRIVATE，堆栈或brk vma（带有NULL文件）只能位于anon_vma列表中。</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">anon_vma_chain</span>;</span>                <span class="hljs-comment">/* 由mmap_sem和* page_table_lock序列化*/</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">anon_vma</span> *<span class="hljs-title">anon_vma</span>;</span>                      <span class="hljs-comment">/* Serialized by page_table_lock 由page_table_lock序列化*/</span><br><br>    <span class="hljs-type">const</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_operations_struct</span> *<span class="hljs-title">vm_ops</span>;</span>      <span class="hljs-comment">/* 用于处理此结构体的函数指针 */</span><br><br>    <span class="hljs-comment">/* 后备存储（backing store）的信息: */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> vm_pgoff;                         <span class="hljs-comment">/* 以PAGE_SIZE为单位的偏移量（在vm_file中），*不是* PAGE_CACHE_SIZE*/</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">file</span> * <span class="hljs-title">vm_file</span>;</span>                          <span class="hljs-comment">/* 我们映射到文件（可以为NULL）*/</span><br>    <span class="hljs-type">void</span> * vm_private_data;                         <span class="hljs-comment">/* 是vm_pte（共享内存） */</span><br>&#125;;<br></code></pre></td></tr></table></figure>
 
 <p>结合前面的内存管理数据结构，可以绘制如下的 Linux 内存管理框图：</p>
 <p>![图片描述](a-Linux 内存管理&#x2F;2.png)</p>
@@ -166,7 +350,7 @@
 <p>由 <code>vmalloc()</code> 分配的存储空间在进程的虚拟空间是连续的，当它对应的物理内存扔需要经过缺页中断后由缺页中断服务程序分配，所分配的物理页帧不是连续的。这些特征和访问用户内存相似，所以&#x3D;&#x3D;不妨把 <code>vmalloc()</code> 和 <code>vfree()</code> 成为用户态内存的申请和释放界面&#x3D;&#x3D;。</p>
 <p>可分配的虚拟空间在 <code>3GB+high_memory+HOLE_8MB</code> 以上的高端，由 <code>vmlist</code> 链表管理。<code>3GB</code> 是内核态赖以访问物理内存的起始地址。<code>high_memory</code> 是安装在计算机中实际可用的物理内存的最高地址。 因此 <code>3GB+high_memory</code> 也是物理内存的上界。 <code>HOLE_8MB</code> 则是长度为 8MB 的“隔离带”，起越界保护作用。这样，<code>vmlist</code>管辖的虚拟空间既不与进程用户态<code>0~3GB</code>的虚拟空间冲突，也不与进程内核态映射的 <code>3GB~3GB+high_memory</code> 的虚拟空间冲突。</p>
 <p><code>vmlist</code>链表的节点类型 <code>vm_struct</code> 具体内容如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vm_struct</span>&#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span>       flags;  <span class="comment">/* 虚拟内存块的占用标志 */</span></span><br><span class="line">    <span class="type">void</span>                *addr;  <span class="comment">/* 虚拟内存块的起始地址 */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">long</span>       size;   <span class="comment">/* 虚拟内存块的长度 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">vm_struct</span>    *<span class="title">next</span>;</span>  <span class="comment">/* 下一个虚拟内存块 */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_struct</span>&#123;</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>       flags;  <span class="hljs-comment">/* 虚拟内存块的占用标志 */</span><br>    <span class="hljs-type">void</span>                *addr;  <span class="hljs-comment">/* 虚拟内存块的起始地址 */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span>       size;   <span class="hljs-comment">/* 虚拟内存块的长度 */</span><br>    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm_struct</span>    *<span class="hljs-title">next</span>;</span>  <span class="hljs-comment">/* 下一个虚拟内存块 */</span><br>&#125;;<br></code></pre></td></tr></table></figure>
 
 <p>起始时，<code>vmlist</code> 只有一个节点，<code>vmlist_addr</code> 置为 <code>VMALLOC_START</code>（段地址 3GB，偏移量 <code>high_memory+8MB</code>）。动态管理过程中，<code>vmlist</code> 的虚拟内存块按起始地址从小到大排序，每个虚拟内存块之后都有一个 <code>4KB</code> 大小的“隔离带”，用来检查指针的越界错误，用户申请大块连续空间可用 <code>vmalloc()</code> ，如下图所示：</p>
 <p>![图片描述](a-Linux 内存管理&#x2F;7.png)</p>
@@ -185,7 +369,7 @@
 </ul>
 <h2 id="0x0a-缺页中断和页面交换"><a href="#0x0a-缺页中断和页面交换" class="headerlink" title="0x0a 缺页中断和页面交换"></a>0x0a 缺页中断和页面交换</h2><p>磁盘中的可执行文件映像 <code>Image</code> 一旦被映射到一个进程的虚拟空间就可以开始执行。由于只有该映像区的开始部分调入内存，因此，进程迟早会执行到那些尚未调入内存的代码。当一个进程访问了一个还没有有效页表项的虚拟地址时（即页表项的 P 位为 0），处理器将产生缺页中断，通知操作系统，并将出现缺页的虚拟地址（在 CR2 寄存器中）和缺页时访问虚拟内存的模式，并传递给 Linux 的缺页中断服务程序。</p>
 <p>在系统初始化时，设定了缺页中断服务程序为 <code>do_page_fault()</code> ：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Set_ttrap_gate(<span class="number">14</span>, &amp;page_fault);</span><br><span class="line">ENTRY(page_fault)</span><br><span class="line">pushI$SYMBOL_NAME(do_page_fault)</span><br><span class="line">jmp error_code  <span class="comment">/* 异常中断服务程序统一入口 */</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs C">Set_ttrap_gate(<span class="hljs-number">14</span>, &amp;page_fault);<br>ENTRY(page_fault)<br>pushI$SYMBOL_NAME(do_page_fault)<br>jmp error_code  <span class="hljs-comment">/* 异常中断服务程序统一入口 */</span><br></code></pre></td></tr></table></figure>
 
 <p>根据控制寄存器 <code>CR2</code> 传递的缺页地址，Linux 必须找到用来表示缺页的虚拟存储区的 <code>vm_area_struct</code> 结构。在搜索进程的 <code>vm_area_struct</code> 结构时，对搜索时间应有严格的限制。为了有效地处理搜索工作，Linux 将所有的 <code>vm_area_struct</code> 结构通过 AVL 平衡树连接起来。如果没用找到与缺页相对应的 <code>vm_area_struct</code> 结构，那么说明进程访问了一个非法存储器，Linux 向进程发送信号 <code>GIGSEGV</code> ，如果进程没用处理该信号的函数，该进程将被终止。</p>
 <p>Linux 接着检测缺页时访问模式是否合法。如果进程对该页的访问超越权限，例如试图对只允许读操作的页面进行写操作，系统也将向该进程发送一个信号，通知进程的存储访问出错。经过以上两步检查，可以确定肯定是正常的缺页中断。</p>
@@ -205,529 +389,386 @@
 <p>如果有可能的话，Linux 还发出读取当前页面后一个页面的读操作请求。这种预读一页的思想来自局部原理，即在进程读当前页时，它的后一页也可能被进程用到。</p>
 <p>随着越来越多的文件页面被读取、执行，<code>page cache</code> 将会变得越来越大。进程不再需要的页面应从 <code>page cache</code> 中删除。当 Linux 在使用内存过程中发现屋里页面渐变稀少时，将缩减 <code>page cache</code>。</p>
 
-<div class="article-footer fs14">
-    <section id="license">
-      <div class="header"><span>许可协议</span></div>
-      <div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
-</div>
-    </section>
-    </div>
-</article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%918-Linux%20%E7%BA%BF%E7%A8%8B%E6%A6%82%E8%BF%B0/">【原理剖析】8-Linux 线程概述</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%917-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/">【原理剖析】7-进程间通信方式之共享内存</a></div></section></div>
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-
-
-
-
-
-<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">mingming</a> 使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.0">Stellar 1.29.0</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
-</div></footer>
-<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
-<div class="widgets">
-<widget class="widget-wrapper user-card ghuser"><div class="widget-body ds-ghinfo" api="https://api.github.com/users/holdyounger"><div class="avatar"><img no-lazy type="img" id="avatar_url" src="https://avatars.githubusercontent.com/u/88082435?v=4" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></div><p class="username" ff="title" type="text" id="name">&nbsp;</p><p class="bio" type="text" id="bio">&nbsp;</p><div class="buttons"><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=followers"><span class="title" type="text" id="followers">0</span><span class="desc">followers</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=following"><span class="title" type="text" id="following">0</span><span class="desc">following</span></a><a class="btn" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger?tab=repositories"><span class="title" type="text" id="public_repos">0</span><span class="desc">repos</span></a></div><a class="follow" target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger"><svg aria-hidden="true" role="img" class="color-icon-primary" viewbox="0 0 16 16" width="1em" height="1em" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Follow</a></div></widget>
-
-
-
-
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Linux%E5%88%86%E9%A1%B5%E7%AE%A1%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-text">0x01 Linux分页管理机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%AE%B5%E7%9A%84%E7%BB%84%E7%BB%87%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="toc-text">0x02 虚拟内存段的组织与管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%86%85%E5%AD%98%E7%9A%84%E5%85%B1%E4%BA%AB%E5%92%8C%E4%BF%9D%E6%8A%A4"><span class="toc-text">0x03 内存的共享和保护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86"><span class="toc-text">0x04 内存空间管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-%E7%A9%BA%E9%97%B2%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="toc-text">0x05 空闲内存管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-%E5%86%85%E6%A0%B8%E6%80%81%E7%9A%84%E5%86%85%E5%AD%98%E7%9A%84%E7%94%B3%E8%AF%B7%E4%B8%8E%E9%87%8A%E6%94%BE"><span class="toc-text">0x06 内核态的内存的申请与释放</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-%E7%94%A8%E6%88%B7%E6%80%81%E5%86%85%E5%AD%98%E7%9A%84%E7%94%B3%E8%AF%B7%E4%B8%8E%E9%87%8A%E6%94%BE"><span class="toc-text">0x07 用户态内存的申请与释放</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4"><span class="toc-text">0x08 交换空间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-%E9%A1%B5%E4%BA%A4%E6%8D%A2%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%A1%B5%E9%9D%A2%E4%BA%A4%E6%8D%A2"><span class="toc-text">0x09 页交换进程与页面交换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0a-%E7%BC%BA%E9%A1%B5%E4%B8%AD%E6%96%AD%E5%92%8C%E9%A1%B5%E9%9D%A2%E4%BA%A4%E6%8D%A2"><span class="toc-text">0x0a 缺页中断和页面交换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0b-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BC%93%E5%86%B2%E6%9C%BA%E5%88%B6"><span class="toc-text">0x0b 存储管理系统的缓冲机制</span></a></li></ol></div><div class="widget-footer">
-
-<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
-
-<widget class="widget-wrapper timeline"><div class="widget-header dis-select"><span class="name">近期动态</span></div><div class="widget-body fs14"><div class="tag-plugin timeline ds-timeline" api="https://api.github.com/repos/holdyounger/ScopeBlog/issues?per_page=8"></div></div></widget>
-</div></aside><div class="float-panel blur">
-  <button type="button" style="display:none" class="laptop-only rightbar-toggle mobile" onclick="sidebar.rightbar()">
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
-  </button>
-  <button type="button" style="display:none" class="mobile-only leftbar-toggle mobile" onclick="sidebar.leftbar()">
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
-  </button>
-</div>
-</div><div class="scripts">
-<script type="text/javascript">
-  const ctx = {
-    date_suffix: {
-      just: `刚刚`,
-      min: `分钟前`,
-      hour: `小时前`,
-      day: `天前`,
-    },
-    root : `/`,
-  };
-
-  // required plugins (only load if needs)
-  if (`local_search`) {
-    ctx.search = {};
-    ctx.search.service = `local_search`;
-    if (ctx.search.service == 'local_search') {
-      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
-      ctx.search[ctx.search.service] = service_obj;
-    }
-  }
-  const def = {
-    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
-    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
-  };
-  const deps = {
-    jquery: `https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js`,
-    marked: `https://cdn.bootcdn.net/ajax/libs/marked/4.0.18/marked.min.js`
-  }
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Linux/" class="category-chain-item">Linux</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/" class="category-chain-item">Linux操作系统原理剖析</a>
+  
   
 
-</script>
+  
 
-<script type="text/javascript">
-  const utils = {
-    // 懒加载 css https://github.com/filamentgroup/loadCSS
-    css: (href, before, media, attributes) => {
-      var doc = window.document;
-      var ss = doc.createElement("link");
-      var ref;
-      if (before) {
-        ref = before;
-      } else {
-        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
-        ref = refs[refs.length - 1];
-      }
-      var sheets = doc.styleSheets;
-      if (attributes) {
-        for (var attributeName in attributes) {
-          if (attributes.hasOwnProperty(attributeName)) {
-            ss.setAttribute(attributeName, attributes[attributeName]);
-          }
-        }
-      }
-      ss.rel = "stylesheet";
-      ss.href = href;
-      ss.media = "only x";
-      function ready(cb) {
-        if (doc.body) {
-          return cb();
-        }
-        setTimeout(function () {
-          ready(cb);
-        });
-      }
-      ready(function () {
-        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
-      });
-      var onloadcssdefined = function (cb) {
-        var resolvedHref = ss.href;
-        var i = sheets.length;
-        while (i--) {
-          if (sheets[i].href === resolvedHref) {
-            return cb();
-          }
-        }
-        setTimeout(function () {
-          onloadcssdefined(cb);
-        });
-      };
-      function loadCB() {
-        if (ss.addEventListener) {
-          ss.removeEventListener("load", loadCB);
-        }
-        ss.media = media || "all";
-      }
-      if (ss.addEventListener) {
-        ss.addEventListener("load", loadCB);
-      }
-      ss.onloadcssdefined = onloadcssdefined;
-      onloadcssdefined(loadCB);
-      return ss;
-    },
+  
 
-    js: (src, opt) => new Promise((resolve, reject) => {
-      var script = document.createElement('script');
-      if (src.startsWith('/')){
-        src = ctx.root + src.substring(1);
-      }
-      script.src = src;
-      if (opt) {
-        for (let key of Object.keys(opt)) {
-          script[key] = opt[key]
-        }
-      } else {
-        // 默认异步，如果需要同步，第二个参数传入 {} 即可
-        script.async = true
-      }
-      script.onerror = reject
-      script.onload = script.onreadystatechange = function() {
-        const loadState = this.readyState
-        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-        script.onload = script.onreadystatechange = null
-        resolve()
-      }
-      document.head.appendChild(script)
-    }),
-
-    jq: (fn) => {
-      if (typeof jQuery === 'undefined') {
-        utils.js(deps.jquery).then(fn)
-      } else {
-        fn()
-      }
-    },
+      </span>
     
-    onLoading: (el) => {
-      if (el) {
-        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
-      }
-    },
-    onLoadSuccess: (el) => {
-      if (el) {
-        $(el).find('.loading-wrap').remove();
-      }
-    },
-    onLoadFailure: (el) => {
-      if (el) {
-        $(el).find('.loading-wrap svg').remove();
-        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
-        $(el).find('.loading-wrap').addClass('error');
-      }
-    },
-    request: (el, url, callback, onFailure) => {
-      let retryTimes = 3;
-      utils.onLoading(el);
-      function req() {
-        return new Promise((resolve, reject) => {
-          let status = 0; // 0 等待 1 完成 2 超时
-          let timer = setTimeout(() => {
-            if (status === 0) {
-              status = 2;
-              timer = null;
-              reject('请求超时');
-              if (retryTimes == 0) {
-                onFailure();
-              }
-            }
-          }, 5000);
-          fetch(url).then(function(response) {
-            if (status !== 2) {
-              clearTimeout(timer);
-              resolve(response);
-              timer = null;
-              status = 1;
-            }
-            if (response.ok) {
-              return response.json();
-            }
-            throw new Error('Network response was not ok.');
-          }).then(function(data) {
-            retryTimes = 0;
-            utils.onLoadSuccess(el);
-            callback(data);
-          }).catch(function(error) {
-            if (retryTimes > 0) {
-              retryTimes -= 1;
-              setTimeout(() => {
-                req();
-              }, 5000);
-            } else {
-              utils.onLoadFailure(el);
-              onFailure();
-            }
-          });
-        });
-      }
-      req();
-    },
-  };
-</script>
+  
+</span>
 
-<script>
-  const sidebar = {
-    leftbar: () => {
-      if (l_body) {
-        l_body.toggleAttribute('leftbar');
-        l_body.removeAttribute('rightbar');
-      }
-    },
-    rightbar: () => {
-      if (l_body) {
-        l_body.toggleAttribute('rightbar');
-        l_body.removeAttribute('leftbar');
-      }
-    },
-    dismiss: () => {
-      if (l_body) {
-        l_body.removeAttribute('leftbar');
-        l_body.removeAttribute('rightbar');
-      }
-    },
-    toggleTOC: () => {
-      document.querySelector('#data-toc').classList.toggle('collapse');
-    }
-  }
-</script>
-<script type="text/javascript">
-  (() => {
-    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
-    for (const tagSwitcher of tagSwitchers) {
-      tagSwitcher.addEventListener('click', (e) => {
-        const parent = e.target.closest('.tag-subtree.parent-tag')
-        parent.classList.toggle('expanded')
-        e.preventDefault()
-      })
-    }
-
-    // Get active tag from query string, then activate it.
-    const urlParams = new URLSearchParams(window.location.search)
-    const activeTag = urlParams.get('tag')
-    if (activeTag) {
-      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
-      if (tag) {
-        tag.querySelector('a').classList.add('active')
-        
-        while (tag) {
-          tag.classList.add('expanded')
-          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
-        }
-      }
-    }
-  })()
-</script>
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E5%86%85%E6%A0%B8/" class="print-no-link">#内核</a>
+      
+    </div>
+  
+</div>
 
 
-<!-- required -->
-<script src="/js/main.js?v=1.29.0" defer></script>
+              
+  
 
-<script type="text/javascript">
-  const applyTheme = (theme) => {
-    if (theme === 'auto') {
-      document.documentElement.removeAttribute('data-theme')
-    } else {
-      document.documentElement.setAttribute('data-theme', theme)
-    }
-
-    applyThemeToGiscus(theme)
-  }
-
-  const applyThemeToGiscus = (theme) => {
-    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
-
-    const cmt = document.getElementById('giscus')
-    if (cmt) {
-      // This works before giscus load.
-      cmt.setAttribute('data-theme', theme)
-    }
-
-    const iframe = document.querySelector('#comments > section.giscus > iframe')
-    if (iframe) {
-      // This works after giscus loaded.
-      const src = iframe.src
-      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
-      iframe.src = newSrc
-    }
-  }
-
-  const switchTheme = () => {
-    // light -> dark -> auto -> light -> ...
-    const currentTheme = document.documentElement.getAttribute('data-theme')
-    let newTheme;
-    switch (currentTheme) {
-      case 'light':
-        newTheme = 'dark'
-        break
-      case 'dark':
-        newTheme = 'auto'
-        break
-      default:
-        newTheme = 'light'
-    }
-    applyTheme(newTheme)
-    window.localStorage.setItem('Stellar.theme', newTheme)
-
-    const messages = {
-      light: `切换到浅色模式`,
-      dark: `切换到深色模式`,
-      auto: `切换到跟随系统配色`,
-    }
-    hud?.toast?.(messages[newTheme])
-  }
-
-  (() => {
-    // Apply user's preferred theme, if any.
-    const theme = window.localStorage.getItem('Stellar.theme')
-    if (theme !== null) {
-      applyTheme(theme)
-    }
-  })()
-</script>
-
-
-<!-- optional -->
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【原理剖析】a-Linux 内存管理</div>
+      <div>http://example.com/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】a-Linux 内存管理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
 
 
 
-<script defer>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
-    for (let id of Object.keys(ctx.services)) {
-      const js = ctx.services[id].js;
-      if (id == 'siteinfo') {
-        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
-        if (ctx.cardlinks?.length > 0) {
-          utils.js(js, { defer: true }).then(function () {
-            setCardLink(ctx.cardlinks);
-          });
-        }
-      } else {
-        const els = document.getElementsByClassName(`ds-${id}`);
-        if (els?.length > 0) {
-          utils.jq(() => {
-            if (id == 'timeline' || 'memos' || 'marked') {
-              utils.js(deps.marked).then(function () {
-                utils.js(js, { defer: true });
-              });
-            } else {
-              utils.js(js, { defer: true });
-            }
-          });
-        }
-      }
-    }
-  });
-</script>
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%919-%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6%E4%B8%8E%E6%AD%BB%E9%94%81/" title="【原理剖析】9-处理机调度与死锁.md">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【原理剖析】9-处理机调度与死锁.md</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" title="【原理剖析】b-Linux 系统文件管理">
+                        <span class="hidden-mobile">【原理剖析】b-Linux 系统文件管理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-<script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    ctx.search = {
-      path: `/search.json`,
-    }
-    utils.js('/js/search/local-search.js', { defer: true });
-  });
-</script><script>
-  window.FPConfig = {
-    delay: 0,
-    ignoreKeywords: [],
-    maxRPS: 5,
-    hoverDelay: 25
-  };
-</script>
-<script defer src="https://cdn.bootcdn.net/ajax/libs/flying-pages/2.1.2/flying-pages.min.js"></script><script defer src="https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.4/lazyload.min.js"></script>
-<script>
-  // https://www.npmjs.com/package/vanilla-lazyload
-  // Set the options globally
-  // to make LazyLoad self-initialize
-  window.lazyLoadOptions = {
-    elements_selector: ".lazy",
-  };
-  // Listen to the initialization event
-  // and get the instance of LazyLoad
-  window.addEventListener(
-    "LazyLoad::Initialized",
-    function (event) {
-      window.lazyLoadInstance = event.detail.instance;
-    },
-    false
-  );
-  document.addEventListener('DOMContentLoaded', function () {
-    window.lazyLoadInstance?.update();
-  });
-</script><script>
-  ctx.fancybox = {
-    selector: `.timenode p>img`,
-    css: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.min.css`,
-    js: `https://cdn.bootcdn.net/ajax/libs/fancyapps-ui/5.0.22/fancybox/fancybox.umd.min.js`
-  };
-  var selector = '[data-fancybox]:not(.error)';
-  if (ctx.fancybox.selector) {
-    selector += `, ${ctx.fancybox.selector}`
-  }
-  var needFancybox = document.querySelectorAll(selector).length !== 0;
-  if (!needFancybox) {
-    const els = document.getElementsByClassName('ds-memos');
-    if (els != undefined && els.length > 0) {
-      needFancybox = true;
-    }
-  }
-  if (needFancybox) {
-    utils.css(ctx.fancybox.css);
-    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
-      Fancybox.bind(selector, {
-        hideScrollbar: false,
-        Thumbs: {
-          autoStart: false,
-        },
-        caption: (fancybox, slide) => {
-          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
-        }
-      });
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
     })
-  }
-</script>
-<script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    const swiper_api = document.getElementById('swiper-api');
-    if (swiper_api != undefined) {
-      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
-      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
-        const effect = swiper_api.getAttribute('effect') || '';
-        var swiper = new Swiper('.swiper#swiper-api', {
-          slidesPerView: 'auto',
-          spaceBetween: 8,
-          centeredSlides: true,
-          effect: effect,
-          rewind: true,
-          pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-          },
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-        });
-      })
-    }
-  });
-</script>
-<link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
-<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
-<script defer src="https://gcore.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
-<script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@v9/dist/mermaid.min.js"></script>
-<script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    var mermaid_config = {
-      startOnLoad: true,
-      theme:
-        "" == "auto" &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "neutral",
-      logLevel: 3,
-      themeVariables: {
-        darkMode: true
-      },
-      flowchart: {
-        useMaxWidth: false,
-        htmlLabels: true,
-        curve: "linear"
-      },
-      gantt: {
-        axisFormat: "%Y/%m/%d"
-      },
-      sequence: {
-        actorMargin: 50
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
       }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
-    mermaid.initialize(mermaid_config);
-  });
-</script><script>
-  document.addEventListener('DOMContentLoaded', function () {
-    window.codeElements = document.querySelectorAll('.code');
-    if (window.codeElements.length > 0) {
-      ctx.copycode = {
-        default_text: `Copy`,
-        success_text: `Copied`,
-        toast: `复制成功`,
-      };
-      utils.js('/js/plugins/copycode.js');
-    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
   });
 </script>
 
 
-<!-- inject -->
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
 
-</div></body></html>
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：用户态查看进程 PEB 和 TEB(通过windbg附加或启动调试的exe)  0x01 用户态查看 TEB 和 PEB在双机调试的时候，可以直接使用 !PEB PID 和 !TEB TID  获取进程和线程的相关信息，在用户态这两个命令就会失效。原因就是用户态不支持&#x3D;&#x3D;大写&#x3D;&#x3D;的 !TEB 和 !PEB 命令。 在用户态调试时获取 teb 和 pe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【调试技术】用户态查看PEB和TEB">
+<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E7%94%A8%E6%88%B7%E6%80%81%E6%9F%A5%E7%9C%8BPEB%E5%92%8CTEB/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：用户态查看进程 PEB 和 TEB(通过windbg附加或启动调试的exe)  0x01 用户态查看 TEB 和 PEB在双机调试的时候，可以直接使用 !PEB PID 和 !TEB TID  获取进程和线程的相关信息，在用户态这两个命令就会失效。原因就是用户态不支持&#x3D;&#x3D;大写&#x3D;&#x3D;的 !TEB 和 !PEB 命令。 在用户态调试时获取 teb 和 pe">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-23T06:08:19.536Z">
+<meta property="article:modified_time" content="2024-08-30T15:12:06.932Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Debug">
+<meta property="article:tag" content="PEB">
+<meta property="article:tag" content="TEB">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【调试技术】用户态查看PEB和TEB - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【调试技术】用户态查看PEB和TEB"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-23 14:08" pubdate>
+          2024年1月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          12 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【调试技术】用户态查看PEB和TEB</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：用户态查看进程 PEB 和 TEB(通过windbg附加或启动调试的exe)</p>
+</blockquote>
+<h2 id="0x01-用户态查看-TEB-和-PEB"><a href="#0x01-用户态查看-TEB-和-PEB" class="headerlink" title="0x01 用户态查看 TEB 和 PEB"></a>0x01 用户态查看 TEB 和 PEB</h2><p>在双机调试的时候，可以直接使用 <code>!PEB PID</code> 和 <code>!TEB TID</code>  获取进程和线程的相关信息，在用户态这两个命令就会失效。原因就是用户态不支持&#x3D;&#x3D;大写&#x3D;&#x3D;的 <code>!TEB</code> 和 <code>!PEB</code> 命令。</p>
+<p>在用户态调试时获取 <code>teb</code> 和 <code>peb</code> 的命令是小写的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs windbg">#获取 peb<br>!peb<br><br># 获取 teb<br>!teb<br></code></pre></td></tr></table></figure>
+
+<p>除此之外，这里提供另外一种思路。我们都知道 &#x3D;&#x3D;TEB&#x3D;&#x3D; 结构体中保存了&#x3D;&#x3D;PEB&#x3D;&#x3D;的地址，因此可以通过&#x3D;&#x3D;TEB&#x3D;&#x3D;获取PEB的相关信息。</p>
+<p>这里以 <strong>notepad.exe</strong> 为例演示。</p>
+<h2 id="0x02-演示"><a href="#0x02-演示" class="headerlink" title="0x02 演示"></a>0x02 演示</h2><h3 id="准备步骤"><a href="#准备步骤" class="headerlink" title="准备步骤"></a>准备步骤</h3><ol>
+<li>运行 &#x3D;&#x3D;notepad.exe&#x3D;&#x3D;， <kbd>Win+R</kbd> 输入 notepad 回车即可。</li>
+<li>运行 windbg，并附加到进程 notepad.exe 上。</li>
+</ol>
+<h3 id="开始调试"><a href="#开始调试" class="headerlink" title="开始调试"></a>开始调试</h3><h3 id="查看当前线程"><a href="#查看当前线程" class="headerlink" title="查看当前线程"></a>查看当前线程</h3><p>使用 <code>~.</code> 查看当前线程(这里其实查看哪个线程都可以，因为当前进程的 <code>PEB</code> 只有一个，所有的 <code>TEB</code> 都指向了同一个 <code>PEB</code>)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:007&gt; ~.<br>.  7  Id: b8f4.d5a0 Suspend: 1 Teb: 000000a3`b61d1000 Unfrozen<br>      Start: ntdll!DbgUiRemoteBreakin (00007ff9`ab83c9c0)<br>      Priority: 0  Priority class: 32  Affinity: ff<br></code></pre></td></tr></table></figure>
+
+<p>可以看到 <code>Teb</code> 地址为 $000000a3&#96;b61d1000$</p>
+<h3 id="查看TEB"><a href="#查看TEB" class="headerlink" title="查看TEB"></a>查看TEB</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">dt ntdll!_Teb 000000a3`b61d1000<br></code></pre></td></tr></table></figure>
+
+<p>输出如下所示，可以看到 <code>0x060</code> 偏移处为 <code>_PEB</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:007&gt; dt ntdll!_Teb 000000a3`b61d1000<br>   +0x000 NtTib            : _NT_TIB<br>   +0x038 EnvironmentPointer : (null) <br>   +0x040 ClientId         : _CLIENT_ID<br>   +0x050 ActiveRpcHandle  : (null) <br>   +0x058 ThreadLocalStoragePointer : (null) <br>   +0x060 ProcessEnvironmentBlock : 0x000000a3`b61b8000 _PEB<br>   +0x068 LastErrorValue   : 0<br>   +0x06c CountOfOwnedCriticalSections : 0<br>   +0x070 CsrClientThread  : (null) <br>   +0x078 Win32ThreadInfo  : (null) <br>   +0x080 User32Reserved   : [26] 0<br>   +0x0e8 UserReserved     : [5] 0<br>   +0x100 WOW32Reserved    : (null) <br>   +0x108 CurrentLocale    : 0x804<br>   +0x10c FpSoftwareStatusRegister : 0<br>   +0x110 ReservedForDebuggerInstrumentation : [16] (null) <br>   +0x190 SystemReserved1  : [30] (null) <br>   +0x280 PlaceholderCompatibilityMode : 0 &#x27;&#x27;<br>   +0x281 PlaceholderHydrationAlwaysExplicit : 0 &#x27;&#x27;<br>   +0x282 PlaceholderReserved : [10]  &quot;&quot;<br>   +0x28c ProxiedProcessId : 0<br>   +0x290 _ActivationStack : _ACTIVATION_CONTEXT_STACK<br>   +0x2b8 WorkingOnBehalfTicket : [8]  &quot;&quot;<br>   +0x2c0 ExceptionCode    : 0n0<br>   +0x2c4 Padding0         : [4]  &quot;&quot;<br>   +0x2c8 ActivationContextStackPointer : 0x000000a3`b61d1290 _ACTIVATION_CONTEXT_STACK<br>   +0x2d0 InstrumentationCallbackSp : 0<br>   +0x2d8 InstrumentationCallbackPreviousPc : 0<br>   +0x2e0 InstrumentationCallbackPreviousSp : 0<br>   +0x2e8 TxFsContext      : 0xfffe<br>   +0x2ec InstrumentationCallbackDisabled : 0 &#x27;&#x27;<br>   +0x2ed UnalignedLoadStoreExceptions : 0 &#x27;&#x27;<br>   +0x2ee Padding1         : [2]  &quot;&quot;<br>   +0x2f0 GdiTebBatch      : _GDI_TEB_BATCH<br>   +0x7d8 RealClientId     : _CLIENT_ID<br>   +0x7e8 GdiCachedProcessHandle : (null) <br>   +0x7f0 GdiClientPID     : 0<br>   +0x7f4 GdiClientTID     : 0<br>   +0x7f8 GdiThreadLocalInfo : (null) <br>   +0x800 Win32ClientInfo  : [62] 0<br>   +0x9f0 glDispatchTable  : [233] (null) <br>   +0x1138 glReserved1      : [29] 0<br>   +0x1220 glReserved2      : (null) <br>   +0x1228 glSectionInfo    : (null) <br>   +0x1230 glSection        : (null) <br>   +0x1238 glTable          : (null) <br>   +0x1240 glCurrentRC      : (null) <br>   +0x1248 glContext        : (null) <br>   +0x1250 LastStatusValue  : 0<br>   +0x1254 Padding2         : [4]  &quot;&quot;<br>   +0x1258 StaticUnicodeString : _UNICODE_STRING &quot;&quot;<br>   +0x1268 StaticUnicodeBuffer : [261]  &quot;&quot;<br>   +0x1472 Padding3         : [6]  &quot;&quot;<br>   +0x1478 DeallocationStack : 0x000000a3`b6400000 Void<br>   +0x1480 TlsSlots         : [64] (null) <br>   +0x1680 TlsLinks         : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]<br>   +0x1690 Vdm              : (null) <br>   +0x1698 ReservedForNtRpc : (null) <br>   +0x16a0 DbgSsReserved    : [2] (null) <br>   +0x16b0 HardErrorMode    : 0<br>   +0x16b4 Padding4         : [4]  &quot;&quot;<br>   +0x16b8 Instrumentation  : [11] (null) <br>   +0x1710 ActivityId       : _GUID &#123;00000000-0000-0000-0000-000000000000&#125;<br>   +0x1720 SubProcessTag    : (null) <br>   +0x1728 PerflibData      : (null) <br>   +0x1730 EtwTraceData     : (null) <br>   +0x1738 WinSockData      : (null) <br>   +0x1740 GdiBatchCount    : 0<br>   +0x1744 CurrentIdealProcessor : _PROCESSOR_NUMBER<br>   +0x1744 IdealProcessorValue : 0x3030000<br>   +0x1744 ReservedPad0     : 0 &#x27;&#x27;<br>   +0x1745 ReservedPad1     : 0 &#x27;&#x27;<br>   +0x1746 ReservedPad2     : 0x3 &#x27;&#x27;<br>   +0x1747 IdealProcessor   : 0x3 &#x27;&#x27;<br>   +0x1748 GuaranteedStackBytes : 0<br>   +0x174c Padding5         : [4]  &quot;&quot;<br>   +0x1750 ReservedForPerf  : (null) <br>   +0x1758 ReservedForOle   : (null) <br>   +0x1760 WaitingOnLoaderLock : 0<br>   +0x1764 Padding6         : [4]  &quot;&quot;<br>   +0x1768 SavedPriorityState : (null) <br>   +0x1770 ReservedForCodeCoverage : 0<br>   +0x1778 ThreadPoolData   : (null) <br>   +0x1780 TlsExpansionSlots : (null) <br>   +0x1788 DeallocationBStore : (null) <br>   +0x1790 BStoreLimit      : (null) <br>   +0x1798 MuiGeneration    : 0<br>   +0x179c IsImpersonating  : 0<br>   +0x17a0 NlsCache         : (null) <br>   +0x17a8 pShimData        : (null) <br>   +0x17b0 HeapData         : 0<br>   +0x17b4 Padding7         : [4]  &quot;&quot;<br>   +0x17b8 CurrentTransactionHandle : (null) <br>   +0x17c0 ActiveFrame      : (null) <br>   +0x17c8 FlsData          : (null) <br>   +0x17d0 PreferredLanguages : (null) <br>   +0x17d8 UserPrefLanguages : (null) <br>   +0x17e0 MergedPrefLanguages : (null) <br>   +0x17e8 MuiImpersonation : 0<br>   +0x17ec CrossTebFlags    : 0<br>   +0x17ec SpareCrossTebBits : 0y0000000000000000 (0)<br>   +0x17ee SameTebFlags     : 8<br>   +0x17ee SafeThunkCall    : 0y0<br>   +0x17ee InDebugPrint     : 0y0<br>   +0x17ee HasFiberData     : 0y0<br>   +0x17ee SkipThreadAttach : 0y1<br>   +0x17ee WerInShipAssertCode : 0y0<br>   +0x17ee RanProcessInit   : 0y0<br>   +0x17ee ClonedThread     : 0y0<br>   +0x17ee SuppressDebugMsg : 0y0<br>   +0x17ee DisableUserStackWalk : 0y0<br>   +0x17ee RtlExceptionAttached : 0y0<br>   +0x17ee InitialThread    : 0y0<br>   +0x17ee SessionAware     : 0y0<br>   +0x17ee LoadOwner        : 0y0<br>   +0x17ee LoaderWorker     : 0y0<br>   +0x17ee SkipLoaderInit   : 0y0<br>   +0x17ee SpareSameTebBits : 0y0<br>   +0x17f0 TxnScopeEnterCallback : (null) <br>   +0x17f8 TxnScopeExitCallback : (null) <br>   +0x1800 TxnScopeContext  : (null) <br>   +0x1808 LockCount        : 0<br>   +0x180c WowTebOffset     : 0n0<br>   +0x1810 ResourceRetValue : (null) <br>   +0x1818 ReservedForWdf   : (null) <br>   +0x1820 ReservedForCrt   : 0<br>   +0x1828 EffectiveContainerId : _GUID &#123;00000000-0000-0000-0000-000000000000&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="查看PEB"><a href="#查看PEB" class="headerlink" title="查看PEB"></a>查看PEB</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs windbg">dt ntdll!_PEB 0xa3b61b8000<br><br># 或者使用 dx 命令<br>dx -r1 ((ntdll!_PEB *)0xa3b61b8000)<br></code></pre></td></tr></table></figure>
+
+<p>输出如下所示，到此就看到了 &#x3D;&#x3D;notepad&#x3D;&#x3D; 的 PEB 了。后文补充了 PEB 结构体中 ProcessParameters 变量的分析和查看。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:007&gt; dt ntdll!_PEB 0xa3b61b8000<br>   +0x000 InheritedAddressSpace : 0 &#x27;&#x27;<br>   +0x001 ReadImageFileExecOptions : 0 &#x27;&#x27;<br>   +0x002 BeingDebugged    : 0x1 &#x27;&#x27;<br>   +0x003 BitField         : 0x84 &#x27;&#x27;<br>   +0x003 ImageUsesLargePages : 0y0<br>   +0x003 IsProtectedProcess : 0y0<br>   +0x003 IsImageDynamicallyRelocated : 0y1<br>   +0x003 SkipPatchingUser32Forwarders : 0y0<br>   +0x003 IsPackagedProcess : 0y0<br>   +0x003 IsAppContainer   : 0y0<br>   +0x003 IsProtectedProcessLight : 0y0<br>   +0x003 IsLongPathAwareProcess : 0y1<br>   +0x004 Padding0         : [4]  &quot;&quot;<br>   +0x008 Mutant           : 0xffffffff`ffffffff Void<br>   +0x010 ImageBaseAddress : 0x00007ff7`7ef80000 Void<br>   +0x018 Ldr              : 0x00007ff9`ab8db4c0 _PEB_LDR_DATA<br>   +0x020 ProcessParameters : 0x000001a6`50d52540 _RTL_USER_PROCESS_PARAMETERS<br>   +0x028 SubSystemData    : 0x00007ff9`9f7af1d0 Void<br>   +0x030 ProcessHeap      : 0x000001a6`50d50000 Void<br>   +0x038 FastPebLock      : 0x00007ff9`ab8db0e0 _RTL_CRITICAL_SECTION<br>   +0x040 AtlThunkSListPtr : (null) <br>   +0x048 IFEOKey          : (null) <br>   +0x050 CrossProcessFlags : 1<br>   +0x050 ProcessInJob     : 0y1<br>   +0x050 ProcessInitializing : 0y0<br>   +0x050 ProcessUsingVEH  : 0y0<br>   +0x050 ProcessUsingVCH  : 0y0<br>   +0x050 ProcessUsingFTH  : 0y0<br>   +0x050 ProcessPreviouslyThrottled : 0y0<br>   +0x050 ProcessCurrentlyThrottled : 0y0<br>   +0x050 ProcessImagesHotPatched : 0y0<br>   +0x050 ReservedBits0    : 0y000000000000000000000000 (0)<br>   +0x054 Padding1         : [4]  &quot;&quot;<br>   +0x058 KernelCallbackTable : 0x00007ff9`a9a80070 Void<br>   +0x058 UserSharedInfoPtr : 0x00007ff9`a9a80070 Void<br>   +0x060 SystemReserved   : 0<br>   +0x064 AtlThunkSListPtr32 : 0<br>   +0x068 ApiSetMap        : 0x000001a6`50c80000 Void<br>   +0x070 TlsExpansionCounter : 0<br>   +0x074 Padding2         : [4]  &quot;&quot;<br>   +0x078 TlsBitmap        : 0x00007ff9`ab8db440 Void<br>   +0x080 TlsBitmapBits    : [2] 0xffffffff<br>   +0x088 ReadOnlySharedMemoryBase : 0x00007df4`3dce0000 Void<br>   +0x090 SharedData       : (null) <br>   +0x098 ReadOnlyStaticServerData : 0x00007df4`3dce0750  -&gt; (null) <br>   +0x0a0 AnsiCodePageData : 0x00007df5`3fe30000 Void<br>   +0x0a8 OemCodePageData  : 0x00007df5`3fe30000 Void<br>   +0x0b0 UnicodeCaseTableData : 0x00007df5`3fe60028 Void<br>   +0x0b8 NumberOfProcessors : 8<br>   +0x0bc NtGlobalFlag     : 0<br>   +0x0c0 CriticalSectionTimeout : _LARGE_INTEGER 0xffffe86d`079b8000<br>   +0x0c8 HeapSegmentReserve : 0x100000<br>   +0x0d0 HeapSegmentCommit : 0x2000<br>   +0x0d8 HeapDeCommitTotalFreeThreshold : 0x10000<br>   +0x0e0 HeapDeCommitFreeBlockThreshold : 0x1000<br>   +0x0e8 NumberOfHeaps    : 6<br>   +0x0ec MaximumNumberOfHeaps : 0x10<br>   +0x0f0 ProcessHeaps     : 0x00007ff9`ab8d9d40  -&gt; 0x000001a6`50d50000 Void<br>   +0x0f8 GdiSharedHandleTable : 0x000001a6`51120000 Void<br>   +0x100 ProcessStarterHelper : (null) <br>   +0x108 GdiDCAttributeList : 0x14<br>   +0x10c Padding3         : [4]  &quot;&quot;<br>   +0x110 LoaderLock       : 0x00007ff9`ab8d55c8 _RTL_CRITICAL_SECTION<br>   +0x118 OSMajorVersion   : 0xa<br>   +0x11c OSMinorVersion   : 0<br>   +0x120 OSBuildNumber    : 0x4a65<br>   +0x122 OSCSDVersion     : 0<br>   +0x124 OSPlatformId     : 2<br>   +0x128 ImageSubsystem   : 2<br>   +0x12c ImageSubsystemMajorVersion : 0xa<br>   +0x130 ImageSubsystemMinorVersion : 0<br>   +0x134 Padding4         : [4]  &quot;&quot;<br>   +0x138 ActiveProcessAffinityMask : 0xff<br>   +0x140 GdiHandleBuffer  : [60] 0<br>   +0x230 PostProcessInitRoutine : (null) <br>   +0x238 TlsExpansionBitmap : 0x00007ff9`ab8db420 Void<br>   +0x240 TlsExpansionBitmapBits : [32] 1<br>   +0x2c0 SessionId        : 1<br>   +0x2c4 Padding5         : [4]  &quot;&quot;<br>   +0x2c8 AppCompatFlags   : _ULARGE_INTEGER 0x0<br>   +0x2d0 AppCompatFlagsUser : _ULARGE_INTEGER 0x0<br>   +0x2d8 pShimData        : 0x000001a6`50cc0000 Void<br>   +0x2e0 AppCompatInfo    : (null) <br>   +0x2e8 CSDVersion       : _UNICODE_STRING &quot;&quot;<br>   +0x2f8 ActivationContextData : 0x000001a6`50cb0000 _ACTIVATION_CONTEXT_DATA<br>   +0x300 ProcessAssemblyStorageMap : 0x000001a6`50d5b5c0 _ASSEMBLY_STORAGE_MAP<br>   +0x308 SystemDefaultActivationContextData : 0x000001a6`50ca0000 _ACTIVATION_CONTEXT_DATA<br>   +0x310 SystemAssemblyStorageMap : (null) <br>   +0x318 MinimumStackCommit : 0<br>   +0x320 SparePointers    : [4] (null) <br>   +0x340 SpareUlongs      : [5] 0<br>   +0x358 WerRegistrationData : 0x000001a6`52e00000 Void<br>   +0x360 WerShipAssertPtr : (null) <br>   +0x368 pUnused          : (null) <br>   +0x370 pImageHeaderHash : (null) <br>   +0x378 TracingFlags     : 0<br>   +0x378 HeapTracingEnabled : 0y0<br>   +0x378 CritSecTracingEnabled : 0y0<br>   +0x378 LibLoaderTracingEnabled : 0y0<br>   +0x378 SpareTracingBits : 0y00000000000000000000000000000 (0)<br>   +0x37c Padding6         : [4]  &quot;&quot;<br>   +0x380 CsrServerReadOnlySharedMemoryBase : 0x00007df4`66cb0000<br>   +0x388 TppWorkerpListLock : 0<br>   +0x390 TppWorkerpList   : _LIST_ENTRY [ 0x000000a3`b5f0f860 - 0x000000a3`b63ffb70 ]<br>   +0x3a0 WaitOnAddressHashTable : [128] (null) <br>   +0x7a0 TelemetryCoverageHeader : (null) <br>   +0x7a8 CloudFileFlags   : 0xe0<br>   +0x7ac CloudFileDiagFlags : 0<br>   +0x7b0 PlaceholderCompatibilityMode : 2 &#x27;&#x27;<br>   +0x7b1 PlaceholderCompatibilityModeReserved : [7]  &quot;&quot;<br>   +0x7b8 LeapSecondData   : 0x00007df5`3fe20000 _LEAP_SECOND_DATA<br>   +0x7c0 LeapSecondFlags  : 0<br>   +0x7c0 SixtySecondEnabled : 0y0<br>   +0x7c0 Reserved         : 0y0000000000000000000000000000000 (0)<br>   +0x7c4 NtGlobalFlag2    : 0<br></code></pre></td></tr></table></figure>
+
+<h3 id="查看-ProcessParameters"><a href="#查看-ProcessParameters" class="headerlink" title="查看 ProcessParameters"></a>查看 ProcessParameters</h3><p>为了进一步了解和查看，这里再查看 <code>ProcessParameters</code> 的变量。</p>
+<p>查看 PEB 的输出可以看到 ProcessParameters 的结构体名为 <code>_RTL_USER_PROCESS_PARAMETERS</code>，该结构体保存了进程很多基础信息，如环境变量、命令行等等。查看当前 <code>ProcessParameters</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs windbg">dx -r1 ((ntdll!_RTL_USER_PROCESS_PARAMETERS *)0x1a650d52540)<br><br># 或者<br><br>dt _RTL_USER_PROCESS_PARAMETERS 0x1a650d52540<br></code></pre></td></tr></table></figure>
+
+<p>输出如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:007&gt; dt _RTL_USER_PROCESS_PARAMETERS 0x1a650d52540<br>ntdll!_RTL_USER_PROCESS_PARAMETERS<br>   +0x000 MaximumLength    : 0x78a<br>   +0x004 Length           : 0x78a<br>   +0x008 Flags            : 0x6001<br>   +0x00c DebugFlags       : 0<br>   +0x010 ConsoleHandle    : (null) <br>   +0x018 ConsoleFlags     : 0<br>   +0x020 StandardInput    : (null) <br>   +0x028 StandardOutput   : (null) <br>   +0x030 StandardError    : (null) <br>   +0x038 CurrentDirectory : _CURDIR<br>   +0x050 DllPath          : _UNICODE_STRING &quot;&quot;<br>   +0x060 ImagePathName    : _UNICODE_STRING &quot;C:\WINDOWS\system32\notepad.exe&quot;<br>   +0x070 CommandLine      : _UNICODE_STRING &quot;&quot;C:\WINDOWS\system32\notepad.exe&quot; &quot;<br>   +0x080 Environment      : 0x000001a6`50d50fe0 Void<br>   +0x088 StartingX        : 0<br>   +0x08c StartingY        : 0<br>   +0x090 CountX           : 0<br>   +0x094 CountY           : 0<br>   +0x098 CountCharsX      : 0<br>   +0x09c CountCharsY      : 0<br>   +0x0a0 FillAttribute    : 0<br>   +0x0a4 WindowFlags      : 0x801<br>   +0x0a8 ShowWindowFlags  : 1<br>   +0x0b0 WindowTitle      : _UNICODE_STRING &quot;C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Accessories\Notepad.lnk&quot;<br>   +0x0c0 DesktopInfo      : _UNICODE_STRING &quot;Winsta0\Default&quot;<br>   +0x0d0 ShellInfo        : _UNICODE_STRING &quot;&quot;<br>   +0x0e0 RuntimeData      : _UNICODE_STRING &quot;&quot;<br>   +0x0f0 CurrentDirectores : [32] _RTL_DRIVE_LETTER_CURDIR<br>   +0x3f0 EnvironmentSize  : 0x154e<br>   +0x3f8 EnvironmentVersion : 3<br>   +0x400 PackageDependencyData : (null) <br>   +0x408 ProcessGroupId   : 0x3ec<br>   +0x40c LoaderThreads    : 0<br>   +0x410 RedirectionDllName : _UNICODE_STRING &quot;&quot;<br>   +0x420 HeapPartitionName : _UNICODE_STRING &quot;&quot;<br>   +0x430 DefaultThreadpoolCpuSetMasks : (null) <br>   +0x438 DefaultThreadpoolCpuSetMaskCount : 0<br>   +0x43c DefaultThreadpoolThreadMaximum : 0<br></code></pre></td></tr></table></figure>
+
+<p>到这一步，基本上进程的详细信息就都可以看到了。如果是 windbg preview 版本，点几下就能看到一些信息，但是 <code>Environment</code> 环境变量是一个指针，如果需要查看，还是需要输入命令才行。</p>
+<h4 id="查看-Environment"><a href="#查看-Environment" class="headerlink" title="查看 Environment"></a>查看 Environment</h4><p>在 <code>_RTL_USER_PROCESS_PARAMETERS</code> 结构中有三个成员与 <code>Environment</code> 相关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs windbg"># 指向环境变量的指针<br>+0x080 Environment      : 0x000001a6`50d50fe0 Void<br><br># 环境变量的大小<br>+0x3f0 EnvironmentSize  : 0x154e<br><br># 环境变量的版本<br>+0x3f8 EnvironmentVersion : 3<br></code></pre></td></tr></table></figure>
+
+<p>通过环境变量指针和大小我们就可以看到环境变量的内容了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">db 0x000001a6`50d50fe0 l 0x154e<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/" class="category-chain-item">调试技术</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Debug/" class="print-no-link">#Debug</a>
+      
+        <a href="/tags/PEB/" class="print-no-link">#PEB</a>
+      
+        <a href="/tags/TEB/" class="print-no-link">#TEB</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【调试技术】用户态查看PEB和TEB</div>
+      <div>http://example.com/wiki/调试技术/【调试技术】用户态查看PEB和TEB/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/" title="【PE】PE文件结构12-TLS表">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【PE】PE文件结构12-TLS表</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/" title="【调试技术】windows双机调试——Net模式">
+                        <span class="hidden-mobile">【调试技术】windows双机调试——Net模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
