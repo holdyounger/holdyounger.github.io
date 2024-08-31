@@ -24,7 +24,7 @@
     <meta name="description" content="Go 语言虽然抛弃了继承，但是却提供了一个更加方便的组合特性。相对于继承的编译期确定实现，组合的运行态指定实现，更加灵活。下面通过一段代码来了解组合的基本属性以及它与继承的不同之处。 先定义一个结构体 Base, 并为它添加两个方法 Foo() 和 Bar()： 1234567891011121314151617type Base struct&#123;    Name string&#125;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go简明手册】Go面向对象编程3——组合">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E7%BB%84%E5%90%88/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B3%E2%80%94%E2%80%94%E7%BB%84%E5%90%88/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E7%BB%84%E5%90%88/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B3%E2%80%94%E2%80%94%E7%BB%84%E5%90%88/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Go 语言虽然抛弃了继承，但是却提供了一个更加方便的组合特性。相对于继承的编译期确定实现，组合的运行态指定实现，更加灵活。下面通过一段代码来了解组合的基本属性以及它与继承的不同之处。 先定义一个结构体 Base, 并为它添加两个方法 Foo() 和 Bar()： 1234567891011121314151617type Base struct&#123;    Name string&#125;">
 <meta property="og:locale" content="zh_CN">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -282,7 +286,6 @@
                 <p>Go 语言虽然抛弃了继承，但是却提供了一个更加方便的组合特性。相对于继承的编译期确定实现，组合的运行态指定实现，更加灵活。下面通过一段代码来了解组合的基本属性以及它与继承的不同之处。</p>
 <p>先定义一个结构体 Base, 并为它添加两个方法 <code>Foo()</code> 和 <code>Bar()</code>：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Base <span class="hljs-keyword">struct</span>&#123;<br>    Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *Base)</span></span> Foo() &#123;...&#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(b *Base)</span></span> Bar() &#123;...&#125;<br><br><span class="hljs-keyword">type</span> Seed <span class="hljs-keyword">struct</span> &#123;<br>    Base<br>    ...<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Seed)</span></span> Foo() &#123;<br>    s.Base.Foo()<br>    s.Bar()<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>上面代码先定义了一个 Base 类，然后定义了一个 Seed 类。Seed 类“继承”了 Base 类的所有成员属性和方法并重写了 <code>Foo()</code> 方法。同时在重写 <code>Foo()</code> 方法时调用了 Base 类的 <code>Foo()</code> 方法和 <code>Bar()</code> 方法。需要注意的是，若此时 Seed 的对象通过 <code>s.Foo()</code> 调用 <code>Foo()</code> 方法时，实际调用的是 Seed 重写过后的 <code>Foo()</code> 方法，而不是基类 Base 的 <code>Foo()</code> 方法，若想调用 Base 类的 <code>Foo()</code> 方法则要使用 <code>s.Base.Foo</code>，而调用没有重写的 <code>Bar()</code> 方法时，使用 <code>s.Bar()</code> 和<code>s.Base.Bar()</code> 效果是一样的。</p>
 
                 
@@ -364,7 +367,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Go简明手册】Go面向对象编程3——组合</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/面向对象编程/组合/【Go简明手册】Go面向对象编程3——组合/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/面向对象编程/组合/【Go简明手册】Go面向对象编程3——组合/</div>
     </div>
     <div class="license-meta">
       

@@ -24,19 +24,19 @@
     <meta name="description" content="概述：计算 sha1 C++ 版">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【OpenSource】 SHA1 in C++">
-<meta property="og:url" content="http://example.com/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：计算 sha1 C++ 版">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/IMG-20240813181742045.png">
+<meta property="og:image" content="https://hodlyounger.github.io/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/IMG-20240813181742045.png">
 <meta property="article:published_time" content="2023-12-04T08:24:30.290Z">
 <meta property="article:modified_time" content="2024-08-16T10:37:06.425Z">
 <meta property="article:author" content="mingming">
-<meta property="article:tag" content="加密&#x2F;SHA1">
 <meta property="article:tag" content="OpenSource">
+<meta property="article:tag" content="加密&#x2F;SHA1">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/IMG-20240813181742045.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/IMG-20240813181742045.png">
   
   
   
@@ -74,11 +74,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -227,7 +231,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          322 字
+          325 字
         
       </span>
     
@@ -284,23 +288,21 @@
 <p>概述：计算 sha1 C++ 版</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-说明"><a href="#0x01-说明" class="headerlink" title="0x01 说明"></a>0x01 说明</h2><p>鉴于个人使用的目的，在 <code>Github</code> 上找了些许开源 sha1 计算的项目，最后使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vog/sha1">vog&#x2F;sha1</a> 这个项目计算出来相关结果，使用比较简单，fork了一个 vs 版本记录一下。</p>
-<p>仓库地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger/SHA1">holdyounger&#x2F;SHA1: sha1 implementation in C++， fork by <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vog/sha1">vog&#x2F;sha1</a></a></p>
-<h2 id="0x02-使用"><a href="#0x02-使用" class="headerlink" title="0x02 使用"></a>0x02 使用</h2><p>如下所示，使用比较简单</p>
+<h2 id="0x01-说明"><a class="markdownIt-Anchor" href="#0x01-说明"></a> 0x01 说明</h2>
+<p>鉴于个人使用的目的，在 <code>Github</code> 上找了些许开源 sha1 计算的项目，最后使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vog/sha1">vog/sha1</a> 这个项目计算出来相关结果，使用比较简单，fork了一个 vs 版本记录一下。</p>
+<p>仓库地址：[holdyounger/SHA1: sha1 implementation in C++， fork by <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/vog/sha1">vog/sha1</a>](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger/SHA1">https://github.com/holdyounger/SHA1</a>)</p>
+<h2 id="0x02-使用"><a class="markdownIt-Anchor" href="#0x02-使用"></a> 0x02 使用</h2>
+<p>如下所示，使用比较简单</p>
 <ol>
 <li>计算文本 sha1</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">test_other</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    SHA1 checksum;<br><br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; <span class="hljs-string">&quot;Test:     No string&quot;</span> &lt;&lt; endl;<br>    <span class="hljs-built_in">compare</span>(checksum.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;da39a3ee5e6b4b0d3255bfef95601890afd80709&quot;</span>);<br><br>    cout &lt;&lt; endl;<br>    checksum.<span class="hljs-built_in">update</span>(<span class="hljs-string">&quot;&quot;</span>);<br>    cout &lt;&lt; <span class="hljs-string">&quot;Test:     Empty string&quot;</span> &lt;&lt; endl;<br>    <span class="hljs-built_in">compare</span>(checksum.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;da39a3ee5e6b4b0d3255bfef95601890afd80709&quot;</span>);<br><br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; <span class="hljs-string">&quot;Test:     abcde&quot;</span> &lt;&lt; endl;<br>    checksum.<span class="hljs-built_in">update</span>(<span class="hljs-string">&quot;abcde&quot;</span>);<br>    <span class="hljs-built_in">compare</span>(checksum.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;03de6c570bfe24bfc328ccd7ca46b76eadaf4334&quot;</span>);<br><br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; <span class="hljs-string">&quot;Test:     Two concurrent checksum calculations&quot;</span> &lt;&lt; endl;<br>    SHA1 checksum1, checksum2;<br>    checksum1.<span class="hljs-built_in">update</span>(<span class="hljs-string">&quot;abc&quot;</span>);<br>    <span class="hljs-built_in">compare</span>(checksum2.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;da39a3ee5e6b4b0d3255bfef95601890afd80709&quot;</span>); <span class="hljs-comment">/* &quot;&quot; */</span><br>    <span class="hljs-built_in">compare</span>(checksum1.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;a9993e364706816aba3e25717850c26c9cd0d89d&quot;</span>); <span class="hljs-comment">/* &quot;abc&quot; */</span><br><br>    cout &lt;&lt; endl;<br>    cout &lt;&lt; <span class="hljs-string">&quot;Test:     a [00] b [7F] c [80] d [FF] e [C3] [F0] f&quot;</span> &lt;&lt; endl;<br>    checksum.<span class="hljs-built_in">update</span>(std::<span class="hljs-built_in">string</span>(<span class="hljs-string">&quot;a&quot;</span> <span class="hljs-string">&quot;\x00&quot;</span> <span class="hljs-string">&quot;b&quot;</span> <span class="hljs-string">&quot;\x7f&quot;</span> <span class="hljs-string">&quot;c&quot;</span> <span class="hljs-string">&quot;\x80&quot;</span> <span class="hljs-string">&quot;d&quot;</span> <span class="hljs-string">&quot;\xff&quot;</span> <span class="hljs-string">&quot;e&quot;</span> <span class="hljs-string">&quot;\xc3\xf0&quot;</span> <span class="hljs-string">&quot;f&quot;</span>, <span class="hljs-number">12</span>));<br>    <span class="hljs-built_in">compare</span>(checksum.<span class="hljs-built_in">final</span>(), <span class="hljs-string">&quot;cd0dd10814c0d4f9c6a2a0a4be2304d2371468d3&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <ol start="2">
 <li>计算文件</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">test_file</span><span class="hljs-params">(<span class="hljs-type">const</span> string &amp;filename)</span></span><br><span class="hljs-function"></span>&#123;<br>    cout &lt;&lt; SHA1::<span class="hljs-built_in">from_file</span>(filename) &lt;&lt; <span class="hljs-string">&quot; *&quot;</span> &lt;&lt; filename &lt;&lt; endl;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="0x03-结果校验"><a href="#0x03-结果校验" class="headerlink" title="0x03 结果校验"></a>0x03 结果校验</h2><p>以下是计算结果，与 Hash.exe 计算结果一直。</p>
+<h2 id="0x03-结果校验"><a class="markdownIt-Anchor" href="#0x03-结果校验"></a> 0x03 结果校验</h2>
+<p>以下是计算结果，与 Hash.exe 计算结果一直。</p>
 <img src="/C_OpenSource/%E3%80%90OpenSource%E3%80%91sha1/IMG-20240813181742045.png" srcset="/img/loading.gif" lazyload class title="计算结果">
                 
               </div>
@@ -334,9 +336,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E5%8A%A0%E5%AF%86-SHA1/" class="print-no-link">#加密/SHA1</a>
-      
         <a href="/tags/OpenSource/" class="print-no-link">#OpenSource</a>
+      
+        <a href="/tags/%E5%8A%A0%E5%AF%86-SHA1/" class="print-no-link">#加密/SHA1</a>
       
         <a href="/tags/C/" class="print-no-link">#C++</a>
       
@@ -351,7 +353,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【OpenSource】 SHA1 in C++</div>
-      <div>http://example.com/C_OpenSource/【OpenSource】sha1/</div>
+      <div>https://hodlyounger.github.io/C_OpenSource/【OpenSource】sha1/</div>
     </div>
     <div class="license-meta">
       

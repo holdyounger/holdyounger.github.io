@@ -24,16 +24,16 @@
     <meta name="description" content="date: 2023&#x2F;12&#x2F;19 概述：x86系统采用动态的方式构建SEH结构，相比而言x64系统下采用静态的方式处理SEH结构，它保存在PE文件中，通常在.pdata区段。因此本文的例子采用x64编译过的程序。异常表在资源表的后面。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【PE】PE文件结构6-异常表(Exception)">
-<meta property="og:url" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%846-%E5%BC%82%E5%B8%B8%E8%A1%A8(Exception)/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%846-%E5%BC%82%E5%B8%B8%E8%A1%A8(Exception)/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="date: 2023&#x2F;12&#x2F;19 概述：x86系统采用动态的方式构建SEH结构，相比而言x64系统下采用静态的方式处理SEH结构，它保存在PE文件中，通常在.pdata区段。因此本文的例子采用x64编译过的程序。异常表在资源表的后面。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-01-23T06:08:25.896Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:06.929Z">
+<meta property="article:published_time" content="2024-08-31T01:41:20.169Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.170Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
-<meta property="article:tag" content="Windows&#x2F;PE">
 <meta property="article:tag" content="PE">
+<meta property="article:tag" content="Windows&#x2F;PE">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -213,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-01-23 14:08" pubdate>
-          2024年1月23日 下午
+        <time datetime="2024-08-31 09:41" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -225,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          842 字
+          840 字
         
       </span>
     
@@ -279,17 +283,15 @@
               <div class="markdown-body">
                 
                 <blockquote>
-<p>date: 2023&#x2F;12&#x2F;19</p>
+<p>date: 2023/12/19</p>
 <p>概述：x86系统采用动态的方式构建SEH结构，相比而言x64系统下采用静态的方式处理SEH结构，它保存在PE文件中，通常在.pdata区段。因此本文的例子采用x64编译过的程序。异常表在资源表的后面。</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-异常表解析"><a href="#0x01-异常表解析" class="headerlink" title="0x01 异常表解析"></a>0x01 异常表解析</h2><p>数据目录表的第四个元素指向异常表，RVA指向的是一个IMAGE_IA64_RUNTIME_FUNCTION_ENTRY的结构体，本例的RVA是0xA000（也就是.pdata段的起始位置），转换成offset是0x7a00。它的结构体是：</p>
+<h2 id="0x01-异常表解析"><a class="markdownIt-Anchor" href="#0x01-异常表解析"></a> 0x01 异常表解析</h2>
+<p>数据目录表的第四个元素指向异常表，RVA指向的是一个IMAGE_IA64_RUNTIME_FUNCTION_ENTRY的结构体，本例的RVA是0xA000（也就是.pdata段的起始位置），转换成offset是0x7a00。它的结构体是：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">_IMAGE_IA64_RUNTIME_FUNCTION_ENTRY</span> &#123;<br>    DWORD BeginAddress;      <span class="hljs-comment">//与SEH相关代码的起始偏移地址</span><br>    DWORD EndAddress;        <span class="hljs-comment">//与SEH相关代码的末尾偏移地址</span><br>    DWORD UnwindInfoAddress; <span class="hljs-comment">//指向描述上面两个字段之间代码异常信息的UNWIND_INFO</span><br>&#125; IMAGE_IA64_RUNTIME_FUNCTION_ENTRY, *PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY;<br></code></pre></td></tr></table></figure>
-
 <p>​    BeginAddress 与 EndAddress之间，是异常处理函数的内容。UnwindInfoAddress 指向的位置是用来描述 BeginAddress 与 EndAddress 之间的代码异常属性信息的UNWIND_INFO。UNWIND_INFO 也叫作异常展开信息，此结构用来描述堆栈指针的记录属性与寄存器中保存的地址属性，它的结构体如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">_UNWIND_INFO</span> &#123;<br>   UBYTE Version:<span class="hljs-number">3</span>;        <br>   UBYTE Flags:<span class="hljs-number">5</span>; <br>   UBYTE SizeOfProlog;        <br>   UBYTE CountOfCodes;   <br>   UBYTE FrameRegister:<span class="hljs-number">4</span>;<br>   UBYTE FrameOffset:<span class="hljs-number">4</span>;<br>   UNWIND_CODE UnwindCode[<span class="hljs-number">1</span>];<br>   <span class="hljs-keyword">union</span> &#123;<br>        <span class="hljs-comment">// If (Flags &amp; UNW_FLAG_EHANDLER)</span><br>       OPTIONAL ULONG ExceptionHandler;<span class="hljs-comment">//异常/终止函数的映像相对地址指针</span><br>       <span class="hljs-comment">// Else if (Flags &amp; UNW_FLAG_CHAININFO)</span><br>       OPTIONAL ULONG FunctionEntry;<span class="hljs-comment">//展开信息链的映像相对地址指针</span><br>   &#125;;<br>   <span class="hljs-comment">// If (Flags &amp; UNW_FLAG_EHANDLER)</span><br>   ULONG ExceptionData[<span class="hljs-number">1</span>];<span class="hljs-comment">//异常处理程序的数据</span><br>&#125; UNWIND_INFO, *PUNWIND_INFO;<br></code></pre></td></tr></table></figure>
-
 <p>Version:异常展开信息的版本号，一般为0x001</p>
 <p>Flags:共有四种标志：</p>
 <ol>
@@ -306,9 +308,9 @@
 <p>ExceptionHandler:异常句柄</p>
 <p>FunctionEntry:展开信息链（函数）的映像相对地址指针（如果设置了UNW_FLAG_CHAININFO标识）</p>
 <p>ExceptionData:异常处理程序的数据</p>
-<h2 id="查找SEH表"><a href="#查找SEH表" class="headerlink" title="查找SEH表"></a>查找SEH表</h2><p> 以下代码说明：打开一个进程模块，然后查找 <code>.pdata</code> 段，依次遍历异常表。</p>
+<h2 id="查找seh表"><a class="markdownIt-Anchor" href="#查找seh表"></a> 查找SEH表</h2>
+<p>以下代码说明：打开一个进程模块，然后查找 <code>.pdata</code> 段，依次遍历异常表。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">const</span> <span class="hljs-type">char</span>	gPDataSectionName[] = <span class="hljs-string">&quot;.pdata&quot;</span>;<br><br><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">_ModuleSectionInfo_T</span> &#123;<br>	VOID*	pBase;<br>	UINT	Size;<br>&#125;ModuleSectionInfo_T;<br><br><span class="hljs-comment">// 查找 .pdata 段地址和大小</span><br><span class="hljs-function">BOOL <span class="hljs-title">getModulePdataSection</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">    __in HANDLE hProcess, </span></span><br><span class="hljs-params"><span class="hljs-function">    __in VOID * pModule, </span></span><br><span class="hljs-params"><span class="hljs-function">    __out ModuleSectionInfo_T * pModuleSectionInfo)</span></span><br><span class="hljs-function"></span>&#123;<br>	IMAGE_DOS_HEADER		ImageDosHeader;<br>	IMAGE_NT_HEADERS		ImageNtHeaders;<br>	IMAGE_SECTION_HEADER*	pImageSectionHeader;<br>	UINT					SectionIdx;<br>	IMAGE_SECTION_HEADER	ImageSectionHeader;<br>	UCHAR*					pBase = (UCHAR*)pModule;<br>	BOOL					bResult = FALSE;<br><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">ReadProcessMemory</span>(hProcess, pBase, &amp;ImageDosHeader, <span class="hljs-built_in">sizeof</span>(ImageDosHeader), <span class="hljs-literal">NULL</span>)) <span class="hljs-keyword">goto</span> End;<br>	<span class="hljs-keyword">if</span> (ImageDosHeader.e_magic != IMAGE_DOS_SIGNATURE) <span class="hljs-keyword">goto</span> End;<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">ReadProcessMemory</span>(hProcess, pBase + ImageDosHeader.e_lfanew, &amp;ImageNtHeaders, <span class="hljs-built_in">sizeof</span>(ImageNtHeaders), <span class="hljs-literal">NULL</span>)) <span class="hljs-keyword">goto</span> End;<br>	<span class="hljs-keyword">if</span> (ImageNtHeaders.Signature != IMAGE_NT_SIGNATURE) <span class="hljs-keyword">goto</span> End;<br>	<span class="hljs-comment">//</span><br>	<span class="hljs-comment">// For 64bits, add the size of IMAGE_NT_HEADERS64 to its own base to get the base of the IMAGE_SECTION_HEADER table</span><br>	<span class="hljs-comment">//</span><br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _WIN64</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(push)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(disable:4127)</span><br>	<span class="hljs-keyword">if</span> (SQLPLUGIN_IS_WOW64 == TRUE) pImageSectionHeader = (IMAGE_SECTION_HEADER*)((UINT_PTR)pBase + ImageDosHeader.e_lfanew + <span class="hljs-built_in">sizeof</span>(IMAGE_NT_HEADERS));<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(pop)</span><br>	<span class="hljs-keyword">else</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span>		</span><br>		pImageSectionHeader = (IMAGE_SECTION_HEADER*)((UINT_PTR)pBase + ImageDosHeader.e_lfanew + <span class="hljs-built_in">sizeof</span>(IMAGE_NT_HEADERS32));<br><br>	<span class="hljs-keyword">for</span> (SectionIdx = <span class="hljs-number">0</span>; SectionIdx &lt; ImageNtHeaders.FileHeader.NumberOfSections; SectionIdx++)<br>	&#123;<br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">ReadProcessMemory</span>(hProcess, &amp;pImageSectionHeader[SectionIdx], &amp;ImageSectionHeader, <span class="hljs-built_in">sizeof</span>(ImageSectionHeader), <span class="hljs-literal">NULL</span>)) <span class="hljs-keyword">goto</span> End;<br>		<span class="hljs-type">const</span> <span class="hljs-type">char</span>* SectionName = (<span class="hljs-type">const</span> <span class="hljs-type">char</span>*)ImageSectionHeader.Name;<br>		<span class="hljs-keyword">if</span> (<span class="hljs-built_in">strncmp</span>(SectionName, gPDataSectionName, <span class="hljs-built_in">sizeof</span>(gPDataSectionName)) == <span class="hljs-number">0</span>)<br>		&#123;<br>			pModuleSectionInfo-&gt;pBase = pBase + ImageSectionHeader.VirtualAddress;<br>			pModuleSectionInfo-&gt;Size = ImageSectionHeader.Misc.VirtualSize;<br>			bResult = TRUE;<br>			<span class="hljs-keyword">break</span>;<br>		&#125;<br>	&#125;<br>End:<br>	<span class="hljs-keyword">return</span> (bResult);<br>&#125;<br><br><br><span class="hljs-function">BOOL <span class="hljs-title">getFunWithSepAddr</span><span class="hljs-params">(MODULEENTRY32 me32, ULONGLONG InputAddr, ULONGLONG&amp; RetAddr)</span></span><br><span class="hljs-function"></span>&#123;<br>	BOOL bRet = FALSE;<br>	ModuleSectionInfo_T ModuleSectionInfo;<br>	ULONGLONG ulModuleBase = (ULONGLONG)me32.modBaseAddr;<br>	ULONGLONG ulModuleSize = (ULONGLONG)me32.modBaseSize;<br><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">getModulePdataSection</span>(m_hProcess, me32.hModule, &amp;ModuleSectionInfo)) <span class="hljs-keyword">goto</span> End;<br><br>	PVOID								pCandidate;<br>	IMAGE_IA64_RUNTIME_FUNCTION_ENTRY	RuntimeEntry;<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(push)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(disable:4305)</span><br>	pCandidate = ModuleSectionInfo.pBase;<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(pop)</span><br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> iCount = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-comment">// 这里遍历的就是 SEH 表</span><br>	<span class="hljs-keyword">for</span> (iCount = <span class="hljs-number">0</span>; iCount &lt; ModuleSectionInfo.Size; iCount += <span class="hljs-built_in">sizeof</span>(IMAGE_IA64_RUNTIME_FUNCTION_ENTRY))<br>	&#123;<br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">ReadProcessMemory</span>(m_hProcess, pCandidate, &amp;RuntimeEntry, <span class="hljs-built_in">sizeof</span>(IMAGE_IA64_RUNTIME_FUNCTION_ENTRY), <span class="hljs-literal">NULL</span>))	<span class="hljs-keyword">goto</span> NextCandidate;<br><br>		ULONGLONG begin = (ULONGLONG)ulModuleBase + RuntimeEntry.BeginAddress;<br>		ULONGLONG end = (ULONGLONG)ulModuleBase + RuntimeEntry.EndAddress;<br><br>		<span class="hljs-keyword">if</span> (<span class="hljs-built_in">IsInThisFun</span>(iCount, InputAddr, begin, end))<br>		&#123;<br>			bRet = TRUE;<br>			RetAddr = begin;<br>			<span class="hljs-keyword">break</span>;<br>		&#125;<br><br>	NextCandidate:<br>		pCandidate = (PVOID)((ULONGLONG)pCandidate + <span class="hljs-built_in">sizeof</span>(IMAGE_IA64_RUNTIME_FUNCTION_ENTRY));<br>	&#125;<br>End:<br>	<span class="hljs-keyword">return</span> bRet;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -351,9 +353,9 @@
       
         <a href="/tags/Windows/" class="print-no-link">#Windows</a>
       
-        <a href="/tags/Windows-PE/" class="print-no-link">#Windows/PE</a>
-      
         <a href="/tags/PE/" class="print-no-link">#PE</a>
+      
+        <a href="/tags/Windows-PE/" class="print-no-link">#Windows/PE</a>
       
     </div>
   
@@ -366,7 +368,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【PE】PE文件结构6-异常表(Exception)</div>
-      <div>http://example.com/wiki/PE/【PE】PE文件结构6-异常表(Exception)/</div>
+      <div>https://hodlyounger.github.io/wiki/PE/【PE】PE文件结构6-异常表(Exception)/</div>
     </div>
     <div class="license-meta">
       
@@ -378,7 +380,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年1月23日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -410,9 +412,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_OS/Windows/Inject&amp;Hook/%E3%80%90IH%E3%80%9132%E4%BD%8D%E7%A8%8B%E5%BA%8F%E5%AF%B964%E4%BD%8D%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%B3%A8%E5%85%A5/" title="【Hook】32位程序对64位程序远程注入的实现">
+                      <a href="/wiki/stellar/%E3%80%90Stellat%E3%80%91layout%E8%AF%B4%E6%98%8E/" title="【Stellat】layout使用说明">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【Hook】32位程序对64位程序远程注入的实现</span>
+                        <span class="hidden-mobile">【Stellat】layout使用说明</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

@@ -24,7 +24,7 @@
     <meta name="description" content="Curl的demo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【网络编程】Curl使用的一些demo，记录">
-<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91Curl%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91Curl%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Curl的demo">
 <meta property="og:locale" content="zh_CN">
@@ -32,9 +32,9 @@
 <meta property="article:modified_time" content="2024-08-15T09:19:56.877Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="C++">
+<meta property="article:tag" content="HTTP">
 <meta property="article:tag" content="Curl">
 <meta property="article:tag" content="网络编程">
-<meta property="article:tag" content="HTTP">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -226,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          519 字
+          518 字
         
       </span>
     
@@ -280,11 +284,14 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="1、编译及使用"><a href="#1、编译及使用" class="headerlink" title="1、编译及使用"></a>1、编译及使用</h1><h2 id="1-1-编译"><a href="#1-1-编译" class="headerlink" title="1.1 编译"></a>1.1 编译</h2><h3 id="1-1-1下载"><a href="#1-1-1下载" class="headerlink" title="1.1.1下载"></a>1.1.1下载</h3><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/curl/curl">GitHub - curl&#x2F;curl: A command line tool and library for transferring data with URL syntax, supporting DICT, FILE, FTP, FTPS, GOPHER, GOPHERS, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, MQTT, POP3, POP3S, RTMP, RTMPS, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, TELNET and TFTP. libcurl offers a myriad of powerful features</a></p>
+<h1 id="1-编译及使用"><a class="markdownIt-Anchor" href="#1-编译及使用"></a> 1、编译及使用</h1>
+<h2 id="11-编译"><a class="markdownIt-Anchor" href="#11-编译"></a> 1.1 编译</h2>
+<h3 id="111下载"><a class="markdownIt-Anchor" href="#111下载"></a> 1.1.1下载</h3>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/curl/curl">GitHub - curl/curl: A command line tool and library for transferring data with URL syntax, supporting DICT, FILE, FTP, FTPS, GOPHER, GOPHERS, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, MQTT, POP3, POP3S, RTMP, RTMPS, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, TELNET and TFTP. libcurl offers a myriad of powerful features</a></p>
 <p>点击链接下载，也可以使用<code>git clone</code>到本地</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/curl/curl.git<br></code></pre></td></tr></table></figure>
-
-<h3 id="1-1-2-编译"><a href="#1-1-2-编译" class="headerlink" title="1.1.2 编译"></a>1.1.2 编译</h3><ul>
+<h3 id="112-编译"><a class="markdownIt-Anchor" href="#112-编译"></a> 1.1.2 编译</h3>
+<ul>
 <li>方法一 VS编译器</li>
 </ul>
 <p>如果需要使用vs编译，首先运行 <code>project</code> 目录下的 <code>generate.bat</code> 文件。然后在<code>projects/Windwows</code> 目录下打开对应的解决方案即可</p>
@@ -293,30 +300,34 @@
 </ul>
 <p>在下载目录 <code>winbuild</code> 目录下，查看 <a href>README.md</a> ，里边告诉了我们如何编译自己需要的包，以我本人使用的为例。</p>
 <ol>
-<li><p>打开对应版本的vs命令行工具</p>
+<li>
+<p>打开对应版本的vs命令行工具</p>
 </li>
-<li><p>进入对应的编译目录 <code>curl-src\winbuild</code>，接着执行以下命令就好。具体的命令参数可以查看winbuild目录下的介绍，选择自己需要的环境就好。</p>
+<li>
+<p>进入对应的编译目录 <code>curl-src\winbuild</code>，接着执行以下命令就好。具体的命令参数可以查看winbuild目录下的介绍，选择自己需要的环境就好。</p>
 </li>
 </ol>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">nmake /f Makefile.vc mode=dll vc=15 MACHINE=x86<br></code></pre></td></tr></table></figure>
-
 <ol start="3">
 <li>执行以后就能在根目录 <code>build</code> 下看到生成了对应的文件夹，这时候就可以在项目中使用了。注意生成目录下有 <code>bin、include、lib</code> 三个文件夹。</li>
 </ol>
-<h2 id="1-2-使用"><a href="#1-2-使用" class="headerlink" title="1.2 使用"></a>1.2 使用</h2><p>将生成的文件拖动到项目所在文件夹目录下，这时候需要做以下几个步骤，打开项目的属性页面：</p>
-<h3 id="1-2-1-预处理器"><a href="#1-2-1-预处理器" class="headerlink" title="1.2.1 预处理器"></a>1.2.1 预处理器</h3><p>在预处理器中添加以下字段：</p>
+<h2 id="12-使用"><a class="markdownIt-Anchor" href="#12-使用"></a> 1.2 使用</h2>
+<p>将生成的文件拖动到项目所在文件夹目录下，这时候需要做以下几个步骤，打开项目的属性页面：</p>
+<h3 id="121-预处理器"><a class="markdownIt-Anchor" href="#121-预处理器"></a> 1.2.1 预处理器</h3>
+<p>在预处理器中添加以下字段：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">;BUILDING_LIBCURL;HTTP_ONLY;<br></code></pre></td></tr></table></figure>
-
-<h3 id="1-2-2-附加库"><a href="#1-2-2-附加库" class="headerlink" title="1.2.2 附加库"></a>1.2.2 附加库</h3><ol>
-<li><p>在链接器中附加库目录，把lib文件夹添加到附加库目录当中</p>
+<h3 id="122-附加库"><a class="markdownIt-Anchor" href="#122-附加库"></a> 1.2.2 附加库</h3>
+<ol>
+<li>
+<p>在链接器中附加库目录，把lib文件夹添加到附加库目录当中</p>
 </li>
-<li><p>添加lib文件</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">libcurl_a.lib;Ws2_32.lib;Wldap32.lib;winmm.lib;Crypt32.lib;Normaliz.lib;%(AdditionalDependencies)<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>添加lib文件</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">libcurl_a.lib;Ws2_32.lib;Wldap32.lib;winmm.lib;Crypt32.lib;Normaliz.lib;%(AdditionalDependencies)<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
-<h3 id="1-3-3-使用"><a href="#1-3-3-使用" class="headerlink" title="1.3.3 使用"></a>1.3.3 使用</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;curl/curl.h&quot;</span></span><br><br><span class="hljs-function">string <span class="hljs-title">UriHelper::Encode</span><span class="hljs-params">(<span class="hljs-type">const</span> string&amp; source)</span></span><br><span class="hljs-function"></span>&#123;<br>	CURL* curl = <span class="hljs-built_in">curl_easy_init</span>();<br>	<span class="hljs-type">char</span>* cres = <span class="hljs-built_in">curl_easy_escape</span>(curl, source.<span class="hljs-built_in">c_str</span>(), source.<span class="hljs-built_in">length</span>());<br>	<span class="hljs-function">string <span class="hljs-title">res</span><span class="hljs-params">(cres)</span></span>;<br>	<span class="hljs-built_in">curl_free</span>(cres);<br>	<span class="hljs-built_in">curl_easy_cleanup</span>(curl);<br>	<span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Hello World!\n&quot;</span>;<br><br>    std::cout &lt;&lt; <span class="hljs-built_in">Encode</span>(<span class="hljs-string">R&quot;(https://10.92.4.117:8443/tac</span><br><span class="hljs-string">        /download/client/com.qianxin.trustagent.win.standard.exe.bm-3.1.1.4585/</span><br><span class="hljs-string">        TrustAgent_standard_3.1.1.4585.aef031d09[10.92.4.117@443].exe)&quot;</span>) &lt;&lt; std::endl;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
-
+<h3 id="133-使用"><a class="markdownIt-Anchor" href="#133-使用"></a> 1.3.3 使用</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;curl/curl.h&quot;</span></span><br><br><span class="hljs-function">string <span class="hljs-title">UriHelper::Encode</span><span class="hljs-params">(<span class="hljs-type">const</span> string&amp; source)</span></span><br><span class="hljs-function"></span>&#123;<br>	CURL* curl = <span class="hljs-built_in">curl_easy_init</span>();<br>	<span class="hljs-type">char</span>* cres = <span class="hljs-built_in">curl_easy_escape</span>(curl, source.<span class="hljs-built_in">c_str</span>(), source.<span class="hljs-built_in">length</span>());<br>	<span class="hljs-function">string <span class="hljs-title">res</span><span class="hljs-params">(cres)</span></span>;<br>	<span class="hljs-built_in">curl_free</span>(cres);<br>	<span class="hljs-built_in">curl_easy_cleanup</span>(curl);<br>	<span class="hljs-keyword">return</span> res;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Hello World!\n&quot;</span>;<br><br>    std::cout &lt;&lt; <span class="hljs-built_in">Encode</span>(<span class="hljs-string">R&quot;(https://10.92.4.117:8443/tac</span><br><span class="hljs-string">        /download/client/com.qianxin.trustagent.win.standard.exe.bm-3.1.1.4585/</span><br><span class="hljs-string">        TrustAgent_standard_3.1.1.4585.aef031d09[10.92.4.117@443].exe)&quot;</span>) &lt;&lt; std::endl;<br>&#125;<br></code></pre></td></tr></table></figure>
 <div style="background-color:black;color:white;font-family:conloas;">
 输出：<br>http0.0000000.0000000.000000www.baidu.com0.000000s0.000000ie%3Dutf-8 0.000000%3D8 %3Dbaidu%26wd%3D5.185438E-3164%B8%B48.694087E-3156%97%B65.190920E-3169%820.000000E5.12199E-31670.000000E%B1
 </div>
@@ -362,11 +373,11 @@
       
         <a href="/tags/C/" class="print-no-link">#C++</a>
       
+        <a href="/tags/HTTP/" class="print-no-link">#HTTP</a>
+      
         <a href="/tags/Curl/" class="print-no-link">#Curl</a>
       
         <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="print-no-link">#网络编程</a>
-      
-        <a href="/tags/HTTP/" class="print-no-link">#HTTP</a>
       
     </div>
   
@@ -379,7 +390,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【网络编程】Curl使用的一些demo，记录</div>
-      <div>http://example.com/B_Code/网络编程/【网络编程】Curl使用教程/</div>
+      <div>https://hodlyounger.github.io/B_Code/网络编程/【网络编程】Curl使用教程/</div>
     </div>
     <div class="license-meta">
       

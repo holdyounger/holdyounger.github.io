@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：Detours 的说明和简单使用  DetoursDetours 是微软提供的一套工具，主要用于win32 API的拦截 Github：microsoft&#x2F;Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed i">
+    <meta name="description" content="概述：Detours 的说明和简单使用   Detours Detours 是微软提供的一套工具，主要用于win32 API的拦截 Github：microsoft&#x2F;Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed in s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Detours的使用">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90win%E3%80%91Detours/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90win%E3%80%91Detours/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：Detours 的说明和简单使用  DetoursDetours 是微软提供的一套工具，主要用于win32 API的拦截 Github：microsoft&#x2F;Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed i">
+<meta property="og:description" content="概述：Detours 的说明和简单使用   Detours Detours 是微软提供的一套工具，主要用于win32 API的拦截 Github：microsoft&#x2F;Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed in s">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:01.948Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:54.639Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          909 字
+          908 字
         
       </span>
     
@@ -280,14 +284,17 @@
                 <blockquote>
 <p>概述：Detours 的说明和简单使用</p>
 </blockquote>
-<h2 id="Detours"><a href="#Detours" class="headerlink" title="Detours"></a>Detours</h2><p>Detours 是微软提供的一套工具，主要用于win32 API的拦截</p>
-<p>Github：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/microsoft/Detours">microsoft&#x2F;Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed in source code form.</a></p>
+<h2 id="detours"><a class="markdownIt-Anchor" href="#detours"></a> Detours</h2>
+<p>Detours 是微软提供的一套工具，主要用于win32 API的拦截</p>
+<p>Github：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/microsoft/Detours">microsoft/Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed in source code form.</a></p>
 <p>仓库中有挺多示例程序可供参考。</p>
 <p>使用 Detours 的大致流程：</p>
 <blockquote>
 <p>在 Detours 的工作过程中，<code>DetourTransactionBegin</code> 函数首先用于启动一个截获（Hook）或解除截获（Unhook）的过程，这个过程中可能包含对多个函数的修改。然后，开发者可以使用 <code>DetourAttach</code> 或 <code>DetourAttachEx</code> 函数将 Detour 钩子附加到目标函数上，或使用 <code>DetourDetach</code> 函数将钩子从目标函数中分离出来。</p>
 </blockquote>
-<h2 id="相关函数说明"><a href="#相关函数说明" class="headerlink" title="相关函数说明"></a>相关函数说明</h2><h3 id="DetourUpdateThread-函数说明"><a href="#DetourUpdateThread-函数说明" class="headerlink" title="DetourUpdateThread 函数说明"></a>DetourUpdateThread 函数说明</h3><p><code>DetourUpdateThread</code> 函数是 Detours 库中的一个重要函数，用于在 Detour 事务处理过程中将特定的线程列入更新范围。Detours 是一个用于在运行时修改二进制代码（如函数钩子）的库，它允许开发者在不修改原始代码的情况下，拦截和修改函数的执行流程。</p>
+<h2 id="相关函数说明"><a class="markdownIt-Anchor" href="#相关函数说明"></a> 相关函数说明</h2>
+<h3 id="detourupdatethread-函数说明"><a class="markdownIt-Anchor" href="#detourupdatethread-函数说明"></a> DetourUpdateThread 函数说明</h3>
+<p><code>DetourUpdateThread</code> 函数是 Detours 库中的一个重要函数，用于在 Detour 事务处理过程中将特定的线程列入更新范围。Detours 是一个用于在运行时修改二进制代码（如函数钩子）的库，它允许开发者在不修改原始代码的情况下，拦截和修改函数的执行流程。</p>
 <p><code>DetourUpdateThread</code> 函数的作用是在这个事务过程中，将一个或多个线程列入需要更新的范围。这是因为在多线程环境中，直接修改函数的代码可能会导致竞态条件，即一个线程正在执行原始代码时，另一个线程可能已经修改了该代码。通过 <code>DetourUpdateThread</code> 将线程列入更新范围，Detours 库可以确保在事务提交时，所有相关线程的代码都被正确地更新，从而避免竞态条件。</p>
 <p>具体来说，<code>DetourUpdateThread</code> 函数的作用是：</p>
 <ol>
@@ -298,10 +305,9 @@
 <p>因此，<code>DetourUpdateThread</code> 函数是 Detours 库中用于确保多线程环境下代码修改一致性和安全性的重要工具之一。</p>
 <p>可以看下 <code>DetourUpdateThread</code> 的源码，如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">LONG WINAPI <span class="hljs-title">DetourUpdateThread</span><span class="hljs-params">(_In_ HANDLE hThread)</span></span><br><span class="hljs-function"></span>&#123;<br>    LONG error;<br><br>    <span class="hljs-comment">// If any of the pending operations failed, then we don&#x27;t need to do this.</span><br>    <span class="hljs-keyword">if</span> (s_nPendingError != NO_ERROR) &#123;<br>        <span class="hljs-keyword">return</span> s_nPendingError;<br>    &#125;<br><br>    <span class="hljs-comment">// Silently (and safely) drop any attempt to suspend our own thread.</span><br>    <span class="hljs-keyword">if</span> (hThread == <span class="hljs-built_in">GetCurrentThread</span>()) &#123;<br>        <span class="hljs-keyword">return</span> NO_ERROR;<br>    &#125;<br><br>    DetourThread *t = <span class="hljs-keyword">new</span> NOTHROW DetourThread;<br>    <span class="hljs-keyword">if</span> (t == <span class="hljs-literal">NULL</span>) &#123;<br>        error = ERROR_NOT_ENOUGH_MEMORY;<br>      fail:<br>        <span class="hljs-keyword">if</span> (t != <span class="hljs-literal">NULL</span>) &#123;<br>            <span class="hljs-keyword">delete</span> t;<br>            t = <span class="hljs-literal">NULL</span>;<br>        &#125;<br>        s_nPendingError = error;<br>        s_ppPendingError = <span class="hljs-literal">NULL</span>;<br>        <span class="hljs-built_in">DETOUR_BREAK</span>();<br>        <span class="hljs-keyword">return</span> error;<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">SuspendThread</span>(hThread) == (DWORD)<span class="hljs-number">-1</span>) &#123;<br>        error = <span class="hljs-built_in">GetLastError</span>();<br>        <span class="hljs-built_in">DETOUR_BREAK</span>();<br>        <span class="hljs-keyword">goto</span> fail;<br>    &#125;<br><br>    t-&gt;hThread = hThread;<br>    t-&gt;pNext = s_pPendingThreads;<br>    s_pPendingThreads = t;<br><br>    <span class="hljs-keyword">return</span> NO_ERROR;<br>&#125;<br><br></code></pre></td></tr></table></figure>
-
-<h2 id="hookDemo"><a href="#hookDemo" class="headerlink" title="hookDemo"></a>hookDemo</h2><p>修改 <code>GetLocalTime</code> ，使其返回的分钟数为 <em>52</em></p>
+<h2 id="hookdemo"><a class="markdownIt-Anchor" href="#hookdemo"></a> hookDemo</h2>
+<p>修改 <code>GetLocalTime</code> ，使其返回的分钟数为 <em>52</em></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;Windows.h&gt;</span></span><br><span class="hljs-comment">//包含Detour的头文件和库文件</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;detours.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment (lib,<span class="hljs-string">&quot;detours.lib&quot;</span>)</span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-comment">//保存函数原型（用指针存储要拦截的API）</span><br><span class="hljs-built_in">void</span> (*OldGetLocalTime)(LPSYSTEMTIME) = GetLocalTime;<br><br><span class="hljs-comment">//拦截后要执行的操作（这里是将时间的分改为52）</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">NewGetLocalTime</span><span class="hljs-params">(LPSYSTEMTIME lpSystemTime)</span> </span>&#123;<br>	<span class="hljs-built_in">OldGetLocalTime</span>(lpSystemTime);<br>	lpSystemTime-&gt;wMinute = <span class="hljs-number">52</span>;<br>&#125;<br><br><span class="hljs-comment">//下钩子函数</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">StartHook</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-comment">//开始事务</span><br>	<span class="hljs-built_in">DetourTransactionBegin</span>();<br>	<span class="hljs-comment">//更新线程信息</span><br>	<span class="hljs-built_in">DetourUpdateThread</span>(<span class="hljs-built_in">GetCurrentThread</span>());<br>	<span class="hljs-comment">//将拦截的函数附加到原函数的地址上</span><br>	<span class="hljs-built_in">DetourAttach</span>(&amp;(PVOID&amp;)OldGetLocalTime, NewGetLocalTime);<br>	<span class="hljs-comment">//结束事务</span><br>	<span class="hljs-built_in">DetourTransactionCommit</span>();<br>&#125;<br><br><span class="hljs-comment">//撤钩子函数</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">EndHook</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-comment">//开始detours事务</span><br>	<span class="hljs-built_in">DetourTransactionBegin</span>();<br>	<span class="hljs-comment">//更新线程信息 </span><br>	<span class="hljs-built_in">DetourUpdateThread</span>(<span class="hljs-built_in">GetCurrentThread</span>());<br>	<span class="hljs-comment">//将拦截的函数从原函数的地址上解除</span><br>	<span class="hljs-built_in">DetourDetach</span>(&amp;(PVOID&amp;)OldGetLocalTime, NewGetLocalTime);<br>	<span class="hljs-comment">//结束detours事务</span><br>	<span class="hljs-built_in">DetourTransactionCommit</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-comment">//获取本地时间</span><br>	SYSTEMTIME time, time2;<br>	<span class="hljs-built_in">GetLocalTime</span>(&amp;time);<br>	cout &lt;&lt; time.wHour &lt;&lt; <span class="hljs-string">&quot;:&quot;</span> &lt;&lt; time.wMinute &lt;&lt; endl;<br>	<span class="hljs-comment">//下钩子</span><br>	<span class="hljs-built_in">StartHook</span>();<br><br>	<span class="hljs-comment">//下钩子后再次获取本地时间</span><br>	<span class="hljs-built_in">GetLocalTime</span>(&amp;time2);<br>	cout &lt;&lt; time2.wHour &lt;&lt; <span class="hljs-string">&quot;:&quot;</span> &lt;&lt; time2.wMinute &lt;&lt; endl;<br><br>	<span class="hljs-comment">//撤钩子</span><br>	<span class="hljs-built_in">EndHook</span>();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -364,7 +370,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Detours的使用</div>
-      <div>http://example.com/A_OS/Windows/工具/【win】Detours/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/工具/【win】Detours/</div>
     </div>
     <div class="license-meta">
       

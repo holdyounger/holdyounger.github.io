@@ -24,7 +24,7 @@
     <meta name="description" content="Qt 中英文支持">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】国际化">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E4%B8%AD%E8%8B%B1%E6%96%87%E5%88%87%E6%8D%A2/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E4%B8%AD%E8%8B%B1%E6%96%87%E5%88%87%E6%8D%A2/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Qt 中英文支持">
 <meta property="og:locale" content="zh_CN">
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -279,10 +283,12 @@
 <p>概述：支持国际化是软件发布的基本项。现阶段我所在的项目也是有了这一需求，基于Qt实现这一需求也相对比较简单。</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h1 id="Qt支持国际化"><a href="#Qt支持国际化" class="headerlink" title="# Qt支持国际化"></a># Qt支持国际化</h1><p>Qt安装时，带了一个 <code>Qt Linguist</code> 的软件，这个软件就是 Qt 用来实现软件翻译的工具。在 Qt 中，所有的输入不见和文本绘制方式对Qt支持的所有语言都提供了内置的支持。Qt内置的字体引擎可以在同一时间正确而且精确地绘制不同的文本，这些文本可以包含来自众多不同书写系统的字符。</p>
-<h1 id="使用-Qt-Linguist-翻译工具"><a href="#使用-Qt-Linguist-翻译工具" class="headerlink" title="# 使用 Qt Linguist 翻译工具"></a># 使用 Qt Linguist 翻译工具</h1><h2 id="tr-函数"><a href="#tr-函数" class="headerlink" title="tr()函数"></a><code>tr()</code>函数</h2><p>在Qt中编写代码时要对需要显示的字符串调用 <code>tr()</code> 函数，完成代码编写后对这个应用程序的翻译主要包含以下几个步骤：</p>
+<h1 id="qt支持国际化"><a class="markdownIt-Anchor" href="#qt支持国际化"></a> # Qt支持国际化</h1>
+<p>Qt安装时，带了一个 <code>Qt Linguist</code> 的软件，这个软件就是 Qt 用来实现软件翻译的工具。在 Qt 中，所有的输入不见和文本绘制方式对Qt支持的所有语言都提供了内置的支持。Qt内置的字体引擎可以在同一时间正确而且精确地绘制不同的文本，这些文本可以包含来自众多不同书写系统的字符。</p>
+<h1 id="使用-qt-linguist-翻译工具"><a class="markdownIt-Anchor" href="#使用-qt-linguist-翻译工具"></a> # 使用 Qt Linguist 翻译工具</h1>
+<h2 id="tr函数"><a class="markdownIt-Anchor" href="#tr函数"></a> <code>tr()</code>函数</h2>
+<p>在Qt中编写代码时要对需要显示的字符串调用 <code>tr()</code> 函数，完成代码编写后对这个应用程序的翻译主要包含以下几个步骤：</p>
 <blockquote>
 <p>使用tr()函数 -&gt; 修改pro文件 -&gt; 更新语言文件 -&gt; 发布语言文件 -&gt; 使用语言文件（QTranslator）</p>
 </blockquote>
@@ -332,7 +338,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】国际化</div>
-      <div>http://example.com/B_Code/Qt/【Qt】中英文切换/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】中英文切换/</div>
     </div>
     <div class="license-meta">
       

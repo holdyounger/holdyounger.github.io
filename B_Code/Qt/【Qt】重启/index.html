@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="Qt 实现电脑重启（需要管理员）12345678inline void reboot()&#123;    QString program &#x3D; QApplication::applicationFilePath();	QStringList arguments &#x3D; QApplication::arguments();	QString workingDirectory &#x3D; QDir::current">
+    <meta name="description" content="Qt 实现电脑重启（需要管理员） 12345678inline void reboot()&#123;    QString program &#x3D; QApplication::applicationFilePath();	QStringList arguments &#x3D; QApplication::arguments();	QString workingDirectory &#x3D; QDir::curre">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】重启">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E9%87%8D%E5%90%AF/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E9%87%8D%E5%90%AF/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="Qt 实现电脑重启（需要管理员）12345678inline void reboot()&#123;    QString program &#x3D; QApplication::applicationFilePath();	QStringList arguments &#x3D; QApplication::arguments();	QString workingDirectory &#x3D; QDir::current">
+<meta property="og:description" content="Qt 实现电脑重启（需要管理员） 12345678inline void reboot()&#123;    QString program &#x3D; QApplication::applicationFilePath();	QStringList arguments &#x3D; QApplication::arguments();	QString workingDirectory &#x3D; QDir::curre">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.249Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:57.303Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -276,8 +280,8 @@
             
               <div class="markdown-body">
                 
-                <h1 id="Qt-实现电脑重启（需要管理员）"><a href="#Qt-实现电脑重启（需要管理员）" class="headerlink" title="Qt 实现电脑重启（需要管理员）"></a>Qt 实现电脑重启（需要管理员）</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">reboot</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    QString program = QApplication::<span class="hljs-built_in">applicationFilePath</span>();<br>	QStringList arguments = QApplication::<span class="hljs-built_in">arguments</span>();<br>	QString workingDirectory = QDir::<span class="hljs-built_in">currentPath</span>();<br>	QProcess::<span class="hljs-built_in">startDetached</span>(program, arguments, workingDirectory);<br>	QApplication::<span class="hljs-built_in">exit</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
-
+                <h1 id="qt-实现电脑重启需要管理员"><a class="markdownIt-Anchor" href="#qt-实现电脑重启需要管理员"></a> Qt 实现电脑重启（需要管理员）</h1>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">reboot</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    QString program = QApplication::<span class="hljs-built_in">applicationFilePath</span>();<br>	QStringList arguments = QApplication::<span class="hljs-built_in">arguments</span>();<br>	QString workingDirectory = QDir::<span class="hljs-built_in">currentPath</span>();<br>	QProcess::<span class="hljs-built_in">startDetached</span>(program, arguments, workingDirectory);<br>	QApplication::<span class="hljs-built_in">exit</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -331,7 +335,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】重启</div>
-      <div>http://example.com/B_Code/Qt/【Qt】重启/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】重启/</div>
     </div>
     <div class="license-meta">
       

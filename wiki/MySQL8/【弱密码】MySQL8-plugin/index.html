@@ -24,12 +24,12 @@
     <meta name="description" content="概述：MySQL8 身份认证插件相关。本文从插件本身，MySQL版本和使用三个方面记录一下。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【弱密码】MySQL8-Authentication-plugin">
-<meta property="og:url" content="http://example.com/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-plugin/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-plugin/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：MySQL8 身份认证插件相关。本文从插件本身，MySQL版本和使用三个方面记录一下。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:06.928Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.158Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="数据库&#x2F;MySQL">
 <meta name="twitter:card" content="summary_large_image">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,33 +284,30 @@
 <p>概述：MySQL8 身份认证插件相关。本文从插件本身，MySQL版本和使用三个方面记录一下。</p>
 </blockquote>
 <span id="more"></span>
-
-<p> 相关推荐：</p>
+<p>相关推荐：</p>
 <ul>
 <li><a href="%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-Connection_control-plugin.md">【弱密码】MySQL8-Connection_control-plugin</a></li>
 </ul>
-<h2 id="身份认证插件"><a href="#身份认证插件" class="headerlink" title="身份认证插件"></a>身份认证插件</h2><p>MySQL8.0版本（8.0.4版本）在密码认证方式上发生了改变，由原本的 <code>mysql_native_password</code> 改为了 <code>caching_sha2_password</code>，在 8.0.34 版本开始将不再使用 <code>mysql_native_password</code> 验证插件。相应的，客户端连接所使用的 <code>libmysqlclient</code> 也做了修改。</p>
+<h2 id="身份认证插件"><a class="markdownIt-Anchor" href="#身份认证插件"></a> 身份认证插件</h2>
+<p>MySQL8.0版本（8.0.4版本）在密码认证方式上发生了改变，由原本的 <code>mysql_native_password</code> 改为了 <code>caching_sha2_password</code>，在 8.0.34 版本开始将不再使用 <code>mysql_native_password</code> 验证插件。相应的，客户端连接所使用的 <code>libmysqlclient</code> 也做了修改。</p>
 <p>对于高版本的MySQL版本，默认使用的就是 <code>caching_sha2_password</code> 加密方式，但如果是从之前的版本升级的，在连接时可以使用命令行参数 <code>--default-auth</code> 指定验证方式：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">mysql --default-auth=mysql_native_password<br></code></pre></td></tr></table></figure>
-
 <p>新的认证插件总共有两个：</p>
 <ul>
 <li>sha256_password: sha256加密插件</li>
 <li>caching_sha2_passowrd：带缓存的sha256加密插件，认证更快</li>
 </ul>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>要创建 <code>caching_sha2_password</code> 用户:</p>
+<h2 id="使用"><a class="markdownIt-Anchor" href="#使用"></a> 使用</h2>
+<p>要创建 <code>caching_sha2_password</code> 用户:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE USER &#x27;sha2user&#x27;@&#x27;localhost&#x27;<br>IDENTIFIED WITH caching_sha2_password BY &#x27;password&#x27;;<br></code></pre></td></tr></table></figure>
-
 <p>配置默认的身份认证插件：</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[mysqld]</span><br><span class="hljs-attr">default_authentication_plugin</span>=caching_sha2_password<br></code></pre></td></tr></table></figure>
-
 <p>配置默认身份认证插件后，创建的用户就默认为 <code>caching_sha2_password</code> 了，再次创建时无需显式声明：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE USER &#x27;sha2user&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;password&#x27;;<br></code></pre></td></tr></table></figure>
-
 <p>但是如果这时你需要创建 <code>mysql_native_password</code> 的用户，则仍需要显式指明你所需要的插件：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs mysql">CREATE USER &#x27;nativeuser&#x27;@&#x27;localhost&#x27;<br>IDENTIFIED WITH mysql_native_password BY &#x27;password&#x27;;<br></code></pre></td></tr></table></figure>
-
-<h2 id="高级配置"><a href="#高级配置" class="headerlink" title="高级配置"></a>高级配置</h2><p>MySQL8 的身份认证支持自定义的加密过程，可以在未加密连接上使用 RSA 进行加密密码交换。详细操作参考官方说明： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html">MySQL :: MySQL 8.0 参考手册 :: 6.4.1.2 缓存 SHA-2 可插入身份验证</a></p>
+<h2 id="高级配置"><a class="markdownIt-Anchor" href="#高级配置"></a> 高级配置</h2>
+<p>MySQL8 的身份认证支持自定义的加密过程，可以在未加密连接上使用 RSA 进行加密密码交换。详细操作参考官方说明： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/refman/8.0/en/caching-sha2-pluggable-authentication.html">MySQL :: MySQL 8.0 参考手册 :: 6.4.1.2 缓存 SHA-2 可插入身份验证</a></p>
 
                 
               </div>
@@ -360,7 +361,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【弱密码】MySQL8-Authentication-plugin</div>
-      <div>http://example.com/wiki/MySQL8/【弱密码】MySQL8-plugin/</div>
+      <div>https://hodlyounger.github.io/wiki/MySQL8/【弱密码】MySQL8-plugin/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="概述：介绍了如何使用 visual studio 引入默认的库文件和头文件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Visual Studio】内置引入文件">
-<meta property="og:url" content="http://example.com/A_OS/Windows/Visual%20Studio/%E3%80%90Visual%20Studio%E3%80%91%E6%96%87%E4%BB%B6%E5%86%85%E7%BD%AE%E5%BC%95%E5%85%A5/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/Visual%20Studio/%E3%80%90Visual%20Studio%E3%80%91%E6%96%87%E4%BB%B6%E5%86%85%E7%BD%AE%E5%BC%95%E5%85%A5/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：介绍了如何使用 visual studio 引入默认的库文件和头文件">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,14 +284,11 @@
 <p>概述：介绍了如何使用 visual studio 引入默认的库文件和头文件</p>
 </blockquote>
 <span id="more"></span>
-
-
 <p>在用户目录下有这样一个文件，路径为 <code>C:\Users\用户名\AppData\Local\Microsoft\MSBuild\v4.0</code></p>
 <p><code>Microsoft.Cpp.*.user.props</code></p>
 <p>该文件用于定义用户自己需要定义的一些配置。</p>
 <p>查看内容如下所示：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;utf-8&quot;</span>?&gt;</span> <br><span class="hljs-tag">&lt;<span class="hljs-name">Project</span> <span class="hljs-attr">DefaultTargets</span>=<span class="hljs-string">&quot;Build&quot;</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">ImportGroup</span> <span class="hljs-attr">Label</span>=<span class="hljs-string">&quot;PropertySheets&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">ImportGroup</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span> <span class="hljs-attr">Label</span>=<span class="hljs-string">&quot;UserMacros&quot;</span> /&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">IncludePath</span>&gt;</span>D:\Documents\A_Source\CWPP\360GPUBNew\dev\include;D:\Documents\A_Source\CWPP\360GPUBNew\dev\include;D:\Documents\A_Source\CWPP\360LPUB\dev\include;D:\Documents\A_Source\CWPP\360LPUB\dev\include\360safe\360NewExamine;D:\Documents\A_Source\CWPP\360LPUB\dev\include\SiteUI;D:\Documents\A_Source\CWPP\360LPUB\opensource\VC-LTL4;$(ProjectDir);$(IncludePath)<br>	<span class="hljs-tag">&lt;/<span class="hljs-name">IncludePath</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">LibraryPath</span>&gt;</span>D:\Documents\A_Source\CWPP\360GPUBNew\dev\lib_s3;D:\Documents\A_Source\CWPP\360GPUBNew\dev\lib_s3\vc2017;D:\Documents\A_Source\CWPP\360LPUB\dev\lib\360netmon;$(LibraryPath)<span class="hljs-tag">&lt;/<span class="hljs-name">LibraryPath</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">PropertyGroup</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">ItemDefinitionGroup</span> /&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">ItemGroup</span> /&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">Project</span>&gt;</span><br><br></code></pre></td></tr></table></figure>
-
 <p>其中：</p>
 <ul>
 <li>IncludePath：即为需要包含的头文件目录</li>
@@ -354,7 +355,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Visual Studio】内置引入文件</div>
-      <div>http://example.com/A_OS/Windows/Visual Studio/【Visual Studio】文件内置引入/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/Visual Studio/【Visual Studio】文件内置引入/</div>
     </div>
     <div class="license-meta">
       

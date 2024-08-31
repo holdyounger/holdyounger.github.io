@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="TCP&#x2F;IP的四元组、五元组、七元组四元组是： 　　源IP地址、目的IP地址、源端口、目的端口 五元组是： 　　源IP地址、目的IP地址、协议号、源端口、目的端口 七元组是： 　　源IP地址、目的IP地址、协议号、源端口、目的端口、服务类型、接口索引">
+    <meta name="description" content="TCP&#x2F;IP的四元组、五元组、七元组 四元组是： 源IP地址、目的IP地址、源端口、目的端口 五元组是： 源IP地址、目的IP地址、协议号、源端口、目的端口 七元组是： 源IP地址、目的IP地址、协议号、源端口、目的端口、服务类型、接口索引">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【网络编程】TCP&#x2F;IP的四元组、五元组、七元组">
-<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E5%9B%9B%E5%85%83%E7%BB%84%E3%80%81%E4%BA%94%E5%85%83%E7%BB%84%E3%80%81%E4%B8%83%E5%85%83%E7%BB%84/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E5%9B%9B%E5%85%83%E7%BB%84%E3%80%81%E4%BA%94%E5%85%83%E7%BB%84%E3%80%81%E4%B8%83%E5%85%83%E7%BB%84/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="TCP&#x2F;IP的四元组、五元组、七元组四元组是： 　　源IP地址、目的IP地址、源端口、目的端口 五元组是： 　　源IP地址、目的IP地址、协议号、源端口、目的端口 七元组是： 　　源IP地址、目的IP地址、协议号、源端口、目的端口、服务类型、接口索引">
+<meta property="og:description" content="TCP&#x2F;IP的四元组、五元组、七元组 四元组是： 源IP地址、目的IP地址、源端口、目的端口 五元组是： 源IP地址、目的IP地址、协议号、源端口、目的端口 七元组是： 源IP地址、目的IP地址、协议号、源端口、目的端口、服务类型、接口索引">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.393Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:56.832Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          87 字
+          86 字
         
       </span>
     
@@ -276,12 +280,13 @@
             
               <div class="markdown-body">
                 
-                <h1 id="TCP-IP的四元组、五元组、七元组"><a href="#TCP-IP的四元组、五元组、七元组" class="headerlink" title="TCP&#x2F;IP的四元组、五元组、七元组"></a>TCP&#x2F;IP的四元组、五元组、七元组</h1><p>四元组是：</p>
-<p>　　源IP地址、目的IP地址、源端口、目的端口</p>
+                <h1 id="tcpip的四元组-五元组-七元组"><a class="markdownIt-Anchor" href="#tcpip的四元组-五元组-七元组"></a> TCP/IP的四元组、五元组、七元组</h1>
+<p>四元组是：</p>
+<p>源IP地址、目的IP地址、源端口、目的端口</p>
 <p>五元组是：</p>
-<p>　　源IP地址、目的IP地址、<strong>协议号</strong>、源端口、目的端口</p>
+<p>源IP地址、目的IP地址、<strong>协议号</strong>、源端口、目的端口</p>
 <p>七元组是：</p>
-<p>　　源IP地址、目的IP地址、协议号、源端口、目的端口、<strong>服务类型</strong>、<strong>接口索引</strong></p>
+<p>源IP地址、目的IP地址、协议号、源端口、目的端口、<strong>服务类型</strong>、<strong>接口索引</strong></p>
 
                 
               </div>
@@ -335,7 +340,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【网络编程】TCP/IP的四元组、五元组、七元组</div>
-      <div>http://example.com/B_Code/网络编程/【网络编程】四元组、五元组、七元组/</div>
+      <div>https://hodlyounger.github.io/B_Code/网络编程/【网络编程】四元组、五元组、七元组/</div>
     </div>
     <div class="license-meta">
       

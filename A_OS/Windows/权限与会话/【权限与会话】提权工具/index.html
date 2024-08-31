@@ -24,7 +24,7 @@
     <meta name="description" content="概述：psexec 用法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【权限与会话】提权工具 psExec.exe">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：psexec 用法">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          675 字
+          674 字
         
       </span>
     
@@ -281,110 +285,110 @@
 <p>概述：psexec 用法</p>
 </blockquote>
 <span id="more"></span>
-
 <p>使用方法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">psexec -i -d -s  cmd.exe <span class="hljs-comment"># 就是提权运行cmd</span><br></code></pre></td></tr></table></figure>
-
 <table>
 <thead>
 <tr>
-<th align="left">参数</th>
-<th align="left">说明</th>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">说明</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><strong>-a</strong></td>
-<td align="left">使用逗号分隔应用程序可以在上面运行的处理器，其中 1 是编号最低的 CPU。 例如，若要在 CPU 2 和 CPU 4 上运行应用程序，请输入：“-a 2,4”</td>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>-a</strong></td>
+<td style="text-align:left">使用逗号分隔应用程序可以在上面运行的处理器，其中 1 是编号最低的 CPU。 例如，若要在 CPU 2 和 CPU 4 上运行应用程序，请输入：“-a 2,4”</td>
 </tr>
 <tr>
-<td align="left"><strong>-c</strong></td>
-<td align="left">将指定的可执行文件复制到远程系统以执行。 如果省略此选项，则应用程序必须位于远程系统上的系统路径中。</td>
+<td style="text-align:left"><strong>-c</strong></td>
+<td style="text-align:left">将指定的可执行文件复制到远程系统以执行。 如果省略此选项，则应用程序必须位于远程系统上的系统路径中。</td>
 </tr>
 <tr>
-<td align="left"><strong>-d</strong></td>
-<td align="left">不要等待进程终止（非交互式）。</td>
+<td style="text-align:left"><strong>-d</strong></td>
+<td style="text-align:left">不要等待进程终止（非交互式）。</td>
 </tr>
 <tr>
-<td align="left"><strong>-e</strong></td>
-<td align="left">不要加载指定帐户的配置文件。</td>
+<td style="text-align:left"><strong>-e</strong></td>
+<td style="text-align:left">不要加载指定帐户的配置文件。</td>
 </tr>
 <tr>
-<td align="left"><strong>-f</strong></td>
-<td align="left">复制指定的程序，即使文件已存在于远程系统上。</td>
+<td style="text-align:left"><strong>-f</strong></td>
+<td style="text-align:left">复制指定的程序，即使文件已存在于远程系统上。</td>
 </tr>
 <tr>
-<td align="left">-i</td>
-<td align="left">运行程序，使其与远程系统上指定会话的桌面进行交互。 如果未指定会话，则进程在控制台会话中运行。 当尝试以交互方式运行控制台应用程序（使用重定向的标准 IO）时，<strong>需要</strong>此标志。</td>
+<td style="text-align:left">-i</td>
+<td style="text-align:left">运行程序，使其与远程系统上指定会话的桌面进行交互。 如果未指定会话，则进程在控制台会话中运行。 当尝试以交互方式运行控制台应用程序（使用重定向的标准 IO）时，<strong>需要</strong>此标志。</td>
 </tr>
 <tr>
-<td align="left"><strong>-h</strong></td>
-<td align="left">如果目标系统为 Vista 或更高版本，则使用帐户的提升令牌（如果可用）运行进程。</td>
+<td style="text-align:left"><strong>-h</strong></td>
+<td style="text-align:left">如果目标系统为 Vista 或更高版本，则使用帐户的提升令牌（如果可用）运行进程。</td>
 </tr>
 <tr>
-<td align="left"><strong>-l</strong></td>
-<td align="left">以受限用户身份运行进程（删除 Administrators 组，并仅允许分配给 Users 组的权限）。 在 Windows Vista 上，进程以低完整性运行。</td>
+<td style="text-align:left"><strong>-l</strong></td>
+<td style="text-align:left">以受限用户身份运行进程（删除 Administrators 组，并仅允许分配给 Users 组的权限）。 在 Windows Vista 上，进程以低完整性运行。</td>
 </tr>
 <tr>
-<td align="left"><strong>-n</strong></td>
-<td align="left">指定连接到远程计算机的超时时间（以秒为单位）。</td>
+<td style="text-align:left"><strong>-n</strong></td>
+<td style="text-align:left">指定连接到远程计算机的超时时间（以秒为单位）。</td>
 </tr>
 <tr>
-<td align="left"><strong>-p</strong></td>
-<td align="left">指定用户名的可选密码。 如果省略此内容，系统将提示你输入隐藏密码。</td>
+<td style="text-align:left"><strong>-p</strong></td>
+<td style="text-align:left">指定用户名的可选密码。 如果省略此内容，系统将提示你输入隐藏密码。</td>
 </tr>
 <tr>
-<td align="left"><strong>-r</strong></td>
-<td align="left">指定要创建或与之交互的远程服务的名称。</td>
+<td style="text-align:left"><strong>-r</strong></td>
+<td style="text-align:left">指定要创建或与之交互的远程服务的名称。</td>
 </tr>
 <tr>
-<td align="left"><strong>-s</strong></td>
-<td align="left">在系统帐户中运行远程进程。</td>
+<td style="text-align:left"><strong>-s</strong></td>
+<td style="text-align:left">在系统帐户中运行远程进程。</td>
 </tr>
 <tr>
-<td align="left"><strong>-u</strong></td>
-<td align="left">指定登录远程计算机的可选用户名。</td>
+<td style="text-align:left"><strong>-u</strong></td>
+<td style="text-align:left">指定登录远程计算机的可选用户名。</td>
 </tr>
 <tr>
-<td align="left"><strong>-v</strong></td>
-<td align="left">仅当指定文件的版本号较高或比远程系统上的版本号新时，才复制指定文件。</td>
+<td style="text-align:left"><strong>-v</strong></td>
+<td style="text-align:left">仅当指定文件的版本号较高或比远程系统上的版本号新时，才复制指定文件。</td>
 </tr>
 <tr>
-<td align="left"><strong>-w</strong></td>
-<td align="left">设置进程的工作目录（相对于远程计算机）。</td>
+<td style="text-align:left"><strong>-w</strong></td>
+<td style="text-align:left">设置进程的工作目录（相对于远程计算机）。</td>
 </tr>
 <tr>
-<td align="left"><strong>-x</strong></td>
-<td align="left">在 Winlogon 安全桌面上显示 UI（仅限本地系统）。</td>
+<td style="text-align:left"><strong>-x</strong></td>
+<td style="text-align:left">在 Winlogon 安全桌面上显示 UI（仅限本地系统）。</td>
 </tr>
 <tr>
-<td align="left"><strong>-priority</strong></td>
-<td align="left">指定 -low、-belownormal、-abovenormal、-high 或 -realtime，以便以不同的优先级运行进程。 使用 -background 在 Vista 上以低内存和 I&#x2F;O 优先级运行。</td>
+<td style="text-align:left"><strong>-priority</strong></td>
+<td style="text-align:left">指定 -low、-belownormal、-abovenormal、-high 或 -realtime，以便以不同的优先级运行进程。 使用 -background 在 Vista 上以低内存和 I/O 优先级运行。</td>
 </tr>
 <tr>
-<td align="left"><strong>computer</strong></td>
-<td align="left">指示 PsExec 在指定的远程计算机上运行应用程序。 如果省略计算机名称，PsExec 将在本地系统上运行应用程序，如果指定通配符 (\*)，PsExec 将在当前域中的所有计算机上运行命令。</td>
+<td style="text-align:left"><strong>computer</strong></td>
+<td style="text-align:left">指示 PsExec 在指定的远程计算机上运行应用程序。 如果省略计算机名称，PsExec 将在本地系统上运行应用程序，如果指定通配符 (\*)，PsExec 将在当前域中的所有计算机上运行命令。</td>
 </tr>
 <tr>
-<td align="left"><strong>@file</strong></td>
-<td align="left">PsExec 将在文件中列出的每台计算机上执行命令。</td>
+<td style="text-align:left"><strong>@file</strong></td>
+<td style="text-align:left">PsExec 将在文件中列出的每台计算机上执行命令。</td>
 </tr>
 <tr>
-<td align="left"><strong>cmd</strong></td>
-<td align="left">要执行的应用程序的名称。</td>
+<td style="text-align:left"><strong>cmd</strong></td>
+<td style="text-align:left">要执行的应用程序的名称。</td>
 </tr>
 <tr>
-<td align="left"><strong>arguments</strong></td>
-<td align="left">要传递的参数（请注意，文件路径必须是目标系统上的绝对路径）。</td>
+<td style="text-align:left"><strong>arguments</strong></td>
+<td style="text-align:left">要传递的参数（请注意，文件路径必须是目标系统上的绝对路径）。</td>
 </tr>
 <tr>
-<td align="left"><strong>-accepteula</strong></td>
-<td align="left">此标志禁止显示许可证对话框。</td>
+<td style="text-align:left"><strong>-accepteula</strong></td>
+<td style="text-align:left">此标志禁止显示许可证对话框。</td>
 </tr>
 <tr>
-<td align="left"><strong>-nobanner</strong></td>
-<td align="left">此标志会消除启动横幅和版权消息。</td>
+<td style="text-align:left"><strong>-nobanner</strong></td>
+<td style="text-align:left">此标志会消除启动横幅和版权消息。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -447,7 +451,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【权限与会话】提权工具 psExec.exe</div>
-      <div>http://example.com/A_OS/Windows/权限与会话/【权限与会话】提权工具/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/权限与会话/【权限与会话】提权工具/</div>
     </div>
     <div class="license-meta">
       
@@ -491,9 +495,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%20Service%E9%99%8D%E6%9D%83%E5%90%AF%E5%8A%A8%E8%BF%9B%E7%A8%8B/" title="【Windows】服务中以管理员\普通权限启动进程">
+                      <a href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E6%8F%90%E6%9D%83/" title="【权限与会话】提权">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【Windows】服务中以管理员\普通权限启动进程</span>
+                        <span class="hidden-mobile">【权限与会话】提权</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -501,8 +505,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E6%8F%90%E6%9D%83/" title="【权限与会话】提权">
-                        <span class="hidden-mobile">【权限与会话】提权</span>
+                      <a href="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E3%80%91Privilege&#39;s%20constants/" title="【Windows】权限(Privilege Constants)">
+                        <span class="hidden-mobile">【Windows】权限(Privilege Constants)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

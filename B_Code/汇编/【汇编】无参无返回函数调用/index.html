@@ -24,17 +24,17 @@
     <meta name="description" content="概述：无参无返回函数的调用汇编及堆栈说明">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【汇编】无参无返回函数调用">
-<meta property="og:url" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：无参无返回函数的调用汇编及堆栈说明">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.363Z">
 <meta property="article:modified_time" content="2024-08-22T01:38:15.181Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="汇编">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png">
   
   
   
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -282,19 +286,11 @@
 <p>概述：无参无返回函数的调用汇编及堆栈说明</p>
 </blockquote>
 <span id="more"></span>
-
-
-
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h2 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Fun</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br><span class="hljs-number">00411780</span>  push        ebp  <br><span class="hljs-number">00411781</span>  mov         ebp,esp  <br><span class="hljs-number">00411783</span>  sub         esp,<span class="hljs-number">0</span>C0h  <br><span class="hljs-number">00411789</span>  push        ebx  <br><span class="hljs-number">0041178</span>A  push        esi  <br><span class="hljs-number">0041178B</span>  push        edi  <br><span class="hljs-number">0041178</span>C  mov         edi,ebp  <br><span class="hljs-number">0041178</span>E  <span class="hljs-keyword">xor</span>         ecx,ecx  <br><span class="hljs-number">00411790</span>  mov         eax,<span class="hljs-number">0</span>CCCCCCCCh  <br><span class="hljs-number">00411795</span>  rep stos    dword ptr es:[edi]  <br><span class="hljs-number">00411797</span>  mov         ecx,offset _460A191B_SimpleFun@<span class="hljs-built_in">cpp</span> (<span class="hljs-number">041</span>C067h)  <br><span class="hljs-number">0041179</span>C  call        @__CheckForDebuggerJustMyCode@<span class="hljs-number">4</span> (<span class="hljs-number">0411325</span>h)  <br>&#125;<br><br><span class="hljs-number">004117</span>A1  pop         edi  <br><span class="hljs-number">004117</span>A2  pop         esi  <br><span class="hljs-number">004117</span>A3  pop         ebx  <br><span class="hljs-number">004117</span>A4  add         esp,<span class="hljs-number">0</span>C0h  <br><span class="hljs-number">004117</span>AA  cmp         ebp,esp  <br><span class="hljs-number">004117</span>AC  call        __RTC_CheckEsp (<span class="hljs-number">0411249</span>h)  <br><span class="hljs-number">004117B</span>1  mov         esp,ebp  <br><span class="hljs-number">004117B</span>3  pop         ebp  <br><span class="hljs-number">004117B</span>4  ret  <br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="堆栈"><a href="#堆栈" class="headerlink" title="堆栈"></a>堆栈</h2><img src="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png" srcset="/img/loading.gif" lazyload class title="堆栈图">
-
-
-
-
-
+<h2 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h2>
+<h2 id="汇编"><a class="markdownIt-Anchor" href="#汇编"></a> 汇编</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Fun</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br><span class="hljs-number">00411780</span>  push        ebp  <br><span class="hljs-number">00411781</span>  mov         ebp,esp  <br><span class="hljs-number">00411783</span>  sub         esp,<span class="hljs-number">0</span>C0h  <br><span class="hljs-number">00411789</span>  push        ebx  <br><span class="hljs-number">0041178</span>A  push        esi  <br><span class="hljs-number">0041178B</span>  push        edi  <br><span class="hljs-number">0041178</span>C  mov         edi,ebp  <br><span class="hljs-number">0041178</span>E  <span class="hljs-keyword">xor</span>         ecx,ecx  <br><span class="hljs-number">00411790</span>  mov         eax,<span class="hljs-number">0</span>CCCCCCCCh  <br><span class="hljs-number">00411795</span>  rep stos    dword ptr es:[edi]  <br><span class="hljs-number">00411797</span>  mov         ecx,offset _460A191B_SimpleFun@<span class="hljs-built_in">cpp</span> (<span class="hljs-number">041</span>C067h)  <br><span class="hljs-number">0041179</span>C  call        @__CheckForDebuggerJustMyCode@<span class="hljs-number">4</span> (<span class="hljs-number">0411325</span>h)  <br>&#125;<br><br><span class="hljs-number">004117</span>A1  pop         edi  <br><span class="hljs-number">004117</span>A2  pop         esi  <br><span class="hljs-number">004117</span>A3  pop         ebx  <br><span class="hljs-number">004117</span>A4  add         esp,<span class="hljs-number">0</span>C0h  <br><span class="hljs-number">004117</span>AA  cmp         ebp,esp  <br><span class="hljs-number">004117</span>AC  call        __RTC_CheckEsp (<span class="hljs-number">0411249</span>h)  <br><span class="hljs-number">004117B</span>1  mov         esp,ebp  <br><span class="hljs-number">004117B</span>3  pop         ebp  <br><span class="hljs-number">004117B</span>4  ret  <br></code></pre></td></tr></table></figure>
+<h2 id="堆栈"><a class="markdownIt-Anchor" href="#堆栈"></a> 堆栈</h2>
+<img src="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%97%A0%E5%8F%82%E6%97%A0%E8%BF%94%E5%9B%9E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8/IMG-20240822093815119.png" srcset="/img/loading.gif" lazyload class title="堆栈图">
 
                 
               </div>
@@ -348,7 +344,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【汇编】无参无返回函数调用</div>
-      <div>http://example.com/B_Code/汇编/【汇编】无参无返回函数调用/</div>
+      <div>https://hodlyounger.github.io/B_Code/汇编/【汇编】无参无返回函数调用/</div>
     </div>
     <div class="license-meta">
       

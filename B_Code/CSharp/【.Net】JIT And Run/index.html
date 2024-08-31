@@ -24,7 +24,7 @@
     <meta name="description" content="概述：微软文档 JIT And Run 运行机制的翻译 关键字：#Method Layout #CLR #SystemDomain #SharedDomain #DefaultDomain">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【.Net】JIT And Run[翻译]">
-<meta property="og:url" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91JIT%20And%20Run/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/CSharp/%E3%80%90.Net%E3%80%91JIT%20And%20Run/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：微软文档 JIT And Run 运行机制的翻译 关键字：#Method Layout #CLR #SystemDomain #SharedDomain #DefaultDomain">
 <meta property="og:locale" content="zh_CN">
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -222,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          593 字
+          590 字
         
       </span>
     
@@ -280,16 +284,18 @@
 <p>关键字：#Method Layout #CLR #SystemDomain #SharedDomain #DefaultDomain</p>
 </blockquote>
 <span id="more"></span>
-
 <p>相关开源代码：</p>
 <ul>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/srgylvn/Protection-Talk/tree/master/Encryptor/Hook">Protection-Talk&#x2F;Encryptor&#x2F;Hook at master · srgylvn&#x2F;Protection-Talk</a><br>具体可以看 <code>my_compileMethodImpl </code> 的实现。</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/srgylvn/Protection-Talk/tree/master/Encryptor/Hook">Protection-Talk/Encryptor/Hook at master · srgylvn/Protection-Talk</a><br>
+具体可以看 <code>my_compileMethodImpl </code> 的实现。</li>
 </ul>
 <p>原文链接：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/archive/msdn-magazine/2005/may/net-framework-internals-how-the-clr-creates-runtime-objects">.NET Framework Internals: How the CLR Creates Runtime Objects | Microsoft Learn</a></p>
 <blockquote>
 <p>建议：在读这篇文章之前，你最好是有相关的 .Net 程序调试经验，并且理解 CLR。</p>
 </blockquote>
-<h2 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h2><h3 id="简要说明"><a href="#简要说明" class="headerlink" title="简要说明"></a>简要说明</h3><p>深入到 .Net 框架，查看 CLR 如何在运行时创建对象</p>
+<h2 id="0x01-简介"><a class="markdownIt-Anchor" href="#0x01-简介"></a> 0x01 简介</h2>
+<h3 id="简要说明"><a class="markdownIt-Anchor" href="#简要说明"></a> 简要说明</h3>
+<p>深入到 .Net 框架，查看 CLR 如何在运行时创建对象</p>
 <p>这篇文章的主要论点：</p>
 <ul>
 <li>SystemDomain，ShareDomain，以及 DefalutDomain</li>
@@ -297,113 +303,131 @@
 <li>方法表布局</li>
 <li>方法分派</li>
 </ul>
-<h2 id="0x02-主要内容"><a href="#0x02-主要内容" class="headerlink" title="0x02 主要内容"></a>0x02 主要内容</h2><p>Domains Created by the CLR Bootstrap<br>System Domain<br>SharedDomain<br>DefaultDomain<br>LoaderHeaps<br>Type Fundamentals<br>ObjectInstance<br>MethodTable<br>Base Instance Size<br>Method Slot Table<br>MethodDesc<br>Interface Vtable Map and Interface Map<br>Virtual Dispatch<br>Static Variables<br>EEClass<br>Conclusion</p>
+<h2 id="0x02-主要内容"><a class="markdownIt-Anchor" href="#0x02-主要内容"></a> 0x02 主要内容</h2>
+<p>Domains Created by the CLR Bootstrap<br>
+System Domain<br>
+SharedDomain<br>
+DefaultDomain<br>
+LoaderHeaps<br>
+Type Fundamentals<br>
+ObjectInstance<br>
+MethodTable<br>
+Base Instance Size<br>
+Method Slot Table<br>
+MethodDesc<br>
+Interface Vtable Map and Interface Map<br>
+Virtual Dispatch<br>
+Static Variables<br>
+EEClass<br>
+Conclusion</p>
 <p>在将来一段时间内，CLR 都将成为在 Windows 中构建应用的主要基础设施。必要的深入了解有助于我们构建高效、工业实力强大的应用程序。在本文中，作者就 CLR 内部结构，包括对象实例布局、方法表布局、方法调用、以及基于接口的方法调用和各种数据结构进行说明。</p>
 <p>本文使用 C# 编写的简单示例，所以对任何语言语法的隐式引用都应该默认为 C#，讨论的一些数据结构和算法可能会在 Microsoft .Net 2.0 的框架进行更改，但是概念基本保持一致。作者使用的的环境为 Visual Studio .Net 2003 Debugger 和 调试扩展 SOS（Son of Strike），用以查看本文中所讨论的数据结构。SOS 可以帮助我们理解 CLR 内部数据结构并转储出有用的信息。有关将 SOS 加载到 Visual Sutio 的方法可以查看 SOS 一节。作者将描述在共享源 CLI（SSCLI）中具有相应实现的类。图1将帮助你在SSCLI中浏览数以兆字节计的代码，同时搜索引用的结构。</p>
 <table>
 <thead>
 <tr>
-<th align="left">Item</th>
-<th align="left">SSCLI Path</th>
+<th style="text-align:left">Item</th>
+<th style="text-align:left">SSCLI Path</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">AppDomain</td>
-<td align="left">\sscli\clr\src\vm\appdomain.hpp</td>
+<tbody>
+<tr>
+<td style="text-align:left">AppDomain</td>
+<td style="text-align:left">\sscli\clr\src\vm\appdomain.hpp</td>
 </tr>
 <tr>
-<td align="left">AppDomainStringLiteralMap</td>
-<td align="left">\sscli\clr\src\vm\stringliteralmap.h</td>
+<td style="text-align:left">AppDomainStringLiteralMap</td>
+<td style="text-align:left">\sscli\clr\src\vm\stringliteralmap.h</td>
 </tr>
 <tr>
-<td align="left">BaseDomain</td>
-<td align="left">\sscli\clr\src\vm\appdomain.hpp</td>
+<td style="text-align:left">BaseDomain</td>
+<td style="text-align:left">\sscli\clr\src\vm\appdomain.hpp</td>
 </tr>
 <tr>
-<td align="left">ClassLoader</td>
-<td align="left">\sscli\clr\src\vm\clsload.hpp</td>
+<td style="text-align:left">ClassLoader</td>
+<td style="text-align:left">\sscli\clr\src\vm\clsload.hpp</td>
 </tr>
 <tr>
-<td align="left">EEClass</td>
-<td align="left">\sscli\clr\src\vm\class.h</td>
+<td style="text-align:left">EEClass</td>
+<td style="text-align:left">\sscli\clr\src\vm\class.h</td>
 </tr>
 <tr>
-<td align="left">FieldDescs</td>
-<td align="left">\sscli\clr\src\vm\field.h</td>
+<td style="text-align:left">FieldDescs</td>
+<td style="text-align:left">\sscli\clr\src\vm\field.h</td>
 </tr>
 <tr>
-<td align="left">GCHeap</td>
-<td align="left">\sscli\clr\src\vm\gc.h</td>
+<td style="text-align:left">GCHeap</td>
+<td style="text-align:left">\sscli\clr\src\vm\gc.h</td>
 </tr>
 <tr>
-<td align="left">GlobalStringLiteralMap</td>
-<td align="left">\sscli\clr\src\vm\stringliteralmap.h</td>
+<td style="text-align:left">GlobalStringLiteralMap</td>
+<td style="text-align:left">\sscli\clr\src\vm\stringliteralmap.h</td>
 </tr>
 <tr>
-<td align="left">HandleTable</td>
-<td align="left">\sscli\clr\src\vm\handletable.h</td>
+<td style="text-align:left">HandleTable</td>
+<td style="text-align:left">\sscli\clr\src\vm\handletable.h</td>
 </tr>
 <tr>
-<td align="left">InterfaceVTableMapMgr</td>
-<td align="left">\sscli\clr\src\vm\appdomain.hpp</td>
+<td style="text-align:left">InterfaceVTableMapMgr</td>
+<td style="text-align:left">\sscli\clr\src\vm\appdomain.hpp</td>
 </tr>
 <tr>
-<td align="left">Large Object Heap</td>
-<td align="left">\sscli\clr\src\vm\gc.h</td>
+<td style="text-align:left">Large Object Heap</td>
+<td style="text-align:left">\sscli\clr\src\vm\gc.h</td>
 </tr>
 <tr>
-<td align="left">LayoutKind</td>
-<td align="left">\sscli\clr\src\bcl\system\runtime\interopservices\layoutkind.cs</td>
+<td style="text-align:left">LayoutKind</td>
+<td style="text-align:left">\sscli\clr\src\bcl\system\runtime\interopservices\layoutkind.cs</td>
 </tr>
 <tr>
-<td align="left">LoaderHeaps</td>
-<td align="left">\sscli\clr\src\inc\utilcode.h</td>
+<td style="text-align:left">LoaderHeaps</td>
+<td style="text-align:left">\sscli\clr\src\inc\utilcode.h</td>
 </tr>
 <tr>
-<td align="left">MethodDescs</td>
-<td align="left">\sscli\clr\src\vm\method.hpp</td>
+<td style="text-align:left">MethodDescs</td>
+<td style="text-align:left">\sscli\clr\src\vm\method.hpp</td>
 </tr>
 <tr>
-<td align="left">MethodTables</td>
-<td align="left">\sscli\clr\src\vm\class.h</td>
+<td style="text-align:left">MethodTables</td>
+<td style="text-align:left">\sscli\clr\src\vm\class.h</td>
 </tr>
 <tr>
-<td align="left">OBJECTREF</td>
-<td align="left">\sscli\clr\src\vm\typehandle.h</td>
+<td style="text-align:left">OBJECTREF</td>
+<td style="text-align:left">\sscli\clr\src\vm\typehandle.h</td>
 </tr>
 <tr>
-<td align="left">SecurityContext</td>
-<td align="left">\sscli\clr\src\vm\security.h</td>
+<td style="text-align:left">SecurityContext</td>
+<td style="text-align:left">\sscli\clr\src\vm\security.h</td>
 </tr>
 <tr>
-<td align="left">SecurityDescriptor</td>
-<td align="left">\sscli\clr\src\vm\security.h</td>
+<td style="text-align:left">SecurityDescriptor</td>
+<td style="text-align:left">\sscli\clr\src\vm\security.h</td>
 </tr>
 <tr>
-<td align="left">SharedDomain</td>
-<td align="left">\sscli\clr\src\vm\appdomain.hpp</td>
+<td style="text-align:left">SharedDomain</td>
+<td style="text-align:left">\sscli\clr\src\vm\appdomain.hpp</td>
 </tr>
 <tr>
-<td align="left">StructLayoutAttribute</td>
-<td align="left">\sscli\clr\src\bcl\system\runtime\interopservices\attributes.cs</td>
+<td style="text-align:left">StructLayoutAttribute</td>
+<td style="text-align:left">\sscli\clr\src\bcl\system\runtime\interopservices\attributes.cs</td>
 </tr>
 <tr>
-<td align="left">SyncTableEntry</td>
-<td align="left">\sscli\clr\src\vm\syncblk.h</td>
+<td style="text-align:left">SyncTableEntry</td>
+<td style="text-align:left">\sscli\clr\src\vm\syncblk.h</td>
 </tr>
 <tr>
-<td align="left">System namespace</td>
-<td align="left">\sscli\clr\src\bcl\system</td>
+<td style="text-align:left">System namespace</td>
+<td style="text-align:left">\sscli\clr\src\bcl\system</td>
 </tr>
 <tr>
-<td align="left">SystemDomain</td>
-<td align="left">\sscli\clr\src\vm\appdomain.hpp</td>
+<td style="text-align:left">SystemDomain</td>
+<td style="text-align:left">\sscli\clr\src\vm\appdomain.hpp</td>
 </tr>
 <tr>
-<td align="left">TypeHandle</td>
-<td align="left">\sscli\clr\src\vm\typehandle.h</td>
+<td style="text-align:left">TypeHandle</td>
+<td style="text-align:left">\sscli\clr\src\vm\typehandle.h</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>图一 SSCLI 引用</p>
 
                 
@@ -451,7 +475,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【.Net】JIT And Run[翻译]</div>
-      <div>http://example.com/B_Code/CSharp/【.Net】JIT And Run/</div>
+      <div>https://hodlyounger.github.io/B_Code/CSharp/【.Net】JIT And Run/</div>
     </div>
     <div class="license-meta">
       

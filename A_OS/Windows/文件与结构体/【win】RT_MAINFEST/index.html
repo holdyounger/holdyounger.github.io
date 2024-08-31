@@ -24,7 +24,7 @@
     <meta name="description" content="概述: MAINFEST文件说明及相关使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RT_MAINFEST 文件">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91RT_MAINFEST/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91RT_MAINFEST/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述: MAINFEST文件说明及相关使用">
 <meta property="og:locale" content="zh_CN">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -283,57 +287,69 @@
 <p>概述: MAINFEST文件说明及相关使用</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-可以指定加载的dll"><a href="#0x01-可以指定加载的dll" class="headerlink" title="0x01 可以指定加载的dll"></a>0x01 可以指定加载的dll</h2><p>可以通过修改 MAINFEST 文件内容来修改 dll 的加载位置。</p>
-<h3 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h3><p>如下所示分别指定了 <code>vcruntime140d.dll</code> 、 <code>ucrtbased.dll</code> 、 <code>libcrypto-3.dll</code> 、<code>libssl-3.dll</code> 四个dll的加载路径</p>
+<h2 id="0x01-可以指定加载的dll"><a class="markdownIt-Anchor" href="#0x01-可以指定加载的dll"></a> 0x01 可以指定加载的dll</h2>
+<p>可以通过修改 MAINFEST 文件内容来修改 dll 的加载位置。</p>
+<h3 id="示例"><a class="markdownIt-Anchor" href="#示例"></a> 示例：</h3>
+<p>如下所示分别指定了 <code>vcruntime140d.dll</code> 、 <code>ucrtbased.dll</code> 、 <code>libcrypto-3.dll</code> 、<code>libssl-3.dll</code> 四个dll的加载路径</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;UTF-8&#x27; standalone=&#x27;yes&#x27;?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">assembly</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&#x27;urn:schemas-microsoft-com:asm.v1&#x27;</span> <span class="hljs-attr">manifestVersion</span>=<span class="hljs-string">&#x27;1.0&#x27;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">file</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;vcruntime140d.dll&quot;</span> <span class="hljs-attr">loadFrom</span>=<span class="hljs-string">&quot;C:\Users\holdy\Documents\TestMySQL\temp1\vcruntime140d.dll&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">file</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;ucrtbased.dll&quot;</span> <span class="hljs-attr">loadFrom</span>=<span class="hljs-string">&quot;C:\Users\holdy\Documents\TestMySQL\temp1\ucrtbased.dll&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">file</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;libcrypto-3.dll&quot;</span> <span class="hljs-attr">loadFrom</span>=<span class="hljs-string">&quot;D:\Documents\A_Source\WindowsTec\Debug\mysqlcppconn8-static-debug-openssl3-mtd\libcrypto-3.dll&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">file</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;libssl-3.dll&quot;</span> <span class="hljs-attr">loadFrom</span>=<span class="hljs-string">&quot;D:\Documents\A_Source\WindowsTec\Debug\mysqlcppconn8-static-debug-openssl3-mtd\libcrypto-3.dll&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">file</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">assembly</span>&gt;</span><br></code></pre></td></tr></table></figure>
-
-
-<h2 id="0x02-自动提升Vista、Win7上进程的权限–RT-MANIFEST"><a href="#0x02-自动提升Vista、Win7上进程的权限–RT-MANIFEST" class="headerlink" title="0x02 自动提升Vista、Win7上进程的权限–RT_MANIFEST"></a>0x02 自动提升Vista、Win7上进程的权限–RT_MANIFEST</h2><p>很多时候自己开发的应用程序需要以更高的用户权限来运行，特别是在Vista、Win7下面。</p>
+<h2 id="0x02-自动提升vista-win7上进程的权限rt_manifest"><a class="markdownIt-Anchor" href="#0x02-自动提升vista-win7上进程的权限rt_manifest"></a> 0x02 自动提升Vista、Win7上进程的权限–RT_MANIFEST</h2>
+<p>很多时候自己开发的应用程序需要以更高的用户权限来运行，特别是在Vista、Win7下面。</p>
 <p>如何使得自己编写的应用程序在运行时也如同下面的方式一样，提示权限提升。</p>
 <p>方法：</p>
 <ol>
-<li><p>按照通常方式，开发VC程序，编译、生成.exe文件；</p>
+<li>
+<p>按照通常方式，开发VC程序，编译、生成.exe文件；</p>
 </li>
-<li><p>在Debug或Release文件夹下面，新建一个“程序名+.exe+.manifest”的文件。若你生成的应用程序名称叫MyApp.exe，在MyApp.exe所在的目录下新建一个名称为MyApp.exe.manifest的文件，将该文件以文本方式打开（如notepad）</p>
+<li>
+<p>在Debug或Release文件夹下面，新建一个“程序名+.exe+.manifest”的文件。若你生成的应用程序名称叫MyApp.exe，在MyApp.exe所在的目录下新建一个名称为MyApp.exe.manifest的文件，将该文件以文本方式打开（如notepad）</p>
 </li>
-<li><p>将下面的此段XML，粘贴到刚刚新建的MyApp.exe.manifest文件中，并保存。</p>
+<li>
+<p>将下面的此段XML，粘贴到刚刚新建的MyApp.exe.manifest文件中，并保存。</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;UTF-8&#x27; standalone=&#x27;yes&#x27;?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">assembly</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&#x27;urn:schemas-microsoft-com:asm.v1&#x27;</span> <span class="hljs-attr">manifestVersion</span>=<span class="hljs-string">&#x27;1.0&#x27;</span>&gt;</span><br> <span class="hljs-tag">&lt;<span class="hljs-name">trustInfo</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;urn:schemas-microsoft-com:asm.v3&quot;</span>&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">security</span>&gt;</span><br>   <span class="hljs-tag">&lt;<span class="hljs-name">requestedPrivileges</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">requestedExecutionLevel</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&#x27;requireAdministrator&#x27;</span> <span class="hljs-attr">uiAccess</span>=<span class="hljs-string">&#x27;false&#x27;</span> /&gt;</span><br>   <span class="hljs-tag">&lt;/<span class="hljs-name">requestedPrivileges</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">security</span>&gt;</span><br> <span class="hljs-tag">&lt;/<span class="hljs-name">trustInfo</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">assembly</span>&gt;</span><br></code></pre></td></tr></table></figure>
-
 <p>requestedExecutionLevel元素中的“level”属性可以取下面的值（比较简单的英文，相信大家都能看懂）。</p>
 </li>
-<li><p>运行.Net Visual Studio命令提示符（注意是.Net下类似cmd.exe的工具，不是Windows附件里面的cmd.exe）。如果你安装了Visual Studio .Net 2003 或 2005 、2008、2010等开发工具，在开始菜单-&gt;Visual Studio 2003或2005-&gt;Visual Studio工具下面可以找到该工具。</p>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://xn--jn2aw7m.Net">运行.Net</a> Visual Studio命令提示符（注意是.Net下类似cmd.exe的工具，不是Windows附件里面的cmd.exe）。如果你安装了Visual Studio .Net 2003 或 2005 、2008、2010等开发工具，在开始菜单-&gt;Visual Studio 2003或2005-&gt;Visual Studio工具下面可以找到该工具。</p>
 </li>
-<li><p>运行.Net Visual Studio命令提示符之后，将当前目录更改到你应用程序（MyApp.exe）所在的目录下面，之后输入如下命令：</p>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://xn--jn2aw7m.Net">运行.Net</a> Visual Studio命令提示符之后，将当前目录更改到你应用程序（MyApp.exe）所在的目录下面，之后输入如下命令：</p>
 </li>
 </ol>
-<p>mt.exe -manifest “MyApp.exe.manifest” -outputresource:”MyApp.exe”;#1 </p>
+<p>mt.exe -manifest “MyApp.exe.manifest” -outputresource:“MyApp.exe”;#1</p>
 <p>（此处的MyApp要替换成你自己应用程序的名字）</p>
 <ol start="6">
-<li>之后再到你应用程序的目录下面就会看到，现在应用程序的图标比原来多了一个安全盾。<br>运行程序就会出现提示。</li>
+<li>之后再到你应用程序的目录下面就会看到，现在应用程序的图标比原来多了一个安全盾。<br>
+运行程序就会出现提示。</li>
 </ol>
-<p>注：如果您开发的是动态链接库DLL。则在.Net Visual Studio命令提示符中输入的命令应该为：</p>
+<p>注：如果您开发的是动态链接库DLL。<a target="_blank" rel="external nofollow noopener noreferrer" href="http://xn--3br26j.Net">则在.Net</a> Visual Studio命令提示符中输入的命令应该为：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">mt.exe -manifest &quot;MyApp.dll.manifest&quot; -outputresource:&quot;MyApp.dll&quot;;#<span class="hljs-number">2</span> 。<br></code></pre></td></tr></table></figure>
-
 <p>最后，读者不妨自己测试一下本文所讲的方法，在Vista或Win7系统下，编写一个修改系统时间的简单应用，在不采用此方法之前，看能否修改成功。如果不能试试本文讲述的方法，然后运行程序再看看能否修改成功。</p>
 <p>修改系统时间的代码如下：</p>
-<p> COleDateTime tm;<br> SYSTEMTIME st;<br> tm.ParseDateTime(_T(“2000-10-10 17:00:00”));<br> tm.GetAsSystemTime(st);<br> SetLocalTime(&amp;st);</p>
-<h3 id="在Vista下提升应用程序的执行权限"><a href="#在Vista下提升应用程序的执行权限" class="headerlink" title="在Vista下提升应用程序的执行权限"></a>在Vista下提升应用程序的执行权限</h3><p>在 vista系统应用程序执行时默认不会使用超级用户权限,这会使一些创建文件和目录的IO操作失败,出现访问错误.这种现象是因为Vista的UAC特性 引起的.</p>
+<p>COleDateTime tm;<br>
+SYSTEMTIME st;<br>
+tm.ParseDateTime(_T(“2000-10-10 17:00:00”));<br>
+tm.GetAsSystemTime(st);<br>
+SetLocalTime(&amp;st);</p>
+<h3 id="在vista下提升应用程序的执行权限"><a class="markdownIt-Anchor" href="#在vista下提升应用程序的执行权限"></a> 在Vista下提升应用程序的执行权限</h3>
+<p>在 vista系统应用程序执行时默认不会使用超级用户权限,这会使一些创建文件和目录的IO操作失败,出现访问错误.这种现象是因为Vista的UAC特性 引起的.</p>
 <p>要避免这种情况,可以强制用户在运行应用程序时以超级用户权限执行程序.具体做法:</p>
 <ol>
-<li><p>编辑manifest文 件. 在manifest文件中配置好应用程序执行时需要的参数和执行环境.下面是一个实际例子:</p>
+<li>
+<p>编辑manifest文 件. 在manifest文件中配置好应用程序执行时需要的参数和执行环境.下面是一个实际例子:</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;UTF-8&quot;</span> standalone=<span class="hljs-string">&quot;yes&quot;</span>?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">assembly</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;urn:schemas-microsoft-com:asm.v1&quot;</span> <span class="hljs-attr">manifestVersion</span>=<span class="hljs-string">&quot;1.0&quot;</span>&gt;</span> <br>  <span class="hljs-tag">&lt;<span class="hljs-name">assemblyIdentity</span> <span class="hljs-attr">version</span>=<span class="hljs-string">&quot;1.0.0.0&quot;</span></span><br><span class="hljs-tag">     <span class="hljs-attr">processorArchitecture</span>=<span class="hljs-string">&quot;X86&quot;</span></span><br><span class="hljs-tag">     <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;IsUserAdmin&quot;</span></span><br><span class="hljs-tag">     <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;win32&quot;</span>/&gt;</span> <br>     <br>  <span class="hljs-tag">&lt;<span class="hljs-name">description</span>&gt;</span>Description of your application<span class="hljs-tag">&lt;/<span class="hljs-name">description</span>&gt;</span> <br>  <span class="hljs-comment">&lt;!-- Identify the application security requirements. --&gt;</span><br>  <span class="hljs-tag">&lt;<span class="hljs-name">trustInfo</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;urn:schemas-microsoft-com:asm.v2&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">security</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">requestedPrivileges</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">requestedExecutionLevel</span></span><br><span class="hljs-tag">          <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;requireAdministrator&quot;</span></span><br><span class="hljs-tag">          <span class="hljs-attr">uiAccess</span>=<span class="hljs-string">&quot;false&quot;</span>/&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">requestedPrivileges</span>&gt;</span><br>       <span class="hljs-tag">&lt;/<span class="hljs-name">security</span>&gt;</span><br>  <span class="hljs-tag">&lt;/<span class="hljs-name">trustInfo</span>&gt;</span><br><br> <span class="hljs-tag">&lt;/<span class="hljs-name">assembly</span>&gt;</span><br></code></pre></td></tr></table></figure>
 </li>
-<li><p>编辑应用程序的资源文件(rc后缀的文件),在其中加入下面两行代码:</p>
+<li>
+<p>编辑应用程序的资源文件(rc后缀的文件),在其中加入下面两行代码:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> MANIFEST_RESOURCE_ID 1MANIFEST_RESOURCE_ID RT_MANIFEST <span class="hljs-string">&quot;&#123;Application.exe&#125;.manifest&quot;</span></span><br></code></pre></td></tr></table></figure>
-
 <p>其中 Application.exe 替换成要编译生成的可执行文件名.</p>
 </li>
-<li><p>编译链接程序,生成可执行应用程序.</p>
+<li>
+<p>编译链接程序,生成可执行应用程序.</p>
 </li>
-<li><p>运行 mt.exe命令,把manifest文件和生成的可执行程序链接起来.把manifest内容写入可执行文件.<br>命令行为:</p>
+<li>
+<p>运行 mt.exe命令,把manifest文件和生成的可执行程序链接起来.把manifest内容写入可执行文件.<br>
+命令行为:</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">mt.exe –manifest temp.manifest –outputresource:YourApp.exe;#<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
 <p>到这一步,生成的可执行文件就可以在vista下运行时弹出UAC确认框,让用户确认以超级用户权限执行应用程序.</p>
 </li>
 </ol>
@@ -403,7 +419,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>RT_MAINFEST 文件</div>
-      <div>http://example.com/A_OS/Windows/文件与结构体/【WIN】RT_MAINFEST/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/文件与结构体/【WIN】RT_MAINFEST/</div>
     </div>
     <div class="license-meta">
       

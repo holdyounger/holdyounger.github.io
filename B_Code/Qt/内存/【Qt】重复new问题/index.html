@@ -21,18 +21,18 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] 槽函数中重复 new这个问题比骄常见，举一个简单的例子： 12345678connect(timer, &amp;QTimer::timeout, this, &amp;this::slotCreateItem);void slotCreateItem()&#123;    QWidget *widget &#x3D; new QWidget();&#125;timer-&gt;start(10">
+    <meta name="description" content="[toc]  槽函数中重复 new 这个问题比骄常见，举一个简单的例子： 12345678connect(timer, &amp;QTimer::timeout, this, &amp;this::slotCreateItem);void slotCreateItem()&#123;    QWidget *widget &#x3D; new QWidget();&#125;timer-&gt;start(">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】因为槽函数问题或者逻辑问题导致重复new问题解决办法及建议">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E5%86%85%E5%AD%98/%E3%80%90Qt%E3%80%91%E9%87%8D%E5%A4%8Dnew%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E5%86%85%E5%AD%98/%E3%80%90Qt%E3%80%91%E9%87%8D%E5%A4%8Dnew%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 槽函数中重复 new这个问题比骄常见，举一个简单的例子： 12345678connect(timer, &amp;QTimer::timeout, this, &amp;this::slotCreateItem);void slotCreateItem()&#123;    QWidget *widget &#x3D; new QWidget();&#125;timer-&gt;start(10">
+<meta property="og:description" content="[toc]  槽函数中重复 new 这个问题比骄常见，举一个简单的例子： 12345678connect(timer, &amp;QTimer::timeout, this, &amp;this::slotCreateItem);void slotCreateItem()&#123;    QWidget *widget &#x3D; new QWidget();&#125;timer-&gt;start(">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.321Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:57.293Z">
 <meta property="article:author" content="mingming">
-<meta property="article:tag" content="new">
 <meta property="article:tag" content="内存">
+<meta property="article:tag" content="new">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,24 +282,28 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="槽函数中重复-new"><a href="#槽函数中重复-new" class="headerlink" title="槽函数中重复 new"></a>槽函数中重复 <code>new</code></h1><p>这个问题比骄常见，举一个简单的例子：</p>
+<h1 id="槽函数中重复-new"><a class="markdownIt-Anchor" href="#槽函数中重复-new"></a> 槽函数中重复 <code>new</code></h1>
+<p>这个问题比骄常见，举一个简单的例子：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotCreateItem);<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    QWidget *widget = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWidget</span>();<br>&#125;<br><br>timer-&gt;<span class="hljs-built_in">start</span>(<span class="hljs-number">1000</span>);<br></code></pre></td></tr></table></figure>
-
 <p>上边只是为了说明一下类似的这种情况，由于一些特殊原因导致的槽函数中会多次触发 <code>new</code> 操作。</p>
-<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><ol>
-<li><p>设置为成员变量，在进入函数时，先执行 <code>delete</code> ，再去 <code>new</code></p>
+<h2 id="解决办法"><a class="markdownIt-Anchor" href="#解决办法"></a> 解决办法</h2>
+<ol>
+<li>
+<p>设置为成员变量，在进入函数时，先执行 <code>delete</code> ，再去 <code>new</code></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-literal">nullptr</span> == m_widget)<br>    &#123;<br>        <span class="hljs-keyword">delete</span> m_widget;<br>        m_widget = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>    m_widget = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWidget</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>第二种办法就是设置控件属性</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs CPP"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    QWidget *widget = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWidget</span>();<br>    widget-&gt;<span class="hljs-built_in">setAttribute</span>(WA_DeleteOnClose);<br>&#125;<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>第二种办法就是设置控件属性</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs CPP"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    QWidget *widget = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWidget</span>();<br>    widget-&gt;<span class="hljs-built_in">setAttribute</span>(WA_DeleteOnClose);<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
-<h1 id="槽函数多次绑定问题"><a href="#槽函数多次绑定问题" class="headerlink" title="槽函数多次绑定问题"></a>槽函数多次绑定问题</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotCreateItem);<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotRePaint); <span class="hljs-comment">// 每进入一次就会绑定一次，每绑定一次，触发次数就会增加一次</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="解决办法-1"><a href="#解决办法-1" class="headerlink" title="解决办法"></a>解决办法</h2><p>使用 Qt 的第五个参数控制。将上述代码改为以下形式</p>
+<h1 id="槽函数多次绑定问题"><a class="markdownIt-Anchor" href="#槽函数多次绑定问题"></a> 槽函数多次绑定问题</h1>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotCreateItem);<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">slotCreateItem</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotRePaint); <span class="hljs-comment">// 每进入一次就会绑定一次，每绑定一次，触发次数就会增加一次</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="解决办法-2"><a class="markdownIt-Anchor" href="#解决办法-2"></a> 解决办法</h2>
+<p>使用 Qt 的第五个参数控制。将上述代码改为以下形式</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">connect</span>(timer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;<span class="hljs-keyword">this</span>::slotRePaint, Qt::UniqueConnection); <span class="hljs-comment">// （modify）每进入一次就会绑定一次，每绑定一次，触发次数就会增加一次</span><br></code></pre></td></tr></table></figure>
-
 <blockquote>
-<p> <code>Qt::UniqueConnection</code>：这是一个标记，可以使用位或与上述任何一种连接类型结合使用。当 <code>Qt::UniqueConnection</code> 被设置后，如果连接已经存在，<code>QObject::connect()</code> 将会失败(即，如果相同的信号已经为同一对对象连接到相同的槽位)。这个标志是在Qt 4.6中引入的。</p>
+<p><code>Qt::UniqueConnection</code>：这是一个标记，可以使用位或与上述任何一种连接类型结合使用。当 <code>Qt::UniqueConnection</code> 被设置后，如果连接已经存在，<code>QObject::connect()</code> 将会失败(即，如果相同的信号已经为同一对对象连接到相同的槽位)。这个标志是在Qt 4.6中引入的。</p>
 </blockquote>
 <p>以下为 Qt 第五个参数各个含义：</p>
 <table>
@@ -306,7 +314,8 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>Qt::AutoConnection</td>
 <td>0</td>
 <td>(默认)如果接收器位于发出信号的线程中，则使用Qt::DirectConnection。否则，使用Qt::QueuedConnection。连接类型是在信号发出时确定的。</td>
@@ -331,7 +340,8 @@
 <td>0x80</td>
 <td>这是一个标记，可以使用位或与上述任何一种连接类型结合使用。当Qt::UniqueConnection被设置后，如果连接已经存在，QObject::connect()将会失败</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -379,9 +389,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/new/" class="print-no-link">#new</a>
-      
         <a href="/tags/%E5%86%85%E5%AD%98/" class="print-no-link">#内存</a>
+      
+        <a href="/tags/new/" class="print-no-link">#new</a>
       
     </div>
   
@@ -394,7 +404,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】因为槽函数问题或者逻辑问题导致重复new问题解决办法及建议</div>
-      <div>http://example.com/B_Code/Qt/内存/【Qt】重复new问题/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/内存/【Qt】重复new问题/</div>
     </div>
     <div class="license-meta">
       

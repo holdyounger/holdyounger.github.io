@@ -24,12 +24,12 @@
     <meta name="description" content="概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【调试技术】.NET 调试">
-<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.NET%20%E8%B0%83%E8%AF%95/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.NET%20%E8%B0%83%E8%AF%95/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-03-22T05:38:58.050Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:08.925Z">
+<meta property="article:published_time" content="2024-08-31T01:41:20.233Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.233Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="windows&#x2F;windbg">
 <meta property="article:tag" content="dump">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -212,8 +216,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-03-22 13:38" pubdate>
-          2024年3月22日 下午
+        <time datetime="2024-08-31 09:41" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -281,28 +285,21 @@
 <p>概述：使用 windbg 调试 .NET 文件，虽然使用windbg是必须的技能，但是非必要情况下可以使用 dnSpy调试。</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
 <p>以 C# 如下所示的代码为例：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">namespace</span> <span class="hljs-title">DnrspEngine.Hooks.System</span><br>&#123;<br>    <span class="hljs-keyword">class</span> <span class="hljs-title">Win32Native</span><br> 	&#123;<br>        [<span class="hljs-meta">StructLayout(LayoutKind.Sequential)</span>]<br>        <span class="hljs-keyword">internal</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SECURITY_ATTRIBUTES</span><br>        &#123;<br>        &#125;<br>         <br>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">static</span> SafeFileHandle <span class="hljs-title">MySafeCreateFile</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> lpFileName, <span class="hljs-built_in">int</span> dwDesiredAccess, FileShare dwShareMode, SECURITY_ATTRIBUTES securityAttrs, FileMode dwCreationDisposition, <span class="hljs-built_in">int</span> dwFlagsAndAttributes, IntPtr hTemplateFile</span>)</span><br>        &#123;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">internal</span> <span class="hljs-keyword">static</span> SafeFileHandle <span class="hljs-title">PxySafeCreateFile</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> lpFileName, <span class="hljs-built_in">int</span> dwDesiredAccess, FileShare dwShareMode, SECURITY_ATTRIBUTES securityAttrs, FileMode dwCreationDisposition, <span class="hljs-built_in">int</span> dwFlagsAndAttributes, IntPtr hTemplateFile</span>)</span><br>        &#123;<br>        &#125;<br> 	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>命名空间 DnrspEngine.Hooks.System 有一个类 Win32Native。</p>
 <p>调试 .Net 程序前，需要加载 SOS 扩展，SOS (Son of Strike) 是 .NET 调试的扩展，它提供了很多用于调试 .NET 应用程序的命令。首先，你需要加载 SOS 扩展：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">.loadby sos clr<br></code></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="0x01-查看函数地址"><a href="#0x01-查看函数地址" class="headerlink" title="0x01 查看函数地址"></a>0x01 查看函数地址</h2><p><code>!name2ee</code> 查看类信息，如果不知道有哪些类，可以使用 <a href="#DumpHeap"><code>!DumpHeap</code> 命令</a>，如果要查看具体的对象具有的方法但是又没有源代码时，可以使用 dnSpy 这类的反编译工具。</p>
+<h2 id="0x01-查看函数地址"><a class="markdownIt-Anchor" href="#0x01-查看函数地址"></a> 0x01 查看函数地址</h2>
+<p><code>!name2ee</code> 查看类信息，如果不知道有哪些类，可以使用 <a href="#DumpHeap"><code>!DumpHeap</code> 命令</a>，如果要查看具体的对象具有的方法但是又没有源代码时，可以使用 dnSpy 这类的反编译工具。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs windbg"># 查看类的属性<br>!name2ee mscorelib.dll!Microsoft.Win32.Win32Native<br><br># 输出如下所示<br>0:026&gt; !name2ee mscorlib.dll!Microsoft.Win32.Win32Native<br>Module:      70931000<br>Assembly:    mscorlib.dll<br>Token:       0200000e<br>MethodTable: 709acdcc<br>EEClass:     70a67be8<br>Name:        Microsoft.Win32.Win32Native<br></code></pre></td></tr></table></figure>
-
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs windbg"># 查看具体的函数<br>!name2ee mscorlib.dll Win32Native.SafeCreateFile // 需要知道函数名<br><br># 输出如下所示<br>0:026&gt; !name2ee mscorlib.dll Win32Native.SafeCreateFile<br>Module:      70931000<br>Assembly:    mscorlib.dll<br>Token:       06000042<br>MethodDesc:  70b9db00<br>Name:        Microsoft.Win32.Win32Native.SafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br>JITTED Code Address: 70d044a0<br></code></pre></td></tr></table></figure>
-
 <p>输出分析，以我当前要使用的字段为主：</p>
 <p>Module: 模块句柄</p>
 <p>MethodTable：方法表。给出了我们对应的类的方法表的地址</p>
-<h3 id="DumpHeap"><a href="#DumpHeap" class="headerlink" title="!DumpHeap"></a>!DumpHeap</h3><p><code>!DumpHeap</code> 命令用于查看当前调试的进程的堆上的对象，略微局限</p>
+<h3 id="dumpheap"><a class="markdownIt-Anchor" href="#dumpheap"></a> !DumpHeap</h3>
+<p><code>!DumpHeap</code> 命令用于查看当前调试的进程的堆上的对象，略微局限</p>
 <ol>
 <li><strong>-stat</strong>：只输出堆上所有类型对象的统计摘要，包括它们的计数、大小和类型名称。这个选项非常有用，可以快速了解堆上对象的分布情况。</li>
 <li><strong>-nostrings</strong>：排除字符串的输出。当与 <code>-stat</code> 一起使用时，这个选项可以使得输出更加简洁，专注于非字符串类型的对象。</li>
@@ -316,39 +313,37 @@
 <li><strong>-lx</strong>：只打印每个堆中的指定数量的项，而不是所有对象。这可以帮助你限制输出的数量。</li>
 <li><strong>-short</strong>：仅打印出对象的地址。这个选项通常与其他命令（如 <code>.foreach</code>）组合使用，用于自动化处理或进一步分析。</li>
 </ol>
-<h2 id="0x02-查看方法有哪些"><a href="#0x02-查看方法有哪些" class="headerlink" title="0x02 查看方法有哪些"></a>0x02 查看方法有哪些</h2><p><code>!dumpmt</code> 查看方法有哪些</p>
+<h2 id="0x02-查看方法有哪些"><a class="markdownIt-Anchor" href="#0x02-查看方法有哪些"></a> 0x02 查看方法有哪些</h2>
+<p><code>!dumpmt</code> 查看方法有哪些</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!dumpmt -md %MethodTable% # 查看方法有哪些<br>---------------------------------------<br>!dumpmt -md 00007ffd79054540<br><br># 输出如下所示：<br>0:024&gt; !dumpmt -md 00007ffd79054540<br>EEClass:         00007ffd792da338<br>Module:          00007ffd79051810<br>Name:            DnrspEngine.Hooks.System.Win32Native<br>mdToken:         000000000200000b<br>File:            DnrspEngine, Version=1.0.0.1031, Culture=neutral, PublicKeyToken=null<br>BaseSize:        0x18<br>ComponentSize:   0x0<br>Slots in VTable: 7<br>Number of IFaces in IFaceMap: 0<br>--------------------------------------<br>MethodDesc Table<br>           Entry       MethodDesc    JIT Name<br>00007ffdd5c957a0 00007ffdd579c7a0 PreJIT System.Object.ToString()<br>00007ffdd5d0d2b0 00007ffdd5935560 PreJIT System.Object.Equals(System.Object)<br>00007ffdd5cfaba0 00007ffdd5935588 PreJIT System.Object.GetHashCode()<br>00007ffdd5d0aac0 00007ffdd5935590 PreJIT System.Object.Finalize()<br>00007ffd79159448 00007ffd79054538   NONE DnrspEngine.Hooks.System.Win32Native..ctor()<br>00007ffd792e1440 00007ffd79054518    JIT DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br>00007ffd792e1810 00007ffd79054528    JIT DnrspEngine.Hooks.System.Win32Native.PxySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)<br></code></pre></td></tr></table></figure>
-
 <p>输出分析：</p>
 <p>可以看到输出内容是比较多的，并且输出了方法表示以及各个方法对应的地址。这里就可以对函数下断点了，以 <code>DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile</code> 为例 （注意只有 JIT 的函数才可以下断点）</p>
-<h2 id="0x03-添加断点"><a href="#0x03-添加断点" class="headerlink" title="0x03 添加断点"></a>0x03 添加断点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!bpmd -md 00007ffd79054518<br><br># 输出如下所示：<br>0:024&gt; !bpmd -md 00007ffd79054518<br>MethodDesc = 00007ffd79054518<br>Setting breakpoint: bp 00007FFD792E1440 [DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)]<br></code></pre></td></tr></table></figure>
-
+<h2 id="0x03-添加断点"><a class="markdownIt-Anchor" href="#0x03-添加断点"></a> 0x03 添加断点</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!bpmd -md 00007ffd79054518<br><br># 输出如下所示：<br>0:024&gt; !bpmd -md 00007ffd79054518<br>MethodDesc = 00007ffd79054518<br>Setting breakpoint: bp 00007FFD792E1440 [DnrspEngine.Hooks.System.Win32Native.MySafeCreateFile(System.String, Int32, System.IO.FileShare, SECURITY_ATTRIBUTES, System.IO.FileMode, Int32, IntPtr)]<br></code></pre></td></tr></table></figure>
 <p>分析：</p>
 <p>可以看到断点设置信息，已经函数参数等。等待函数执行就可以触发断点。</p>
-<h2 id="0x04-查看堆栈"><a href="#0x04-查看堆栈" class="headerlink" title="0x04 查看堆栈"></a>0x04 查看堆栈</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!clrstack <br><br># 查看所有线程的堆栈<br>!dumpstack<br>#或者<br>~*e!dumpstack<br><br></code></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="添加初始断点"><a href="#添加初始断点" class="headerlink" title="添加初始断点"></a>添加初始断点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:000&gt; sxe ld:clrjit<br><br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\sos.dll<br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\clr.dll<br>0:000&gt; .loadby sos clr  （等同于上面两条命令）<br></code></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="0x06-其他命令补充"><a href="#0x06-其他命令补充" class="headerlink" title="0x06 其他命令补充"></a>0x06 其他命令补充</h2><ol>
-<li><p>帮助命令</p>
+<h2 id="0x04-查看堆栈"><a class="markdownIt-Anchor" href="#0x04-查看堆栈"></a> 0x04 查看堆栈</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!clrstack <br><br># 查看所有线程的堆栈<br>!dumpstack<br>#或者<br>~*e!dumpstack<br><br></code></pre></td></tr></table></figure>
+<h2 id="添加初始断点"><a class="markdownIt-Anchor" href="#添加初始断点"></a> 添加初始断点</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs windbg">0:000&gt; sxe ld:clrjit<br><br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\sos.dll<br>0:000&gt; .load C:\Windows\Microsoft.NET\Framework\v4.0.30319\clr.dll<br>0:000&gt; .loadby sos clr  （等同于上面两条命令）<br></code></pre></td></tr></table></figure>
+<h2 id="0x06-其他命令补充"><a class="markdownIt-Anchor" href="#0x06-其他命令补充"></a> 0x06 其他命令补充</h2>
+<ol>
+<li>
+<p>帮助命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!help<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>清屏</p>
+<li>
+<p>清屏</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!cls<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>查看当前托管线程已执行时间</p>
+<li>
+<p>查看当前托管线程已执行时间</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!runaway<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>查看当前线程池情况</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!threadpool<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>查看当前线程池情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">!threadpool<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
 
                 
@@ -405,7 +400,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【调试技术】.NET 调试</div>
-      <div>http://example.com/wiki/调试技术/【调试技术】.NET 调试/</div>
+      <div>https://hodlyounger.github.io/wiki/调试技术/【调试技术】.NET 调试/</div>
     </div>
     <div class="license-meta">
       
@@ -417,7 +412,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年3月22日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -449,9 +444,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E7%95%85%E6%8D%B7%E9%80%9A/%E3%80%90QVD-2023-13612%E3%80%91%E7%95%85%E6%8D%B7%E9%80%9ASQL%E6%B3%A8%E5%85%A5/" title="【QVD-2023-13612】畅捷通T+ SQL 注入漏洞">
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91PEB/" title="【调试技术】使用Windbg查看PEB">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【QVD-2023-13612】畅捷通T+ SQL 注入漏洞</span>
+                        <span class="hidden-mobile">【调试技术】使用Windbg查看PEB</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -459,8 +454,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/" title="【.Net】可执行文件结构分析（翻译）">
-                        <span class="hidden-mobile">【.Net】可执行文件结构分析（翻译）</span>
+                      <a href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91WebLogic/" title="WebLogic 弱密码">
+                        <span class="hidden-mobile">WebLogic 弱密码</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

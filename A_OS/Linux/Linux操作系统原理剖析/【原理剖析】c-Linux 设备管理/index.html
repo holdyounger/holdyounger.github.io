@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：  Linux 系统设备管理的特点 Linux 设备驱动程序的接口 Linux 的磁盘高速缓存 Linux 字符设备缓冲区管理 Linux 的设备驱动   0x01 Linux 系统设备管理的特点Linux 系统把设备分为两大类。  块设备：用于存储信息，它对信息的存取是以信息块为单位的，如通常使用的磁盘、磁带等等。 字符设备：通常用于输入输入出，作为人和计算机之间的接口，它对信息的存取是">
+    <meta name="description" content="概述：  Linux 系统设备管理的特点 Linux 设备驱动程序的接口 Linux 的磁盘高速缓存 Linux 字符设备缓冲区管理 Linux 的设备驱动    0x01 Linux 系统设备管理的特点 Linux 系统把设备分为两大类。  块设备：用于存储信息，它对信息的存取是以信息块为单位的，如通常使用的磁盘、磁带等等。 字符设备：通常用于输入输入出，作为人和计算机之间的接口，它对信息的存">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【原理剖析】c-Linux 设备管理">
-<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91c-Linux%20%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：  Linux 系统设备管理的特点 Linux 设备驱动程序的接口 Linux 的磁盘高速缓存 Linux 字符设备缓冲区管理 Linux 的设备驱动   0x01 Linux 系统设备管理的特点Linux 系统把设备分为两大类。  块设备：用于存储信息，它对信息的存取是以信息块为单位的，如通常使用的磁盘、磁带等等。 字符设备：通常用于输入输入出，作为人和计算机之间的接口，它对信息的存取是">
+<meta property="og:description" content="概述：  Linux 系统设备管理的特点 Linux 设备驱动程序的接口 Linux 的磁盘高速缓存 Linux 字符设备缓冲区管理 Linux 的设备驱动    0x01 Linux 系统设备管理的特点 Linux 系统把设备分为两大类。  块设备：用于存储信息，它对信息的存取是以信息块为单位的，如通常使用的磁盘、磁带等等。 字符设备：通常用于输入输入出，作为人和计算机之间的接口，它对信息的存">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-27T07:15:36.586Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:56.250Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -287,27 +291,32 @@
 <li>Linux 的设备驱动</li>
 </ul>
 </blockquote>
-<h2 id="0x01-Linux-系统设备管理的特点"><a href="#0x01-Linux-系统设备管理的特点" class="headerlink" title="0x01 Linux 系统设备管理的特点"></a>0x01 Linux 系统设备管理的特点</h2><p>Linux 系统把设备分为两大类。</p>
+<h2 id="0x01-linux-系统设备管理的特点"><a class="markdownIt-Anchor" href="#0x01-linux-系统设备管理的特点"></a> 0x01 Linux 系统设备管理的特点</h2>
+<p>Linux 系统把设备分为两大类。</p>
 <ul>
 <li>块设备：用于存储信息，它对信息的存取是以信息块为单位的，如通常使用的磁盘、磁带等等。</li>
 <li>字符设备：通常用于输入输入出，作为人和计算机之间的接口，它对信息的存取是以字符为单位进行的，如键盘、鼠标、显示器、打印机等等。</li>
 </ul>
-<p>Linux 系统把 I&#x2F;O 设备看作文件，称为特别文件。例如：打印机的文件名为 <code>lp</code> ，控制终端的文件名为 <code>console</code>。这些特别文件组织在目录 <code>/dev</code> 下。如果要访问打印机可以使用路径 <code>/dev/lp</code> ，使用系统调用 <code>open</code> 可以打开设备文件并进行操作。</p>
+<p>Linux 系统把 I/O 设备看作文件，称为特别文件。例如：打印机的文件名为 <code>lp</code> ，控制终端的文件名为 <code>console</code>。这些特别文件组织在目录 <code>/dev</code> 下。如果要访问打印机可以使用路径 <code>/dev/lp</code> ，使用系统调用 <code>open</code> 可以打开设备文件并进行操作。</p>
 <p>Linux 系统的这一特点使得任何外部设备在用户面前与普通文件完全一样，而不必涉及它的物理特性，给用户带来极大的方便。在文件系统内部，外部设备和普通文件一样受到存取控制的保护，仅仅在最终驱动设备时才转向各个设备的驱动程序。块设备上的普通文件和目录文件并不是设备特殊文件，但是块设备本身可以作为特殊文件来访问。</p>
-<h2 id="0x02-文件系统与设备驱动程序的接口"><a href="#0x02-文件系统与设备驱动程序的接口" class="headerlink" title="0x02 文件系统与设备驱动程序的接口"></a>0x02 文件系统与设备驱动程序的接口</h2><p>Linux 系统为各类设备分别配置不同的驱动程序，在用户程序中通过该文件操作方式使用设备，如：打开、关闭、读、写等等，由文件系统转入设备驱动程序。</p>
+<h2 id="0x02-文件系统与设备驱动程序的接口"><a class="markdownIt-Anchor" href="#0x02-文件系统与设备驱动程序的接口"></a> 0x02 文件系统与设备驱动程序的接口</h2>
+<p>Linux 系统为各类设备分别配置不同的驱动程序，在用户程序中通过该文件操作方式使用设备，如：打开、关闭、读、写等等，由文件系统转入设备驱动程序。</p>
 <p>核心与设备驱动程序的接口是块设备开关表和字符设备开关表。每一种设备类型在表中占用一个表目，包含若干数据项，其中有一项为该类设备驱动程序入口地址，在系统调用时引导核心转向适当的驱动程序接口。</p>
 <p>对设备特殊文件的系统调用，根据文件类型转入块设备开关表或字符设备开关表进行打开、关闭块设备或字符设备的操作。字符设备特殊文件的系统调用 <code>read</code>、<code>write</code> 系统调用则通过高速缓冲模块转向设备驱动模块中的策略过程。</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;1.png)</p>
-<h2 id="0x03-设备开关表"><a href="#0x03-设备开关表" class="headerlink" title="0x03 设备开关表"></a>0x03 设备开关表</h2><p>Linux 系统吧块设备和字符设备又分别细分为若干类。如块设备可分为硬盘、软盘、磁带、光盘等，字符设备可分为终端设备、打印机等。为指定一类设备，将设备类从 0 开始顺序编号，称为主设备号；同一类的设备可能有许多，为了指定一台具体设备，需要一个次设备号来标识。因此，在指定一台具体设备时要给出块设备&#x2F;字符设备、主设备号、次设备号。如下图所示:</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;2.png)</p>
+<p>![图片描述](c-Linux 设备管理/1.png)</p>
+<h2 id="0x03-设备开关表"><a class="markdownIt-Anchor" href="#0x03-设备开关表"></a> 0x03 设备开关表</h2>
+<p>Linux 系统吧块设备和字符设备又分别细分为若干类。如块设备可分为硬盘、软盘、磁带、光盘等，字符设备可分为终端设备、打印机等。为指定一类设备，将设备类从 0 开始顺序编号，称为主设备号；同一类的设备可能有许多，为了指定一台具体设备，需要一个次设备号来标识。因此，在指定一台具体设备时要给出块设备/字符设备、主设备号、次设备号。如下图所示:</p>
+<p>![图片描述](c-Linux 设备管理/2.png)</p>
 <p>设备开关表相当于一个二维矩阵，每一行含有同一类设备的驱动程序入口地址，主设备号与行号一一对应；每一列是完全不同操作（<code>open</code>、<code>close</code>、<code>read</code>、<code>write</code>）的驱动程序入口地址，如下表所示：</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;3.png)</p>
-<h2 id="0x04-磁盘高速缓存读写策略"><a href="#0x04-磁盘高速缓存读写策略" class="headerlink" title="0x04 磁盘高速缓存读写策略"></a>0x04 磁盘高速缓存读写策略</h2><p>对文件系统的一切存取操作都能通过直接从磁盘上读或写来实现，当磁盘 I&#x2F;O 的速度较慢，系统性能较低。为了减少对磁盘的存取频率，Linux 使用了磁盘高速缓存技术。</p>
-<p>Linux 磁盘缓冲管理策略试图把尽可能多的有用数据保存在缓冲区中，磁盘缓冲管理模块位于文件系统和块设备驱动程序之间。当从磁盘中读数据时，文件系统先从磁盘高速缓存中读，如果数据已在高速缓存中，则不必启动磁盘 I&#x2F;O ，如果数据不再高速缓存中，则启动磁盘 I&#x2F;O ，从磁盘读取数据送往高速缓存，进程再冲高速缓存中读取数据。</p>
+<p>![图片描述](c-Linux 设备管理/3.png)</p>
+<h2 id="0x04-磁盘高速缓存读写策略"><a class="markdownIt-Anchor" href="#0x04-磁盘高速缓存读写策略"></a> 0x04 磁盘高速缓存读写策略</h2>
+<p>对文件系统的一切存取操作都能通过直接从磁盘上读或写来实现，当磁盘 I/O 的速度较慢，系统性能较低。为了减少对磁盘的存取频率，Linux 使用了磁盘高速缓存技术。</p>
+<p>Linux 磁盘缓冲管理策略试图把尽可能多的有用数据保存在缓冲区中，磁盘缓冲管理模块位于文件系统和块设备驱动程序之间。当从磁盘中读数据时，文件系统先从磁盘高速缓存中读，如果数据已在高速缓存中，则不必启动磁盘 I/O ，如果数据不再高速缓存中，则启动磁盘 I/O ，从磁盘读取数据送往高速缓存，进程再冲高速缓存中读取数据。</p>
 <p>当进程向磁盘上写数据时，先往高速缓存中写数据，以便随后读取它时能够直接从高速缓存上读取而不需要启动磁盘读写。Linux 采用“延时写”策略，即如果缓存区还没有写满这不会急于将缓冲区中的数据写到磁盘上，而是在缓冲管理数据结构中对该缓冲区设置延迟写标志，当高速缓存中的数据延迟到必须向磁盘上写的时候再进行写磁盘操作。</p>
-<h2 id="0x05-磁盘缓冲管理的数据结构"><a href="#0x05-磁盘缓冲管理的数据结构" class="headerlink" title="0x05 磁盘缓冲管理的数据结构"></a>0x05 磁盘缓冲管理的数据结构</h2><p>Linux 使用多个内存缓冲区进行磁盘缓冲，为了合理有效地管理和使用这些缓冲区，必须按照一定策略进行管理。管理的依据是缓冲区的相关信息，为了能访问这些信息，必须将其按一定数据结构进行组织。</p>
+<h2 id="0x05-磁盘缓冲管理的数据结构"><a class="markdownIt-Anchor" href="#0x05-磁盘缓冲管理的数据结构"></a> 0x05 磁盘缓冲管理的数据结构</h2>
+<p>Linux 使用多个内存缓冲区进行磁盘缓冲，为了合理有效地管理和使用这些缓冲区，必须按照一定策略进行管理。管理的依据是缓冲区的相关信息，为了能访问这些信息，必须将其按一定数据结构进行组织。</p>
 <p>首先，给每个缓冲区建立“缓冲首部”来存放该缓冲区的相关信息，如下图所示。</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;4.png)</p>
+<p>![图片描述](c-Linux 设备管理/4.png)</p>
 <p>其中内容有：</p>
 <ul>
 <li>设备号 <code>dev</code>：缓冲区内包含的信息所属设备的设备号</li>
@@ -315,18 +324,20 @@
 <li>状态 <code>flag</code>：描述了缓冲区的当状态，包括： - 忙标志 <code>BUSY</code>：缓冲区当前是否正忙 - 有效位 <code>AVE</code>：缓冲区包含的数据是否有效 - 延迟写位 <code>DELWR</code>：是否延迟写 - 写标志位 <code>WRITE</code>：是否正在把缓冲区的内容写到磁盘上 - 读标志位 <code>READ</code>：是否从磁盘往缓冲区读取数据信息 - 等待位 <code>WAIT</code>：是否有一个进程正在等待该缓冲区 - 设备缓冲区队列前向指针 <code>b-forw</code> - 设备缓冲区队列后向指针 <code>b-back</code> - 空闲缓冲区队列前向指针 <code>av-forw</code> - 空闲缓冲区队列后向指针 <code>av-back</code></li>
 </ul>
 <p>要对所有缓冲区进行管理，必须将所有缓冲区首部组织成一定的数据结构， Linux 建立了两个缓冲区队列；空闲缓冲区队列和设备缓冲区队列。空闲缓冲区队列如下图所示：</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;5.png)</p>
+<p>![图片描述](c-Linux 设备管理/5.png)</p>
 <p>为了对缓冲区进行分配，把所有空闲缓冲区组织成一个队列，队列中的所有缓冲区的忙标志位 <code>BUSY</code> 均为 0 。该队列是一个双向循环链表。</p>
 <p>对于每类设备都建立一个设备缓冲区队列，由与该类设备有关的所有缓冲区构成。此队列中的所有缓冲区首部的忙标志位 <code>BUSY</code> 均为 1 。该队列同样是一个双向循环链表。</p>
 <p>任何缓冲区首部不是位于空闲缓冲区队列中就是位于设备缓冲区队列中。设备缓冲区队列如下图所示：</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;6.png)</p>
-<h2 id="0x06-Linux-磁盘缓冲区管理算法"><a href="#0x06-Linux-磁盘缓冲区管理算法" class="headerlink" title="0x06 Linux 磁盘缓冲区管理算法"></a>0x06 Linux 磁盘缓冲区管理算法</h2><p>Linux 提供的磁盘高速缓冲区不属于任何进程专用，而是由多个进程共享，由操作系统进行统一管理。为了提高使用效率，必须采取适当的管理策略。</p>
+<p>![图片描述](c-Linux 设备管理/6.png)</p>
+<h2 id="0x06-linux-磁盘缓冲区管理算法"><a class="markdownIt-Anchor" href="#0x06-linux-磁盘缓冲区管理算法"></a> 0x06 Linux 磁盘缓冲区管理算法</h2>
+<p>Linux 提供的磁盘高速缓冲区不属于任何进程专用，而是由多个进程共享，由操作系统进行统一管理。为了提高使用效率，必须采取适当的管理策略。</p>
 <p>当某进程要从一个磁盘读取数据时，首先需要检查要读取数据的磁盘块是否包含在某缓冲区中，如果不在，则从空闲缓冲区队列中分配给它一个空闲缓冲区；当某进程要将数据写入磁盘时，首先查看一下要写的磁盘块是否在某缓冲区中，如果不在则为这个磁盘块分配一个空闲缓冲区，被分配的空闲缓冲区从空闲缓冲队列中退出并进入对应的设备缓冲区队列，该缓冲区的 <code>BUSY</code> 标志位置一。</p>
 <p>当缓冲区的信息读到相应进程的内存区后，或进程信息写到缓冲区后，，使释放进程使用的缓冲区，将 <code>flag</code> 中的 <code>BUSY</code> 标志位清零并送入空闲缓冲区队列尾部，即将置为延迟写的缓冲区也送入空闲缓冲队列，这样可以使得有限的缓冲区得到充分利用，满足多个并发进程的需求。</p>
-<p>当一个缓冲区被送往空闲缓冲区队列尾部时，并不退出设备缓冲区队列，而是仍然留在原队列中，这样使得此次使用完毕送往空闲缓冲区队列的缓冲区能够暂时保存最后的信息应对可能的访问。如果将其保留在设备缓冲区队列中，当后来要读取的磁盘数据仍然保留在此缓冲区中时可以直接从缓冲区中读取而不需要再次启动磁盘 I&#x2F;O ，提高了读盘速度，这正是使用高速磁盘缓存的目的。</p>
+<p>当一个缓冲区被送往空闲缓冲区队列尾部时，并不退出设备缓冲区队列，而是仍然留在原队列中，这样使得此次使用完毕送往空闲缓冲区队列的缓冲区能够暂时保存最后的信息应对可能的访问。如果将其保留在设备缓冲区队列中，当后来要读取的磁盘数据仍然保留在此缓冲区中时可以直接从缓冲区中读取而不需要再次启动磁盘 I/O ，提高了读盘速度，这正是使用高速磁盘缓存的目的。</p>
 <p>如果要使得使用完毕送入空闲缓冲区队列的缓冲区重新分配给其他设备，则可以将该缓冲区同时从空闲缓冲区队列和原设备缓冲区队列中抽出，送入新的设备缓冲区队列。</p>
 <p>因为被使用过的缓冲区放在空闲缓冲区队列的末尾，随着不断地从空闲缓冲区队列上取下缓冲区，后面的缓冲区会不断地向队列首部移动。如果一个延迟写标志位为 1 的缓冲区移动到了空闲缓冲区队列的头部，当其被重新分配之前，需要将内部的内容写入到相应设备指定的磁盘块中。</p>
-<h2 id="0x07-字符缓冲区及其队列"><a href="#0x07-字符缓冲区及其队列" class="headerlink" title="0x07 字符缓冲区及其队列"></a>0x07 字符缓冲区及其队列</h2><p>Linux 中为字符设备的数据传输设置了一个公用的字符缓冲池，该缓冲池内包含有若干个缓冲区，但是每个缓冲区很小，仅有几个到几十字节。为了合理使用这些缓冲区，将其组织成一定的数据结构。同块设备缓冲区的管理类似，建立空闲字符缓冲区队列和设备字符缓冲区队列。</p>
+<h2 id="0x07-字符缓冲区及其队列"><a class="markdownIt-Anchor" href="#0x07-字符缓冲区及其队列"></a> 0x07 字符缓冲区及其队列</h2>
+<p>Linux 中为字符设备的数据传输设置了一个公用的字符缓冲池，该缓冲池内包含有若干个缓冲区，但是每个缓冲区很小，仅有几个到几十字节。为了合理使用这些缓冲区，将其组织成一定的数据结构。同块设备缓冲区的管理类似，建立空闲字符缓冲区队列和设备字符缓冲区队列。</p>
 <p>每个字符缓冲区由四部分组成：</p>
 <ul>
 <li>缓冲区的第一个字符位置</li>
@@ -335,29 +346,32 @@
 <li>字符缓冲区</li>
 </ul>
 <p>如下图所示：</p>
-<p>![图片描述](c-Linux 设备管理&#x2F;7.png)</p>
+<p>![图片描述](c-Linux 设备管理/7.png)</p>
 <p>对字符空闲区的操作是每次送入一个字符或取出一个字符。送入字符再字符缓冲区的尾部进行；取出字符从字符缓冲区的头部进行。随着不断往字符缓冲区中放入字符，最后一个字符的位置会向后推移，直到字符缓冲区的末尾，第一个字符的位置不一定是字符缓冲区的开始位置，随着不断地从缓冲区中取出字符，第一个字符的位置不断后移直到字符缓冲区的末尾。</p>
-<h2 id="0x08-空闲缓冲区的分配与回收"><a href="#0x08-空闲缓冲区的分配与回收" class="headerlink" title="0x08 空闲缓冲区的分配与回收"></a>0x08 空闲缓冲区的分配与回收</h2><p>在一个进程中使用字符设备进行 I&#x2F;O 操作时，文件系统会为该字符设备分配一个空闲缓冲区。分配时会检查空闲缓冲区队列，当队列非空时则直接从队列首部取出一个空闲缓冲区分配给这个字符设备并将其送入该字符设备的设备缓冲区队列，并将指向该缓冲区的指针返回给调用进程；当空闲缓冲区队列为空时，则请求 I&#x2F;O 操作的进程将被阻塞等待直到有空闲缓冲区可用。</p>
+<h2 id="0x08-空闲缓冲区的分配与回收"><a class="markdownIt-Anchor" href="#0x08-空闲缓冲区的分配与回收"></a> 0x08 空闲缓冲区的分配与回收</h2>
+<p>在一个进程中使用字符设备进行 I/O 操作时，文件系统会为该字符设备分配一个空闲缓冲区。分配时会检查空闲缓冲区队列，当队列非空时则直接从队列首部取出一个空闲缓冲区分配给这个字符设备并将其送入该字符设备的设备缓冲区队列，并将指向该缓冲区的指针返回给调用进程；当空闲缓冲区队列为空时，则请求 I/O 操作的进程将被阻塞等待直到有空闲缓冲区可用。</p>
 <p>当字符缓冲区中的数据被提取完毕后，便要释放该缓冲区，将该缓冲区送入空闲字符缓冲区队列的首部。若此时有申请空闲缓冲区而阻塞的进程则会唤醒该进程。</p>
-<h2 id="0x09-Linux-的设备驱动"><a href="#0x09-Linux-的设备驱动" class="headerlink" title="0x09 Linux 的设备驱动"></a>0x09 Linux 的设备驱动</h2><p>设备驱动是指控制具体的物理设备完成 I&#x2F;O 操作，与硬件的物理特性和数据传输控制方式密切相关，不同类型的设备、不同数据传输控制方式要采用不同设备驱动方式。</p>
+<h2 id="0x09-linux-的设备驱动"><a class="markdownIt-Anchor" href="#0x09-linux-的设备驱动"></a> 0x09 Linux 的设备驱动</h2>
+<p>设备驱动是指控制具体的物理设备完成 I/O 操作，与硬件的物理特性和数据传输控制方式密切相关，不同类型的设备、不同数据传输控制方式要采用不同设备驱动方式。</p>
 <p>Linux 首先把设备分为块设备、字符设备两大类，然后再对块设备和字符设备具体分类，针对每一类设备分别开发不同的设备驱动程序。</p>
-<h2 id="0x0a-块设备驱动"><a href="#0x0a-块设备驱动" class="headerlink" title="0x0a 块设备驱动"></a>0x0a 块设备驱动</h2><ol>
+<h2 id="0x0a-块设备驱动"><a class="markdownIt-Anchor" href="#0x0a-块设备驱动"></a> 0x0a 块设备驱动</h2>
+<ol>
 <li>数据结构</li>
 </ol>
 <p>块设备表，对每一类块设备分别设置块设备表，记录该类设备的相关信息。其内容包括：</p>
 <ul>
 <li>忙标志：标志设备的忙闲状态，0 表示空闲，1 表示正忙。</li>
-<li>出错次数：指设备 I&#x2F;O 出错次数。每次 I&#x2F;O 完成后，就转入设备中断处理程序，设备中断处理程序检测此次 I&#x2F;O 过程是否出错，如果出错则将出错次数加一，如果出错次数没用超过规定值则中断处理程序重新启动一次数据传输；如果出错次数超出规定值则认为是真正的数据传输错误，不会再重新启动数据传输。</li>
+<li>出错次数：指设备 I/O 出错次数。每次 I/O 完成后，就转入设备中断处理程序，设备中断处理程序检测此次 I/O 过程是否出错，如果出错则将出错次数加一，如果出错次数没用超过规定值则中断处理程序重新启动一次数据传输；如果出错次数超出规定值则认为是真正的数据传输错误，不会再重新启动数据传输。</li>
 <li>设备缓冲区队列头指针：分配给该设备的缓冲区队列的头指针</li>
 <li>设备缓冲区队列尾指针：分配给该设备的缓冲区队列的尾指针</li>
-<li>I&#x2F;O 请求队列头指针：请求该类设备 I&#x2F;O 操作的请求块组成的队列的头指针</li>
-<li>I&#x2F;O 请求队列尾指针：请求该类设备 I&#x2F;O 操作的请求块组成的队列的尾指针</li>
+<li>I/O 请求队列头指针：请求该类设备 I/O 操作的请求块组成的队列的头指针</li>
+<li>I/O 请求队列尾指针：请求该类设备 I/O 操作的请求块组成的队列的尾指针</li>
 </ul>
-<p>I&#x2F;O 请求队列。用户进程的 I&#x2F;O 请求包括要求完成 I&#x2F;O 操作的逻辑设备名、要求的操作、传送数据在内存中的起始地址、传送数据的长度，将这些信息组织成 I&#x2F;O 请求块 <code>iorb</code>。逻辑设备名相同（同一类设备）的 I&#x2F;O 请求块构成一个队列，称为 I&#x2F;O 请求队列。每一类设备都分别有一个 I&#x2F;O 请求队列。</p>
+<p>I/O 请求队列。用户进程的 I/O 请求包括要求完成 I/O 操作的逻辑设备名、要求的操作、传送数据在内存中的起始地址、传送数据的长度，将这些信息组织成 I/O 请求块 <code>iorb</code>。逻辑设备名相同（同一类设备）的 I/O 请求块构成一个队列，称为 I/O 请求队列。每一类设备都分别有一个 I/O 请求队列。</p>
 <ol>
 <li>磁盘设备驱动程序</li>
 </ol>
-<p>驱动程序控制设备具体实现进程的高级 I&#x2F;O 请求包括打开、关闭、读、写等。</p>
+<p>驱动程序控制设备具体实现进程的高级 I/O 请求包括打开、关闭、读、写等。</p>
 <ul>
 <li>打开。磁盘在使用之前必须进行打开操作，其目的是在使用磁盘之前进行必要的初始化————设置硬盘的工作参数，硬盘工作参数存放在主存中操作系统结构硬盘控制块中，它是驱动程序对硬盘进行控制的依据。硬盘工作参数存放在硬盘的引导区中，因此要将引导区内容读到硬盘控制块中必须进行部分初始化工作。</li>
 <li>读写硬盘。由策略接口程序 <code>strategy</code> 完成，每次只读写一个扇区，Linux 中对硬盘有两种读方式和三种写方式： - 一般读方式：把当前所需盘块中的内容读入缓冲区 - 预先读：进程读顺序文件的盘块时，会预先读取下一盘块的内容 - 一般写方式：把缓冲区数据写到盘块，进程必须等待写操作完成 - 异步写方式：把缓冲区数据写到盘块，进程不必等待写操作完成 - 延迟写：先将数据写到缓冲区，标记该缓冲区延迟写，挂到空闲缓冲区队列尾部等到后续时间再写到盘块中</li>
@@ -366,14 +380,15 @@
 <ul>
 <li>将逻辑块号转换为物理块号</li>
 <li>申请 DMA</li>
-<li>将物理块号转换为盘面号&#x2F;柱面号&#x2F;扇区号</li>
+<li>将物理块号转换为盘面号/柱面号/扇区号</li>
 <li>移动磁头到指定柱面</li>
 <li>向硬件控制器发送读写命令</li>
 <li>CPU 发出读写命令后不必等待，继续执行其他进程</li>
 <li>当传输结束后，硬盘控制器会向 CPU 发送中断信号</li>
 <li>CPU 响应后转入硬盘中断处理程序</li>
 </ul>
-<h2 id="0x0b-字符设备驱动"><a href="#0x0b-字符设备驱动" class="headerlink" title="0x0b 字符设备驱动"></a>0x0b 字符设备驱动</h2><p>字符设备作为人和计算机之间的接口设备，人们通常通过字符设备向计算机输入信息（指令、数据）或输出信息。字符设备以字符作为数据传输单位，速度较慢。常见的字符设备有终端、行式打印机、卡片输入机等等。</p>
+<h2 id="0x0b-字符设备驱动"><a class="markdownIt-Anchor" href="#0x0b-字符设备驱动"></a> 0x0b 字符设备驱动</h2>
+<p>字符设备作为人和计算机之间的接口设备，人们通常通过字符设备向计算机输入信息（指令、数据）或输出信息。字符设备以字符作为数据传输单位，速度较慢。常见的字符设备有终端、行式打印机、卡片输入机等等。</p>
 <p>字符设备的传递使用一组专用的寄存器来实现。每种字符设备的控制器一般都有三个寄存器：</p>
 <ul>
 <li>控制寄存器接收 CPU 发送来的命令、控制设备的操作；</li>
@@ -458,7 +473,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【原理剖析】c-Linux 设备管理</div>
-      <div>http://example.com/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】c-Linux 设备管理/</div>
+      <div>https://hodlyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】c-Linux 设备管理/</div>
     </div>
     <div class="license-meta">
       

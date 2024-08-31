@@ -24,7 +24,7 @@
     <meta name="description" content="概述：LoadLibrary加载失败，返回126，解决方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【GetLastError】126">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/GetLastError/%E3%80%90GetLastError%E3%80%91126/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/GetLastError/%E3%80%90GetLastError%E3%80%91126/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：LoadLibrary加载失败，返回126，解决方法。">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,17 +284,19 @@
 <p>概述：LoadLibrary加载失败，返回126，解决方法。</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h1 id="问题描述："><a href="#问题描述：" class="headerlink" title="问题描述："></a>问题描述：</h1><p>服务加载的 DLL 依赖第三方 DLL。</p>
+<h1 id="问题描述"><a class="markdownIt-Anchor" href="#问题描述"></a> 问题描述：</h1>
+<p>服务加载的 DLL 依赖第三方 DLL。</p>
 <p>在某一个windows环境中，安装了一个服务 d，服务 d 的启动依赖于一个关键的 dll 文件(假设为info.dll)，info.dll 所依赖的 dll 也存在，但是在服务启动的时候，使用 <code>LoadLibrary</code> 函数会返回<code>GetLastError</code> 126。</p>
-<h1 id="排查手段记录"><a href="#排查手段记录" class="headerlink" title="排查手段记录"></a>排查手段记录</h1><p>使用 Dependencies GUI 查看 DLL 的依赖也是都满足的。问题还是出在服务进程加载的 DLL 如何加载另外一个 DLL。</p>
+<h1 id="排查手段记录"><a class="markdownIt-Anchor" href="#排查手段记录"></a> 排查手段记录</h1>
+<p>使用 Dependencies GUI 查看 DLL 的依赖也是都满足的。问题还是出在服务进程加载的 DLL 如何加载另外一个 DLL。</p>
 <p>已经尝试过的排查手段包括但不限于：</p>
 <p>windbg 挂载，修改 <code>showsnaps</code> 查看 dll 加载记录。</p>
 <p>可能和 DLL 有关系，作为 DLL 不能直接加载 DLL。</p>
-<h2 id="使用绝对路径加载dll"><a href="#使用绝对路径加载dll" class="headerlink" title="使用绝对路径加载dll"></a>使用绝对路径加载dll</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// old</span><br><span class="hljs-built_in">LoadLibrary</span>(<span class="hljs-string">&quot;info.dll&quot;</span>);<br><span class="hljs-comment">// new</span><br><span class="hljs-built_in">LoadLibrary</span>(<span class="hljs-string">&quot;C:\\info.dll&quot;</span>);<br></code></pre></td></tr></table></figure>
+<h2 id="使用绝对路径加载dll"><a class="markdownIt-Anchor" href="#使用绝对路径加载dll"></a> 使用绝对路径加载dll</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// old</span><br><span class="hljs-built_in">LoadLibrary</span>(<span class="hljs-string">&quot;info.dll&quot;</span>);<br><span class="hljs-comment">// new</span><br><span class="hljs-built_in">LoadLibrary</span>(<span class="hljs-string">&quot;C:\\info.dll&quot;</span>);<br></code></pre></td></tr></table></figure>
+<h1 id="问题关键"><a class="markdownIt-Anchor" href="#问题关键"></a> 问题关键</h1>
 
-<h1 id="问题关键"><a href="#问题关键" class="headerlink" title="问题关键"></a>问题关键</h1>
                 
               </div>
             
@@ -357,7 +363,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【GetLastError】126</div>
-      <div>http://example.com/A_OS/Windows/异常及错误处理/GetLastError/【GetLastError】126/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/异常及错误处理/GetLastError/【GetLastError】126/</div>
     </div>
     <div class="license-meta">
       

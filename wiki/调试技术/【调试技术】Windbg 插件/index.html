@@ -21,15 +21,15 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：windbg 插件  相关插件推荐MEX参考文章：在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园">
+    <meta name="description" content="概述：windbg 插件   相关插件推荐  MEX 参考文章：在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【调试技术】Windbg 插件">
-<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%20%E6%8F%92%E4%BB%B6/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%20%E6%8F%92%E4%BB%B6/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：windbg 插件  相关插件推荐MEX参考文章：在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园">
+<meta property="og:description" content="概述：windbg 插件   相关插件推荐  MEX 参考文章：在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-25T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:08.926Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.243Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="windows&#x2F;windbg">
 <meta property="article:tag" content="windbg">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,7 +285,9 @@
                 <blockquote>
 <p>概述：windbg 插件</p>
 </blockquote>
-<h2 id="相关插件推荐"><a href="#相关插件推荐" class="headerlink" title="相关插件推荐"></a>相关插件推荐</h2><h3 id="MEX"><a href="#MEX" class="headerlink" title="MEX"></a>MEX</h3><p>参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/yilang/p/11934539.html">在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园</a></p>
+<h2 id="相关插件推荐"><a class="markdownIt-Anchor" href="#相关插件推荐"></a> 相关插件推荐</h2>
+<h3 id="mex"><a class="markdownIt-Anchor" href="#mex"></a> MEX</h3>
+<p>参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/yilang/p/11934539.html">在WinDbg里使用MEX调试扩展 - 活着的虫子 - 博客园</a></p>
 
                 
               </div>
@@ -339,7 +345,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【调试技术】Windbg 插件</div>
-      <div>http://example.com/wiki/调试技术/【调试技术】Windbg 插件/</div>
+      <div>https://hodlyounger.github.io/wiki/调试技术/【调试技术】Windbg 插件/</div>
     </div>
     <div class="license-meta">
       

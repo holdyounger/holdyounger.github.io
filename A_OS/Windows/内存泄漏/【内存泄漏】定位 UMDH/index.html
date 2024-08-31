@@ -24,7 +24,7 @@
     <meta name="description" content="概述：使用 UMDH 分析内存泄漏">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【内存泄漏】使用 UMDH 定位用户模式内存泄漏">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91%E5%AE%9A%E4%BD%8D%20UMDH/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91%E5%AE%9A%E4%BD%8D%20UMDH/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：使用 UMDH 分析内存泄漏">
 <meta property="og:locale" content="zh_CN">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -283,52 +287,57 @@
 <p>概述：使用 UMDH 分析内存泄漏</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h2 id="UMDH"><a href="#UMDH" class="headerlink" title="UMDH"></a>UMDH</h2><blockquote>
+<h2 id="umdh"><a class="markdownIt-Anchor" href="#umdh"></a> UMDH</h2>
+<blockquote>
 <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/debugger/umdh?source=recommendations">UMDH</a>（用户模式转储堆），是与操作系统一起用于分析特性进程Windows堆分配。UMDH查找特定进程中的哪个例程正在泄漏内存。特别要注意的事：使用UMDH显示堆栈跟踪数据之前，必须使用 GFlags 正确配置系统。Windows的调试工具中包含了 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/debugger/gflags?source=recommendations">GFlags</a>。</p>
 </blockquote>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="启用-UMDH-stack-跟踪："><a href="#启用-UMDH-stack-跟踪：" class="headerlink" title="启用 UMDH stack 跟踪："></a>启用 <code>UMDH stack</code> 跟踪：</h3><ol>
-<li><p>在 GFlags 图形界面中，选择 “图像文件” 选项卡，键入进程名称 (包括文件扩展名) ，按 TAB 键，选择 “ <strong>创建用户模式堆栈跟踪数据库</strong>“，然后选择 “ <strong>应用</strong>“。或者，在命令行界面使用 <code>gflags</code> 命令设置。</p>
+<h2 id="使用"><a class="markdownIt-Anchor" href="#使用"></a> 使用</h2>
+<h3 id="启用-umdh-stack-跟踪"><a class="markdownIt-Anchor" href="#启用-umdh-stack-跟踪"></a> 启用 <code>UMDH stack</code> 跟踪：</h3>
+<ol>
+<li>
+<p>在 GFlags 图形界面中，选择 “图像文件” 选项卡，键入进程名称 (包括文件扩展名) ，按 TAB 键，选择 &quot; <strong>创建用户模式堆栈跟踪数据库</strong>&quot;，然后选择 &quot; <strong>应用</strong>&quot;。或者，在命令行界面使用 <code>gflags</code> 命令设置。</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">gflags -i imageName +ust<br></code></pre></td></tr></table></figure>
-
 <p>当完成分析后，使用 <code>-</code> 清楚设置：</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">gflags -i imageName -ust<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>默认情况下，在 x86 处理器上 Windows 收集的堆栈跟踪数据量限制为 32 MB，在 x64 处理器上限制为 64 mb。 如果必须增加此数据库的大小，请选择 “GFlags” 图形界面中的 “ <strong>映像文件</strong> “ 选项卡，键入进程名称，按 tab 键，选中 “ <strong>Stack Backtrace (Megs)</strong> “ 复选框，在 “关联” 文本框中键入值 (，以) MB 为单位），然后选择 “ <strong>应用</strong>“。 仅在必要时增加此数据库，因为它可能会耗尽有限的 Windows 资源。 如果不再需要更大的大小，则将此设置返回到其原始值。</p>
+<li>
+<p>默认情况下，在 x86 处理器上 Windows 收集的堆栈跟踪数据量限制为 32 MB，在 x64 处理器上限制为 64 mb。 如果必须增加此数据库的大小，请选择 “GFlags” 图形界面中的 &quot; <strong>映像文件</strong> &quot; 选项卡，键入进程名称，按 tab 键，选中 &quot; <strong>Stack Backtrace (Megs)</strong> &quot; 复选框，在 “关联” 文本框中键入值 (，以) MB 为单位），然后选择 &quot; <strong>应用</strong>&quot;。 仅在必要时增加此数据库，因为它可能会耗尽有限的 Windows 资源。 如果不再需要更大的大小，则将此设置返回到其原始值。</p>
 </li>
-<li><p>如果更改了 “<strong>系统注册表</strong>“ 选项卡上的任何标志，则必须重新启动 Windows 以使这些更改生效。 如果更改了 “ <strong>图像文件</strong> “ 选项卡上的任何标志，则必须重新启动该过程才能使更改生效。 对<strong>内核标志</strong>选项卡所做的更改会立即生效，但下次重新启动 Windows，它们会丢失。</p>
+<li>
+<p>如果更改了 “<strong>系统注册表</strong>” 选项卡上的任何标志，则必须重新启动 Windows 以使这些更改生效。 如果更改了 &quot; <strong>图像文件</strong> &quot; 选项卡上的任何标志，则必须重新启动该过程才能使更改生效。 对<strong>内核标志</strong>选项卡所做的更改会立即生效，但下次重新启动 Windows，它们会丢失。</p>
 </li>
 </ol>
 <p>在使用 UMDH 之前，必须有权访问应用程序的正确符号。UMDH 使用环境变量指定的符号路径 <code>_NT_SYMBOL_PATH</code>。将此变量设置为包含应用程序的符号的路径。如果还包括 Windows 符号的路径，则分析可能更完整。此符号路径的语法与调试器使用的语法相同。</p>
 <p>例如，如果你的应用程序的符号位于 <code>C:\MySymbols</code>，并且你想要为你的 Windows 符号使用公共 Microsoft 符号存储区，则使用 <code>C:\MyCache</code> 作为下游存储，你将使用以下命令设置你的符号路径：</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">set _NT_SYMBOL_PATH=c:\mysymbols;srv*c:\mycache*https://msdl.microsoft.com/download/symb<br></code></pre></td></tr></table></figure>
-
 <p>此外，若需要确保准确的结果，必须禁用 <code>BSTR</code> 缓存。为此，请将 <code>OANOCACHE</code> 环境变量的值设置为 1（需要在启动跟踪其分配的应用程序之前进行设置）。如果需要跟踪服务所做的分配，则必须将 <code>OANOCACHE</code> 设置为西戎环境变量，然后重新启动 Windows 以使此设置生效。</p>
 <p>检测通过 UMDH 增加的堆分配</p>
-<h4 id="1-确认进程ID-PID"><a href="#1-确认进程ID-PID" class="headerlink" title="1. 确认进程ID (PID)"></a>1. 确认进程ID (PID)</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 查找进程id<br>tlist | finstr &quot;进程名&quot;<br></code></pre></td></tr></table></figure>
-
-<h4 id="2-保存日志文件"><a href="#2-保存日志文件" class="headerlink" title="2. 保存日志文件"></a>2. 保存日志文件</h4><p>使用 UMDH 分析此进程的堆内存分配，并将其保存到日志文件。将 <code>-p</code> 开关与 PID 一起使用，并将 <code>-f</code> 开关与日志文件的名称一起使用。例如，如果 PID 为123，并且你想要将日志文件命名为 <code>Log1.txt</code> ，请使用以下命令：</p>
+<h4 id="1-确认进程id-pid"><a class="markdownIt-Anchor" href="#1-确认进程id-pid"></a> 1. 确认进程ID (PID)</h4>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 查找进程id<br>tlist | finstr &quot;进程名&quot;<br></code></pre></td></tr></table></figure>
+<h4 id="2-保存日志文件"><a class="markdownIt-Anchor" href="#2-保存日志文件"></a> 2. 保存日志文件</h4>
+<p>使用 UMDH 分析此进程的堆内存分配，并将其保存到日志文件。将 <code>-p</code> 开关与 PID 一起使用，并将 <code>-f</code> 开关与日志文件的名称一起使用。例如，如果 PID 为123，并且你想要将日志文件命名为 <code>Log1.txt</code> ，请使用以下命令：</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># 保存快照<br>umdh -p:<span class="hljs-number">123</span> -f:log1.txt<br></code></pre></td></tr></table></figure>
-
-<h4 id="3-查看日志"><a href="#3-查看日志" class="headerlink" title="3. 查看日志"></a>3. 查看日志</h4><p>使用记事本或其他程序打开日志文件。 此文件包含每个堆分配的调用堆栈、通过该调用堆栈进行的分配数，以及通过该调用堆栈使用的字节数。</p>
-<h4 id="4-前后两次日志对比结果"><a href="#4-前后两次日志对比结果" class="headerlink" title="4. 前后两次日志对比结果"></a>4. 前后两次日志对比结果</h4><p>由于您正在查找内存泄漏，因此，单个日志文件的内容是不够的。 你必须比较在不同时间记录的日志文件，以确定哪些分配正在增长。</p>
+<h4 id="3-查看日志"><a class="markdownIt-Anchor" href="#3-查看日志"></a> 3. 查看日志</h4>
+<p>使用记事本或其他程序打开日志文件。 此文件包含每个堆分配的调用堆栈、通过该调用堆栈进行的分配数，以及通过该调用堆栈使用的字节数。</p>
+<h4 id="4-前后两次日志对比结果"><a class="markdownIt-Anchor" href="#4-前后两次日志对比结果"></a> 4. 前后两次日志对比结果</h4>
+<p>由于您正在查找内存泄漏，因此，单个日志文件的内容是不够的。 你必须比较在不同时间记录的日志文件，以确定哪些分配正在增长。</p>
 <p>UMDH 可以比较两个不同的日志文件，并在各自的分配大小中显示更改。 您可以使用大于符号 (<strong>&gt;</strong>) 将结果重定向到第三个文本文件。 你可能还需要包含-d 选项，该选项将字节和分配计数从十六进制转换为十进制。 例如，若要比较 Log1.txt 和 Log2.txt，将比较结果保存到文件 LogCompare.txt，请使用以下命令：</p>
 <figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">umdh log1.txt log2.txt &gt; logcompare.txt <br></code></pre></td></tr></table></figure>
-
-<h4 id="5-分析内存泄漏"><a href="#5-分析内存泄漏" class="headerlink" title="5. 分析内存泄漏"></a>5. 分析内存泄漏</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">+ 5320 ( f110 - 9df0) 3a allocs BackTrace00B53 <br>Total increase == 5320 <br></code></pre></td></tr></table></figure>
-
+<h4 id="5-分析内存泄漏"><a class="markdownIt-Anchor" href="#5-分析内存泄漏"></a> 5. 分析内存泄漏</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">+ 5320 ( f110 - 9df0) 3a allocs BackTrace00B53 <br>Total increase == 5320 <br></code></pre></td></tr></table></figure>
 <p>对于每个调用堆栈 (在 UMDH 日志文件中标记为 “BackTrace” ) ，这两个日志文件之间有比较。 在此示例中，第一个日志文件 (Log1.txt) 为 BackTrace00B53 分配的0x9DF0 字节，而第二个日志文件记录了0xF110 字节，这意味着在捕获两个日志的时间之间分配有0x5320 的额外字节。 这些字节来自 BackTrace00B53 标识的调用堆栈。</p>
-<h4 id="6-查看泄漏堆栈"><a href="#6-查看泄漏堆栈" class="headerlink" title="6. 查看泄漏堆栈"></a>6. 查看泄漏堆栈</h4><p>若要确定该 backtrace 中的内容，请打开一个原始日志文件 (例如 Log2.txt) ，然后搜索 “BackTrace00B53”。结果类似于以下数据：</p>
+<h4 id="6-查看泄漏堆栈"><a class="markdownIt-Anchor" href="#6-查看泄漏堆栈"></a> 6. 查看泄漏堆栈</h4>
+<p>若要确定该 backtrace 中的内容，请打开一个原始日志文件 (例如 Log2.txt) ，然后搜索 “BackTrace00B53”。结果类似于以下数据：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs text">00005320 bytes in 0x14 allocations (@ 0x00000428) by: BackTrace00B53<br>ntdll!RtlDebugAllocateHeap+0x000000FD<br>ntdll!RtlAllocateHeapSlowly+0x0000005A<br>ntdll!RtlAllocateHeap+0x00000808<br>MyApp!_heap_alloc_base+0x00000069<br>MyApp!_heap_alloc_dbg+0x000001A2<br>MyApp!_nh_malloc_dbg+0x00000023<br>MyApp!_nh_malloc+0x00000016<br>MyApp!operator new+0x0000000E<br>MyApp!DisplayMyGraphics+0x0000001E<br>MyApp!main+0x0000002C<br>MyApp!mainCRTStartup+0x000000FC<br>KERNEL32!BaseProcessStart+0x0000003D <br></code></pre></td></tr></table></figure>
-
 <blockquote>
 <p><strong>上述泄漏内存分析</strong>:</p>
 <p>此 UMDH 输出显示有) (十进制21280从调用堆栈中分配的总字节数。 这些字节是从 0x14 (十进制 20) 单独分配的，每个 0x428 (十进制 1064) 字节。</p>
 <p>将为调用堆栈提供 “BackTrace00B53” 的标识符，并显示此堆栈中的调用。 在检查调用堆栈时，可以看到 <strong>DisplayMyGraphics</strong> 例程正在通过 <strong>new</strong> 运算符分配内存，该运算符调用例程 <em>malloc</em>，后者使用 Visual C++ 运行时库从堆中获取内存。</p>
 <p>确定要在源代码中显式显示的最后一个调用。 在这种情况下，它可能是 <strong>new</strong> 运算符，因为调用 <em>malloc</em> 是作为 <strong>新</strong> 的实现的一部分而不是作为单独的分配。 因此， <strong>DisplayMyGraphics</strong>例程中<strong>new</strong>运算符的此实例会重复分配未释放的内存。</p>
 </blockquote>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/debugger/using-umdh-to-find-a-user-mode-memory-leak">使用 UMDH 查找用户模式内存泄漏 - Windows drivers | Microsoft Docs</a></p>
+<h2 id="参考链接"><a class="markdownIt-Anchor" href="#参考链接"></a> 参考链接</h2>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/debugger/using-umdh-to-find-a-user-mode-memory-leak">使用 UMDH 查找用户模式内存泄漏 - Windows drivers | Microsoft Docs</a></p>
 
                 
               </div>
@@ -395,7 +404,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【内存泄漏】使用 UMDH 定位用户模式内存泄漏</div>
-      <div>http://example.com/A_OS/Windows/内存泄漏/【内存泄漏】定位 UMDH/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/内存泄漏/【内存泄漏】定位 UMDH/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="Netsh 是命令行脚本实用工具，可让你显示或修改当前正在运行的计算机的网络配置。 可以通过在 netsh 提示符下键入命令来运行 Netsh 命令，并且可以在批处理文件或脚本中使用 Netsh 命令。 可以使用 netsh 命令来配置远程计算机和本地计算机。 Netsh 还提供脚本功能，可让你在批处理模式下对指定的计算机运行一组命令。 你可以使用 Netsh 将配置脚本保存在文本文件中，以便存档">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【一文搞懂】【CMD】netsh用法整理">
-<meta property="og:url" content="http://example.com/A_OS/Windows/cmd/netsh%E7%94%A8%E6%B3%95%E6%95%B4%E7%90%86/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/cmd/netsh%E7%94%A8%E6%B3%95%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Netsh 是命令行脚本实用工具，可让你显示或修改当前正在运行的计算机的网络配置。 可以通过在 netsh 提示符下键入命令来运行 Netsh 命令，并且可以在批处理文件或脚本中使用 Netsh 命令。 可以使用 netsh 命令来配置远程计算机和本地计算机。 Netsh 还提供脚本功能，可让你在批处理模式下对指定的计算机运行一组命令。 你可以使用 Netsh 将配置脚本保存在文本文件中，以便存档">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,56 +282,73 @@
                 
                 <p>Netsh 是命令行脚本实用工具，可让你显示或修改当前正在运行的计算机的网络配置。 可以通过在 netsh 提示符下键入命令来运行 Netsh 命令，并且可以在批处理文件或脚本中使用 Netsh 命令。 可以使用 netsh 命令来配置远程计算机和本地计算机。</p>
 <p>Netsh 还提供脚本功能，可让你在批处理模式下对指定的计算机运行一组命令。 你可以使用 Netsh 将配置脚本保存在文本文件中，以便存档或者帮助你配置其他计算机。</p>
-<h1 id="一、如何正确使用netsh"><a href="#一、如何正确使用netsh" class="headerlink" title="一、如何正确使用netsh"></a>一、如何正确使用<code>netsh</code></h1><ol>
+<h1 id="一-如何正确使用netsh"><a class="markdownIt-Anchor" href="#一-如何正确使用netsh"></a> 一、如何正确使用<code>netsh</code></h1>
+<ol>
 <li>当我们忘记netsh的相关命令时，可以直接使用netsh自带的帮助功能，就能看到一些可以使用的命令。</li>
 </ol>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh /?<br><br>C:\Users\ming Ming&gt;netsh /?<br><br>Usage: netsh [-a AliasFile] [-c Context] [-r RemoteMachine] [-u [DomainName\]UserName] [-p Password | *]<br>             [Command | -f ScriptFile]<br><br>The following commands are available:<br><br>Commands in this context:<br>?              - Displays a list of commands.<br>add            - Adds a configuration entry to a list of entries.<br>advfirewall    - Changes to the `netsh advfirewall&#x27; context.<br>bridge         - Changes to the `netsh bridge&#x27; context.<br>delete         - Deletes a configuration entry from a list of entries.<br>dhcpclient     - Changes to the `netsh dhcpclient&#x27; context.<br>dnsclient      - Changes to the `netsh dnsclient&#x27; context.<br>dump           - Displays a configuration script.<br>exec           - Runs a script file.<br>firewall       - Changes to the `netsh firewall&#x27; context.<br>help           - Displays a list of commands.<br>http           - Changes to the `netsh http&#x27; context.<br>interface      - Changes to the `netsh interface&#x27; context.<br>ipsec          - Changes to the `netsh ipsec&#x27; context.<br>lan            - Changes to the `netsh lan&#x27; context.<br>mbn            - Changes to the `netsh mbn&#x27; context.<br>namespace      - Changes to the `netsh namespace&#x27; context.<br>netio          - Changes to the `netsh netio&#x27; context.<br>nlm            - Changes to the `netsh nlm&#x27; context.<br>p2p            - Changes to the `netsh p2p&#x27; context.<br>ras            - Changes to the `netsh ras&#x27; context.<br>rpc            - Changes to the `netsh rpc&#x27; context.<br>set            - Updates configuration settings.<br>show           - Displays information.<br>trace          - Changes to the `netsh trace&#x27; context.<br>wcn            - Changes to the `netsh wcn&#x27; context.<br>wfp            - Changes to the `netsh wfp&#x27; context.<br>winhttp        - Changes to the `netsh winhttp&#x27; context.<br>winsock        - Changes to the `netsh winsock&#x27; context.<br>wlan           - Changes to the `netsh wlan&#x27; context.<br><br>The following sub-contexts are available:<br> advfirewall bridge dhcpclient dnsclient firewall http interface ipsec lan mbn namespace netio nlm p2p ras rpc trace wcn wfp winhttp winsock wlan<br><br>To view help for a command, type the command, followed by a space, and then<br> type ?.<br></code></pre></td></tr></table></figure>
-
 <ol start="2">
-<li><p>那知道有哪些可选功能后，我们就可以进一步输入二级命令去执行我们将要进行的操作，比如下边我就以查看当前tcp链接状态位列展示：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$</span><span class="language-bash">&gt;netsh</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh&gt;int</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh interface&gt;ip</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh interface ipv4&gt;show tcpstats</span><br><br>TCP Statistics<br>------------------------------------------------------<br>Timeout Algorithm:                      Van Jacobson&#x27;s Algorithm<br>Minimum Timeout:                        5<br>Maximum Timeout:                        4294967295<br>Maximum Connections:                    Dynamic<br>Active Opens:                           3971<br>Passive Opens:                          556<br>Attempts Failed:                        1017<br>Established Resets:                     407<br>Currently Established:                  34<br>In Segments:                            202193<br>Out Segments:                           149657<br>Retransmitted Segments:                 0<br>In Errors:                              0<br>Out Resets:                             845<br>Fastopen Active Opens:                  0<br>Fastopen Passive Opens:                 0<br>Fastopen Attempts Failed:               0<br>Retransmits Of First SYN:               644<br>Retransmits Of First SYN (Fastopen):    0<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>那知道有哪些可选功能后，我们就可以进一步输入二级命令去执行我们将要进行的操作，比如下边我就以查看当前tcp链接状态位列展示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$</span><span class="language-bash">&gt;netsh</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh&gt;int</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh interface&gt;ip</span><br><span class="hljs-meta prompt_">$</span><span class="language-bash">netsh interface ipv4&gt;show tcpstats</span><br><br>TCP Statistics<br>------------------------------------------------------<br>Timeout Algorithm:                      Van Jacobson&#x27;s Algorithm<br>Minimum Timeout:                        5<br>Maximum Timeout:                        4294967295<br>Maximum Connections:                    Dynamic<br>Active Opens:                           3971<br>Passive Opens:                          556<br>Attempts Failed:                        1017<br>Established Resets:                     407<br>Currently Established:                  34<br>In Segments:                            202193<br>Out Segments:                           149657<br>Retransmitted Segments:                 0<br>In Errors:                              0<br>Out Resets:                             845<br>Fastopen Active Opens:                  0<br>Fastopen Passive Opens:                 0<br>Fastopen Attempts Failed:               0<br>Retransmits Of First SYN:               644<br>Retransmits Of First SYN (Fastopen):    0<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
-<h1 id="二、netsh命令整理"><a href="#二、netsh命令整理" class="headerlink" title="二、netsh命令整理"></a>二、<code>netsh</code>命令整理</h1><h2 id="1-导出导入脚本"><a href="#1-导出导入脚本" class="headerlink" title="1. 导出导入脚本"></a>1. 导出导入脚本</h2><ol>
-<li><p>导出配置脚本：</p>
+<h1 id="二-netsh命令整理"><a class="markdownIt-Anchor" href="#二-netsh命令整理"></a> 二、<code>netsh</code>命令整理</h1>
+<h2 id="1-导出导入脚本"><a class="markdownIt-Anchor" href="#1-导出导入脚本"></a> 1. 导出导入脚本</h2>
+<ol>
+<li>
+<p>导出配置脚本：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh -c interface ip dump &gt; c:/interface.txt<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>导入配置脚本：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh -f c:/interface.txt<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>导入配置脚本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh -f c:/interface.txt<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
-<h2 id="2-固定IP地址批处理"><a href="#2-固定IP地址批处理" class="headerlink" title="2. 固定IP地址批处理"></a>2. 固定IP地址批处理</h2><p>&#x2F;&#x2F;SETIPDNS.bat（ “本地连接”换成你网卡的名字, 具体的 ip 地址，网关，请自行修改 ）</p>
+<h2 id="2-固定ip地址批处理"><a class="markdownIt-Anchor" href="#2-固定ip地址批处理"></a> 2. 固定IP地址批处理</h2>
+<p><a target="_blank" rel="noopener" href="//SETIPDNS.bat">//SETIPDNS.bat</a>（ “本地连接”换成你网卡的名字, 具体的 ip 地址，网关，请自行修改 ）</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs shell">@echo off<br><br>echo 正在修改本机IP...<br><br>netsh interface ip set address name=&quot;本地连接&quot; source=static 192.168.1.188  255.255.255.0 192.168.1.1 1<br><br>echo 正在添加本机主DNS...<br><br>netsh interface ip set dns &quot;本地连接&quot; static 18.0.0.10 primary<br><br>echo 正在添加本机副DNS...<br><br>netsh interface ip add dns &quot;本地连接&quot; 18.0.0.10<br><br>echo 设置完成...<br><br>echo 检查当前本机配置...<br><br>ipconfig /all<br><br>echo 导出配置脚本...<br><br>netsh -c interface ip dump<br><br>pause<br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-自动获取-IP"><a href="#3-自动获取-IP" class="headerlink" title="3. 自动获取 IP"></a>3. 自动获取 IP</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs shell">@echo off<br><br>echo 正在修改本机IP...<br><br>netsh interface ip set address name=&quot;本地连接&quot; source=dhcp<br><br>echo 正在添加本机主DNS...<br><br>netsh interface ip set dns &quot;本地连接&quot; dhcp<br><br>echo 设置完成...<br><br>echo 检查当前本机配置...<br><br>ipconfig /all<br><br>echo 导出配置脚本...<br><br>netsh -c interface ip dump<br><br>pause<br></code></pre></td></tr></table></figure>
-
-<h2 id="4-netsh用法"><a href="#4-netsh用法" class="headerlink" title="4. netsh用法"></a>4. netsh用法</h2><ol>
-<li><p>查看网络配置</p>
+<h2 id="3-自动获取-ip"><a class="markdownIt-Anchor" href="#3-自动获取-ip"></a> 3. 自动获取 IP</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs shell">@echo off<br><br>echo 正在修改本机IP...<br><br>netsh interface ip set address name=&quot;本地连接&quot; source=dhcp<br><br>echo 正在添加本机主DNS...<br><br>netsh interface ip set dns &quot;本地连接&quot; dhcp<br><br>echo 设置完成...<br><br>echo 检查当前本机配置...<br><br>ipconfig /all<br><br>echo 导出配置脚本...<br><br>netsh -c interface ip dump<br><br>pause<br></code></pre></td></tr></table></figure>
+<h2 id="4-netsh用法"><a class="markdownIt-Anchor" href="#4-netsh用法"></a> 4. netsh用法</h2>
+<ol>
+<li>
+<p>查看网络配置</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh interface ip show &#123;选项&#125;<br><br>&#123;选项&#125;可以是：<br>address-显示IP地址配置。<br>config-显示IP地址和更多信息。<br>dns-显示DNS服务器地址。<br>icmp-显示ICMP统计。<br>interface-显示IP接口统计。<br>ipaddress-显示当前IP地址。<br>ipnet-显示IP的网络到媒体的映射。<br>ipstats-显示IP统计。<br>joins-显示加入的多播组。<br>offload-显示卸载信息。<br>tcpconn-显示TCP连接。<br>tcpstats-显示TCP统计。<br>udpconn-显示UDP连接。<br>udpstats-显示UDP统计。<br>wins-显示WINS服务器地址。<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>查看网络配置</p>
+<li>
+<p>查看网络配置</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh interface ip show &#123;选项&#125;<br><br>&#123;选项&#125;可以是：<br>address-显示IP地址配置。<br>config-显示IP地址和更多信息。<br>dns-显示DNS服务器地址。<br>icmp-显示ICMP统计。<br>interface-显示IP接口统计。<br>ipaddress-显示当前IP地址。<br>ipnet-显示IP的网络到媒体的映射。<br>ipstats-显示IP统计。<br>joins-显示加入的多播组。<br>offload-显示卸载信息。<br>tcpconn-显示TCP连接。<br>tcpstats-显示TCP统计。<br>udpconn-显示UDP连接。<br>udpstats-显示UDP统计。<br>wins-显示WINS服务器地址。<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>配置接口IP&#x2F;网关IP</p>
+<li>
+<p>配置接口IP/网关IP</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh interface ip set address &quot;本地连接&quot; static 10.1.2.90 255.255.255.0 10.1.2.254 1<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>配置自动换取IP地址,DNS地址及wins地址</p>
+<li>
+<p>配置自动换取IP地址,DNS地址及wins地址</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh interface ip set address &quot;本地连接&quot; dhcp<br>netsh interface ip set dns &quot;本地连接&quot; dhcp<br>netsh interface ip set wins &quot;本地连接&quot; dhcp<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>配置静态IP地址，DNS地址及wins地址</p>
+<li>
+<p>配置静态IP地址，DNS地址及wins地址</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh interface ip set address &quot;本地连接&quot; static 10.1.2.90<br>netsh interface ip set dns &quot;本地连接&quot; static 202.99.160.68<br>netsh interface ip set wins &quot;本地连接&quot; static 10.1.2.200<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>看网络配置文件</p>
+<li>
+<p>看网络配置文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">C:&gt;netsh -c interface dump<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>导出网络配置文件</p>
+<li>
+<p>导出网络配置文件</p>
  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh -c interface dump &gt; d:/1.txt<br></code></pre></td></tr></table></figure>
 </li>
-<li><p>导入网络配置文件</p>
+<li>
+<p>导入网络配置文件</p>
  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">netsh -f d:/1.txt<br>netsh exec d:/2.txt <br></code></pre></td></tr></table></figure>
 </li>
-<li><p>netsh 配置防火墙<br>查看、开启或禁用系统防火墙</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看防火墙的状态</span><br>netsh firewall show state<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">禁用系统防火墙</span><br>netsh firewall set opmode disable<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">启用防火墙</span><br>netsh firewall set opmode enable<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>netsh 配置防火墙<br>
+查看、开启或禁用系统防火墙</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">查看防火墙的状态</span><br>netsh firewall show state<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">禁用系统防火墙</span><br>netsh firewall set opmode disable<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">启用防火墙</span><br>netsh firewall set opmode enable<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
 
                 
@@ -389,7 +410,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【一文搞懂】【CMD】netsh用法整理</div>
-      <div>http://example.com/A_OS/Windows/cmd/netsh用法整理/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/cmd/netsh用法整理/</div>
     </div>
     <div class="license-meta">
       

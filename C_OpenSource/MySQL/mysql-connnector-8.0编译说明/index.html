@@ -21,19 +21,19 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：本文主要记录 MySQL Connector&#x2F;C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 &#x2F;MT 模式的静态库文件。 官方文档：4.3 从源安装连接器&#x2F;C++_MySQL 连接器&#x2F;C++ 8.0 开发人员指南  本次编译目标产物：   Debug 模式下 &#x2F;MTd 编译 静态编译  Release 模式下 &#x2F;MT 编译 静态">
+    <meta name="description" content="概述：本文主要记录 MySQL Connector&#x2F;C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 &#x2F;MT 模式的静态库文件。 官方文档：4.3 从源安装连接器&#x2F;C++_MySQL 连接器&#x2F;C++ 8.0 开发人员指南  本次编译目标产物：  [x] Debug 模式下 &#x2F;MTd 编译 静态编译 [ ] Release 模式下 &#x2F;MT 编译 静态编译   前言  需求及官方文件说明">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows下MySQL Connector&#x2F;C++ 8.1编译说明">
-<meta property="og:url" content="http://example.com/C_OpenSource/MySQL/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/C_OpenSource/MySQL/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：本文主要记录 MySQL Connector&#x2F;C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 &#x2F;MT 模式的静态库文件。 官方文档：4.3 从源安装连接器&#x2F;C++_MySQL 连接器&#x2F;C++ 8.0 开发人员指南  本次编译目标产物：   Debug 模式下 &#x2F;MTd 编译 静态编译  Release 模式下 &#x2F;MT 编译 静态">
+<meta property="og:description" content="概述：本文主要记录 MySQL Connector&#x2F;C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 &#x2F;MT 模式的静态库文件。 官方文档：4.3 从源安装连接器&#x2F;C++_MySQL 连接器&#x2F;C++ 8.0 开发人员指南  本次编译目标产物：  [x] Debug 模式下 &#x2F;MTd 编译 静态编译 [ ] Release 模式下 &#x2F;MT 编译 静态编译   前言  需求及官方文件说明">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png">
+<meta property="og:image" content="https://hodlyounger.github.io/C_OpenSource/MySQL/images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.417Z">
 <meta property="article:modified_time" content="2024-08-15T09:29:03.899Z">
 <meta property="article:author" content="mingming">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/C_OpenSource/MySQL/images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png">
   
   
   
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          871 字
+          828 字
         
       </span>
     
@@ -235,7 +239,7 @@
         
         
         
-          8 分钟
+          7 分钟
         
       </span>
     
@@ -278,49 +282,53 @@
               <div class="markdown-body">
                 
                 <blockquote>
-<p>概述：本文主要记录 MySQL Connector&#x2F;C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 <code>/MT</code> 模式的静态库文件。</p>
-<p>官方文档：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://mysql.net.cn/doc/connector-cpp/8.0/en/connector-cpp-installation-source-cpp.html">4.3 从源安装连接器&#x2F;C++_MySQL 连接器&#x2F;C++ 8.0 开发人员指南</a></p>
+<p>概述：本文主要记录 MySQL Connector/C++ 8.1 静态库的编译方式，因项目工程问题，需要编译 <code>/MT</code> 模式的静态库文件。</p>
+<p>官方文档：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://mysql.net.cn/doc/connector-cpp/8.0/en/connector-cpp-installation-source-cpp.html">4.3 从源安装连接器/C++_MySQL 连接器/C++ 8.0 开发人员指南</a></p>
 </blockquote>
 <p>本次编译目标产物：</p>
 <ul>
-<li><input checked disabled type="checkbox"> Debug 模式下 &#x2F;MTd 编译 静态编译</li>
-<li><input disabled type="checkbox"> Release 模式下 &#x2F;MT 编译 静态编译</li>
+<li>[x] Debug 模式下 /MTd 编译 静态编译</li>
+<li>[ ] Release 模式下 /MT 编译 静态编译</li>
 </ul>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="需求及官方文件说明"><a href="#需求及官方文件说明" class="headerlink" title="需求及官方文件说明"></a>需求及官方文件说明</h3><p>由于 MySQL官方并没有提供 &#x2F;MT 模式的lib文件，因此编译所需要的静态库都需要从源码编译，首先说明一下官方已编译好的文件：</p>
-<p>在 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/connector-cpp/8.1/en/connector-cpp-apps-windows-notes.html">MySQL :: MySQL Connector&#x2F;C++ Developer Guide :: 5.2.1 Windows Notes</a> 这里可以看到官方提供了 <code>/MD</code> 模式下的 Debug 和 Release 静态库文件，下载为：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://downloads.mysql.com/archives/c-cpp/">MySQL :: Download MySQL Connector&#x2F;C++ (Archived Versions)</a>。关于下载后安装包的文件这我补充一下：</p>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<h3 id="需求及官方文件说明"><a class="markdownIt-Anchor" href="#需求及官方文件说明"></a> 需求及官方文件说明</h3>
+<p>由于 MySQL官方并没有提供 /MT 模式的lib文件，因此编译所需要的静态库都需要从源码编译，首先说明一下官方已编译好的文件：</p>
+<p>在 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/connector-cpp/8.1/en/connector-cpp-apps-windows-notes.html">MySQL :: MySQL Connector/C++ Developer Guide :: 5.2.1 Windows Notes</a> 这里可以看到官方提供了 <code>/MD</code> 模式下的 Debug 和 Release 静态库文件，下载为：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://downloads.mysql.com/archives/c-cpp/">MySQL :: Download MySQL Connector/C++ (Archived Versions)</a>。关于下载后安装包的文件这我补充一下：</p>
 <ul>
-<li>mysql-connector-c++-8.0.33-win32-debug：Debug 模式下 <code>/MD</code> 的编译产物</li>
-<li>mysql-connector-c++-8.0.33-win32：Release 模式下 <code>/MD</code> 的编译产物</li>
+<li>mysql-connector-c+±8.0.33-win32-debug：Debug 模式下 <code>/MD</code> 的编译产物</li>
+<li>mysql-connector-c+±8.0.33-win32：Release 模式下 <code>/MD</code> 的编译产物</li>
 </ul>
 <p>两个下载包的文件基本一致，主要是以下四个文件：</p>
 <ul>
-<li>mysqlcppconn.lib: 使用 &#x3D;&#x3D;JDBC+openssl1.1.1&#x3D;&#x3D; 版本编译</li>
-<li>mysqlcppconn8.lib：使用 &#x3D;&#x3D;X DEVAPI+openssl1.1.1&#x3D;&#x3D; 编译产物</li>
-<li>mysqlcppconn8-static.lib：使用 &#x3D;&#x3D;X DEVAPI+OpenSSL3.3.1&#x3D;&#x3D; 编译产物</li>
-<li>mysqlcppconn-static.lib：使用 &#x3D;&#x3D;JDBC+OpenSSL3.3.31&#x3D;&#x3D; 编译产物</li>
+<li>mysqlcppconn.lib: 使用 <mark>JDBC+openssl1.1.1</mark> 版本编译</li>
+<li>mysqlcppconn8.lib：使用 <mark>X DEVAPI+openssl1.1.1</mark> 编译产物</li>
+<li>mysqlcppconn8-static.lib：使用 <mark>X DEVAPI+OpenSSL3.3.1</mark> 编译产物</li>
+<li>mysqlcppconn-static.lib：使用 <mark>JDBC+OpenSSL3.3.31</mark> 编译产物</li>
 </ul>
-<p>使用 &#x3D;&#x3D;JDBC&#x3D;&#x3D; 和 &#x3D;&#x3D;X DEVAPI&#x3D;&#x3D; 的包需要使用不同的方式去连接 MySQL，具体代码如下所示：</p>
-<h3 id="使用-JDBC-连接"><a href="#使用-JDBC-连接" class="headerlink" title="使用 JDBC 连接"></a>使用 JDBC 连接</h3><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;list&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cstdlib&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;mysqlx/xdevapi.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> mysqlx;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _DEBUG</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;mysqlcppconn8-static-debug-openssl3-mdd.lib&quot;</span>)    <span class="hljs-comment">// 特殊命名标记了一下，官方库文件下 mysqlcppconn8_static.lib</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;dnsapi.lib&quot;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;mysqlcppconn8_md.lib&quot;</span>)<span class="hljs-comment">// 特殊命名标记了一下，官方库文件下 mysqlcppconn8_static.libs</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;dnsapi.lib&quot;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span> <span class="hljs-comment">// DEBUG</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// 修改控制台编码</span><br>    <span class="hljs-comment">// std::system(&quot;chcp 65001&quot;);</span><br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// 改成你的信息b</span><br>        <span class="hljs-function">Session <span class="hljs-title">sess</span><span class="hljs-params">(SessionOption::USER, <span class="hljs-string">&quot;root&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::PWD, <span class="hljs-string">&quot;123456&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::HOST, <span class="hljs-string">&quot;localhost&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::PORT, <span class="hljs-number">33060</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::DB, <span class="hljs-string">&quot;test&quot;</span>)</span></span>;<br><br>        <span class="hljs-keyword">auto</span> result = sess.<span class="hljs-built_in">sql</span>(<span class="hljs-string">&quot;select * from user&quot;</span>).<span class="hljs-built_in">execute</span>();<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> row : result.<span class="hljs-built_in">fetchAll</span>()) &#123;<br>            std::cout &lt;&lt; row[<span class="hljs-number">0</span>] &lt;&lt; <span class="hljs-string">&quot; &quot;</span> &lt;&lt; row[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-string">&quot; &quot;</span> &lt;&lt; row[<span class="hljs-number">2</span>] &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>        &#125;<br><br>    &#125;<br>    <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>        std::cerr &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; <span class="hljs-string">&#x27;\n&#x27;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h4 id="预处理器"><a href="#预处理器" class="headerlink" title="预处理器"></a>预处理器</h4><p>参考官方说明：For applications that use X DevAPI, X DevAPI for C, or (as of Connector&#x2F;C++ 8.0.16) the legacy JDBC API, define the <code>STATIC_CONCPP</code> macro. All that matters is that you define it; the value does not matter. For example: <code>-DSTATIC_CONCPP</code></p>
+<p>使用 <mark>JDBC</mark> 和 <mark>X DEVAPI</mark> 的包需要使用不同的方式去连接 MySQL，具体代码如下所示：</p>
+<h3 id="使用-jdbc-连接"><a class="markdownIt-Anchor" href="#使用-jdbc-连接"></a> 使用 JDBC 连接</h3>
+<h4 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;list&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cstdlib&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;mysqlx/xdevapi.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> mysqlx;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _DEBUG</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;mysqlcppconn8-static-debug-openssl3-mdd.lib&quot;</span>)    <span class="hljs-comment">// 特殊命名标记了一下，官方库文件下 mysqlcppconn8_static.lib</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;dnsapi.lib&quot;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;mysqlcppconn8_md.lib&quot;</span>)<span class="hljs-comment">// 特殊命名标记了一下，官方库文件下 mysqlcppconn8_static.libs</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;dnsapi.lib&quot;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span> <span class="hljs-comment">// DEBUG</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// 修改控制台编码</span><br>    <span class="hljs-comment">// std::system(&quot;chcp 65001&quot;);</span><br><br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-comment">// 改成你的信息b</span><br>        <span class="hljs-function">Session <span class="hljs-title">sess</span><span class="hljs-params">(SessionOption::USER, <span class="hljs-string">&quot;root&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::PWD, <span class="hljs-string">&quot;123456&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::HOST, <span class="hljs-string">&quot;localhost&quot;</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::PORT, <span class="hljs-number">33060</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            SessionOption::DB, <span class="hljs-string">&quot;test&quot;</span>)</span></span>;<br><br>        <span class="hljs-keyword">auto</span> result = sess.<span class="hljs-built_in">sql</span>(<span class="hljs-string">&quot;select * from user&quot;</span>).<span class="hljs-built_in">execute</span>();<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> row : result.<span class="hljs-built_in">fetchAll</span>()) &#123;<br>            std::cout &lt;&lt; row[<span class="hljs-number">0</span>] &lt;&lt; <span class="hljs-string">&quot; &quot;</span> &lt;&lt; row[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-string">&quot; &quot;</span> &lt;&lt; row[<span class="hljs-number">2</span>] &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>        &#125;<br><br>    &#125;<br>    <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>        std::cerr &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; <span class="hljs-string">&#x27;\n&#x27;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="预处理器"><a class="markdownIt-Anchor" href="#预处理器"></a> 预处理器</h4>
+<p>参考官方说明：For applications that use X DevAPI, X DevAPI for C, or (as of Connector/C++ 8.0.16) the legacy JDBC API, define the <code>STATIC_CONCPP</code> macro. All that matters is that you define it; the value does not matter. For example: <code>-DSTATIC_CONCPP</code></p>
 <p>使用 JDBC 连接编译时，需要在预处理器添加 <code>STATIC_CONCPP</code> 宏。</p>
-<p><img src="/../images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png" srcset="/img/loading.gif" lazyload alt="预处理器添加宏"></p>
+<p><img src="../images/mysql-connnector-8.0%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/image-20231014145224610.png" srcset="/img/loading.gif" lazyload alt="预处理器添加宏"></p>
 <p>特别的，如果执行以上步骤之后还是编译报错，需要根据相关报错信息链接其他的库。如 <code>MSCVRT.lib</code></p>
-<h2 id="使用cmkae生成工程文件"><a href="#使用cmkae生成工程文件" class="headerlink" title="使用cmkae生成工程文件"></a>使用cmkae生成工程文件</h2><blockquote>
-<p> 有其他特殊需求参考官方说明：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/connector-cpp/8.1/en/connector-cpp-installation-source-cpp.html">MySQL :: MySQL Connector&#x2F;C++ Developer Guide :: 4.3 Installing Connector&#x2F;C++ from Source</a></p>
+<h2 id="使用cmkae生成工程文件"><a class="markdownIt-Anchor" href="#使用cmkae生成工程文件"></a> 使用cmkae生成工程文件</h2>
+<blockquote>
+<p>有其他特殊需求参考官方说明：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://dev.mysql.com/doc/connector-cpp/8.1/en/connector-cpp-installation-source-cpp.html">MySQL :: MySQL Connector/C++ Developer Guide :: 4.3 Installing Connector/C++ from Source</a></p>
 </blockquote>
 <p>官方要求安装boost库，实际编译不安装boost也可以编译成功。</p>
 <p>编译命令如下所示：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">cmake . -G <span class="hljs-string">&quot;Visual Studio 15&quot;</span> -A Win32 -DBUILD_STATIC=<span class="hljs-keyword">ON</span> -DWITH_SSL=<span class="hljs-string">&quot;D:\OpenSSL-3.1-Win32-mtd&quot;</span> -DWITH_JDBC=<span class="hljs-keyword">ON</span> -DWITH_MYSQL=<span class="hljs-string">&quot;C:\Program Files\MySQL\MySQL Server 8.0&quot;</span><br></code></pre></td></tr></table></figure>
-
 <p>生成 vs2017工程（v141工具集）下的工程文件，产物为静态库，OpenSSL安装位置为 <code>&quot;D:\OpenSSL-3.1-Win32-mtd</code>。说明：</p>
 <ul>
 <li>-G “Visual Studio 16”：指定工具集</li>
 <li>-A Win32 指定生成的系统</li>
-<li>-DBUILD_STATIC&#x3D;ON：指定生成静态库</li>
-<li>-DWITH_SSL&#x3D;”D:\OpenSSL-3.1-Win32-mtd”：指定 OpenSSL 的安装位置</li>
-<li>-DWITH_MYSQL&#x3D;”C:\Program Files\MySQL\MySQL Server 8.0”：指定 mysql的安装位置</li>
-<li>-DWITH_JDBC&#x3D;ON：指定编译JDBC</li>
+<li>-DBUILD_STATIC=ON：指定生成静态库</li>
+<li>-DWITH_SSL=“D:\OpenSSL-3.1-Win32-mtd”：指定 OpenSSL 的安装位置</li>
+<li>-DWITH_MYSQL=“C:\Program Files\MySQL\MySQL Server 8.0”：指定 mysql的安装位置</li>
+<li>-DWITH_JDBC=ON：指定编译JDBC</li>
 </ul>
 <p>由于需要 <code>/MT</code> 版本的，因此 OpenSSL 也需要自己编译 <code>/MT</code> 版本的才可以。</p>
 
@@ -369,7 +377,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Windows下MySQL Connector/C++ 8.1编译说明</div>
-      <div>http://example.com/C_OpenSource/MySQL/mysql-connnector-8.0编译说明/</div>
+      <div>https://hodlyounger.github.io/C_OpenSource/MySQL/mysql-connnector-8.0编译说明/</div>
     </div>
     <div class="license-meta">
       

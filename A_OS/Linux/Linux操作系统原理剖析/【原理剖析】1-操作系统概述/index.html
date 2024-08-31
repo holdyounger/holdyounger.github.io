@@ -21,26 +21,26 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：本章知识点  什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍   0x01 什么是操作系统众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是">
+    <meta name="description" content="概述：本章知识点  什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍    0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【原理剖析】Linux操作系统原理剖析——操作系统概述">
-<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：本章知识点  什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍   0x01 什么是操作系统众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是">
+<meta property="og:description" content="概述：本章知识点  什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍    0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402643.png">
-<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402876.png">
-<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403055.png">
-<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403107.png">
-<meta property="og:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403164.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402643.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402876.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403055.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403107.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403164.png">
 <meta property="article:published_time" content="2023-12-18T01:37:30.801Z">
 <meta property="article:modified_time" content="2024-08-20T01:34:03.223Z">
 <meta property="article:author" content="mingming">
-<meta property="article:tag" content="书籍">
 <meta property="article:tag" content="Linux">
+<meta property="article:tag" content="书籍">
 <meta property="article:tag" content="书籍&#x2F;《Linux操作系统原理剖析》">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402643.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402643.png">
   
   
   
@@ -78,11 +78,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -295,35 +299,33 @@
 <li>Linux <strong>操作系统介绍</strong></li>
 </ul>
 </blockquote>
-<h2 id="0x01-什么是操作系统"><a href="#0x01-什么是操作系统" class="headerlink" title="0x01 什么是操作系统"></a>0x01 什么是操作系统</h2><p>众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图：</p>
+<h2 id="0x01-什么是操作系统"><a class="markdownIt-Anchor" href="#0x01-什么是操作系统"></a> 0x01 什么是操作系统</h2>
+<p>众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图：</p>
 <img src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402643.png" srcset="/img/loading.gif" lazyload class title="操作系统层次结构图">
-
 <p>可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。</p>
-<h2 id="操作系统有哪些功能"><a href="#操作系统有哪些功能" class="headerlink" title="操作系统有哪些功能"></a>操作系统有哪些功能</h2><p>知道了操作系统在计算机系统中所处的位置后，就应该明白操作系统的主要目的就是为了方便用户使用计算机系统和提高计算机系统资源利用率而诞生的软件系统。</p>
+<h2 id="操作系统有哪些功能"><a class="markdownIt-Anchor" href="#操作系统有哪些功能"></a> 操作系统有哪些功能</h2>
+<p>知道了操作系统在计算机系统中所处的位置后，就应该明白操作系统的主要目的就是为了方便用户使用计算机系统和提高计算机系统资源利用率而诞生的软件系统。</p>
 <p>操作系统的主要功能可用概况为以下两方面：</p>
 <ul>
 <li>提供人机接口</li>
 <li>管理计算机资源</li>
 </ul>
-<h3 id="人机接口"><a href="#人机接口" class="headerlink" title="人机接口"></a>人机接口</h3><p>提供人机接口其实就是运行在计算机硬件上的操作系统为用户的使用提供了方式和方法。最简单的方式就是我们开发人员在计算机上基于操作系统进行软件的开发和使用，从而实现了程序的开发运行。</p>
+<h3 id="人机接口"><a class="markdownIt-Anchor" href="#人机接口"></a> 人机接口</h3>
+<p>提供人机接口其实就是运行在计算机硬件上的操作系统为用户的使用提供了方式和方法。最简单的方式就是我们开发人员在计算机上基于操作系统进行软件的开发和使用，从而实现了程序的开发运行。</p>
 <p>大家都知道，像 C 、C++ 一类的编译性语言编写的程序在真正运行起来之前是需要进行代码编译、链接后才能运行的。其中，代码编译是将高级语言编译成简单的二进制文件，而引入链接后就需要用到操作系统下的库的概念（尤其是动态库链接），最后到真正运行程序时，程序其实是在操作系统的基础上才运行起来的。</p>
 <p>现在，我们大家来简单练习一个最基本的程序员入门程序 “hello world!” 。大家基于现在的 Ubuntu 操作系统环境，在终端窗口下使用 <code>vim</code> 编辑器编写代码，具体命令如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim hello.c<br></code></pre></td></tr></table></figure>
-
 <p>在打开的 VI 窗口中，使用 <code>i</code> 切换到输入状态，然后编写入如下代码：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;hello world!\n&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>在填写完代码内容后，按下 <code>Esc</code> 切换到正常模式，输入 <code>:wq</code> 保存内容退出 Vi 编辑器，然后通过以下命令完成 C 代码的编译：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 仅进行编译操作，不进行链接</span><br>gcc -c hello.c -o hello.o<br><span class="hljs-comment"># 完成链接操作，产生可执行文件</span><br>gcc hello.o -o hello<br></code></pre></td></tr></table></figure>
-
 <p>此时，产生的 <code>hello</code> 可执行文件就是基于 Ubuntu（Linux）操作系统的可以运行的程序，如果简单脱离这个操作系统，这个程序是无法运行起来的。我们可以通过 <code>file</code> 命令来查看这个文件的基本属性：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file hello<br></code></pre></td></tr></table></figure>
-
 <p>结果如下：</p>
 <img src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093402876.png" srcset="/img/loading.gif" lazyload class title="图片描述">
-
 <p>通过这样简单的一个程序的编译、运行练习，大家应该明白操作系统所提供的人机接口是什么了吧？其实人机接口主要就是为了给人们提供与计算机进行交互的接口功能。</p>
-<h3 id="管理计算机资源"><a href="#管理计算机资源" class="headerlink" title="管理计算机资源"></a>管理计算机资源</h3><p>计算机系统的资源总的来说分为硬件资源和软件资源，硬件资源有处理器、存储器、外设等；软件资源则大部分指程序和数据。</p>
+<h3 id="管理计算机资源"><a class="markdownIt-Anchor" href="#管理计算机资源"></a> 管理计算机资源</h3>
+<p>计算机系统的资源总的来说分为硬件资源和软件资源，硬件资源有处理器、存储器、外设等；软件资源则大部分指程序和数据。</p>
 <p>操作系统提供了大量用于管理这些资源的功能。具体如下：</p>
 <ul>
 <li>处理器资源管理：处理器调度、进程控制、进程通信、进程同步</li>
@@ -333,26 +335,23 @@
 </ul>
 <p>下面通过一个简单的输入、输出程序来演示操作系统管理设备的功能，构建实现一个 <code>input</code> 的程序，创建源文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim input.c<br></code></pre></td></tr></table></figure>
-
 <p>在源文件中添加如下内容：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br>    <span class="hljs-type">char</span> msg[<span class="hljs-number">128</span>] = &#123;<span class="hljs-number">0</span>&#125;;<br>    <span class="hljs-type">int</span> ret = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Please Input message: \n&quot;</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%s&quot;</span>, msg);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Your input message : \n&quot;</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>, msg);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>添加完成代码后，使用编译器进行编译和运行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc input.c -o input<br>./input<br></code></pre></td></tr></table></figure>
-
 <p>执行结果如下：</p>
 <img src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403055.png" srcset="/img/loading.gif" lazyload class title="图片描述">
-
 <p>从这个程序的运行过程中能够看出，当程序执行开始，屏幕上会显示我们想要打印的字符串数据，这里就用到了操作系统的输出设备管理功能，将数据发送给显卡进行显示；然后我们通过键盘输入了消息数据，操作系统管理的输入设备（键盘）获取到我们敲击键盘的事件消息后拼成了最终输入的消息数据送给运行的应用程序，然后应用程序最终重新将获取到的数据打印显示到了屏幕上。具体流程参考如下：</p>
 <img src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403107.png" srcset="/img/loading.gif" lazyload class title="图片描述">
-
-<h2 id="0x03-操作系统的分类"><a href="#0x03-操作系统的分类" class="headerlink" title="0x03 操作系统的分类"></a>0x03 操作系统的分类</h2><p>从一开始的裸机到单任务处理的单片机，最后发展成为如今的多任务并发处理的现代计算机，计算机系统发展迅速，而在计算机系统中十分重要的操作系统也发展形成了多种类不同的操作系统。</p>
+<h2 id="0x03-操作系统的分类"><a class="markdownIt-Anchor" href="#0x03-操作系统的分类"></a> 0x03 操作系统的分类</h2>
+<p>从一开始的裸机到单任务处理的单片机，最后发展成为如今的多任务并发处理的现代计算机，计算机系统发展迅速，而在计算机系统中十分重要的操作系统也发展形成了多种类不同的操作系统。</p>
 <p>由于应对的场景不同，操作系统根据处理多任务的不同方式可以分为：</p>
 <ul>
 <li>分时操作系统：目前大部分桌面操作系统都属于分时操作系统，其中最主要的区别就是多任务分时共享计算机的处理资源。目前所见到的 Windows、Ubuntu、MacOS 等桌面操作系统都属于分时操作系统。</li>
 <li>实时操作系统：实时操作系统针对工业和需要及时处理数据消息而设计的操作系统，有及时性、可靠性等特点。这类型操作系统多指嵌入式操作系统，有 rtos、uCosII 等等。</li>
 </ul>
-<h2 id="0x04-操作系统的结构组成"><a href="#0x04-操作系统的结构组成" class="headerlink" title="0x04 操作系统的结构组成"></a>0x04 操作系统的结构组成</h2><p>操作系统是一个大型的软件系统，是由许多独立功能的程序模块组成的，这些程序模块共同构成了一个完整的操作系统。大部分的操作系统都可以被分为这样两种结构：层次结构和微内核结构。</p>
+<h2 id="0x04-操作系统的结构组成"><a class="markdownIt-Anchor" href="#0x04-操作系统的结构组成"></a> 0x04 操作系统的结构组成</h2>
+<p>操作系统是一个大型的软件系统，是由许多独立功能的程序模块组成的，这些程序模块共同构成了一个完整的操作系统。大部分的操作系统都可以被分为这样两种结构：层次结构和微内核结构。</p>
 <ol>
 <li>层次结构 层次结构操作系统的设计思想主要是按照操作系统各个模块的功能和相互之间的依存关系而设计。而操作系统应该分为多少层，各个层应该在什么位置其实都是层次结构操作系统的设计关键点。处于最底层的程序模块往往成为操作系统的内核。这部分程序模块的功能包括系统中断处理程序、各个外设驱动程序、高优先级处理频率高的程序模块（如时钟管理程序、进程调度程序、低级通信模块、内存管理模块等等）。一般情况下，为了整个操作系统的效率，系统内核部分会在计算机系统工作过程中常驻内存中持续运行。</li>
 <li>微内核结构 与层次结构相对的就是微内核结构。微内核结构的操作系统其实就是把操作系统中的基本功能模块组织为操作系统的微内核，而其他功能模块尽量做到内核以外，通过调用内核来实现。微内核机构是具有如下优点：</li>
@@ -363,7 +362,8 @@
 <li>安全性高：由于大部分的功能模块都是处于内核以外的部分运行实现，其实类似高级用户一样的层次，则相对于操作系统来说更安全，大部分功能模块产生的漏洞不会影响到系统内核部分。</li>
 <li>方便移植：由于硬件相关的部分都包含在微内核中，当需要进行系统移植时，只需要修改微内核代码以适应不同的硬件平台即可进行系统移植，而对于操作系统中各个功能模块以及更上层的应用层来说不需要做任何改变。</li>
 </ul>
-<h2 id="Linux-操作系统介绍"><a href="#Linux-操作系统介绍" class="headerlink" title="Linux 操作系统介绍"></a>Linux 操作系统介绍</h2><p>经过对操作系统的介绍，详细大家对于计算机系统中的操作系统应该有了一定的概念。本课程重点研究的操作系统是 Linux 操作系统，现在就简单介绍一下关于 Linux 操作系统。前面实现练习操作的 Ubuntu 桌面操作系统就是一个基于 Linux 内核实现的 Linux 桌面操作系统。</p>
+<h2 id="linux-操作系统介绍"><a class="markdownIt-Anchor" href="#linux-操作系统介绍"></a> Linux 操作系统介绍</h2>
+<p>经过对操作系统的介绍，详细大家对于计算机系统中的操作系统应该有了一定的概念。本课程重点研究的操作系统是 Linux 操作系统，现在就简单介绍一下关于 Linux 操作系统。前面实现练习操作的 Ubuntu 桌面操作系统就是一个基于 Linux 内核实现的 Linux 桌面操作系统。</p>
 <p>Linux 系统有两种不同的含义：</p>
 <ul>
 <li>一方面单指 Linus Torvalds 维护的开源代码 Unix 类操作系统的内核 Linux；</li>
@@ -381,15 +381,16 @@
 <li>具有大量有用的实用程序和通信、联网工具</li>
 <li>具有面向屏幕的编辑软件</li>
 </ul>
-<h2 id="Linux的内核特征"><a href="#Linux的内核特征" class="headerlink" title="Linux的内核特征"></a>Linux的内核特征</h2><p>Linux 操作系统的核心稳定而且高效，以独占的方式执行最底层任务，保证其他程序的正常运行是整个系统的核心和独特的性质。</p>
+<h2 id="linux的内核特征"><a class="markdownIt-Anchor" href="#linux的内核特征"></a> Linux的内核特征</h2>
+<p>Linux 操作系统的核心稳定而且高效，以独占的方式执行最底层任务，保证其他程序的正常运行是整个系统的核心和独特的性质。</p>
 <p>1、接口特色</p>
 <p>按照 POSIX 标准，可以运行 Unix 程序的系统就是 Unix，使用 Linux 系统也属于 Unix 的一种。为此，Linux 系统提供了和一般 Unix 系统相同的标准界面，包括程序级和用户级的。</p>
 <p>2、功能特色</p>
-<p>Linux 核心最早运行在 Intel 80386 系统 PC 机上，如今，Linux 已经能够正常运行在 Apple、DEC alpha、MIPS、Motorola 等等一系列计算机上。同时，一些改进的嵌入式 Linux 核心也可以运行在手机、家电等设备上。Linux 系统支出多种硬件设备，并且由于 Linux 系统下的驱动程序的开发方式相比 Windows 等其他操作系统更为简单，所以越来越多的硬件厂商也针对 Linux 操作系统提供设备驱动。此外，Linux 的内存管理采用多级分页的方式；使用专用文件系统 Ext2 可以提供方便有效的文件共享及保护机制；内置 TCP&#x2F;IP 协议栈也提供了各种高效的网络功能，包括基本的进程间通信、网络文件服务等等。</p>
-<h2 id="Linux的版本查看"><a href="#Linux的版本查看" class="headerlink" title="Linux的版本查看"></a>Linux的版本查看</h2><p>Linux 内核采用的是双树系统，一棵树是稳定树，主要用于发行；另一棵树是非稳定树或者开发树，用于产品开发、改进。Linux 版本序号的形式为 x.y.z ，对于稳定树来说，y 是偶数；而对于开发树拉说，y 是相比稳定树大一的奇数。</p>
+<p>Linux 核心最早运行在 Intel 80386 系统 PC 机上，如今，Linux 已经能够正常运行在 Apple、DEC alpha、MIPS、Motorola 等等一系列计算机上。同时，一些改进的嵌入式 Linux 核心也可以运行在手机、家电等设备上。Linux 系统支出多种硬件设备，并且由于 Linux 系统下的驱动程序的开发方式相比 Windows 等其他操作系统更为简单，所以越来越多的硬件厂商也针对 Linux 操作系统提供设备驱动。此外，Linux 的内存管理采用多级分页的方式；使用专用文件系统 Ext2 可以提供方便有效的文件共享及保护机制；内置 TCP/IP 协议栈也提供了各种高效的网络功能，包括基本的进程间通信、网络文件服务等等。</p>
+<h2 id="linux的版本查看"><a class="markdownIt-Anchor" href="#linux的版本查看"></a> Linux的版本查看</h2>
+<p>Linux 内核采用的是双树系统，一棵树是稳定树，主要用于发行；另一棵树是非稳定树或者开发树，用于产品开发、改进。Linux 版本序号的形式为 x.y.z ，对于稳定树来说，y 是偶数；而对于开发树拉说，y 是相比稳定树大一的奇数。</p>
 <p>我们可以在 Linux 操作系统的终端窗口下通过命令来获取当前操作系统的版本号，具体如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">uname</span> -a<br></code></pre></td></tr></table></figure>
-
 <p>结果显示如下：</p>
 <img src="/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/IMG-20240820093403164.png" srcset="/img/loading.gif" lazyload class title="图片描述">
                 
@@ -438,9 +439,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E4%B9%A6%E7%B1%8D/" class="print-no-link">#书籍</a>
-      
         <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/%E4%B9%A6%E7%B1%8D/" class="print-no-link">#书籍</a>
       
         <a href="/tags/%E4%B9%A6%E7%B1%8D-%E3%80%8ALinux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%8B/" class="print-no-link">#书籍/《Linux操作系统原理剖析》</a>
       
@@ -455,7 +456,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【原理剖析】Linux操作系统原理剖析——操作系统概述</div>
-      <div>http://example.com/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】1-操作系统概述/</div>
+      <div>https://hodlyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】1-操作系统概述/</div>
     </div>
     <div class="license-meta">
       

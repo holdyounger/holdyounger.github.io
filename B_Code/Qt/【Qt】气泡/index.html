@@ -21,14 +21,14 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[TOC] 需求描述：鼠标 hover 在一个控件上时，展示设置好的气泡信息 演示   相关说明Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 QToolTip 类实现自己需要的气泡样式。 从 Qt 5.9.9  已经支持 QToolTip。基本所有继承于 QWidget 的组件都可以通过 setToolTi">
+    <meta name="description" content="[TOC] 需求描述：鼠标 hover 在一个控件上时，展示设置好的气泡信息  演示   相关说明 Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 QToolTip 类实现自己需要的气泡样式。 从 Qt 5.9.9  已经支持 QToolTip。基本所有继承于 QWidget 的组件都可以通过 setTool">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】鼠标 hover 操作时弹出文字气泡">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[TOC] 需求描述：鼠标 hover 在一个控件上时，展示设置好的气泡信息 演示   相关说明Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 QToolTip 类实现自己需要的气泡样式。 从 Qt 5.9.9  已经支持 QToolTip。基本所有继承于 QWidget 的组件都可以通过 setToolTi">
+<meta property="og:description" content="[TOC] 需求描述：鼠标 hover 在一个控件上时，展示设置好的气泡信息  演示   相关说明 Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 QToolTip 类实现自己需要的气泡样式。 从 Qt 5.9.9  已经支持 QToolTip。基本所有继承于 QWidget 的组件都可以通过 setTool">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Qt/images/Qt%E6%B0%94%E6%B3%A1/1.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.246Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:57.423Z">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="气泡">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif">
   
   
   
@@ -74,11 +74,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -282,10 +286,10 @@
                 
                 <p>[TOC]</p>
 <p>需求描述：鼠标 hover 在一个控件上时，展示设置好的气泡信息</p>
-<h1 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h1><img src="/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif" srcset="/img/loading.gif" lazyload class title="2022_04_22_15_56_50_238">
-
-
-<h1 id="相关说明"><a href="#相关说明" class="headerlink" title="相关说明"></a>相关说明</h1><p>Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 <code>QToolTip</code> 类实现自己需要的气泡样式。</p>
+<h1 id="演示"><a class="markdownIt-Anchor" href="#演示"></a> 演示</h1>
+<img src="/B_Code/Qt/%E3%80%90Qt%E3%80%91%E6%B0%94%E6%B3%A1/IMG-20240813183603898.gif" srcset="/img/loading.gif" lazyload class title="2022_04_22_15_56_50_238">
+<h1 id="相关说明"><a class="markdownIt-Anchor" href="#相关说明"></a> 相关说明</h1>
+<p>Qt5之前的版本要设置气泡需要通过C++中其他的类库去实现，在Qt5中则已经实现了相关的Qt类。并且除了设置文字气泡之外，还可以通过重写 <code>QToolTip</code> 类实现自己需要的气泡样式。</p>
 <p>从 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://qt5.digitser.net/5.9/zh-CN/index.html">Qt 5.9.9 </a> 已经支持 <code>QToolTip</code>。基本所有继承于 <code>QWidget</code> 的组件都可以通过 <code>setToolTip()</code>设置气泡信息。以下所展示的Qt基类都可以设置气泡信息。</p>
 <blockquote>
 <ul>
@@ -295,8 +299,10 @@
 </ul>
 </blockquote>
 <p>基本上所有继承于 <code>QWidget</code> 的Qt控件类都支持设置气泡，本文以 <code>QLabel</code> 和 <code>QPushButton</code> 为例演示文字气泡功能。</p>
-<h2 id="支持-SetToolTip的控件"><a href="#支持-SetToolTip的控件" class="headerlink" title="支持 SetToolTip的控件"></a>支持 <code>SetToolTip</code>的控件</h2><p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Qt/images/Qt%E6%B0%94%E6%B3%A1/1.png" srcset="/img/loading.gif" lazyload alt="image-20220422160147373"></p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>代码很简单，在ui界面拖一个 <code>QLabel</code> 和一个 <code>QPushbutton</code> 即可，信号槽直接在ui界面右击转到槽即可。</p>
+<h2 id="支持-settooltip的控件"><a class="markdownIt-Anchor" href="#支持-settooltip的控件"></a> 支持 <code>SetToolTip</code>的控件</h2>
+<p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/Qt/images/Qt%E6%B0%94%E6%B3%A1/1.png" srcset="/img/loading.gif" lazyload alt="image-20220422160147373"></p>
+<h2 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h2>
+<p>代码很简单，在ui界面拖一个 <code>QLabel</code> 和一个 <code>QPushbutton</code> 即可，信号槽直接在ui界面右击转到槽即可。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;widget.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;ui_widget.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QImage&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QPixmap&gt;</span></span><br><br>Widget::<span class="hljs-built_in">Widget</span>(QWidget *parent)<br>    : <span class="hljs-built_in">QWidget</span>(parent)<br>    , <span class="hljs-built_in">ui</span>(<span class="hljs-keyword">new</span> Ui::Widget)<br>&#123;<br>    ui-&gt;<span class="hljs-built_in">setupUi</span>(<span class="hljs-keyword">this</span>);<br><br><br>    <span class="hljs-function">QPixmap <span class="hljs-title">img</span><span class="hljs-params">(<span class="hljs-string">&quot;:/Win11.jpg&quot;</span>)</span></span>;<br><br>    ui-&gt;label-&gt;<span class="hljs-built_in">setPixmap</span>(img);<br>    ui-&gt;label-&gt;<span class="hljs-built_in">setScaledContents</span>(<span class="hljs-literal">true</span>);<br>    ui-&gt;label-&gt;<span class="hljs-built_in">setToolTip</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;壁纸《Win11.png》&quot;</span>));<br>    ui-&gt;pushButton-&gt;<span class="hljs-built_in">setToolTip</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;隐藏或显示图片&quot;</span>));<br>&#125;<br><br>Widget::~<span class="hljs-built_in">Widget</span>()<br>&#123;<br>    <span class="hljs-keyword">delete</span> ui;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Widget::on_pushButton_clicked</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span>(ui-&gt;label-&gt;<span class="hljs-built_in">isVisible</span>())<br>        ui-&gt;label-&gt;<span class="hljs-built_in">hide</span>();<br>    <span class="hljs-keyword">else</span><br>        ui-&gt;label-&gt;<span class="hljs-built_in">setVisible</span>(<span class="hljs-literal">true</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
@@ -353,7 +359,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】鼠标 hover 操作时弹出文字气泡</div>
-      <div>http://example.com/B_Code/Qt/【Qt】气泡/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】气泡/</div>
     </div>
     <div class="license-meta">
       
@@ -397,9 +403,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/B_Code/Qt/%E3%80%90Qt%E3%80%91%E7%AA%97%E5%8F%A3%E6%8B%96%E6%8B%BD/" title="【Qt】实现窗口拖拽">
+                      <a href="/B_Code/Qt/%E3%80%90Qt%E3%80%91%E7%AA%97%E5%8F%A3%E5%B1%85%E4%B8%AD/" title="【Qt】窗口居中显示">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【Qt】实现窗口拖拽</span>
+                        <span class="hidden-mobile">【Qt】窗口居中显示</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

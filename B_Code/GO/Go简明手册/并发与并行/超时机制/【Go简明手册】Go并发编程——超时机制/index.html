@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="通过前面的内容我们了解到，channel 的读写操作非常简单，只需要通过 &lt;- 操作符即可实现，但是 channel 的使用不当却会带来大麻烦。我们先来看之前的一段代码： 123a :&#x3D; make(chan int)a &lt;- 1z :&#x3D; &lt;-a  观察上面三行代码，第 2 行往 channel 内写入了数据，第 3 行从 channel 中读取了数据，如果程序运行正常当然不会出什">
+    <meta name="description" content="通过前面的内容我们了解到，channel 的读写操作非常简单，只需要通过 &lt;- 操作符即可实现，但是 channel 的使用不当却会带来大麻烦。我们先来看之前的一段代码： 123a :&#x3D; make(chan int)a &lt;- 1z :&#x3D; &lt;-a 观察上面三行代码，第 2 行往 channel 内写入了数据，第 3 行从 channel 中读取了数据，如果程序运行正常当然不会出什么">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go并发编程——超时机制">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E2%80%94%E2%80%94%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E2%80%94%E2%80%94%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="通过前面的内容我们了解到，channel 的读写操作非常简单，只需要通过 &lt;- 操作符即可实现，但是 channel 的使用不当却会带来大麻烦。我们先来看之前的一段代码： 123a :&#x3D; make(chan int)a &lt;- 1z :&#x3D; &lt;-a  观察上面三行代码，第 2 行往 channel 内写入了数据，第 3 行从 channel 中读取了数据，如果程序运行正常当然不会出什">
+<meta property="og:description" content="通过前面的内容我们了解到，channel 的读写操作非常简单，只需要通过 &lt;- 操作符即可实现，但是 channel 的使用不当却会带来大麻烦。我们先来看之前的一段代码： 123a :&#x3D; make(chan int)a &lt;- 1z :&#x3D; &lt;-a 观察上面三行代码，第 2 行往 channel 内写入了数据，第 3 行从 channel 中读取了数据，如果程序运行正常当然不会出什么">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.180Z">
 <meta property="article:modified_time" content="2024-08-26T09:48:12.139Z">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,17 +285,14 @@
                 
                 <p>通过前面的内容我们了解到，<code>channel</code> 的读写操作非常简单，只需要通过 <code>&lt;-</code> 操作符即可实现，但是 <code>channel</code> 的使用不当却会带来大麻烦。我们先来看之前的一段代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">a := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>)<br>a &lt;- <span class="hljs-number">1</span><br>z := &lt;-a<br></code></pre></td></tr></table></figure>
-
 <p>观察上面三行代码，第 2 行往 <code>channel</code> 内写入了数据，第 3 行从 <code>channel</code> 中读取了数据，如果程序运行正常当然不会出什么问题，可如果第二行数据写入失败，或者 <code>channel</code> 中没有数据，那么第 3 行代码会因为永远无法从 <code>a</code> 中读取到数据而一直处于阻塞状态。相反的，如果 <code>channel</code> 中的数据一直没有被读取，那么写入操作也会一直处于阻塞状态。如果不正确处理这个情况，很可能会导致整个 <code>goroutine</code> 锁死，这就是超时问题。Go 语言没有针对超时提供专门的处理机制，但是我们却可以利用 <code>select</code> 来巧妙地实现超时处理机制，下面看一个示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go">t := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">bool</span>)<br><span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span></span> &#123;<br>    time.Sleep(<span class="hljs-number">1e9</span>) <span class="hljs-comment">//等待1秒</span><br>    t &lt;- <span class="hljs-literal">true</span><br>&#125;<br><br><span class="hljs-keyword">select</span> &#123;<br>    <span class="hljs-keyword">case</span> &lt;-ch:  <span class="hljs-comment">//从ch中读取数据</span><br><br>    <span class="hljs-keyword">case</span> &lt;-t:  <span class="hljs-comment">//如果1秒后没有从ch中读取到数据，那么从t中读取，并进行下一步操作</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>这样的方法就可以让程序在等待 1 秒后继续执行，而不会因为 ch 读取等待而导致程序停滞，从而巧妙地实现了超时处理机制，这种方法不仅简单，在实际项目开发中也是非常实用的。</p>
-<h4 id="channel-的关闭"><a href="#channel-的关闭" class="headerlink" title="channel 的关闭"></a>channel 的关闭</h4><p><code>channel</code> 的关闭非常简单，使用 Go 语言内置的 <code>close()</code> 函数即可关闭 <code>channel</code>，示例：</p>
+<h4 id="channel-的关闭"><a class="markdownIt-Anchor" href="#channel-的关闭"></a> channel 的关闭</h4>
+<p><code>channel</code> 的关闭非常简单，使用 Go 语言内置的 <code>close()</code> 函数即可关闭 <code>channel</code>，示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>)<br><span class="hljs-built_in">close</span>(ch)<br></code></pre></td></tr></table></figure>
-
 <p>关闭了 <code>channel</code> 后如何查看 <code>channel</code> 是否关闭成功了呢？很简单，我们可以在读取 <code>channel</code> 时采用多重返回值的方式，示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">x, ok := &lt;-ch<br></code></pre></td></tr></table></figure>
-
 <p>通过查看第二个返回值的 <code>bool</code> 值即可判断 <code>channel</code> 是否关闭，若为 <code>false</code> 则表示 <code>channel</code> 被关闭，反之则没有关闭。</p>
 
                 
@@ -373,7 +374,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Go并发编程——超时机制</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/并发与并行/超时机制/【Go简明手册】Go并发编程——超时机制/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/并发与并行/超时机制/【Go简明手册】Go并发编程——超时机制/</div>
     </div>
     <div class="license-meta">
       

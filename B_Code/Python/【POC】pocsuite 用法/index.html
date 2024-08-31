@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：pocsuite 工具的用法整理 参考链接：  工具| PocSuite 使用介绍 - FreeBuf网络安全行业门户 Pocsuite3 | Open source remote vulnerability testing framework   安装1234# pippip install pocsuite# pdmpdm add pocsuite  安装完成之后还要安装 setupt">
+    <meta name="description" content="概述：pocsuite 工具的用法整理 参考链接：  工具| PocSuite 使用介绍 - FreeBuf网络安全行业门户 Pocsuite3 | Open source remote vulnerability testing framework    安装 1234# pippip install pocsuite# pdmpdm add pocsuite 安装完成之后还要安装 setup">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【POC】pocsuite 用法">
-<meta property="og:url" content="http://example.com/B_Code/Python/%E3%80%90POC%E3%80%91pocsuite%20%E7%94%A8%E6%B3%95/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Python/%E3%80%90POC%E3%80%91pocsuite%20%E7%94%A8%E6%B3%95/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：pocsuite 工具的用法整理 参考链接：  工具| PocSuite 使用介绍 - FreeBuf网络安全行业门户 Pocsuite3 | Open source remote vulnerability testing framework   安装1234# pippip install pocsuite# pdmpdm add pocsuite  安装完成之后还要安装 setupt">
+<meta property="og:description" content="概述：pocsuite 工具的用法整理 参考链接：  工具| PocSuite 使用介绍 - FreeBuf网络安全行业门户 Pocsuite3 | Open source remote vulnerability testing framework    安装 1234# pippip install pocsuite# pdmpdm add pocsuite 安装完成之后还要安装 setup">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-03T09:10:00.379Z">
 <meta property="article:modified_time" content="2024-08-26T07:12:32.288Z">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -225,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          245 字
+          243 字
         
       </span>
     
@@ -286,14 +290,13 @@
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://pocsuite.org/">Pocsuite3 | Open source remote vulnerability testing framework</a></li>
 </ul>
 </blockquote>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># pip<br>pip install pocsuite<br># pdm<br>pdm add pocsuite<br></code></pre></td></tr></table></figure>
-
-<p>安装完成之后还要安装 <code>setuptools</code>，如果不安装，则会报错 <code>ModuleNotFoundError: No module named &#39;pkg_resources&#39;</code></p>
+<h2 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h2>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># pip<br>pip install pocsuite<br># pdm<br>pdm add pocsuite<br></code></pre></td></tr></table></figure>
+<p>安装完成之后还要安装 <code>setuptools</code>，如果不安装，则会报错 <code>ModuleNotFoundError: No module named 'pkg_resources'</code></p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd"># pip<br>pip install setuptools<br># pdm<br>pdm add setuptools<br></code></pre></td></tr></table></figure>
-
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>使用 pdm 运行时，必须指定 POC 的全路径。</p>
+<h2 id="使用"><a class="markdownIt-Anchor" href="#使用"></a> 使用</h2>
+<p>使用 pdm 运行时，必须指定 POC 的全路径。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs cmd">Administrator@<span class="hljs-number">5</span>CD227B8LV MINGW64 /d/Documents/A_Source/OpenSource/POC/Library-POC/Exchange/CVE-<span class="hljs-number">2021</span>-<span class="hljs-number">26855</span> (master)<br>$ pdm run pocsuite -r &quot;D:\Documents\A_Source\OpenSource\POC\Library-POC\Exchange\CVE-<span class="hljs-number">2021</span>-<span class="hljs-number">26855</span>\CVE-<span class="hljs-number">2021</span>-<span class="hljs-number">26855</span>.py&quot; -u https://<span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">106</span>.<span class="hljs-number">145</span> --<span class="hljs-built_in">verify</span><br><br>,------.                        ,--. ,--.       ,----.   &#123;<span class="hljs-number">2</span>.<span class="hljs-number">0</span>.<span class="hljs-number">8</span>-<span class="hljs-number">247</span>cac4&#125;<br>|  .--. &#x27;,---. ,---.,---.,--.,--`--,-&#x27;  &#x27;-.,---.&#x27;.-.  |<br>|  &#x27;--&#x27; | .-. | .--(  .-&#x27;|  ||  ,--&#x27;-.  .-| .-. : .&#x27; &lt;<br>|  | --&#x27;&#x27; &#x27;-&#x27; \ `--.-&#x27;  `&#x27;  &#x27;&#x27;  |  | |  | \   --/&#x27;-&#x27;  |<br>`--&#x27;     `---&#x27; `---`----&#x27; `----&#x27;`--&#x27; `--&#x27;  `----`----&#x27;   https://pocsuite.org<br>[*] starting <span class="hljs-built_in">at</span> <span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span><br><br>[<span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span>] [INFO] loading PoC script &#x27;D:\Documents\A_Source\OpenSource\POC\Library-POC\Exchange\CVE-<span class="hljs-number">2021</span>-<span class="hljs-number">26855</span>\CVE-<span class="hljs-number">2021</span>-<span class="hljs-number">26855</span>.py&#x27;<br>[<span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span>] [INFO] pocsusite got a total of <span class="hljs-number">1</span> tasks<br>[<span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span>] [INFO] running poc:&#x27;Microsoft Exchange Server SSRF漏洞&#x27; target &#x27;https://<span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">106</span>.<span class="hljs-number">145</span>&#x27;<br>[<span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span>] [+] URL : https://<span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">106</span>.<span class="hljs-number">145</span>:<span class="hljs-number">443</span><br>[<span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span>] [INFO] Scan completed,ready to <span class="hljs-built_in">print</span><br><br>+-------------------------+------------------------------------+--------+---------------------------+------------------------------------------------------------------+---------+<br>| target-url              |              poc-name              | poc-id |         component         |                             version                              |  status |<br>+-------------------------+------------------------------------+--------+---------------------------+------------------------------------------------------------------+---------+<br>| https://<span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">106</span>.<span class="hljs-number">145</span> | Microsoft Exchange Server SSRF漏洞 |        | Microsoft Exchange Server | Exchange Server <span class="hljs-number">2013</span>、Exchange Server <span class="hljs-number">2016</span>、Exchange Server <span class="hljs-number">2019</span> | success |<br>+-------------------------+------------------------------------+--------+---------------------------+------------------------------------------------------------------+---------+<br>success : <span class="hljs-number">1</span> / <span class="hljs-number">1</span><br><br>[*] shutting down <span class="hljs-built_in">at</span> <span class="hljs-number">15</span>:<span class="hljs-number">38</span>:<span class="hljs-number">32</span><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -351,7 +354,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【POC】pocsuite 用法</div>
-      <div>http://example.com/B_Code/Python/【POC】pocsuite 用法/</div>
+      <div>https://hodlyounger.github.io/B_Code/Python/【POC】pocsuite 用法/</div>
     </div>
     <div class="license-meta">
       

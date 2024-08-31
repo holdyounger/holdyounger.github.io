@@ -21,21 +21,21 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：Unicode解码 参考文章：  windows下C++实现Unicode和Utf8编码的互转_c++ unicode转utf-8-CSDN博客  C &#x2F; C++ 处理转义 \uxxxx 字符-CSDN博客">
+    <meta name="description" content="概述：Unicode解码 参考文章：   windows下C实现Unicode和Utf8编码的互转_c unicode转utf-8-CSDN博客   C &#x2F; C++ 处理转义 \uxxxx 字符-CSDN博客">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【编解码】Unicode解码">
-<meta property="og:url" content="http://example.com/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：Unicode解码 参考文章：  windows下C++实现Unicode和Utf8编码的互转_c++ unicode转utf-8-CSDN博客  C &#x2F; C++ 处理转义 \uxxxx 字符-CSDN博客">
+<meta property="og:description" content="概述：Unicode解码 参考文章：   windows下C实现Unicode和Utf8编码的互转_c unicode转utf-8-CSDN博客   C &#x2F; C++ 处理转义 \uxxxx 字符-CSDN博客">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/IMG-20240826171243454.png">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/IMG-20240826171243454.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.094Z">
 <meta property="article:modified_time" content="2024-08-26T09:13:39.771Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Code&#x2F;C">
 <meta property="article:tag" content="Unicode">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/IMG-20240826171243454.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/IMG-20240826171243454.png">
   
   
   
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -226,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          438 字
+          435 字
         
       </span>
     
@@ -283,38 +287,42 @@
 <p>概述：Unicode解码</p>
 <p>参考文章：</p>
 <ul>
-<li><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/r5014/article/details/125278587#:~:text=windows%E4%B8%8BC%2B%2B%E5%AE%9E%E7%8E%B0Unicode%E5%92%8CUtf8%E7%BC%96%E7%A0%81%E7%9A%84%E4%BA%92%E8%BD%AC%201%201.UNICODE%E8%BD%ACUTF8%20%23include%20%3Ciostream%3E%20%23include%20%3Cwindows.h%3E%20%23include,%28nNeedChars%20%3E%200%29%20%2F%2F%E5%86%8D%E6%AC%A1%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%8B%20%7B%20...%202%202.UTF8%E8%BD%AC%E4%B8%BAUNICODE">windows下C++实现Unicode和Utf8编码的互转_c++ unicode转utf-8-CSDN博客</a></p>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/r5014/article/details/125278587#:~:text=windows%E4%B8%8BC%2B%2B%E5%AE%9E%E7%8E%B0Unicode%E5%92%8CUtf8%E7%BC%96%E7%A0%81%E7%9A%84%E4%BA%92%E8%BD%AC%201%201.UNICODE%E8%BD%ACUTF8%20%23include%20%3Ciostream%3E%20%23include%20%3Cwindows.h%3E%20%23include,%28nNeedChars%20%3E%200%29%20%2F%2F%E5%86%8D%E6%AC%A1%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%8B%20%7B%20...%202%202.UTF8%E8%BD%AC%E4%B8%BAUNICODE">windows下C<ins>实现Unicode和Utf8编码的互转_c</ins> unicode转utf-8-CSDN博客</a></p>
 </li>
-<li><p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/Scott0902/article/details/131309384">C &#x2F; C++ 处理转义 \uxxxx 字符-CSDN博客</a></p>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/Scott0902/article/details/131309384">C / C++ 处理转义 \uxxxx 字符-CSDN博客</a></p>
 </li>
 </ul>
 </blockquote>
 <span id="more"></span>
-
-
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于前后端交互中编码的问题，出现了这样的一串字符：</p>
+<h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>由于前后端交互中编码的问题，出现了这样的一串字符：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;share_names&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-string">&quot;\u4e2d\u6587\u8def\u5f84&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
-
 <p>出现了unicode编码作为字符串内容的情况，直接用json解析的话会报错，所以在json解析前需要先进行转码，两种方案</p>
 <ol>
 <li>所有的 ASCII 编码转为 UNICODE</li>
 <li>所有 UNICODE 转为 ASCII</li>
 </ol>
 <p>常规思维就是 UNICODE 转为 ASCII。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>UNICODE 编码占用了两个字节，所以在处理时需要使用宽字符，也就是 <code>wchar_t</code> 或者 <code>wstring</code>。</p>
-<h3 id="特征："><a href="#特征：" class="headerlink" title="特征："></a>特征：</h3><p>UNICODE 的编码格式固定：<code>\udddd</code> 的形式。</p>
-<h3 id="步骤说明："><a href="#步骤说明：" class="headerlink" title="步骤说明："></a>步骤说明：</h3><ol>
+<h2 id="思路"><a class="markdownIt-Anchor" href="#思路"></a> 思路</h2>
+<p>UNICODE 编码占用了两个字节，所以在处理时需要使用宽字符，也就是 <code>wchar_t</code> 或者 <code>wstring</code>。</p>
+<h3 id="特征"><a class="markdownIt-Anchor" href="#特征"></a> 特征：</h3>
+<p>UNICODE 的编码格式固定：<code>\udddd</code> 的形式。</p>
+<h3 id="步骤说明"><a class="markdownIt-Anchor" href="#步骤说明"></a> 步骤说明：</h3>
+<ol>
 <li>遍历整个字符串</li>
 <li>发现 <code>\\u</code> 则读取对应的 <code>dddd</code></li>
 <li>保存 <code>dddd</code> 到宽字符串中。需要按照 16 进制读取。</li>
 </ol>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="C-版本"><a href="#C-版本" class="headerlink" title="C++版本"></a>C++版本</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">string <span class="hljs-title">Unescape</span><span class="hljs-params">(<span class="hljs-type">const</span> string&amp; input)</span> </span>&#123;<br>    wstring wresult;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; input.<span class="hljs-built_in">length</span>(); ) &#123;<br>        <span class="hljs-keyword">if</span> (input[i] == <span class="hljs-string">&#x27;\\&#x27;</span> &amp;&amp; input[i + <span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;u&#x27;</span>) &#123;<br>            string code = input.<span class="hljs-built_in">substr</span>(i + <span class="hljs-number">2</span>, <span class="hljs-number">4</span>);<br>            <span class="hljs-type">wchar_t</span> unicode = <span class="hljs-built_in">stoi</span>(code, <span class="hljs-literal">nullptr</span>, <span class="hljs-number">16</span>);<br>            wresult += unicode;<br>            i += <span class="hljs-number">6</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            wresult += input[i++];<br>        &#125;<br>    &#125;<br>    wstring_convert&lt;codecvt_utf8&lt;<span class="hljs-type">wchar_t</span>&gt;&gt; conv;<br>    string result = conv.<span class="hljs-built_in">to_bytes</span>(wresult);<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h3 id="ATL版本"><a href="#ATL版本" class="headerlink" title="ATL版本"></a>ATL版本</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">CString <span class="hljs-title">Unescape</span><span class="hljs-params">(<span class="hljs-type">const</span> CString&amp; csInput)</span> </span>&#123;<br>	string input = <span class="hljs-built_in">CW2A</span>(csInput);<br>	wstring wresult;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; input.<span class="hljs-built_in">length</span>(); ) &#123;<br>		<span class="hljs-keyword">if</span> (input[i] == <span class="hljs-string">&#x27;\\&#x27;</span> &amp;&amp; input[i + <span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;u&#x27;</span>) &#123;<br>			string code = input.<span class="hljs-built_in">substr</span>(i + <span class="hljs-number">2</span>, <span class="hljs-number">4</span>);<br>			<span class="hljs-type">wchar_t</span> unicode = <span class="hljs-built_in">stoi</span>(code, <span class="hljs-literal">nullptr</span>, <span class="hljs-number">16</span>);<br>			wresult += unicode;<br>			i += <span class="hljs-number">6</span>;<br>		&#125;<br>		<span class="hljs-keyword">else</span> &#123;<br>			wresult += input[i++];<br>		&#125;<br>	&#125;<br>	CString csResult;<br>	csResult.<span class="hljs-built_in">Format</span>(<span class="hljs-string">L&quot;%s&quot;</span>, wresult);<br>	<span class="hljs-keyword">return</span> csResult;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>如果直接使用 C++ string 构造的话，就能正确识别十六进制中文字符</p>
+<h2 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h2>
+<h3 id="c版本"><a class="markdownIt-Anchor" href="#c版本"></a> C++版本</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">string <span class="hljs-title">Unescape</span><span class="hljs-params">(<span class="hljs-type">const</span> string&amp; input)</span> </span>&#123;<br>    wstring wresult;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; input.<span class="hljs-built_in">length</span>(); ) &#123;<br>        <span class="hljs-keyword">if</span> (input[i] == <span class="hljs-string">&#x27;\\&#x27;</span> &amp;&amp; input[i + <span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;u&#x27;</span>) &#123;<br>            string code = input.<span class="hljs-built_in">substr</span>(i + <span class="hljs-number">2</span>, <span class="hljs-number">4</span>);<br>            <span class="hljs-type">wchar_t</span> unicode = <span class="hljs-built_in">stoi</span>(code, <span class="hljs-literal">nullptr</span>, <span class="hljs-number">16</span>);<br>            wresult += unicode;<br>            i += <span class="hljs-number">6</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            wresult += input[i++];<br>        &#125;<br>    &#125;<br>    wstring_convert&lt;codecvt_utf8&lt;<span class="hljs-type">wchar_t</span>&gt;&gt; conv;<br>    string result = conv.<span class="hljs-built_in">to_bytes</span>(wresult);<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="atl版本"><a class="markdownIt-Anchor" href="#atl版本"></a> ATL版本</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">CString <span class="hljs-title">Unescape</span><span class="hljs-params">(<span class="hljs-type">const</span> CString&amp; csInput)</span> </span>&#123;<br>	string input = <span class="hljs-built_in">CW2A</span>(csInput);<br>	wstring wresult;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; input.<span class="hljs-built_in">length</span>(); ) &#123;<br>		<span class="hljs-keyword">if</span> (input[i] == <span class="hljs-string">&#x27;\\&#x27;</span> &amp;&amp; input[i + <span class="hljs-number">1</span>] == <span class="hljs-string">&#x27;u&#x27;</span>) &#123;<br>			string code = input.<span class="hljs-built_in">substr</span>(i + <span class="hljs-number">2</span>, <span class="hljs-number">4</span>);<br>			<span class="hljs-type">wchar_t</span> unicode = <span class="hljs-built_in">stoi</span>(code, <span class="hljs-literal">nullptr</span>, <span class="hljs-number">16</span>);<br>			wresult += unicode;<br>			i += <span class="hljs-number">6</span>;<br>		&#125;<br>		<span class="hljs-keyword">else</span> &#123;<br>			wresult += input[i++];<br>		&#125;<br>	&#125;<br>	CString csResult;<br>	csResult.<span class="hljs-built_in">Format</span>(<span class="hljs-string">L&quot;%s&quot;</span>, wresult);<br>	<span class="hljs-keyword">return</span> csResult;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="补充"><a class="markdownIt-Anchor" href="#补充"></a> 补充</h2>
+<p>如果直接使用 C++ string 构造的话，就能正确识别十六进制中文字符</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    string jsonStr = <span class="hljs-string">&quot;&#123;\&quot;share_names\&quot;:[\&quot;\u4e2d\u6587\u8def\u5f84\&quot;]&#125;&quot;</span>;<br><br>    cout &lt;&lt; jsonStr &lt;&lt; endl;<br><br>    cout &lt;&lt; <span class="hljs-string">&quot;≡ is the same as \u2261&quot;</span> &lt;&lt; endl;<br>    <span class="hljs-function">string <span class="hljs-title">s</span><span class="hljs-params">(<span class="hljs-string">&quot;≡ is the same as \u2261&quot;</span>)</span></span>;<br>    cout &lt;&lt; s &lt;&lt; endl;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <img src="/B_Code/C/%E3%80%90%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%91Unicode%E8%A7%A3%E7%A0%81/IMG-20240826171243454.png" srcset="/img/loading.gif" lazyload class title="image-20231021181620756">
 
                 
@@ -371,7 +379,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【编解码】Unicode解码</div>
-      <div>http://example.com/B_Code/C/【编解码】Unicode解码/</div>
+      <div>https://hodlyounger.github.io/B_Code/C/【编解码】Unicode解码/</div>
     </div>
     <div class="license-meta">
       

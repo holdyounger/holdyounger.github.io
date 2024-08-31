@@ -24,7 +24,7 @@
     <meta name="description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【原理剖析】b-Linux 系统文件管理">
-<meta property="og:url" content="http://example.com/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%91b-Linux%20%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：从逻辑结构上看，Linux 系统中的文件是没有结构的流式文件。从物理结构上看，Linux 采用混合多重索引结构，即将文件所占用磁盘的盘块号直接或间接存放在该文件索引节点的地址项中。在查找文件时只要找到该文件的索引节点就可以用直接或间接的寻址方式获得指定文件的盘块号。  Linux 文件的物理结构 Linux 文件系统 Linux 文件目录管理命令 Linux 操作系统下的软链接和硬链接">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -286,9 +290,11 @@
 <li>Linux 操作系统下的软链接和硬链接</li>
 </ul>
 </blockquote>
-<h2 id="0x01-Linux文件的屋里结构"><a href="#0x01-Linux文件的屋里结构" class="headerlink" title="0x01 Linux文件的屋里结构"></a>0x01 Linux文件的屋里结构</h2><p>在 Linux 中根据文件的大小，形成小型、中型、大型和巨型等不同规模的文件，如下图所示：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;1.png)</p>
-<h2 id="0x02-寻址方式"><a href="#0x02-寻址方式" class="headerlink" title="0x02 寻址方式"></a>0x02 寻址方式</h2><ol>
+<h2 id="0x01-linux文件的屋里结构"><a class="markdownIt-Anchor" href="#0x01-linux文件的屋里结构"></a> 0x01 Linux文件的屋里结构</h2>
+<p>在 Linux 中根据文件的大小，形成小型、中型、大型和巨型等不同规模的文件，如下图所示：</p>
+<p>![图片描述](b-Linux 系统文件管理/1.png)</p>
+<h2 id="0x02-寻址方式"><a class="markdownIt-Anchor" href="#0x02-寻址方式"></a> 0x02 寻址方式</h2>
+<ol>
 <li>直接寻址方式</li>
 </ol>
 <p>Linux 系统为了提高对文件的检索速度，采用直接寻址方式。在索引节点中建立 12 个地址项，用来直接存放该文件所在的盘块号，对应的盘块称为直接块。</p>
@@ -300,7 +306,8 @@
 <li>多次间接寻址方式</li>
 </ol>
 <p>对于大型或巨型的文件，Linux 系统又引入了二次间接寻址和三次间接寻址。二次间接项中存放的是一次间接块号表，三次间接项对应的盘块中放有二次间接块号表。</p>
-<h2 id="0x03-地址转换"><a href="#0x03-地址转换" class="headerlink" title="0x03 地址转换"></a>0x03 地址转换</h2><p>Linux 系统利用地址转换过程将逻辑文件中的字节偏移量转换成文件的物理块号。首先，将字节偏移量转换成文件逻辑块号及块内偏移量，然后将逻辑块号转换成物理块号。</p>
+<h2 id="0x03-地址转换"><a class="markdownIt-Anchor" href="#0x03-地址转换"></a> 0x03 地址转换</h2>
+<p>Linux 系统利用地址转换过程将逻辑文件中的字节偏移量转换成文件的物理块号。首先，将字节偏移量转换成文件逻辑块号及块内偏移量，然后将逻辑块号转换成物理块号。</p>
 <ol>
 <li>直接地址</li>
 </ol>
@@ -309,17 +316,20 @@
 <li>间接地址</li>
 </ol>
 <p>当计算出的文件逻辑块号大于或等于 12 而小于 268 时，采用一次间接地址方式。将逻辑块号转换为物理块号的方法是从一次间接项中得到一级间接的盘块号，根据该间接块的内容计算一次间接块中的地址下标，即将文件的逻辑块号减去 12 ，从相应下标的地址项中得到物理块号。</p>
-<h2 id="0x04-Linux文件系统"><a href="#0x04-Linux文件系统" class="headerlink" title="0x04 Linux文件系统"></a>0x04 Linux文件系统</h2><p>和普通 Unix 系统意义，Linux 使用树状的文件系统。每个系统都有一个根目录，从这里开始可以遍历整个系统中的所有文件，Linux 文件系统中没有类似 Windows 系统中的驱动器和盘符的概念。</p>
-<h2 id="0x05-Linux文件类型"><a href="#0x05-Linux文件类型" class="headerlink" title="0x05 Linux文件类型"></a>0x05 Linux文件类型</h2><p>Linux 系统下的文件类型主要有：</p>
+<h2 id="0x04-linux文件系统"><a class="markdownIt-Anchor" href="#0x04-linux文件系统"></a> 0x04 Linux文件系统</h2>
+<p>和普通 Unix 系统意义，Linux 使用树状的文件系统。每个系统都有一个根目录，从这里开始可以遍历整个系统中的所有文件，Linux 文件系统中没有类似 Windows 系统中的驱动器和盘符的概念。</p>
+<h2 id="0x05-linux文件类型"><a class="markdownIt-Anchor" href="#0x05-linux文件类型"></a> 0x05 Linux文件类型</h2>
+<p>Linux 系统下的文件类型主要有：</p>
 <ul>
 <li>普通文件：C 语言元代码、SHELL 脚本、二进制的可执行文件等。分为纯文本和二进制。</li>
 <li>目录文件：目录，存储文件的唯一地方。</li>
 <li>链接文件：指向同一个文件或目录的的文件。</li>
-<li>特殊文件：与系统外设相关的，通常在&#x2F;dev 下面。分为块设备和字符设备。</li>
+<li>特殊文件：与系统外设相关的，通常在/dev 下面。分为块设备和字符设备。</li>
 </ul>
 <p>在 Linux 系统下可以在终端使用 <code>ls –l</code>、<code>file</code>、<code>stat</code> 几个命令来查看文件的类型等相关信息。如下图所示：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;2.png)</p>
-<h2 id="0x06-Linux-文件存储结构"><a href="#0x06-Linux-文件存储结构" class="headerlink" title="0x06 Linux 文件存储结构"></a>0x06 Linux 文件存储结构</h2><p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code>)一个文件由目录项、inode 和数据块组成。</p>
+<p>![图片描述](b-Linux 系统文件管理/2.png)</p>
+<h2 id="0x06-linux-文件存储结构"><a class="markdownIt-Anchor" href="#0x06-linux-文件存储结构"></a> 0x06 Linux 文件存储结构</h2>
+<p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code>)一个文件由目录项、inode 和数据块组成。</p>
 <ul>
 <li>目录项：包括文件名和 inode 节点号。</li>
 <li><code>inode</code>：又称文件索引节点，是文件基本信息的存放地和数据块指针存放地。</li>
@@ -327,26 +337,28 @@
 </ul>
 <p>Linux 正统的文件系统(如 <code>ext2</code>、<code>ext3</code> 等)将硬盘分区时会划分出目录块、<code>inode Table</code> 区块和 <code>data block</code> 数据区域。一个文件由一个目录项、<code>inode</code> 和数据区域块组成。<code>Inode</code> 包含文件的属性(如读写属性、<code>owner</code>等，以及指向数据块的指针)，数据区域块则是文件内容。当查看某个文件时，会先从 <code>inode table</code> 中查出文件属性及数据存放点，再从数据块中读取数据。</p>
 <p>如下图所示：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;3.png)</p>
+<p>![图片描述](b-Linux 系统文件管理/3.png)</p>
 <p>其中目录项的结构如下(每个文件的目录项存储在改文件所属目录的文件内容里)，如下图所示：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;4.png)</p>
+<p>![图片描述](b-Linux 系统文件管理/4.png)</p>
 <p>其中文件的 inode 结构如下（inode 里所包含的文件信息可以通过 <code>stat filename</code> 查看得到）：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;5.png)</p>
+<p>![图片描述](b-Linux 系统文件管理/5.png)</p>
 <p>以上只反映大体的结构，linux 文件系统本身在不断发展。但是以上概念基本是不变的。且如 <code>ext2</code>、<code>ext3</code>、<code>ext4</code> 文件系统也存在很大差别，如果要了解可以查看专门的文件系统介绍。</p>
-<h2 id="0x07-软连接、硬链接"><a href="#0x07-软连接、硬链接" class="headerlink" title="0x07 软连接、硬链接"></a>0x07 软连接、硬链接</h2><p>软链接和硬链接是我们常见的两种概念：</p>
+<h2 id="0x07-软连接-硬链接"><a class="markdownIt-Anchor" href="#0x07-软连接-硬链接"></a> 0x07 软连接、硬链接</h2>
+<p>软链接和硬链接是我们常见的两种概念：</p>
 <ul>
-<li>硬链接：是给文件一个副本，同时建立两者之间的链接关系。修改其中一个，与其链接的文件同时被修改。如果删除其中 [color&#x3D;red] 任意一个 [&#x2F;color] 其余的文件将不受影响。</li>
+<li>硬链接：是给文件一个副本，同时建立两者之间的链接关系。修改其中一个，与其链接的文件同时被修改。如果删除其中 [color=red] 任意一个 [/color] 其余的文件将不受影响。</li>
 <li>软链接:也叫符号链接,他只是对源文件在新的位置建立一个“快捷方式（借用一下 <code>wondows</code> 常用词）”，所以，当源文件删除时，符号链接的文件将成为无源之水-&gt;仅仅剩下个文件名了，当然删除这个链接，也不会影响到源文件，但对链接文件的使用、引用都是直接调用源文件的。</li>
 </ul>
 <p>具体关系可以看下图：</p>
-<p>![图片描述](b-Linux 系统文件管理&#x2F;8.png)</p>
+<p>![图片描述](b-Linux 系统文件管理/8.png)</p>
 <p>从图上可以看出硬链接和软链接的区别：</p>
 <ul>
 <li>硬链接原文件和新文件的 <code>inode</code> 编号一致。而软链接不一样。</li>
 <li>对原文件删除，会导致软链接不可用，而硬链接不受影响。</li>
 <li>对原文件的修改，软、硬链接文件内容也一样的修改，因为都是指向同一个文件内容的。</li>
 </ul>
-<h2 id="0x08-Linux文件目录管理"><a href="#0x08-Linux文件目录管理" class="headerlink" title="0x08 Linux文件目录管理"></a>0x08 Linux文件目录管理</h2><p>磁盘和文件空间使用命令：</p>
+<h2 id="0x08-linux文件目录管理"><a class="markdownIt-Anchor" href="#0x08-linux文件目录管理"></a> 0x08 Linux文件目录管理</h2>
+<p>磁盘和文件空间使用命令：</p>
 <ul>
 <li><code>dd</code>：把指定的输入文件复制到指定的输出文件中，并且在复制过程中进行格式转换。</li>
 <li><code>fdisk</code>：创建和维护分区表的程序，它兼容 DOS 类型的分区表、BSD 或者 SUN 类型的磁盘列表。</li>
@@ -394,7 +406,8 @@
 <li><code>locate</code>: <code>locate [filename]</code> 该命令用于把相关字的文件和目录都列出来。查找数据特别快，也是通过数据库方式来查询。但是数据库一周更新一次，所以可能有些存在数据查不到。可以去修改配置文件。</li>
 <li><code>find</code>: <code>find [path] [参数] [keyword]</code> 该命令用于在指定路径下查找文件。不是通过数据来查询，所以速度会比较慢。</li>
 </ul>
-<h2 id="0x09-Linux文件系统常见目录描述"><a href="#0x09-Linux文件系统常见目录描述" class="headerlink" title="0x09 Linux文件系统常见目录描述"></a>0x09 Linux文件系统常见目录描述</h2><p>Linux 各种发行版的目录结构基本一致，各个目录简单介绍如下：</p>
+<h2 id="0x09-linux文件系统常见目录描述"><a class="markdownIt-Anchor" href="#0x09-linux文件系统常见目录描述"></a> 0x09 Linux文件系统常见目录描述</h2>
+<p>Linux 各种发行版的目录结构基本一致，各个目录简单介绍如下：</p>
 <table>
 <thead>
 <tr>
@@ -402,71 +415,73 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td>&#x2F;</td>
+<tbody>
+<tr>
+<td>/</td>
 <td>根目录</td>
 </tr>
 <tr>
-<td>&#x2F;bin</td>
-<td>做为基础系统所需要的最基础的命令就是放在这里。比如 ls、cp、mkdir 等命令；功能和&#x2F;usr&#x2F;bin 类似，这个目录中的文件都是可执行的，普通用户都可以使用的命令。</td>
+<td>/bin</td>
+<td>做为基础系统所需要的最基础的命令就是放在这里。比如 ls、cp、mkdir 等命令；功能和/usr/bin 类似，这个目录中的文件都是可执行的，普通用户都可以使用的命令。</td>
 </tr>
 <tr>
-<td>&#x2F;boot</td>
+<td>/boot</td>
 <td>Linux 的内核及引导系统程序所需要的文件，比如 vmlinuz initrd.img 文件都位于这个目录中。在一般情况下，GRUB 或 LILO 系统引导管理器也位于这个目录；启动装载文件存放位置，如 kernels,initrd,grub。一般是一个独立的分区。</td>
 </tr>
 <tr>
-<td>&#x2F;dev</td>
-<td>一些必要的设备,声卡、磁盘等。还有如 &#x2F;dev&#x2F;null. &#x2F;dev&#x2F;console &#x2F;dev&#x2F;zero &#x2F;dev&#x2F;full 等。</td>
+<td>/dev</td>
+<td>一些必要的设备,声卡、磁盘等。还有如 /dev/null. /dev/console /dev/zero /dev/full 等。</td>
 </tr>
 <tr>
-<td>&#x2F;etc</td>
-<td>系统的配置文件存放地. 一些服务器的配置文件也在这里；比如用户帐号及密码配置文件；&#x2F;etc&#x2F;opt:&#x2F;opt 对应的配置文件；&#x2F;etc&#x2F;X11:Xwindows 系统配置文件；&#x2F;etc&#x2F;xml:XML 配置文件；……</td>
+<td>/etc</td>
+<td>系统的配置文件存放地. 一些服务器的配置文件也在这里；比如用户帐号及密码配置文件；/etc/opt:/opt 对应的配置文件；/etc/X11:Xwindows 系统配置文件；/etc/xml:XML 配置文件；……</td>
 </tr>
 <tr>
-<td>&#x2F;home</td>
+<td>/home</td>
 <td>用户工作目录，和个人配置文件，如个人环境变量等，所有的账号分配一个工作目录。一般是一个独立的分区。</td>
 </tr>
 <tr>
-<td>&#x2F;lib</td>
+<td>/lib</td>
 <td>库文件存放地。bin 和 sbin 需要的库文件。类似 windows 的 DLL。</td>
 </tr>
 <tr>
-<td>&#x2F;media</td>
+<td>/media</td>
 <td>可拆卸的媒介挂载点，如 CD-ROMs、移动硬盘、U 盘，系统默认会挂载到这里来。</td>
 </tr>
 <tr>
-<td>&#x2F;mnt</td>
-<td>临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，比如有 cdrom 等目录。可以参看 &#x2F;etc&#x2F;fstab 的定义。</td>
+<td>/mnt</td>
+<td>临时挂载文件系统。这个目录一般是用于存放挂载储存设备的挂载目录的，比如有 cdrom 等目录。可以参看 /etc/fstab 的定义。</td>
 </tr>
 <tr>
-<td>&#x2F;opt</td>
+<td>/opt</td>
 <td>可选的应用程序包。</td>
 </tr>
 <tr>
-<td>&#x2F;proc</td>
-<td>操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如 cpu、硬盘分区、内存信息等）存放在这里。&#x2F;proc 目录伪装的文件系统 proc 的挂载目录，proc 并不是真正的文件系统，它的定义可以参见 &#x2F;etc&#x2F;fstab 。</td>
+<td>/proc</td>
+<td>操作系统运行时，进程（正在运行中的程序）信息及内核信息（比如 cpu、硬盘分区、内存信息等）存放在这里。/proc 目录伪装的文件系统 proc 的挂载目录，proc 并不是真正的文件系统，它的定义可以参见 /etc/fstab 。</td>
 </tr>
 <tr>
-<td>&#x2F;root</td>
+<td>/root</td>
 <td>Root 用户的工作目录</td>
 </tr>
 <tr>
-<td>&#x2F;sbin</td>
+<td>/sbin</td>
 <td>和 bin 类似，是一些可执行文件，不过不是所有用户都需要的，一般是系统管理所需要使用得到的。</td>
 </tr>
 <tr>
-<td>&#x2F;tmp</td>
+<td>/tmp</td>
 <td>系统的临时文件，一般系统重启不会被保存。</td>
 </tr>
 <tr>
-<td>&#x2F;usr</td>
-<td>包含了系统用户工具和程序。&#x2F;usr&#x2F;bin：非必须的普通用户可执行命令；&#x2F;usr&#x2F;include：标准头文件； &#x2F;usr&#x2F;lib:&#x2F;usr&#x2F;bin&#x2F; 和 &#x2F;usr&#x2F;sbin&#x2F;的库文件； &#x2F;usr&#x2F;sbin:非必须的可执行文件；&#x2F;usr&#x2F;src:内核源码；&#x2F;usr&#x2F;X11R6:X Window System, Version 11, Release 6.</td>
+<td>/usr</td>
+<td>包含了系统用户工具和程序。/usr/bin：非必须的普通用户可执行命令；/usr/include：标准头文件； /usr/lib:/usr/bin/ 和 /usr/sbin/的库文件； /usr/sbin:非必须的可执行文件；/usr/src:内核源码；/usr/X11R6:X Window System, Version 11, Release 6.</td>
 </tr>
 <tr>
-<td>&#x2F;srv</td>
+<td>/srv</td>
 <td>该目录存放一些服务启动之后需要提取的数据</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -529,7 +544,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【原理剖析】b-Linux 系统文件管理</div>
-      <div>http://example.com/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】b-Linux 系统文件管理/</div>
+      <div>https://hodlyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】b-Linux 系统文件管理/</div>
     </div>
     <div class="license-meta">
       

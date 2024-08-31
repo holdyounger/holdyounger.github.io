@@ -24,7 +24,7 @@
     <meta name="description" content="概述：Exchange 运行异常整理及解决方案">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【异常处理】Exchange异常">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/%E3%80%90%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E3%80%91Exchange%E5%BC%82%E5%B8%B8/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/%E3%80%90%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E3%80%91Exchange%E5%BC%82%E5%B8%B8/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：Exchange 运行异常整理及解决方案">
 <meta property="og:locale" content="zh_CN">
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -222,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          516 字
+          509 字
         
       </span>
     
@@ -279,55 +283,61 @@
 <p>概述：Exchange 运行异常整理及解决方案</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-ecp、owa登录后报错-http-500"><a href="#0x01-ecp、owa登录后报错-http-500" class="headerlink" title="0x01 ecp、owa登录后报错 http 500"></a>0x01 ecp、owa登录后报错 http 500</h2><p>本人环境：windows server 2016 + exchange 2016 cu21</p>
+<h2 id="0x01-ecp-owa登录后报错-http-500"><a class="markdownIt-Anchor" href="#0x01-ecp-owa登录后报错-http-500"></a> 0x01 ecp、owa登录后报错 http 500</h2>
+<p>本人环境：windows server 2016 + exchange 2016 cu21</p>
 <p>问题描述：Exchange 登录 ecp 或者 owa 之后报错 http Error 500</p>
 <p>相关链接：</p>
 <ol>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://community.spiceworks.com/topic/2176642-http-500-eac-owa-exhange-2016-server-2016">http 500 EAC&#x2F;OWA exhange 2016 server 2016</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://community.spiceworks.com/topic/2176642-http-500-eac-owa-exhange-2016-server-2016">http 500 EAC/OWA exhange 2016 server 2016</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/answers/questions/711247/exchange-server-2019-http-error-500">Exchange Server 2019 HTTP Error 500 - Microsoft Q&amp;A</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.jianshu.com/p/4de78f42b3a7">Exchange 2019 访问OWA或者ECP 提示HTTP 500错误的解决方案 - 简书</a></li>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.ollischer.com/exchange-2016-http-error-500-after-logging-into-ecpowa">Exchange 2016 - HTTP Error 500 after logging into ECP&#x2F;OWA - blog - Alexander Ollischer | Citrix | Microsoft</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.ollischer.com/exchange-2016-http-error-500-after-logging-into-ecpowa">Exchange 2016 - HTTP Error 500 after logging into ECP/OWA - blog - Alexander Ollischer | Citrix | Microsoft</a></li>
 </ol>
 <p>如果以下方案还是不行，可以再尝试一下重置 Exchange，微软官网文档：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/exchange/high-availability/disaster-recovery/recover-exchange-servers?view=exchserver-2019">恢复 Exchange 服务器、恢复丢失Exchange Server、丢失Exchange Server恢复 | Microsoft Learn</a></p>
-<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><p>先说一下本人解决的步骤，以下几个方法我都尝试后重启电脑，然后 Exchange 恢复正常。i cant distinguish which operation is effective.</p>
-<h4 id="运行-UpdateCas-ps1"><a href="#运行-UpdateCas-ps1" class="headerlink" title="运行 UpdateCas.ps1"></a>运行 <strong>UpdateCas.ps1</strong></h4><p>参考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.ollischer.com/exchange-2016-http-error-500-after-logging-into-ecpowa">Exchange 2016 - HTTP Error 500 after logging into ECP&#x2F;OWA - blog - Alexander Ollischer | Citrix | Microsoft</a></p>
+<h3 id="解决思路"><a class="markdownIt-Anchor" href="#解决思路"></a> 解决思路</h3>
+<p>先说一下本人解决的步骤，以下几个方法我都尝试后重启电脑，然后 Exchange 恢复正常。i cant distinguish which operation is effective.</p>
+<h4 id="运行-updatecasps1"><a class="markdownIt-Anchor" href="#运行-updatecasps1"></a> 运行 <strong>UpdateCas.ps1</strong></h4>
+<p>参考 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.ollischer.com/exchange-2016-http-error-500-after-logging-into-ecpowa">Exchange 2016 - HTTP Error 500 after logging into ECP/OWA - blog - Alexander Ollischer | Citrix | Microsoft</a></p>
 <ol>
 <li><strong>C:\Program Files\Microsoft\Exchange Server\V15\Bin</strong> 目录</li>
 <li>找到 <code>UpdateCas.ps1</code> 并运行</li>
 <li>cmd中运行 iisreset (或者重启系统)</li>
 </ol>
-<h4 id="删除owa目录"><a href="#删除owa目录" class="headerlink" title="删除owa目录"></a>删除owa目录</h4><p>禁用管理员然后启用</p>
+<h4 id="删除owa目录"><a class="markdownIt-Anchor" href="#删除owa目录"></a> 删除owa目录</h4>
+<p>禁用管理员然后启用</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Disable-Mailbox</span> administrator<br><span class="hljs-built_in">Enable-Mailbox</span> administrator<br></code></pre></td></tr></table></figure>
-
 <p>最后还是重启下 iis 服务或者重启操作系统</p>
-<h4 id="重新创建-OWA-虚拟目录"><a href="#重新创建-OWA-虚拟目录" class="headerlink" title="重新创建 OWA 虚拟目录"></a>重新创建 OWA 虚拟目录</h4><p>可以使用 Get-OwaVirtualDirectory 查看当前存在的 OWA 虚拟目录</p>
+<h4 id="重新创建-owa-虚拟目录"><a class="markdownIt-Anchor" href="#重新创建-owa-虚拟目录"></a> 重新创建 OWA 虚拟目录</h4>
+<p>可以使用 Get-OwaVirtualDirectory 查看当前存在的 OWA 虚拟目录</p>
 <ol>
 <li>打开 Exchange Management Shell</li>
 <li>移除 OWA 虚拟目录</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Remove-OwaVirtualDirectory</span>  <span class="hljs-string">&#x27;EXCHANGE\owa (Default Web Site)&#x27;</span> <span class="hljs-comment"># ‘EXCHANGE’为 exchange 主机名称</span><br></code></pre></td></tr></table></figure>
-
 <ol start="3">
 <li>创建 OWA 虚拟目录</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">New-OwaVirtualDirectory</span> <span class="hljs-literal">-WebSiteName</span> <span class="hljs-string">&#x27;Default Web Site&#x27;</span><br></code></pre></td></tr></table></figure>
-
 <p>操作完成后重启 iis 服务或者重启操作系统</p>
-<h4 id="回收应用池"><a href="#回收应用池" class="headerlink" title="回收应用池"></a>回收应用池</h4><ol>
-<li>在 服务器面 板 — 打 开 工具“ASDI 编 辑 器 ” ，右键，连接到，<br>找 到“连接点”的“选择一个已知命名上下文”，下拉选择“ 配 置 ”<br>— 然 后 找 到“CN&#x3D;Services”<br>—“CN&#x3D;Microsoft Exchange”—“CN&#x3D;&lt;你的 Exchange 组织名称”—“CN&#x3D;Client Acess”<br>—右击“属性”—打开“编辑器”窗口—找到”MSExchCanaryData”—“属性”，然后清空该选项；</li>
+<h4 id="回收应用池"><a class="markdownIt-Anchor" href="#回收应用池"></a> 回收应用池</h4>
+<ol>
+<li>在 服务器面 板 — 打 开 工具“ASDI 编 辑 器 ” ，右键，连接到，<br>
+找 到“连接点”的“选择一个已知命名上下文”，下拉选择“ 配 置 ”<br>
+— 然 后 找 到“CN=Services”<br>
+—“CN=Microsoft Exchange”—“CN=&lt;你的 Exchange 组织名称”—“CN=Client Acess”<br>
+—右击“属性”—打开“编辑器”窗口—找到”MSExchCanaryData”—“属性”，然后清空该选项；</li>
 <li>打开 Internet Iformation Service (IIS)，找到“应用程序池”，找到“MSExchangeOWAAppPool”，点击回收。</li>
 </ol>
 <p>操作完成后重启 iis 服务或者重启操作系统</p>
-<h4 id="移除-config-文件"><a href="#移除-config-文件" class="headerlink" title="移除 config 文件"></a>移除 config 文件</h4><p>将 <code>C:\inetpub\wwwroot</code> 目录下的 <code>web.config</code> 移出。我的操作是修改了文件名，最后还是改回了 <code>web.config</code></p>
-<h2 id="0x02-Exchange-登录后提示没有该邮箱"><a href="#0x02-Exchange-登录后提示没有该邮箱" class="headerlink" title="0x02 Exchange 登录后提示没有该邮箱"></a>0x02 Exchange 登录后提示没有该邮箱</h2><p>可能的原因，之前的操作中禁用了该邮箱。</p>
+<h4 id="移除-config-文件"><a class="markdownIt-Anchor" href="#移除-config-文件"></a> 移除 config 文件</h4>
+<p>将 <code>C:\inetpub\wwwroot</code> 目录下的 <code>web.config</code> 移出。我的操作是修改了文件名，最后还是改回了 <code>web.config</code></p>
+<h2 id="0x02-exchange-登录后提示没有该邮箱"><a class="markdownIt-Anchor" href="#0x02-exchange-登录后提示没有该邮箱"></a> 0x02 Exchange 登录后提示没有该邮箱</h2>
+<p>可能的原因，之前的操作中禁用了该邮箱。</p>
 <p>可以使用以下命令启用：</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Enable-Mailbox</span> administrator<br></code></pre></td></tr></table></figure>
-
 <p>或者</p>
 <p>使用如下所示的命令修复</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">New-MailboxRestoreRequest</span> <span class="hljs-literal">-SourceDatabase</span> RecoveryDB01 <span class="hljs-literal">-SourceStoreMailbox</span> GUID <span class="hljs-literal">-TargetMailbox</span> test@keyman .com<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -381,7 +391,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【异常处理】Exchange异常</div>
-      <div>http://example.com/A_OS/Windows/异常及错误处理/【异常处理】Exchange异常/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/异常及错误处理/【异常处理】Exchange异常/</div>
     </div>
     <div class="license-meta">
       

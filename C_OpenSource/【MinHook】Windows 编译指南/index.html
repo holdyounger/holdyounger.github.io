@@ -24,7 +24,7 @@
     <meta name="description" content="概述：MinHook——一个mini的Hook库。如何使用及原理解析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【OPenSource】MinHook">
-<meta property="og:url" content="http://example.com/C_OpenSource/%E3%80%90MinHook%E3%80%91Windows%20%E7%BC%96%E8%AF%91%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/C_OpenSource/%E3%80%90MinHook%E3%80%91Windows%20%E7%BC%96%E8%AF%91%E6%8C%87%E5%8D%97/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：MinHook——一个mini的Hook库。如何使用及原理解析">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          297 字
+          292 字
         
       </span>
     
@@ -281,16 +285,17 @@
 <p>概述：MinHook——一个mini的Hook库。如何使用及原理解析</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="MinHook-说明"><a href="#MinHook-说明" class="headerlink" title="MinHook 说明"></a>MinHook 说明</h2><p>MinHook 是一个用C语言实现的 mini 的 Hook 项目，可同时适用于 x86&#x2F;x64环境下，支持静态编译到项目中，目前 :star: Github Start 4K。</p>
-<p>Github地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/TsudaKageyu/minhook">TsudaKageyu&#x2F;minhook: The Minimalistic x86&#x2F;x64 API Hooking Library for Windows</a></p>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>如何使用  MinHook ？</p>
+<h2 id="minhook-说明"><a class="markdownIt-Anchor" href="#minhook-说明"></a> MinHook 说明</h2>
+<p>MinHook 是一个用C语言实现的 mini 的 Hook 项目，可同时适用于 x86/x64环境下，支持静态编译到项目中，目前 ⭐ Github Start 4K。</p>
+<p>Github地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/TsudaKageyu/minhook">TsudaKageyu/minhook: The Minimalistic x86/x64 API Hooking Library for Windows</a></p>
+<h2 id="使用"><a class="markdownIt-Anchor" href="#使用"></a> 使用</h2>
+<p>如何使用  MinHook ？</p>
 <p>使用非常简单，初始化、创建Hook、启用Hook。大致代码如下所示：</p>
 <p><strong>Hook 实现修改弹窗:</strong> 实现<code>Hook MsgBox</code>弹窗,该库的原理与我们上面手动实现的方式是相同的.</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/* </span><br><span class="hljs-comment">代码来自 C/C++ MinHook 库的使用技巧 - lyshark - 博客园</span><br><span class="hljs-comment">https://www.cnblogs.com/LyShark/p/13653435.html</span><br><span class="hljs-comment">*/</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;Windows.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;MinHook.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib,<span class="hljs-string">&quot;libMinHook.x86.lib&quot;</span>)</span><br><br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">int</span> <span class="hljs-params">(WINAPI *OldMessageBox)</span><span class="hljs-params">(HWND, LPCSTR, LPCSTR, UINT)</span></span>;<br><br>OldMessageBox fpMessageBoxA = <span class="hljs-literal">NULL</span>;<br><br><span class="hljs-function"><span class="hljs-type">int</span> WINAPI <span class="hljs-title">MyMessageBoxA</span><span class="hljs-params">(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">int</span> ret = <span class="hljs-built_in">fpMessageBoxA</span>(hWnd, <span class="hljs-string">&quot;Hook Inject&quot;</span>, lpCaption, uType);<br>	<span class="hljs-keyword">return</span> ret;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">SetHook</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">MH_Initialize</span>() == MB_OK)<br>	&#123;<br>		<span class="hljs-built_in">MH_CreateHook</span>(&amp;MessageBoxA, &amp;MyMessageBoxA, <span class="hljs-built_in">reinterpret_cast</span>&lt;<span class="hljs-type">void</span>**&gt;(&amp;fpMessageBoxA));<br>		<span class="hljs-built_in">MH_EnableHook</span>(&amp;MessageBoxA);<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">UnHook</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">MH_DisableHook</span>(&amp;MessageBoxA) == MB_OK)<br>	&#123;<br>		<span class="hljs-built_in">MH_Uninitialize</span>();<br>	&#125;<br>&#125;<br><br><span class="hljs-function">BOOL APIENTRY <span class="hljs-title">DllMain</span><span class="hljs-params">(HMODULE hModule,DWORD ul_reason_for_call,LPVOID lpReserved)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">switch</span> (ul_reason_for_call)<br>	&#123;<br>	<span class="hljs-keyword">case</span> DLL_PROCESS_ATTACH:<br>		<span class="hljs-built_in">SetHook</span>();<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">case</span> DLL_PROCESS_DETACH:<br>		<span class="hljs-built_in">UnHook</span>();<br>		<span class="hljs-keyword">break</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>这里还有其他一些例子，参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/LyShark/p/13653435.html">C&#x2F;C++ MinHook 库的使用技巧 - lyshark - 博客园</a></p>
-<h2 id="MinHook-原理分析"><a href="#MinHook-原理分析" class="headerlink" title="MinHook 原理分析"></a>MinHook 原理分析</h2><p>参考文章：</p>
+<p>这里还有其他一些例子，参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/LyShark/p/13653435.html">C/C++ MinHook 库的使用技巧 - lyshark - 博客园</a></p>
+<h2 id="minhook-原理分析"><a class="markdownIt-Anchor" href="#minhook-原理分析"></a> MinHook 原理分析</h2>
+<p>参考文章：</p>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/lsh123/p/7467997.html">MinHook 分析01 （x86的jmp+offset类型hook） - 沉疴 - 博客园</a></li>
 </ul>
@@ -342,7 +347,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【OPenSource】MinHook</div>
-      <div>http://example.com/C_OpenSource/【MinHook】Windows 编译指南/</div>
+      <div>https://hodlyounger.github.io/C_OpenSource/【MinHook】Windows 编译指南/</div>
     </div>
     <div class="license-meta">
       

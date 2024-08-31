@@ -24,7 +24,7 @@
     <meta name="description" content="IPC之管道通信，附带两个Demo(一个管道的服务端和客户端控制程序，一个管道类)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【管道】（二） 管道通信">
-<meta property="og:url" content="http://example.com/B_Code/IPC/%E3%80%90%E7%AE%A1%E9%81%93%E3%80%91%E4%BD%BF%E7%94%A8%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/IPC/%E3%80%90%E7%AE%A1%E9%81%93%E3%80%91%E4%BD%BF%E7%94%A8%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="IPC之管道通信，附带两个Demo(一个管道的服务端和客户端控制程序，一个管道类)">
 <meta property="og:locale" content="zh_CN">
@@ -74,11 +74,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -284,20 +288,24 @@
 <p>本文所讲管道通信主要是<b>进程间</b>管道通信。</p>
 </blockquote>
 <p>[toc]</p>
-<h1 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h1><blockquote>
-<p> 命名管道的通信是在一个命名管道服务器和一个命名管道客户之间进行的。命名管道服务器是指创建爱你命名管道的应用程序，客户可以连接到它所创建的命名管道上。命名管道的 <mark>名称的格式</mark> 是 <code>\\Server\pipe\PipeName</code>。</p>
+<h1 id="管道"><a class="markdownIt-Anchor" href="#管道"></a> 管道</h1>
+<blockquote>
+<p>命名管道的通信是在一个命名管道服务器和一个命名管道客户之间进行的。命名管道服务器是指创建爱你命名管道的应用程序，客户可以连接到它所创建的命名管道上。命名管道的 <mark>名称的格式</mark> 是 <code>\\Server\pipe\PipeName</code>。</p>
 <ul>
-<li>名称中的<code>Server</code>部分指定了此命名管道服务器当前执行所在的计算机（<mark>需要注意的是</mark>：命名管道服务器不能创建远程系统上的命名管道）。但是这个名称可以是一个DNS名称（比如，mspress.microsoft.com）、一个NetBIOS名称（mspress）或者一个IP地址（131.107.0.1）。</li>
+<li>名称中的<code>Server</code>部分指定了此命名管道服务器当前执行所在的计算机（<mark>需要注意的是</mark>：命名管道服务器不能创建远程系统上的命名管道）。但是这个名称可以是一个DNS名称（比如，<a target="_blank" rel="external nofollow noopener noreferrer" href="http://mspress.microsoft.com">mspress.microsoft.com</a>）、一个NetBIOS名称（mspress）或者一个IP地址（131.107.0.1）。</li>
 <li>名称中的 <code>Pipe</code> 部分必须是字符串 <code>Pipe</code>。而 <code>PipeName</code> 则是分配给此命名管道的唯一名。命名管道名称中的唯一名部分可以包含子目录。如：<code>\\MyComputer\Pipe\MyServerApp\ConnectionPipe</code> 是一个包含子目录的命名管道名称的例子。</li>
 </ul>
 <p>综上，我们在一个示例程序中创建的管道可以命名为 <code>\\.\pipe\DemoApp\test.pip</code> （使用转义也就是<code>\\\\.\\pipe\\DemoApp\\test_pip</code>），这里的 <code>\</code> 代表的是本地计算机。</p>
 <hr>
 <p>而以上的管道名，也就是我们后续调用API的参数之一，也是我们唯一可以标识管道的标志。</p>
 </blockquote>
-<h1 id="创建管道的方式一-CreateNamedPipe"><a href="#创建管道的方式一-CreateNamedPipe" class="headerlink" title="创建管道的方式一 CreateNamedPipe"></a>创建管道的方式一 <code>CreateNamedPipe</code></h1><h2 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">HANDLE <span class="hljs-title">CreateNamedPipeA</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           LPCSTR                lpName,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 dwOpenMode,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 dwPipeMode,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nMaxInstances,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nOutBufferSize,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nInBufferSize,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nDefaultTimeOut,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in, optional] LPSECURITY_ATTRIBUTES lpSecurityAttributes</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>;<br></code></pre></td></tr></table></figure>
-
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ol>
-<li><code>lpName</code><br>要创建的管道名。</li>
+<h1 id="创建管道的方式一-createnamedpipe"><a class="markdownIt-Anchor" href="#创建管道的方式一-createnamedpipe"></a> 创建管道的方式一 <code>CreateNamedPipe</code></h1>
+<h2 id="原型"><a class="markdownIt-Anchor" href="#原型"></a> 原型</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">HANDLE <span class="hljs-title">CreateNamedPipeA</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           LPCSTR                lpName,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 dwOpenMode,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 dwPipeMode,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nMaxInstances,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nOutBufferSize,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nInBufferSize,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]           DWORD                 nDefaultTimeOut,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in, optional] LPSECURITY_ATTRIBUTES lpSecurityAttributes</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>;<br></code></pre></td></tr></table></figure>
+<h2 id="参数说明"><a class="markdownIt-Anchor" href="#参数说明"></a> 参数说明</h2>
+<ol>
+<li><code>lpName</code><br>
+要创建的管道名。</li>
 <li><code>dwOpenMode</code></li>
 <li><code>dwPipeMod</code></li>
 <li><code>nMaxInstances</code></li>
@@ -306,11 +314,15 @@
 <li><code>nDefaultTimeOut</code></li>
 <li><code>lpSecurityAttributes</code></li>
 </ol>
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h1 id="创建管道的方式二-CreateFile"><a href="#创建管道的方式二-CreateFile" class="headerlink" title="创建管道的方式二 CreateFile"></a>创建管道的方式二 <code>CreateFile</code></h1><h2 id="原型-1"><a href="#原型-1" class="headerlink" title="原型"></a>原型</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h2><h2 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h2><h1 id="Demo1——管道客户端和服务端的控制台程序"><a href="#Demo1——管道客户端和服务端的控制台程序" class="headerlink" title="Demo1——管道客户端和服务端的控制台程序"></a>Demo1——管道客户端和服务端的控制台程序</h1><h1 id="Demo2——管道类"><a href="#Demo2——管道类" class="headerlink" title="Demo2——管道类"></a>Demo2——管道类</h1><p>知识来源：</p>
+<h2 id="用法"><a class="markdownIt-Anchor" href="#用法"></a> 用法</h2>
+<h1 id="创建管道的方式二-createfile"><a class="markdownIt-Anchor" href="#创建管道的方式二-createfile"></a> 创建管道的方式二 <code>CreateFile</code></h1>
+<h2 id="原型-2"><a class="markdownIt-Anchor" href="#原型-2"></a> 原型</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br></code></pre></td></tr></table></figure>
+<h2 id="参数说明-2"><a class="markdownIt-Anchor" href="#参数说明-2"></a> 参数说明</h2>
+<h2 id="用法-2"><a class="markdownIt-Anchor" href="#用法-2"></a> 用法</h2>
+<h1 id="demo1管道客户端和服务端的控制台程序"><a class="markdownIt-Anchor" href="#demo1管道客户端和服务端的控制台程序"></a> Demo1——管道客户端和服务端的控制台程序</h1>
+<h1 id="demo2管道类"><a class="markdownIt-Anchor" href="#demo2管道类"></a> Demo2——管道类</h1>
+<p>知识来源：</p>
 <ul>
 <li>《深入解析Windows操作系统》</li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/qq78442761/article/details/124429013">Qt笔记-Windows管道通信_IT1995的博客-CSDN博客_qt管道通信</a></li>
@@ -377,7 +389,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【管道】（二） 管道通信</div>
-      <div>http://example.com/B_Code/IPC/【管道】使用管道通信/</div>
+      <div>https://hodlyounger.github.io/B_Code/IPC/【管道】使用管道通信/</div>
     </div>
     <div class="license-meta">
       

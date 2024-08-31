@@ -21,21 +21,21 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] 动画框架结构动画框架由基类 QAbstractAnimation 以及它的两个子类 QVariantAnimation 、QAnimationGroup 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationG">
+    <meta name="description" content="[toc]  动画框架结构 动画框架由基类 QAbstractAnimation 以及它的两个子类 QVariantAnimation 、QAnimationGroup 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimatio">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】动画类">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 动画框架结构动画框架由基类 QAbstractAnimation 以及它的两个子类 QVariantAnimation 、QAnimationGroup 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationG">
+<meta property="og:description" content="[toc]  动画框架结构 动画框架由基类 QAbstractAnimation 以及它的两个子类 QVariantAnimation 、QAnimationGroup 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimatio">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185045990.png">
-<meta property="og:image" content="http://example.com/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185046054.png">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185045990.png">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185046054.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.325Z">
 <meta property="article:modified_time" content="2024-08-17T12:19:15.934Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Qt&#x2F;动画">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185045990.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185045990.png">
   
   
   
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,24 +284,23 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="动画框架结构"><a href="#动画框架结构" class="headerlink" title="动画框架结构"></a>动画框架结构</h1><p>动画框架由基类 <code>QAbstractAnimation</code> 以及它的两个子类<code> QVariantAnimation</code> 、<code>QAnimationGroup</code> 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationGroup、QSequentialAnimationGroup），完成一个连续的动画。</p>
+<h1 id="动画框架结构"><a class="markdownIt-Anchor" href="#动画框架结构"></a> 动画框架结构</h1>
+<p>动画框架由基类 <code>QAbstractAnimation</code> 以及它的两个子类<code> QVariantAnimation</code> 、<code>QAnimationGroup</code> 组成。基础动画由QVariantAnimation的子类QPropertyAnimation来设置，再通过将多个QPropertyAnimation和QPauseAnimation组合成为动画组（QParallelAnimationGroup、QSequentialAnimationGroup），完成一个连续的动画。</p>
 <img src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185045990.png" srcset="/img/loading.gif" lazyload class title="Qt动画框架">QPropertyAnimation
-
 <p><code>QPropertyAnimation</code> 类能够修改Qt的属性值，如pos、geometry等属性。设置好动画的初值和末值，以及持续的时间后，一个属性动画就基本完成了。</p>
-<h2 id="缩放"><a href="#缩放" class="headerlink" title="缩放"></a>缩放</h2><p>通过修改控件的geometry属性可以实现缩放效果，也可以实现位移的动画，该属性的前两个值确定了控件左上角的位置，后两个值确定了控件的大小。</p>
+<h2 id="缩放"><a class="markdownIt-Anchor" href="#缩放"></a> 缩放</h2>
+<p>通过修改控件的geometry属性可以实现缩放效果，也可以实现位移的动画，该属性的前两个值确定了控件左上角的位置，后两个值确定了控件的大小。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//scale</span><br>QPropertyAnimation *pScaleAnimation1 = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QPropertyAnimation</span>(ui-&gt;scaleButton, <span class="hljs-string">&quot;geometry&quot;</span>);<br>pScaleAnimation1-&gt;<span class="hljs-built_in">setDuration</span>(<span class="hljs-number">1000</span>);<br>pScaleAnimation1-&gt;<span class="hljs-built_in">setStartValue</span>(<span class="hljs-built_in">QRect</span>(<span class="hljs-number">190</span>, <span class="hljs-number">230</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>));<br>pScaleAnimation1-&gt;<span class="hljs-built_in">setEndValue</span>(<span class="hljs-built_in">QRect</span>(<span class="hljs-number">120</span>, <span class="hljs-number">160</span>, <span class="hljs-number">140</span>, <span class="hljs-number">140</span>));<br></code></pre></td></tr></table></figure>
-
-<h2 id="位移"><a href="#位移" class="headerlink" title="位移"></a>位移</h2><p>如果只是需要位移动画的话，修改控件的pos属性即可。pos属性就是控件的左上角所在的位置。</p>
+<h2 id="位移"><a class="markdownIt-Anchor" href="#位移"></a> 位移</h2>
+<p>如果只是需要位移动画的话，修改控件的pos属性即可。pos属性就是控件的左上角所在的位置。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//pos</span><br>QPropertyAnimation *pPosAnimation1 = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QPropertyAnimation</span>(ui-&gt;posButton, <span class="hljs-string">&quot;pos&quot;</span>);<br>pPosAnimation1-&gt;<span class="hljs-built_in">setDuration</span>(<span class="hljs-number">1000</span>);<br>pPosAnimation1-&gt;<span class="hljs-built_in">setStartValue</span>(<span class="hljs-built_in">QPoint</span>(<span class="hljs-number">360</span>, <span class="hljs-number">160</span>));<br>pPosAnimation1-&gt;<span class="hljs-built_in">setEndValue</span>(<span class="hljs-built_in">QPoint</span>(<span class="hljs-number">360</span>, <span class="hljs-number">350</span>));<br>pPosAnimation1-&gt;<span class="hljs-built_in">setEasingCurve</span>(QEasingCurve::InOutQuad);<br></code></pre></td></tr></table></figure>
-
-<h2 id="不透明度"><a href="#不透明度" class="headerlink" title="不透明度"></a>不透明度</h2><p>Qt的控件没有单独的透明度属性，要修改控件的透明度可以通过 <code>QGraphicsOpacityEffect</code> 类来实现。</p>
+<h2 id="不透明度"><a class="markdownIt-Anchor" href="#不透明度"></a> 不透明度</h2>
+<p>Qt的控件没有单独的透明度属性，要修改控件的透明度可以通过 <code>QGraphicsOpacityEffect</code> 类来实现。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//opacity</span><br>QGraphicsOpacityEffect *pButtonOpacity = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QGraphicsOpacityEffect</span>(<span class="hljs-keyword">this</span>);<br>pButtonOpacity-&gt;<span class="hljs-built_in">setOpacity</span>(<span class="hljs-number">1</span>);<br>ui-&gt;opasityButton-&gt;<span class="hljs-built_in">setGraphicsEffect</span>(pButtonOpacity);<br><br>QPropertyAnimation *pOpacityAnimation1 = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QPropertyAnimation</span>(pButtonOpacity, <span class="hljs-string">&quot;opacity&quot;</span>);<br>pOpacityAnimation1-&gt;<span class="hljs-built_in">setDuration</span>(<span class="hljs-number">1000</span>);<br>pOpacityAnimation1-&gt;<span class="hljs-built_in">setStartValue</span>(<span class="hljs-number">1</span>);<br>pOpacityAnimation1-&gt;<span class="hljs-built_in">setEndValue</span>(<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
-
-<h2 id="动画曲线"><a href="#动画曲线" class="headerlink" title="动画曲线"></a>动画曲线</h2><p>动画还可以设置时间的插值曲线，默认是linear，即线性运动，通过设置QEasingCurve即可。Qt提供了40种已经定义好的曲线（如果有需要也可以自定义曲线）：</p>
+<h2 id="动画曲线"><a class="markdownIt-Anchor" href="#动画曲线"></a> 动画曲线</h2>
+<p>动画还可以设置时间的插值曲线，默认是linear，即线性运动，通过设置QEasingCurve即可。Qt提供了40种已经定义好的曲线（如果有需要也可以自定义曲线）：</p>
 <img src="/B_Code/Qt/%E5%8A%A8%E7%94%BB/%E3%80%90Qt%E3%80%91%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C/IMG-20240813185046054.png" srcset="/img/loading.gif" lazyload class title="Qt动画曲线">
-
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">pScaleAnimation1-&gt;<span class="hljs-built_in">setEasingCurve</span>(QEasingCurve::InOutQuad);<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -358,7 +361,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】动画类</div>
-      <div>http://example.com/B_Code/Qt/动画/【Qt】动画效果/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/动画/【Qt】动画效果/</div>
     </div>
     <div class="license-meta">
       

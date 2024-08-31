@@ -24,7 +24,7 @@
     <meta name="description" content="概述：.evtx 是 Windows 事件日志文件的扩展名。这些文件通常包含系统或应用程序的操作信息，如系统警告、错误、信息事件等。这些文件主要被系统管理员用来进行故障排查和系统监控。 Windows 事件查看器是查看 .evtx 文件的主要工具，你可以在 Windows 的控制面板或者通过在 “运行” 对话框中输入 eventvwr.msc 来打开它。在事件查看器中，你可以查看、导出和清除事件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows 事件日志文件——EVTX文件">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91EVTX%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91EVTX%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：.evtx 是 Windows 事件日志文件的扩展名。这些文件通常包含系统或应用程序的操作信息，如系统警告、错误、信息事件等。这些文件主要被系统管理员用来进行故障排查和系统监控。 Windows 事件查看器是查看 .evtx 文件的主要工具，你可以在 Windows 的控制面板或者通过在 “运行” 对话框中输入 eventvwr.msc 来打开它。在事件查看器中，你可以查看、导出和清除事件">
 <meta property="og:locale" content="zh_CN">
@@ -78,11 +78,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -231,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.1k 字
+          2k 字
         
       </span>
     
@@ -290,42 +294,58 @@
 <p><code>.evtx</code> 文件是二进制文件，所以直接用文本编辑器打开它们并不能看到有用的信息。有一些第三方工具，如 NirSoft 的 MyEventViewer 或 Log Parser，可以解析 <code>.evtx</code> 文件并以更易于理解的格式显示事件。</p>
 </blockquote>
 <span id="more"></span>
-
-<h1 id="evtx文件概述"><a href="#evtx文件概述" class="headerlink" title="evtx文件概述"></a>evtx文件概述</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>.evtx是Windows事件日志文件的扩展名,全称为Windows XML事件日志格式。<br>Windows事件日志用于记录系统和应用程序在运行过程中发生的不同事件。.evtx文件采用XML格式来存储这些事件信息。每个evtx文件通常对应一个特定的日志类型,如:<br>• System.evtx - 记录系统事件<br>• Application.evtx - 记录应用程序事件<br>• Security.evtx -  记录安全审核事件</p>
-<h2 id="如何查看"><a href="#如何查看" class="headerlink" title="如何查看"></a>如何查看</h2><p>.evtx文件可以使用事件查看器(Windows Event Viewer)来查看和分析。我们还可以使用PowerShell、evtparser等工具来解析evtx文件,例如:</p>
+<h1 id="evtx文件概述"><a class="markdownIt-Anchor" href="#evtx文件概述"></a> evtx文件概述</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>.evtx是Windows事件日志文件的扩展名,全称为Windows XML事件日志格式。<br>
+Windows事件日志用于记录系统和应用程序在运行过程中发生的不同事件。.evtx文件采用XML格式来存储这些事件信息。每个evtx文件通常对应一个特定的日志类型,如:<br>
+• System.evtx - 记录系统事件<br>
+• Application.evtx - 记录应用程序事件<br>
+• Security.evtx -  记录安全审核事件</p>
+<h2 id="如何查看"><a class="markdownIt-Anchor" href="#如何查看"></a> 如何查看</h2>
+<p>.evtx文件可以使用事件查看器(Windows Event Viewer)来查看和分析。我们还可以使用PowerShell、evtparser等工具来解析evtx文件,例如:</p>
 <ol>
-<li><p>获取evtx文件中的事件ID为1000的所有事件:</p>
+<li>获取evtx文件中的事件ID为1000的所有事件:</li>
+</ol>
   <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Get-WinEvent</span> <span class="hljs-literal">-Path</span> application.evtx | <span class="hljs-built_in">Where</span> &#123;<span class="hljs-variable">$_</span>.Id <span class="hljs-operator">-eq</span> <span class="hljs-string">&quot;1000&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>根据evtx文件中的事件消息筛选事件:</p>
+<ol start="2">
+<li>根据evtx文件中的事件消息筛选事件:</li>
+</ol>
   <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Get-WinEvent</span> <span class="hljs-literal">-Path</span> application.evtx | <span class="hljs-built_in">Where</span> &#123;<span class="hljs-variable">$_</span>.Message <span class="hljs-operator">-like</span> <span class="hljs-string">&quot;*some message*&quot;</span>&#125;<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>导出evtx文件中的所有事件到CSV文件:</p>
+<ol start="3">
+<li>导出evtx文件中的所有事件到CSV文件:</li>
+</ol>
   <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Get-WinEvent</span> <span class="hljs-literal">-Path</span> application.evtx | <span class="hljs-built_in">Export-CSV</span> <span class="hljs-literal">-Path</span> events.csv<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>使用evtparser解析evtx文件<br>evtparser.py application.evtx &gt; events.log<br>evtx文件的主要作用是进行系统监控、安全审计和事件分析。通过分析evtx文件,我们可以:</p>
+<ol start="4">
+<li>
+<p>使用evtparser解析evtx文件<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="http://evtparser.py">evtparser.py</a> application.evtx &gt; events.log<br>
+evtx文件的主要作用是进行系统监控、安全审计和事件分析。通过分析evtx文件,我们可以:</p>
 <ul>
-<li><p>了解系统或应用程序的运行状况和遇到的问题</p>
+<li>
+<p>了解系统或应用程序的运行状况和遇到的问题</p>
 </li>
-<li><p>检测系统或应用程序的潜在安全威胁</p>
+<li>
+<p>检测系统或应用程序的潜在安全威胁</p>
 </li>
-<li><p>分析某个时间段内的系统事件,查找可能导致问题的变化</p>
+<li>
+<p>分析某个时间段内的系统事件,查找可能导致问题的变化</p>
 </li>
-<li><p>审计对系统的访问和更改等</p>
+<li>
+<p>审计对系统的访问和更改等</p>
 </li>
 </ul>
 </li>
 </ol>
-<p>  所以,熟悉evtx文件格式和如何分析evtx文件是信息安全人员和系统管理员的重要技能之一。</p>
-<h1 id="EVTX-文件结构"><a href="#EVTX-文件结构" class="headerlink" title="EVTX 文件结构"></a>EVTX 文件结构</h1><p>evtx文件主要由三部分组成：</p>
+<p>所以,熟悉evtx文件格式和如何分析evtx文件是信息安全人员和系统管理员的重要技能之一。</p>
+<h1 id="evtx-文件结构"><a class="markdownIt-Anchor" href="#evtx-文件结构"></a> EVTX 文件结构</h1>
+<p>evtx文件主要由三部分组成：</p>
 <ul>
 <li>file header （文件头）</li>
 <li>chunks （数据块）</li>
 <li>trailing empty values （尾部填充空值）</li>
 </ul>
-<h2 id="File-Header（文件头）："><a href="#File-Header（文件头）：" class="headerlink" title="File Header（文件头）："></a>File Header（文件头）：</h2><p>文件头长度为4KB（4096bytes），其结构如下：</p>
+<h2 id="file-header文件头"><a class="markdownIt-Anchor" href="#file-header文件头"></a> File Header（文件头）：</h2>
+<p>文件头长度为4KB（4096bytes），其结构如下：</p>
 <table>
 <thead>
 <tr>
@@ -335,11 +355,12 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>0x00</td>
 <td>8</td>
 <td>“ElfFile\x00”</td>
-<td>标志位&#x2F;签名</td>
+<td>标志位/签名</td>
 </tr>
 <tr>
 <td>0x08</td>
@@ -413,8 +434,10 @@
 <td></td>
 <td>未知 (空值)</td>
 </tr>
-</tbody></table>
-<h2 id="Chunk-块-："><a href="#Chunk-块-：" class="headerlink" title="Chunk(块)："></a>Chunk(块)：</h2><p>每个块的大小是 65536 bytes（64KB），主要由三部分组成：</p>
+</tbody>
+</table>
+<h2 id="chunk块"><a class="markdownIt-Anchor" href="#chunk块"></a> Chunk(块)：</h2>
+<p>每个块的大小是 65536 bytes（64KB），主要由三部分组成：</p>
 <ul>
 <li>chunk header 块头</li>
 <li>array of event records 事件记录组</li>
@@ -430,11 +453,12 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>0x00</td>
 <td>8</td>
 <td>“ElfChnk\x00”</td>
-<td>标志位&#x2F;签名</td>
+<td>标志位/签名</td>
 </tr>
 <tr>
 <td>0x08</td>
@@ -502,8 +526,10 @@
 <td></td>
 <td>块头CRC32校验和（块头前120个字节和128至512字节的数据的CRC32校验和）</td>
 </tr>
-</tbody></table>
-<h2 id="Event-record-事件记录-："><a href="#Event-record-事件记录-：" class="headerlink" title="Event record(事件记录)："></a>Event record(事件记录)：</h2><p>事件记录的长度非固定长度，其结构如下：</p>
+</tbody>
+</table>
+<h2 id="event-record事件记录"><a class="markdownIt-Anchor" href="#event-record事件记录"></a> Event record(事件记录)：</h2>
+<p>事件记录的长度非固定长度，其结构如下：</p>
 <table>
 <thead>
 <tr>
@@ -513,11 +539,12 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>0x00</td>
 <td>4</td>
 <td>“\x2a\x2a\x00\x00”</td>
-<td>标志位&#x2F;签名</td>
+<td>标志位/签名</td>
 </tr>
 <tr>
 <td>0x04</td>
@@ -549,26 +576,32 @@
 <td></td>
 <td>记录长度（副本）</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>由上面的信息，可知<code>evtx</code>日志文件包含一个4KB的文件头加后面一定数量的64KB大小的块，一个块中记录一定数量（大约100条）的事件记录。每个块是独立的，不受其他块影响。不会出现一条事件记录的数据存在于两个块中。每条记录包含一个基于二进制XML编码的信息。每条事件记录包含其创建时间与事件 ID（可以用于确定事件的种类），因此可以反映某个特定的时间发生的特定的操作，取证人员可以根据日志文件来发现犯罪的过程。</p>
 <p><code>evtx</code>日志文件大概的结构如下所示：</p>
 <p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows/images/EVTX%E6%96%87%E4%BB%B6/1.png" srcset="/img/loading.gif" lazyload alt="evtx结构说明"></p>
-<h1 id="EVTX文件的存储"><a href="#EVTX文件的存储" class="headerlink" title="EVTX文件的存储"></a>EVTX文件的存储</h1><p>Windows事件日志文件保存在<code>%SystemRoot%\System32\Winevt\Logs</code>路径中。</p>
+<h1 id="evtx文件的存储"><a class="markdownIt-Anchor" href="#evtx文件的存储"></a> EVTX文件的存储</h1>
+<p>Windows事件日志文件保存在<code>%SystemRoot%\System32\Winevt\Logs</code>路径中。</p>
 <p>常见日志文件主要有三个，分别是：<code>System.evtx</code> 、<code>Application.evtx</code> 和<code>Security.evtx</code>。分别是系统日志、应用程序日志和安全日志。</p>
 <ul>
-<li><p>System.evtx</p>
+<li>
+<p>System.evtx</p>
 <p>记录操作系统自身组件产生的日志事件，比如驱动、系统组件和应用软件的崩溃以及数据丢失错误等等。</p>
 </li>
-<li><p>Application.evtx</p>
+<li>
+<p>Application.evtx</p>
 <p>记录应用程序或系统程序运行方面的日志事件，比如数据库程序可以在应用程序日志中记录文件错误，应用的崩溃记录等。</p>
 </li>
-<li><p>Security.evtx</p>
+<li>
+<p>Security.evtx</p>
 <p>记录系统的安全审计日志事件，比如登录事件、对象访问、进程追踪、特权调用、帐号管理、策略变更等。<code>Security.evtx</code>也是取证中最常用到的。</p>
 </li>
 </ul>
 <p>默认情况下，当一个<code>evtx</code>文件的记录满了，日志服务会覆盖最开始的记录，从头开始写入新的记录。也就是相当于一个循环记录的缓存文件。</p>
 <p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows/images/EVTX%E6%96%87%E4%BB%B6/2.png" srcset="/img/loading.gif" lazyload alt="image-20210721142106536"></p>
-<h1 id="Evtx日志分析"><a href="#Evtx日志分析" class="headerlink" title="Evtx日志分析"></a>Evtx日志分析</h1><p><code>Windows</code> 用 <code>Event ID</code>来标识事件的不同含义，拿<code>Security</code>日志来说，一些常见的<code>Event ID</code> 如下：</p>
+<h1 id="evtx日志分析"><a class="markdownIt-Anchor" href="#evtx日志分析"></a> Evtx日志分析</h1>
+<p><code>Windows</code> 用 <code>Event ID</code>来标识事件的不同含义，拿<code>Security</code>日志来说，一些常见的<code>Event ID</code> 如下：</p>
 <table>
 <thead>
 <tr>
@@ -576,7 +609,8 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>4608</td>
 <td>Windows 启动</td>
 </tr>
@@ -640,23 +674,24 @@
 <td>4779</td>
 <td>用户在未注销的情况下断开了终端服务器会话</td>
 </tr>
-</tbody></table>
-<h2 id="1、通过Windows事件查看器分析日志"><a href="#1、通过Windows事件查看器分析日志" class="headerlink" title="1、通过Windows事件查看器分析日志"></a>1、通过Windows事件查看器分析日志</h2><p>通过<code>Windows</code>事件查看器可以查看当前主机的事件日志，也可以打开保存的 <code>evtx</code>文件。</p>
+</tbody>
+</table>
+<h2 id="1-通过windows事件查看器分析日志"><a class="markdownIt-Anchor" href="#1-通过windows事件查看器分析日志"></a> 1、通过Windows事件查看器分析日志</h2>
+<p>通过<code>Windows</code>事件查看器可以查看当前主机的事件日志，也可以打开保存的 <code>evtx</code>文件。</p>
 <p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows/images/EVTX%E6%96%87%E4%BB%B6/3.png" srcset="/img/loading.gif" lazyload alt="image-20210721160559304"></p>
 <p>可以通过点击、筛选、查找等多种方式查看事件日志</p>
 <p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows/images/EVTX%E6%96%87%E4%BB%B6/4.png" srcset="/img/loading.gif" lazyload alt="筛选"></p>
 <p>筛选器提供了丰富的筛选方式：</p>
 <p><img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows/images/EVTX%E6%96%87%E4%BB%B6/6.png" srcset="/img/loading.gif" lazyload alt="image-20210721161013112"></p>
-<h2 id="2、通过工具分析Evtx"><a href="#2、通过工具分析Evtx" class="headerlink" title="2、通过工具分析Evtx"></a>2、通过工具分析Evtx</h2><p>Log Parser</p>
+<h2 id="2-通过工具分析evtx"><a class="markdownIt-Anchor" href="#2-通过工具分析evtx"></a> 2、通过工具分析Evtx</h2>
+<p>Log Parser</p>
 <p><code>Log Parser</code>（是微软公司自己开发的日志分析工具，它功能强大，使用简单，可以分析基于文本的日志文件、<code>XML</code> 文件、<code>CSV</code>（逗号分隔符）文件，以及操作系统的事件日志、注册表、文件系统、Active Directory。它使用类似 SQL 语句一样查询分析这些数据，还可以把分析结果以图表的形式展现出来。</p>
 <p><code>Log Parser</code>下载地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.microsoft.com/en-us/download/details.aspx?id=24659">https://www.microsoft.com/en-us/download/details.aspx?id=24659</a></p>
 <p>使用方法:</p>
   <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">logparser -<span class="hljs-selector-tag">i</span>:输入文件的格式 -o:输出文件的格式 <span class="hljs-string">&quot;查询语句 和文件路径&quot;</span><br></code></pre></td></tr></table></figure>
-
 <p>例子：</p>
 <p>查询登录成功的事件：</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">LogParser.exe -i:EVT -o:DATAGRID  &quot;<span class="hljs-keyword">SELECT</span> *  <span class="hljs-keyword">FROM</span> <span class="hljs-built_in">E</span>:\Security.evtx <span class="hljs-keyword">where</span> EventID=<span class="hljs-number">4624</span><span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure>
-
 <p>Log Parser Studio</p>
 <p><code>logparser</code>的GUI版本。</p>
 <p>下载地址：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://techcommunity.microsoft.com/t5/exchange-team-blog/log-parser-studio-2-0-is-now-available/ba-p/593266">https://techcommunity.microsoft.com/t5/exchange-team-blog/log-parser-studio-2-0-is-now-available/ba-p/593266</a></p>
@@ -727,7 +762,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Windows 事件日志文件——EVTX文件</div>
-      <div>http://example.com/A_OS/Windows/文件与结构体/【WIN】EVTX文件/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/文件与结构体/【WIN】EVTX文件/</div>
     </div>
     <div class="license-meta">
       

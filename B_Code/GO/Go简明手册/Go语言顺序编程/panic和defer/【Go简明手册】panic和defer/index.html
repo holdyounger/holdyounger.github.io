@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="panic 和 recoverpanic() 函数用于抛出异常，recover() 函数用于捕获异常，这两个函数的原型如下： 12func panic(interface&#123;&#125;)func recover() interface&#123;&#125;  当在一个函数中调用 panic() 时，正常的函数执行流程将立即终止，但函数中之前使用 defer 关键字延迟执行的语句将正常展">
+    <meta name="description" content="panic 和 recover panic() 函数用于抛出异常，recover() 函数用于捕获异常，这两个函数的原型如下： 12func panic(interface&#123;&#125;)func recover() interface&#123;&#125; 当在一个函数中调用 panic() 时，正常的函数执行流程将立即终止，但函数中之前使用 defer 关键字延迟执行的语句将正常">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go简明手册】panic和defer">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/panic%E5%92%8Cdefer/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91panic%E5%92%8Cdefer/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/panic%E5%92%8Cdefer/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91panic%E5%92%8Cdefer/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="panic 和 recoverpanic() 函数用于抛出异常，recover() 函数用于捕获异常，这两个函数的原型如下： 12func panic(interface&#123;&#125;)func recover() interface&#123;&#125;  当在一个函数中调用 panic() 时，正常的函数执行流程将立即终止，但函数中之前使用 defer 关键字延迟执行的语句将正常展">
+<meta property="og:description" content="panic 和 recover panic() 函数用于抛出异常，recover() 函数用于捕获异常，这两个函数的原型如下： 12func panic(interface&#123;&#125;)func recover() interface&#123;&#125; 当在一个函数中调用 panic() 时，正常的函数执行流程将立即终止，但函数中之前使用 defer 关键字延迟执行的语句将正常">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.137Z">
 <meta property="article:modified_time" content="2024-08-26T07:16:50.833Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -277,16 +281,14 @@
             
               <div class="markdown-body">
                 
-                <h1 id="panic-和-recover"><a href="#panic-和-recover" class="headerlink" title="panic 和 recover"></a><code>panic</code> 和 <code>recover</code></h1><p><code>panic()</code> 函数用于抛出异常，<code>recover()</code> 函数用于捕获异常，这两个函数的原型如下：</p>
+                <h1 id="panic-和-recover"><a class="markdownIt-Anchor" href="#panic-和-recover"></a> <code>panic</code> 和 <code>recover</code></h1>
+<p><code>panic()</code> 函数用于抛出异常，<code>recover()</code> 函数用于捕获异常，这两个函数的原型如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">panic</span><span class="hljs-params">(<span class="hljs-keyword">interface</span>&#123;&#125;)</span></span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">recover</span><span class="hljs-params">()</span></span> <span class="hljs-keyword">interface</span>&#123;&#125;<br></code></pre></td></tr></table></figure>
-
 <p>当在一个函数中调用 <code>panic()</code> 时，正常的函数执行流程将立即终止，但函数中之前使用 <code>defer</code> 关键字延迟执行的语句将正常展开执行，之后该函数将返回到调用函数，并导致逐层向上执行 <code>panic()</code> 流程，直至所属的 <code>goroutine</code> 中所有正在执行的函数被终止。错误信息将被报告，包括在调用 <code>panic()</code> 函数时传入的参数，这个过程称为错误流程处理。</p>
 <p><code>panic()</code> 接受一个 <code>interface&#123;&#125;</code> 参数，可支持任意类型，例如：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-built_in">panic</span>(<span class="hljs-number">404</span>)<br><span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;network broken&quot;</span>)<br><span class="hljs-built_in">panic</span>(Error(<span class="hljs-string">&quot;file not exists&quot;</span>))<br></code></pre></td></tr></table></figure>
-
 <p>在 <code>defer</code> 语句中，可以使用 <code>recover()</code> 终止错误处理流程，这样可以避免异常向上传递，但要注意 <code>recover()</code> 之后，程序不会再回到 <code>panic()</code> 那里，函数仍在 <code>defer</code> 之后返回。新建一个源文件 <code>error1.go</code>，输入以下代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">foo</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-built_in">panic</span>(errors.New(<span class="hljs-string">&quot;i&#x27;m a bug&quot;</span>))<br>    <span class="hljs-keyword">return</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">test</span><span class="hljs-params">()</span></span> (result <span class="hljs-type">int</span>) &#123;<br>    <span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>        <span class="hljs-keyword">if</span> r := <span class="hljs-built_in">recover</span>(); r != <span class="hljs-literal">nil</span> &#123;<br>            err := r.(<span class="hljs-type">error</span>)<br>            fmt.Println(<span class="hljs-string">&quot;Cache Exception:&quot;</span>, err)<br>        &#125;<br>    &#125;()<br>    foo()<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">10</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    fmt.Println(test())     <span class="hljs-comment">// 0</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -363,7 +365,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Go简明手册】panic和defer</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/Go语言顺序编程/panic和defer/【Go简明手册】panic和defer/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/Go语言顺序编程/panic和defer/【Go简明手册】panic和defer/</div>
     </div>
     <div class="license-meta">
       

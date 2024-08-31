@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="0Day 漏洞指路：  crisprss&#x2F;PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights e">
+    <meta name="description" content="0Day 漏洞指路：  crisprss&#x2F;PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights escala">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【RPC】漏洞">
-<meta property="og:url" content="http://example.com/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="0Day 漏洞指路：  crisprss&#x2F;PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights e">
+<meta property="og:description" content="0Day 漏洞指路：  crisprss&#x2F;PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights escala">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-08T06:01:23.607Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:55.049Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          181 字
+          179 字
         
       </span>
     
@@ -278,8 +282,8 @@
                 
                 <p>0Day 漏洞指路：</p>
 <ul>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/crisprss/PetitPotam">crisprss&#x2F;PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights escalation methods have been realized</a></li>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/crisprss/magicAzureAttestService">crisprss&#x2F;magicAzureAttestService: 针对于AzureAttestService服务的本地提权Eop，微软表示已经进行修复</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/crisprss/PetitPotam">crisprss/PetitPotam: 替代PrintBug用于本地提权的新方式，主要利用MS-EFSR协议中的接口函数 借鉴了Potitpotam中对于EFSR协议的利用,实现了本地提权的一系列方式 Drawing on the use of the EFSR protocol in Potitpotam, a series of local rights escalation methods have been realized</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/crisprss/magicAzureAttestService">crisprss/magicAzureAttestService: 针对于AzureAttestService服务的本地提权Eop，微软表示已经进行修复</a></li>
 </ul>
 <p>相关分析：</p>
 <ul>
@@ -355,7 +359,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【RPC】漏洞</div>
-      <div>http://example.com/A_OS/Windows/RPC/【RPC】漏洞/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/RPC/【RPC】漏洞/</div>
     </div>
     <div class="license-meta">
       

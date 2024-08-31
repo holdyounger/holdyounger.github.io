@@ -24,12 +24,12 @@
     <meta name="description" content="概述：.Net 调试命令。主要是 SOS (Son of Strike) 提供的能力 参考文章：.NET 的 SOS 调试扩展 - .NET | Microsoft Learn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【调试技术】.Net 调试基础命令">
-<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.Net%20%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.Net%20%E8%B0%83%E8%AF%95%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：.Net 调试命令。主要是 SOS (Son of Strike) 提供的能力 参考文章：.NET 的 SOS 调试扩展 - .NET | Microsoft Learn">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-06-30T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-30T15:11:59.662Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.237Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="DotNet">
 <meta property="article:tag" content="Code&#x2F;DotNet">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -283,461 +287,469 @@
 <p>参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/core/diagnostics/sos-debugging-extension">.NET 的 SOS 调试扩展 - .NET | Microsoft Learn</a></p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h3 id="LLDB-调试程序"><a href="#LLDB-调试程序" class="headerlink" title="LLDB 调试程序"></a>LLDB 调试程序</h3><p>有关针对 LLDB 配置 SOS 的说明，请参阅 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/core/diagnostics/dotnet-sos">dotnet-sos</a>。 可对实时进程或转储使用 SOS 命令。</p>
+<h3 id="lldb-调试程序"><a class="markdownIt-Anchor" href="#lldb-调试程序"></a> LLDB 调试程序</h3>
+<p>有关针对 LLDB 配置 SOS 的说明，请参阅 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/core/diagnostics/dotnet-sos">dotnet-sos</a>。 可对实时进程或转储使用 SOS 命令。</p>
 <p>默认情况下，可以通过输入以下内容来使用所有 SOS 命令：<code>sos [command_name]</code>。 但是，常见命令已有别名，因此你不需要 <code>sos</code> 前缀：</p>
 <p>展开表</p>
 <table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">函数</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">函数</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>analyzeoom</code></td>
-<td align="left">显示对 GC 堆进行分配请求时发生的最后 OOM 的信息。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>analyzeoom</code></td>
+<td style="text-align:left">显示对 GC 堆进行分配请求时发生的最后 OOM 的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>bpmd</code></td>
-<td align="left">在指定模块中的指定托管方法处创建断点。</td>
+<td style="text-align:left"><code>bpmd</code></td>
+<td style="text-align:left">在指定模块中的指定托管方法处创建断点。</td>
 </tr>
 <tr>
-<td align="left"><code>clrmodules</code></td>
-<td align="left">列出进程中的托管模块。</td>
+<td style="text-align:left"><code>clrmodules</code></td>
+<td style="text-align:left">列出进程中的托管模块。</td>
 </tr>
 <tr>
-<td align="left"><code>clrstack</code></td>
-<td align="left">仅提供托管代码的堆栈跟踪。</td>
+<td style="text-align:left"><code>clrstack</code></td>
+<td style="text-align:left">仅提供托管代码的堆栈跟踪。</td>
 </tr>
 <tr>
-<td align="left"><code>clrthreads</code></td>
-<td align="left">列出正在运行的托管线程。</td>
+<td style="text-align:left"><code>clrthreads</code></td>
+<td style="text-align:left">列出正在运行的托管线程。</td>
 </tr>
 <tr>
-<td align="left"><code>clru</code></td>
-<td align="left">显示托管方法的批注反汇编。</td>
+<td style="text-align:left"><code>clru</code></td>
+<td style="text-align:left">显示托管方法的批注反汇编。</td>
 </tr>
 <tr>
-<td align="left"><code>dbgout</code></td>
-<td align="left">启用&#x2F;禁用 (<code>-off</code>) 内部 SOS 日志记录。</td>
+<td style="text-align:left"><code>dbgout</code></td>
+<td style="text-align:left">启用/禁用 (<code>-off</code>) 内部 SOS 日志记录。</td>
 </tr>
 <tr>
-<td align="left"><code>dso</code></td>
-<td align="left">显示在当前堆栈的边界内找到的所有托管对象。</td>
+<td style="text-align:left"><code>dso</code></td>
+<td style="text-align:left">显示在当前堆栈的边界内找到的所有托管对象。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpalc</code></td>
-<td align="left">显示有关指定对象加载到的可回收 AssemblyLoadContext 的详细信息。</td>
+<td style="text-align:left"><code>dumpalc</code></td>
+<td style="text-align:left">显示有关指定对象加载到的可回收 AssemblyLoadContext 的详细信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumparray</code></td>
-<td align="left">显示有关托管数组的详细信息。</td>
+<td style="text-align:left"><code>dumparray</code></td>
+<td style="text-align:left">显示有关托管数组的详细信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpasync</code></td>
-<td align="left">显示有关垃圾回收堆上异步状态机的信息。</td>
+<td style="text-align:left"><code>dumpasync</code></td>
+<td style="text-align:left">显示有关垃圾回收堆上异步状态机的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpassembly</code></td>
-<td align="left">显示有关程序集的详细信息。</td>
+<td style="text-align:left"><code>dumpassembly</code></td>
+<td style="text-align:left">显示有关程序集的详细信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpclass</code></td>
-<td align="left">显示有关指定地址处的 <code>EEClass</code> 结构的信息。</td>
+<td style="text-align:left"><code>dumpclass</code></td>
+<td style="text-align:left">显示有关指定地址处的 <code>EEClass</code> 结构的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpconcurrentdictionary</code></td>
-<td align="left">显示并发字典内容。</td>
+<td style="text-align:left"><code>dumpconcurrentdictionary</code></td>
+<td style="text-align:left">显示并发字典内容。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpconcurrentqueue</code></td>
-<td align="left">显示并发队列内容。</td>
+<td style="text-align:left"><code>dumpconcurrentqueue</code></td>
+<td style="text-align:left">显示并发队列内容。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpdelegate</code></td>
-<td align="left">显示有关委托的信息。</td>
+<td style="text-align:left"><code>dumpdelegate</code></td>
+<td style="text-align:left">显示有关委托的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpdomain</code></td>
-<td align="left">显示有关所有 AppDomain 或指定 AppDomain 中的所有程序集的信息。</td>
+<td style="text-align:left"><code>dumpdomain</code></td>
+<td style="text-align:left">显示有关所有 AppDomain 或指定 AppDomain 中的所有程序集的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpgcdata</code></td>
-<td align="left">显示有关 GC 数据的信息。</td>
+<td style="text-align:left"><code>dumpgcdata</code></td>
+<td style="text-align:left">显示有关 GC 数据的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpgen</code></td>
-<td align="left">显示指定代系的堆内容。</td>
+<td style="text-align:left"><code>dumpgen</code></td>
+<td style="text-align:left">显示指定代系的堆内容。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpheap</code></td>
-<td align="left">显示有关垃圾回收堆的信息和有关对象的收集统计信息。</td>
+<td style="text-align:left"><code>dumpheap</code></td>
+<td style="text-align:left">显示有关垃圾回收堆的信息和有关对象的收集统计信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpil</code></td>
-<td align="left">显示与托管方法关联的公共中间语言（CIL）。</td>
+<td style="text-align:left"><code>dumpil</code></td>
+<td style="text-align:left">显示与托管方法关联的公共中间语言（CIL）。</td>
 </tr>
 <tr>
-<td align="left"><code>dumplog</code></td>
-<td align="left">将内存中压力日志的内容写入到指定文件。</td>
+<td style="text-align:left"><code>dumplog</code></td>
+<td style="text-align:left">将内存中压力日志的内容写入到指定文件。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpmd</code></td>
-<td align="left">显示有关指定地址处的 <code>MethodDesc</code> 结构的信息。</td>
+<td style="text-align:left"><code>dumpmd</code></td>
+<td style="text-align:left">显示有关指定地址处的 <code>MethodDesc</code> 结构的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpmodule</code></td>
-<td align="left">显示有关指定地址处的模块的信息。</td>
+<td style="text-align:left"><code>dumpmodule</code></td>
+<td style="text-align:left">显示有关指定地址处的模块的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpmt</code></td>
-<td align="left">显示有关指定地址处的方法表的信息。</td>
+<td style="text-align:left"><code>dumpmt</code></td>
+<td style="text-align:left">显示有关指定地址处的方法表的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpobj</code></td>
-<td align="left">显示有关指定地址处的对象的信息。</td>
+<td style="text-align:left"><code>dumpobj</code></td>
+<td style="text-align:left">显示有关指定地址处的对象的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpruntimetypes</code></td>
-<td align="left">查找 GC 堆中的所有 System.RuntimeType 对象，并输出它们引用的类型名称和 MethodTable。</td>
+<td style="text-align:left"><code>dumpruntimetypes</code></td>
+<td style="text-align:left">查找 GC 堆中的所有 System.RuntimeType 对象，并输出它们引用的类型名称和 MethodTable。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpsig</code></td>
-<td align="left">转储由 <code>&lt;sigaddr&gt; &lt;moduleaddr&gt;</code> 指定的方法或字段的签名。</td>
+<td style="text-align:left"><code>dumpsig</code></td>
+<td style="text-align:left">转储由 <code>&lt;sigaddr&gt; &lt;moduleaddr&gt;</code> 指定的方法或字段的签名。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpsigelem</code></td>
-<td align="left">转储签名对象的单个元素。</td>
+<td style="text-align:left"><code>dumpsigelem</code></td>
+<td style="text-align:left">转储签名对象的单个元素。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpstack</code></td>
-<td align="left">显示原生和托管堆栈跟踪。</td>
+<td style="text-align:left"><code>dumpstack</code></td>
+<td style="text-align:left">显示原生和托管堆栈跟踪。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpstackobjects</code></td>
-<td align="left">显示在当前堆栈的边界内找到的所有托管对象。</td>
+<td style="text-align:left"><code>dumpstackobjects</code></td>
+<td style="text-align:left">显示在当前堆栈的边界内找到的所有托管对象。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpvc</code></td>
-<td align="left">显示有关值类的字段的信息。</td>
+<td style="text-align:left"><code>dumpvc</code></td>
+<td style="text-align:left">显示有关值类的字段的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>eeheap</code></td>
-<td align="left">显示有关内部运行时数据结构所使用的进程内存的信息。</td>
+<td style="text-align:left"><code>eeheap</code></td>
+<td style="text-align:left">显示有关内部运行时数据结构所使用的进程内存的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>eestack</code></td>
-<td align="left">对进程中的所有线程运行 <code>dumpstack</code> 命令。</td>
+<td style="text-align:left"><code>eestack</code></td>
+<td style="text-align:left">对进程中的所有线程运行 <code>dumpstack</code> 命令。</td>
 </tr>
 <tr>
-<td align="left"><code>eeversion</code></td>
-<td align="left">显示有关运行时和 SOS 版本的信息。</td>
+<td style="text-align:left"><code>eeversion</code></td>
+<td style="text-align:left">显示有关运行时和 SOS 版本的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>ehinfo</code></td>
-<td align="left">显示 JIT 方法中的异常处理块。</td>
+<td style="text-align:left"><code>ehinfo</code></td>
+<td style="text-align:left">显示 JIT 方法中的异常处理块。</td>
 </tr>
 <tr>
-<td align="left"><code>finalizequeue</code></td>
-<td align="left">显示所有已进行终结注册的对象。</td>
+<td style="text-align:left"><code>finalizequeue</code></td>
+<td style="text-align:left">显示所有已进行终结注册的对象。</td>
 </tr>
 <tr>
-<td align="left"><code>findappdomain</code></td>
-<td align="left">尝试解析 GC 对象的 AppDomain。</td>
+<td style="text-align:left"><code>findappdomain</code></td>
+<td style="text-align:left">尝试解析 GC 对象的 AppDomain。</td>
 </tr>
 <tr>
-<td align="left"><code>findroots</code></td>
-<td align="left">跨 GC 集合查找并显示对象根。</td>
+<td style="text-align:left"><code>findroots</code></td>
+<td style="text-align:left">跨 GC 集合查找并显示对象根。</td>
 </tr>
 <tr>
-<td align="left"><code>gchandles</code></td>
-<td align="left">显示有关进程中的垃圾回收器句柄的统计信息。</td>
+<td style="text-align:left"><code>gchandles</code></td>
+<td style="text-align:left">显示有关进程中的垃圾回收器句柄的统计信息。</td>
 </tr>
 <tr>
-<td align="left"><code>gcheapstat</code></td>
-<td align="left">显示有关垃圾回收器的统计信息。</td>
+<td style="text-align:left"><code>gcheapstat</code></td>
+<td style="text-align:left">显示有关垃圾回收器的统计信息。</td>
 </tr>
 <tr>
-<td align="left"><code>gcinfo</code></td>
-<td align="left">显示方法的 JIT GC 编码。</td>
+<td style="text-align:left"><code>gcinfo</code></td>
+<td style="text-align:left">显示方法的 JIT GC 编码。</td>
 </tr>
 <tr>
-<td align="left"><code>gcroot</code></td>
-<td align="left">显示有关对指定地址处的对象的引用（或根）的信息。</td>
+<td style="text-align:left"><code>gcroot</code></td>
+<td style="text-align:left">显示有关对指定地址处的对象的引用（或根）的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>gcwhere</code></td>
-<td align="left">显示指定地址在 GC 堆中的位置。</td>
+<td style="text-align:left"><code>gcwhere</code></td>
+<td style="text-align:left">显示指定地址在 GC 堆中的位置。</td>
 </tr>
 <tr>
-<td align="left"><code>histclear</code></td>
-<td align="left">释放由 Hist 命令系列使用的任何资源。</td>
+<td style="text-align:left"><code>histclear</code></td>
+<td style="text-align:left">释放由 Hist 命令系列使用的任何资源。</td>
 </tr>
 <tr>
-<td align="left"><code>histinit</code></td>
-<td align="left">从保存在调试对象中的压力日志初始化 SOS 结构。</td>
+<td style="text-align:left"><code>histinit</code></td>
+<td style="text-align:left">从保存在调试对象中的压力日志初始化 SOS 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>histobj</code></td>
-<td align="left">检查所有压力日志的重定位记录，并显示可能已将地址作为自变量传入的垃圾回收重定位链。</td>
+<td style="text-align:left"><code>histobj</code></td>
+<td style="text-align:left">检查所有压力日志的重定位记录，并显示可能已将地址作为自变量传入的垃圾回收重定位链。</td>
 </tr>
 <tr>
-<td align="left"><code>histobjfind</code></td>
-<td align="left">显示在指定地址处引用对象的所有日志项。</td>
+<td style="text-align:left"><code>histobjfind</code></td>
+<td style="text-align:left">显示在指定地址处引用对象的所有日志项。</td>
 </tr>
 <tr>
-<td align="left"><code>histroot</code></td>
-<td align="left">显示与指定根的提升和重定位相关的信息。</td>
+<td style="text-align:left"><code>histroot</code></td>
+<td style="text-align:left">显示与指定根的提升和重定位相关的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>histstats</code></td>
-<td align="left">显示压力日志统计信息。</td>
+<td style="text-align:left"><code>histstats</code></td>
+<td style="text-align:left">显示压力日志统计信息。</td>
 </tr>
 <tr>
-<td align="left"><code>ip2md</code></td>
-<td align="left">显示已 JIT 编译的代码中指定地址处的 <code>MethodDesc</code> 结构。</td>
+<td style="text-align:left"><code>ip2md</code></td>
+<td style="text-align:left">显示已 JIT 编译的代码中指定地址处的 <code>MethodDesc</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>listnearobj</code></td>
-<td align="left">显示指定地址前后的对象。</td>
+<td style="text-align:left"><code>listnearobj</code></td>
+<td style="text-align:left">显示指定地址前后的对象。</td>
 </tr>
 <tr>
-<td align="left"><code>loadsymbols</code></td>
-<td align="left">加载 .NET 本机模块符号。</td>
+<td style="text-align:left"><code>loadsymbols</code></td>
+<td style="text-align:left">加载 .NET 本机模块符号。</td>
 </tr>
 <tr>
-<td align="left"><code>logging</code></td>
-<td align="left">启用&#x2F;禁用内部 SOS 日志记录。</td>
+<td style="text-align:left"><code>logging</code></td>
+<td style="text-align:left">启用/禁用内部 SOS 日志记录。</td>
 </tr>
 <tr>
-<td align="left"><code>name2ee</code></td>
-<td align="left">显示指定模块中的指定类型或方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
+<td style="text-align:left"><code>name2ee</code></td>
+<td style="text-align:left">显示指定模块中的指定类型或方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>objsize</code></td>
-<td align="left">显示指定对象的大小。</td>
+<td style="text-align:left"><code>objsize</code></td>
+<td style="text-align:left">显示指定对象的大小。</td>
 </tr>
 <tr>
-<td align="left"><code>parallelstacks</code></td>
-<td align="left">显示与 Visual Studio“并行堆栈”面板类似的合并线程堆栈。</td>
+<td style="text-align:left"><code>parallelstacks</code></td>
+<td style="text-align:left">显示与 Visual Studio“并行堆栈”面板类似的合并线程堆栈。</td>
 </tr>
 <tr>
-<td align="left"><code>pathto</code></td>
-<td align="left">显示从 <code>&lt;root&gt;</code> 到 <code>&lt;target&gt;</code> 的 GC 路径。</td>
+<td style="text-align:left"><code>pathto</code></td>
+<td style="text-align:left">显示从 <code>&lt;root&gt;</code> 到 <code>&lt;target&gt;</code> 的 GC 路径。</td>
 </tr>
 <tr>
-<td align="left"><code>pe</code></td>
-<td align="left">显示从指定地址处的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.exception">Exception</a> 类派生的任何对象的字段并设置这些字段的格式。</td>
+<td style="text-align:left"><code>pe</code></td>
+<td style="text-align:left">显示从指定地址处的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.exception">Exception</a> 类派生的任何对象的字段并设置这些字段的格式。</td>
 </tr>
 <tr>
-<td align="left"><code>printexception</code></td>
-<td align="left">显示从指定地址处的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.exception">Exception</a> 类派生的任何对象的字段并设置这些字段的格式。</td>
+<td style="text-align:left"><code>printexception</code></td>
+<td style="text-align:left">显示从指定地址处的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/dotnet/api/system.exception">Exception</a> 类派生的任何对象的字段并设置这些字段的格式。</td>
 </tr>
 <tr>
-<td align="left"><code>runtimes</code></td>
-<td align="left">列出目标中的运行时或更改默认运行时。</td>
+<td style="text-align:left"><code>runtimes</code></td>
+<td style="text-align:left">列出目标中的运行时或更改默认运行时。</td>
 </tr>
 <tr>
-<td align="left"><code>stoponcatch</code></td>
-<td align="left">目标进程将在下次执行期间捕获托管异常时中断。</td>
+<td style="text-align:left"><code>stoponcatch</code></td>
+<td style="text-align:left">目标进程将在下次执行期间捕获托管异常时中断。</td>
 </tr>
 <tr>
-<td align="left"><code>setclrpath</code></td>
-<td align="left">设置用于加载 coreclr dac&#x2F;dbi 文件的路径。 <code>setclrpath &lt;path&gt;</code>。</td>
+<td style="text-align:left"><code>setclrpath</code></td>
+<td style="text-align:left">设置用于加载 coreclr dac/dbi 文件的路径。 <code>setclrpath &lt;path&gt;</code>。</td>
 </tr>
 <tr>
-<td align="left"><code>sethostruntime</code></td>
-<td align="left">设置或显示用于在 SOS 中运行托管代码的 .NET 运行时目录。</td>
+<td style="text-align:left"><code>sethostruntime</code></td>
+<td style="text-align:left">设置或显示用于在 SOS 中运行托管代码的 .NET 运行时目录。</td>
 </tr>
 <tr>
-<td align="left"><code>setsymbolserver</code></td>
-<td align="left">启用符号服务器支持。</td>
+<td style="text-align:left"><code>setsymbolserver</code></td>
+<td style="text-align:left">启用符号服务器支持。</td>
 </tr>
 <tr>
-<td align="left"><code>setsostid</code></td>
-<td align="left">设置当前 OS tid&#x2F;thread 索引，而不是使用 lldb 提供的索引。 <code>setsostid &lt;tid&gt; &lt;index&gt;</code>。</td>
+<td style="text-align:left"><code>setsostid</code></td>
+<td style="text-align:left">设置当前 OS tid/thread 索引，而不是使用 lldb 提供的索引。 <code>setsostid &lt;tid&gt; &lt;index&gt;</code>。</td>
 </tr>
 <tr>
-<td align="left"><code>sos</code></td>
-<td align="left">执行各种 coreclr 调试命令。 使用语法 <code>sos &lt;command-name&gt; &lt;args&gt;</code>。 有关详细信息，请参阅“soshelp”。</td>
+<td style="text-align:left"><code>sos</code></td>
+<td style="text-align:left">执行各种 coreclr 调试命令。 使用语法 <code>sos &lt;command-name&gt; &lt;args&gt;</code>。 有关详细信息，请参阅“soshelp”。</td>
 </tr>
 <tr>
-<td align="left"><code>soshelp</code></td>
-<td align="left">在未指定参数时显示所有可用命令，或者显示有关指定命令的详细帮助信息：<code>soshelp &lt;command&gt;</code>。</td>
+<td style="text-align:left"><code>soshelp</code></td>
+<td style="text-align:left">在未指定参数时显示所有可用命令，或者显示有关指定命令的详细帮助信息：<code>soshelp &lt;command&gt;</code>。</td>
 </tr>
 <tr>
-<td align="left"><code>syncblk</code></td>
-<td align="left">显示 SyncBlock 持有者信息。</td>
+<td style="text-align:left"><code>syncblk</code></td>
+<td style="text-align:left">显示 SyncBlock 持有者信息。</td>
 </tr>
 <tr>
-<td align="left"><code>taskstate</code></td>
-<td align="left">以人类可读格式显示任务状态。</td>
+<td style="text-align:left"><code>taskstate</code></td>
+<td style="text-align:left">以人类可读格式显示任务状态。</td>
 </tr>
 <tr>
-<td align="left"><code>threadpool</code></td>
-<td align="left">显示有关运行时线程池的信息。</td>
+<td style="text-align:left"><code>threadpool</code></td>
+<td style="text-align:left">显示有关运行时线程池的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>threadpoolqueue</code></td>
-<td align="left">显示排队的线程池工作项。</td>
+<td style="text-align:left"><code>threadpoolqueue</code></td>
+<td style="text-align:left">显示排队的线程池工作项。</td>
 </tr>
 <tr>
-<td align="left"><code>threadstate</code></td>
-<td align="left">整齐输出线程状态的含义。</td>
+<td style="text-align:left"><code>threadstate</code></td>
+<td style="text-align:left">整齐输出线程状态的含义。</td>
 </tr>
 <tr>
-<td align="left"><code>timerinfo</code></td>
-<td align="left">显示有关正在运行的计时器的信息。</td>
+<td style="text-align:left"><code>timerinfo</code></td>
+<td style="text-align:left">显示有关正在运行的计时器的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>token2ee</code></td>
-<td align="left">显示指定令牌和模块的 MethodTable 结构和 MethodDesc 结构。</td>
+<td style="text-align:left"><code>token2ee</code></td>
+<td style="text-align:left">显示指定令牌和模块的 MethodTable 结构和 MethodDesc 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>traverseheap</code></td>
-<td align="left">以 CLR 探查器能够理解的格式将堆信息写入文件。</td>
+<td style="text-align:left"><code>traverseheap</code></td>
+<td style="text-align:left">以 CLR 探查器能够理解的格式将堆信息写入文件。</td>
 </tr>
 <tr>
-<td align="left"><code>verifyheap</code></td>
-<td align="left">检查 GC 堆是否有损坏的迹象。</td>
+<td style="text-align:left"><code>verifyheap</code></td>
+<td style="text-align:left">检查 GC 堆是否有损坏的迹象。</td>
 </tr>
 <tr>
-<td align="left"><code>verifyobj</code></td>
-<td align="left">检查作为自变量传递的对象是否有损坏迹象。</td>
+<td style="text-align:left"><code>verifyobj</code></td>
+<td style="text-align:left">检查作为自变量传递的对象是否有损坏迹象。</td>
 </tr>
-</tbody></table>
-<h2 id="Windbg-cdb-示例用法"><a href="#Windbg-cdb-示例用法" class="headerlink" title="Windbg&#x2F;cdb 示例用法"></a>Windbg&#x2F;cdb 示例用法</h2><p>展开表</p>
+</tbody>
+</table>
+<h2 id="windbgcdb-示例用法"><a class="markdownIt-Anchor" href="#windbgcdb-示例用法"></a> Windbg/cdb 示例用法</h2>
+<p>展开表</p>
 <table>
 <thead>
 <tr>
-<th align="left">Command</th>
-<th align="left">说明</th>
+<th style="text-align:left">Command</th>
+<th style="text-align:left">说明</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>!dumparray -start 2 -length 5 -details 00ad28d0</code></td>
-<td align="left">显示地址 <code>00ad28d0</code> 处的数组内容。 显示从第二个元素开始，连续显示五个元素。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>!dumparray -start 2 -length 5 -details 00ad28d0</code></td>
+<td style="text-align:left">显示地址 <code>00ad28d0</code> 处的数组内容。 显示从第二个元素开始，连续显示五个元素。</td>
 </tr>
 <tr>
-<td align="left"><code>!dumpassembly 1ca248</code></td>
-<td align="left">显示地址 <code>1ca248</code> 处的程序集内容。</td>
+<td style="text-align:left"><code>!dumpassembly 1ca248</code></td>
+<td style="text-align:left">显示地址 <code>1ca248</code> 处的程序集内容。</td>
 </tr>
 <tr>
-<td align="left"><code>!dumpheap</code></td>
-<td align="left">显示有关垃圾回收器堆的信息。</td>
+<td style="text-align:left"><code>!dumpheap</code></td>
+<td style="text-align:left">显示有关垃圾回收器堆的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>!DumpLog</code></td>
-<td align="left">将内存中压力日志的内容写入到当前目录中名为 StressLog.txt 的（默认）文件中。</td>
+<td style="text-align:left"><code>!DumpLog</code></td>
+<td style="text-align:left">将内存中压力日志的内容写入到当前目录中名为 StressLog.txt 的（默认）文件中。</td>
 </tr>
 <tr>
-<td align="left"><code>!dumpmd 902f40</code></td>
-<td align="left">显示在地址 <code>MethodDesc</code> 处的 <code>902f40</code> 结构。</td>
+<td style="text-align:left"><code>!dumpmd 902f40</code></td>
+<td style="text-align:left">显示在地址 <code>MethodDesc</code> 处的 <code>902f40</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>!dumpmodule 1caa50</code></td>
-<td align="left">显示有关地址 <code>1caa50</code> 处的模块的信息。</td>
+<td style="text-align:left"><code>!dumpmodule 1caa50</code></td>
+<td style="text-align:left">显示有关地址 <code>1caa50</code> 处的模块的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>!DumpObj a79d40</code></td>
-<td align="left">显示有关地址 <code>a79d40</code> 处的对象的信息。</td>
+<td style="text-align:left"><code>!DumpObj a79d40</code></td>
+<td style="text-align:left">显示有关地址 <code>a79d40</code> 处的对象的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>!DumpVC 0090320c 00a79d9c</code></td>
-<td align="left">使用地址 <code>00a79d9c</code> 处的方法表显示地址 <code>0090320c</code> 处的值类的字段。</td>
+<td style="text-align:left"><code>!DumpVC 0090320c 00a79d9c</code></td>
+<td style="text-align:left">使用地址 <code>00a79d9c</code> 处的方法表显示地址 <code>0090320c</code> 处的值类的字段。</td>
 </tr>
 <tr>
-<td align="left"><code>!eeheap</code> -gc</td>
-<td align="left">显示垃圾回收器所使用的进程内存。</td>
+<td style="text-align:left"><code>!eeheap</code> -gc</td>
+<td style="text-align:left">显示垃圾回收器所使用的进程内存。</td>
 </tr>
 <tr>
-<td align="left"><code>!finalizequeue</code></td>
-<td align="left">显示所有已做好终结计划的对象。</td>
+<td style="text-align:left"><code>!finalizequeue</code></td>
+<td style="text-align:left">显示所有已做好终结计划的对象。</td>
 </tr>
 <tr>
-<td align="left"><code>!findappdomain 00a79d98</code></td>
-<td align="left">确定地址 <code>00a79d98</code> 处的对象的应用程序域。</td>
+<td style="text-align:left"><code>!findappdomain 00a79d98</code></td>
+<td style="text-align:left">确定地址 <code>00a79d98</code> 处的对象的应用程序域。</td>
 </tr>
 <tr>
-<td align="left"><code>!gcinfo 5b68dbb8</code></td>
-<td align="left">显示当前进程中的所有垃圾回收器句柄。</td>
+<td style="text-align:left"><code>!gcinfo 5b68dbb8</code></td>
+<td style="text-align:left">显示当前进程中的所有垃圾回收器句柄。</td>
 </tr>
 <tr>
-<td align="left"><code>!name2ee unittest.exe MainClass.Main</code></td>
-<td align="left">显示模块 <code>unittest.exe</code> 的类 <code>MainClass</code> 中的 <code>Main</code> 方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
+<td style="text-align:left"><code>!name2ee unittest.exe MainClass.Main</code></td>
+<td style="text-align:left">显示模块 <code>unittest.exe</code> 的类 <code>MainClass</code> 中的 <code>Main</code> 方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>!token2ee unittest.exe 02000003</code></td>
-<td align="left">显示有关模块 <code>unittest.exe</code> 中的地址 <code>02000003</code> 处的元数据标记的信息。</td>
+<td style="text-align:left"><code>!token2ee unittest.exe 02000003</code></td>
+<td style="text-align:left">显示有关模块 <code>unittest.exe</code> 中的地址 <code>02000003</code> 处的元数据标记的信息。</td>
 </tr>
-</tbody></table>
-<h2 id="LLDB-示例用法"><a href="#LLDB-示例用法" class="headerlink" title="LLDB 示例用法"></a>LLDB 示例用法</h2><p>展开表</p>
+</tbody>
+</table>
+<h2 id="lldb-示例用法"><a class="markdownIt-Anchor" href="#lldb-示例用法"></a> LLDB 示例用法</h2>
+<p>展开表</p>
 <table>
 <thead>
 <tr>
-<th align="left">Command</th>
-<th align="left">说明</th>
+<th style="text-align:left">Command</th>
+<th style="text-align:left">说明</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>dumparray -start 2 -length 5 -details 00ad28d0</code></td>
-<td align="left">显示地址 <code>00ad28d0</code> 处的数组内容。 显示从第二个元素开始，连续显示五个元素。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>dumparray -start 2 -length 5 -details 00ad28d0</code></td>
+<td style="text-align:left">显示地址 <code>00ad28d0</code> 处的数组内容。 显示从第二个元素开始，连续显示五个元素。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpassembly 1ca248</code></td>
-<td align="left">显示地址 <code>1ca248</code> 处的程序集内容。</td>
+<td style="text-align:left"><code>dumpassembly 1ca248</code></td>
+<td style="text-align:left">显示地址 <code>1ca248</code> 处的程序集内容。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpheap</code></td>
-<td align="left">显示有关垃圾回收器堆的信息。</td>
+<td style="text-align:left"><code>dumpheap</code></td>
+<td style="text-align:left">显示有关垃圾回收器堆的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumplog</code></td>
-<td align="left">将内存中压力日志的内容写入到当前目录中名为 StressLog.txt 的（默认）文件中。</td>
+<td style="text-align:left"><code>dumplog</code></td>
+<td style="text-align:left">将内存中压力日志的内容写入到当前目录中名为 StressLog.txt 的（默认）文件中。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpmd 902f40</code></td>
-<td align="left">显示在地址 <code>MethodDesc</code> 处的 <code>902f40</code> 结构。</td>
+<td style="text-align:left"><code>dumpmd 902f40</code></td>
+<td style="text-align:left">显示在地址 <code>MethodDesc</code> 处的 <code>902f40</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpmodule 1caa50</code></td>
-<td align="left">显示有关地址 <code>1caa50</code> 处的模块的信息。</td>
+<td style="text-align:left"><code>dumpmodule 1caa50</code></td>
+<td style="text-align:left">显示有关地址 <code>1caa50</code> 处的模块的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpobj a79d40</code></td>
-<td align="left">显示有关地址 <code>a79d40</code> 处的对象的信息。</td>
+<td style="text-align:left"><code>dumpobj a79d40</code></td>
+<td style="text-align:left">显示有关地址 <code>a79d40</code> 处的对象的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>dumpvc 0090320c 00a79d9c</code></td>
-<td align="left">使用地址 <code>00a79d9c</code> 处的方法表显示地址 <code>0090320c</code> 处的值类的字段。</td>
+<td style="text-align:left"><code>dumpvc 0090320c 00a79d9c</code></td>
+<td style="text-align:left">使用地址 <code>00a79d9c</code> 处的方法表显示地址 <code>0090320c</code> 处的值类的字段。</td>
 </tr>
 <tr>
-<td align="left"><code>eeheap -gc</code></td>
-<td align="left">显示垃圾回收器所使用的进程内存。</td>
+<td style="text-align:left"><code>eeheap -gc</code></td>
+<td style="text-align:left">显示垃圾回收器所使用的进程内存。</td>
 </tr>
 <tr>
-<td align="left"><code>findappdomain 00a79d98</code></td>
-<td align="left">确定地址 <code>00a79d98</code> 处的对象的应用程序域。</td>
+<td style="text-align:left"><code>findappdomain 00a79d98</code></td>
+<td style="text-align:left">确定地址 <code>00a79d98</code> 处的对象的应用程序域。</td>
 </tr>
 <tr>
-<td align="left"><code>gcinfo 5b68dbb8</code></td>
-<td align="left">显示当前进程中的所有垃圾回收器句柄。</td>
+<td style="text-align:left"><code>gcinfo 5b68dbb8</code></td>
+<td style="text-align:left">显示当前进程中的所有垃圾回收器句柄。</td>
 </tr>
 <tr>
-<td align="left"><code>name2ee unittest.exe MainClass.Main</code></td>
-<td align="left">显示模块 <code>unittest.exe</code> 的类 <code>MainClass</code> 中的 <code>Main</code> 方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
+<td style="text-align:left"><code>name2ee unittest.exe MainClass.Main</code></td>
+<td style="text-align:left">显示模块 <code>unittest.exe</code> 的类 <code>MainClass</code> 中的 <code>Main</code> 方法的 <code>MethodTable</code> 和 <code>EEClass</code> 结构。</td>
 </tr>
 <tr>
-<td align="left"><code>token2ee unittest.exe 02000003</code></td>
-<td align="left">显示有关模块 <code>unittest.exe</code> 中的地址 <code>02000003</code> 处的元数据标记的信息。</td>
+<td style="text-align:left"><code>token2ee unittest.exe 02000003</code></td>
+<td style="text-align:left">显示有关模块 <code>unittest.exe</code> 中的地址 <code>02000003</code> 处的元数据标记的信息。</td>
 </tr>
 <tr>
-<td align="left"><code>clrthreads</code></td>
-<td align="left">显示托管线程。</td>
+<td style="text-align:left"><code>clrthreads</code></td>
+<td style="text-align:left">显示托管线程。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -795,7 +807,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【调试技术】.Net 调试基础命令</div>
-      <div>http://example.com/wiki/调试技术/【调试技术】.Net 调试基础命令/</div>
+      <div>https://hodlyounger.github.io/wiki/调试技术/【调试技术】.Net 调试基础命令/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="概述：寄存器相关整理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【汇编】寄存器相关">
-<meta property="og:url" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%AF%84%E5%AD%98%E5%99%A8%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%AF%84%E5%AD%98%E5%99%A8%E7%9B%B8%E5%85%B3/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：寄存器相关整理">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          699 字
+          688 字
         
       </span>
     
@@ -281,120 +285,126 @@
 <p>概述：寄存器相关整理</p>
 </blockquote>
 <span id="more"></span>
-
-
-
 <p>[toc]</p>
-<h2 id="寄存器的易失性和保存方式"><a href="#寄存器的易失性和保存方式" class="headerlink" title="寄存器的易失性和保存方式"></a>寄存器的易失性和保存方式</h2><p>下表说明了每种寄存器在整个函数调用过程中的使用方法：</p>
+<h2 id="寄存器的易失性和保存方式"><a class="markdownIt-Anchor" href="#寄存器的易失性和保存方式"></a> 寄存器的易失性和保存方式</h2>
+<p>下表说明了每种寄存器在整个函数调用过程中的使用方法：</p>
 <p>展开表</p>
 <table>
 <thead>
 <tr>
-<th align="left">注册</th>
-<th align="left">状态</th>
-<th align="left">使用</th>
+<th style="text-align:left">注册</th>
+<th style="text-align:left">状态</th>
+<th style="text-align:left">使用</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">RAX</td>
-<td align="left">易失的</td>
-<td align="left">返回值寄存器</td>
+<tbody>
+<tr>
+<td style="text-align:left">RAX</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">返回值寄存器</td>
 </tr>
 <tr>
-<td align="left">RCX</td>
-<td align="left">易失的</td>
-<td align="left">第一个整型自变量</td>
+<td style="text-align:left">RCX</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第一个整型自变量</td>
 </tr>
 <tr>
-<td align="left">RDX</td>
-<td align="left">易失的</td>
-<td align="left">第二个整型自变量</td>
+<td style="text-align:left">RDX</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第二个整型自变量</td>
 </tr>
 <tr>
-<td align="left">R8</td>
-<td align="left">易失的</td>
-<td align="left">第三个整型自变量</td>
+<td style="text-align:left">R8</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第三个整型自变量</td>
 </tr>
 <tr>
-<td align="left">R9</td>
-<td align="left">易失的</td>
-<td align="left">第四个整型自变量</td>
+<td style="text-align:left">R9</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第四个整型自变量</td>
 </tr>
 <tr>
-<td align="left">R10:R11</td>
-<td align="left">易失的</td>
-<td align="left">必须根据需要由调用方保留；在 syscall&#x2F;sysret 指令中使用</td>
+<td style="text-align:left">R10:R11</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">必须根据需要由调用方保留；在 syscall/sysret 指令中使用</td>
 </tr>
 <tr>
-<td align="left">R12:R15</td>
-<td align="left">非易失的</td>
-<td align="left">必须由被调用方保留</td>
+<td style="text-align:left">R12:R15</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">必须由被调用方保留</td>
 </tr>
 <tr>
-<td align="left">RDI</td>
-<td align="left">非易失的</td>
-<td align="left">必须由被调用方保留</td>
+<td style="text-align:left">RDI</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">必须由被调用方保留</td>
 </tr>
 <tr>
-<td align="left">RSI</td>
-<td align="left">非易失的</td>
-<td align="left">必须由被调用方保留</td>
+<td style="text-align:left">RSI</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">必须由被调用方保留</td>
 </tr>
 <tr>
-<td align="left">RBX</td>
-<td align="left">非易失的</td>
-<td align="left">必须由被调用方保留</td>
+<td style="text-align:left">RBX</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">必须由被调用方保留</td>
 </tr>
 <tr>
-<td align="left">RBP</td>
-<td align="left">非易失的</td>
-<td align="left">可用作帧指针；必须由被调用方保留</td>
+<td style="text-align:left">RBP</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">可用作帧指针；必须由被调用方保留</td>
 </tr>
 <tr>
-<td align="left">RSP</td>
-<td align="left">非易失的</td>
-<td align="left">堆栈指针</td>
+<td style="text-align:left">RSP</td>
+<td style="text-align:left">非易失的</td>
+<td style="text-align:left">堆栈指针</td>
 </tr>
 <tr>
-<td align="left">XMM0、YMM0</td>
-<td align="left">易失的</td>
-<td align="left">第一个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第一个矢量类型参数</td>
+<td style="text-align:left">XMM0、YMM0</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第一个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第一个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM1、YMM1</td>
-<td align="left">易失的</td>
-<td align="left">第二个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第二个矢量类型参数</td>
+<td style="text-align:left">XMM1、YMM1</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第二个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第二个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM2、YMM2</td>
-<td align="left">易失的</td>
-<td align="left">第三个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第三个矢量类型参数</td>
+<td style="text-align:left">XMM2、YMM2</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第三个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第三个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM3、YMM3</td>
-<td align="left">易失的</td>
-<td align="left">第四个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第四个矢量类型参数</td>
+<td style="text-align:left">XMM3、YMM3</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">第四个 FP 参数；使用 <strong><code>__vectorcall</code></strong> 时的第四个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM4、YMM4</td>
-<td align="left">易失的</td>
-<td align="left">必须根据调用方的需要保留；使用 <strong><code>__vectorcall</code></strong> 时的第五个矢量类型参数</td>
+<td style="text-align:left">XMM4、YMM4</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">必须根据调用方的需要保留；使用 <strong><code>__vectorcall</code></strong> 时的第五个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM5、YMM5</td>
-<td align="left">易失的</td>
-<td align="left">必须根据调用方的需要保留；使用 <strong><code>__vectorcall</code></strong> 时的第六个矢量类型参数</td>
+<td style="text-align:left">XMM5、YMM5</td>
+<td style="text-align:left">易失的</td>
+<td style="text-align:left">必须根据调用方的需要保留；使用 <strong><code>__vectorcall</code></strong> 时的第六个矢量类型参数</td>
 </tr>
 <tr>
-<td align="left">XMM6:XMM15、YMM6:YMM15</td>
-<td align="left">非易失的 (XMM)，易失的（YMM 的上半部分）</td>
-<td align="left">必须由被调用方保留。 YMM 寄存器必须根据需要由调用方保留。</td>
+<td style="text-align:left">XMM6:XMM15、YMM6:YMM15</td>
+<td style="text-align:left">非易失的 (XMM)，易失的（YMM 的上半部分）</td>
+<td style="text-align:left">必须由被调用方保留。 YMM 寄存器必须根据需要由调用方保留。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>当函数进入和退出 C 运行时库调用和 Windows 系统调用时，CPU 标志寄存器的方向位标志将被清除。</p>
-<h2 id="段寄存器"><a href="#段寄存器" class="headerlink" title="段寄存器"></a>段寄存器</h2><p>四个[段寄存器](【汇编】【实验楼】汇编教程笔记 #8086 寄存器组)，分别是 CS 代码段寄存器、DS 数据段寄存器、ES 附加段寄存器、SS 堆栈段寄存器。</p>
-<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><p>存放当前正在运行的程序代码所在段的段基址，表示当前使用的指令代码可以从该段寄存器指定的存储器段中取得，相应的偏移量则由IP提供。 </p>
-<h3 id="SS"><a href="#SS" class="headerlink" title="SS"></a>SS</h3><h3 id="DS"><a href="#DS" class="headerlink" title="DS"></a>DS</h3><h3 id="ES"><a href="#ES" class="headerlink" title="ES"></a>ES</h3><h3 id="FS"><a href="#FS" class="headerlink" title="FS"></a>FS</h3><p>&#x3D;&#x3D;fs&#x3D;&#x3D; 是 &#x3D;&#x3D;80386&#x3D;&#x3D; 起增加的两个辅助段寄存器之一,在这之前只有一个辅助段寄存器ES FS寄存器指向当前活动线程的TEB结构（线程结构）</p>
+<h2 id="段寄存器"><a class="markdownIt-Anchor" href="#段寄存器"></a> 段寄存器</h2>
+<p>四个[段寄存器](【汇编】【实验楼】汇编教程笔记 #8086 寄存器组)，分别是 CS 代码段寄存器、DS 数据段寄存器、ES 附加段寄存器、SS 堆栈段寄存器。</p>
+<h3 id="cs"><a class="markdownIt-Anchor" href="#cs"></a> CS</h3>
+<p>存放当前正在运行的程序代码所在段的段基址，表示当前使用的指令代码可以从该段寄存器指定的存储器段中取得，相应的偏移量则由IP提供。</p>
+<h3 id="ss"><a class="markdownIt-Anchor" href="#ss"></a> SS</h3>
+<h3 id="ds"><a class="markdownIt-Anchor" href="#ds"></a> DS</h3>
+<h3 id="es"><a class="markdownIt-Anchor" href="#es"></a> ES</h3>
+<h3 id="fs"><a class="markdownIt-Anchor" href="#fs"></a> FS</h3>
+<p><mark>fs</mark> 是 <mark>80386</mark> 起增加的两个辅助段寄存器之一,在这之前只有一个辅助段寄存器ES FS寄存器指向当前活动线程的TEB结构（线程结构）</p>
 <table>
 <thead>
 <tr>
@@ -402,7 +412,8 @@
 <th>说明</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>00</td>
 <td>只想SEH链表指针</td>
 </tr>
@@ -450,8 +461,10 @@
 <td>34</td>
 <td>上一个错误（LastError)</td>
 </tr>
-</tbody></table>
-<h3 id="GS"><a href="#GS" class="headerlink" title="GS"></a>GS</h3>
+</tbody>
+</table>
+<h3 id="gs"><a class="markdownIt-Anchor" href="#gs"></a> GS</h3>
+
                 
               </div>
             
@@ -506,7 +519,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【汇编】寄存器相关</div>
-      <div>http://example.com/B_Code/汇编/【汇编】寄存器相关/</div>
+      <div>https://hodlyounger.github.io/B_Code/汇编/【汇编】寄存器相关/</div>
     </div>
     <div class="license-meta">
       

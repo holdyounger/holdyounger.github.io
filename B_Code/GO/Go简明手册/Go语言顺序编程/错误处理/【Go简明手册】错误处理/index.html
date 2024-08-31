@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="错误处理* 错误处理是任何语言都需要考虑到的问题，而 Go 语言在错误处理上解决得更为完善，优雅的错误处理机制是 Go 语言的一大特点。  errorGo 语言引入了一个错误处理的标准模式，即 error 接口，该接口定义如下： 123type error interface &#123;    Error() string&#125;  对于大多数函数，如果要返回错误，可以将 error 作为多">
+    <meta name="description" content="错误处理*  错误处理是任何语言都需要考虑到的问题，而 Go 语言在错误处理上解决得更为完善，优雅的错误处理机制是 Go 语言的一大特点。   error Go 语言引入了一个错误处理的标准模式，即 error 接口，该接口定义如下： 123type error interface &#123;    Error() string&#125; 对于大多数函数，如果要返回错误，可以将 error">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Go简明手册】错误处理">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="错误处理* 错误处理是任何语言都需要考虑到的问题，而 Go 语言在错误处理上解决得更为完善，优雅的错误处理机制是 Go 语言的一大特点。  errorGo 语言引入了一个错误处理的标准模式，即 error 接口，该接口定义如下： 123type error interface &#123;    Error() string&#125;  对于大多数函数，如果要返回错误，可以将 error 作为多">
+<meta property="og:description" content="错误处理*  错误处理是任何语言都需要考虑到的问题，而 Go 语言在错误处理上解决得更为完善，优雅的错误处理机制是 Go 语言的一大特点。   error Go 语言引入了一个错误处理的标准模式，即 error 接口，该接口定义如下： 123type error interface &#123;    Error() string&#125; 对于大多数函数，如果要返回错误，可以将 error">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.152Z">
 <meta property="article:modified_time" content="2024-08-15T10:35:31.987Z">
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -275,18 +279,17 @@
             
               <div class="markdown-body">
                 
-                <h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理*"></a>错误处理<code>*</code></h2><blockquote>
+                <h2 id="错误处理"><a class="markdownIt-Anchor" href="#错误处理"></a> 错误处理<code>*</code></h2>
+<blockquote>
 <p>错误处理是任何语言都需要考虑到的问题，而 Go 语言在错误处理上解决得更为完善，优雅的错误处理机制是 Go 语言的一大特点。</p>
 </blockquote>
-<h4 id="error"><a href="#error" class="headerlink" title="error"></a>error</h4><p>Go 语言引入了一个错误处理的标准模式，即 <code>error</code> 接口，该接口定义如下：</p>
+<h4 id="error"><a class="markdownIt-Anchor" href="#error"></a> error</h4>
+<p>Go 语言引入了一个错误处理的标准模式，即 <code>error</code> 接口，该接口定义如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> <span class="hljs-type">error</span> <span class="hljs-keyword">interface</span> &#123;<br>    Error() <span class="hljs-type">string</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>对于大多数函数，如果要返回错误，可以将 <code>error</code> 作为多返回值的最后一个：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">foo</span><span class="hljs-params">(param <span class="hljs-type">int</span>)</span></span>(ret <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)<br>&#123;<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>调用时的代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go">n, err := foo(<span class="hljs-number">0</span>)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>    <span class="hljs-comment">//  错误处理</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 使用返回值n</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>我们还可以自定义错误类型，创建源文件 <code>error.go</code>，输入以下代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;fmt&quot;</span><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;errors&quot;</span><br><br><span class="hljs-comment">//自定义的出错结构</span><br><span class="hljs-keyword">type</span> myError <span class="hljs-keyword">struct</span> &#123;<br>    arg  <span class="hljs-type">int</span><br>    errMsg <span class="hljs-type">string</span><br>&#125;<br><span class="hljs-comment">//实现Error接口</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(e *myError)</span></span> Error() <span class="hljs-type">string</span> &#123;<br>    <span class="hljs-keyword">return</span> fmt.Sprintf(<span class="hljs-string">&quot;%d - %s&quot;</span>, e.arg, e.errMsg)<br>&#125;<br><br><span class="hljs-comment">//两种出错</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">error_test</span><span class="hljs-params">(arg <span class="hljs-type">int</span>)</span></span> (<span class="hljs-type">int</span>, <span class="hljs-type">error</span>) &#123;<br>    <span class="hljs-keyword">if</span> arg &lt; <span class="hljs-number">0</span>  &#123;<br>         <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>, errors.New(<span class="hljs-string">&quot;Bad Arguments - negtive!&quot;</span>)<br>     &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> arg &gt;<span class="hljs-number">256</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>, &amp;myError&#123;arg, <span class="hljs-string">&quot;Bad Arguments - too large!&quot;</span>&#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> arg*arg, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">//相关的测试</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">for</span> _, i := <span class="hljs-keyword">range</span> []<span class="hljs-type">int</span>&#123;<span class="hljs-number">-1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1000</span>&#125; &#123;<br>        <span class="hljs-keyword">if</span> r, e := error_test(i); e != <span class="hljs-literal">nil</span> &#123;<br>            fmt.Println(<span class="hljs-string">&quot;failed:&quot;</span>, e)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            fmt.Println(<span class="hljs-string">&quot;success:&quot;</span>, r)<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
                 
@@ -355,7 +358,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Go简明手册】错误处理</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/Go语言顺序编程/错误处理/【Go简明手册】错误处理/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/Go语言顺序编程/错误处理/【Go简明手册】错误处理/</div>
     </div>
     <div class="license-meta">
       

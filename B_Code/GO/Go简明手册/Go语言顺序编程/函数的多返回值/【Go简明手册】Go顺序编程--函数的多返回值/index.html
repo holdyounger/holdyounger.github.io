@@ -24,7 +24,7 @@
     <meta name="description" content="概述： Golang 函数如何返回多个变量">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go顺序编程——函数的多返回值">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B--%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/Go%E8%AF%AD%E8%A8%80%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B/%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%A1%BA%E5%BA%8F%E7%BC%96%E7%A8%8B--%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%9A%E8%BF%94%E5%9B%9E%E5%80%BC/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述： Golang 函数如何返回多个变量">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          234 字
+          233 字
         
       </span>
     
@@ -281,14 +285,11 @@
 <p>概述： Golang 函数如何返回多个变量</p>
 </blockquote>
 <span id="more"></span>
-
-
-<p>与 C&#x2F;C++ 和 JAVA 不同，Go 语言的函数和方法可以有多个返回值，这是 Go 提供的一个优美的特性，示例如下：</p>
+<p>与 C/C++ 和 JAVA 不同，Go 语言的函数和方法可以有多个返回值，这是 Go 提供的一个优美的特性，示例如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> Divide<br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;errors&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">divide</span> <span class="hljs-params">(a <span class="hljs-type">int</span>, b <span class="hljs-type">int</span>)</span></span> (num <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)&#123; <span class="hljs-comment">//定义两个返回值</span><br>    <span class="hljs-keyword">if</span> b == <span class="hljs-number">0</span> &#123;<br>        err = errors.New(<span class="hljs-string">&quot;被除数不能为零！&quot;</span>)<br>        <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> a / b, <span class="hljs-literal">nil</span>   <span class="hljs-comment">//支持多个返回值</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h4 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h4><p>在 Go 语言中，你可以在代码里随时定义匿名函数，匿名函数由一个不带函数名的函数声明和函数体组成，示例如下：</p>
+<h4 id="匿名函数"><a class="markdownIt-Anchor" href="#匿名函数"></a> 匿名函数</h4>
+<p>在 Go 语言中，你可以在代码里随时定义匿名函数，匿名函数由一个不带函数名的函数声明和函数体组成，示例如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a, b, c <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> a * b &lt; c<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>你可以将匿名函数直接赋值给一个变量，也可以直接调用运行，示例如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">x := <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a, b, c <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> a * b &lt; c<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a, b, c <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> a * b &lt; c<br>&#125; (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>) <span class="hljs-comment">//小括号内直接给参数列表表示函数调用</span><br></code></pre></td></tr></table></figure>
                 
@@ -366,7 +367,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Go顺序编程——函数的多返回值</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/Go语言顺序编程/函数的多返回值/【Go简明手册】Go顺序编程--函数的多返回值/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/Go语言顺序编程/函数的多返回值/【Go简明手册】Go顺序编程--函数的多返回值/</div>
     </div>
     <div class="license-meta">
       

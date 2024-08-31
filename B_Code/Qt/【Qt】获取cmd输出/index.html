@@ -24,7 +24,7 @@
     <meta name="description" content="Qt 使用 QProcess 执行命令行脚本，并通过 readAllStandardOutput 获取其输出。 123456789101112131415161718192021222324252627#include &lt;QCoreApplication&gt;#include &lt;QProcess&gt;#include &lt;QDebug&gt;int main(int argc,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="oone">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E8%8E%B7%E5%8F%96cmd%E8%BE%93%E5%87%BA/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E8%8E%B7%E5%8F%96cmd%E8%BE%93%E5%87%BA/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="Qt 使用 QProcess 执行命令行脚本，并通过 readAllStandardOutput 获取其输出。 123456789101112131415161718192021222324252627#include &lt;QCoreApplication&gt;#include &lt;QProcess&gt;#include &lt;QDebug&gt;int main(int argc,">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,9 +284,6 @@
                 <p>Qt 使用 <code>QProcess</code> 执行命令行脚本，并通过 <code>readAllStandardOutput</code> 获取其输出。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QCoreApplication&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QProcess&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QDebug&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function">QCoreApplication <span class="hljs-title">a</span><span class="hljs-params">(argc, argv)</span></span>;<br><br>    <span class="hljs-comment">// 创建一个QProcess对象</span><br>    QProcess cmdProcess;<br><br>    <span class="hljs-comment">// 设置要执行的命令</span><br>    QString command = <span class="hljs-string">&quot;your_cmd_command&quot;</span>;<br>    <br>    <span class="hljs-comment">// 启动命令并等待它完成</span><br>    cmdProcess.<span class="hljs-built_in">start</span>(command);<br>    cmdProcess.<span class="hljs-built_in">waitForFinished</span>();<br><br>    <span class="hljs-comment">// 获取命令输出</span><br>    QByteArray output = cmdProcess.<span class="hljs-built_in">readAllStandardOutput</span>();<br><br>    <span class="hljs-comment">// 将输出转换为字符串并输出</span><br>    QString outputStr = QString::<span class="hljs-built_in">fromLocal8Bit</span>(output);<br>    <span class="hljs-built_in">qDebug</span>() &lt;&lt; outputStr;<br><br>    <span class="hljs-keyword">return</span> a.<span class="hljs-built_in">exec</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
 
-
-
-
                 
               </div>
             
@@ -337,7 +338,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div></div>
-      <div>http://example.com/B_Code/Qt/【Qt】获取cmd输出/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】获取cmd输出/</div>
     </div>
     <div class="license-meta">
       

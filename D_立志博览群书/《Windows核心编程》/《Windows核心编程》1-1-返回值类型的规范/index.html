@@ -24,7 +24,7 @@
     <meta name="description" content="参照 Windows 对程序错误的处理中，函数常用返回值的设置，作为C++开发，也应该参照这一标准。  当调用一个 Windows 函数时，它首先要检验传递给它的的各个参数的有效性，然后再设法 执行任务。如果传递了一个无效参数，或者由于某种原因无法执行这项操作，那么操作系统就 会返回一个值，指明该函数在某种程度上运行失败了。表 1 - 1列出了大多数 Windows 函数使用 的返回值的数据类型">
 <meta property="og:type" content="article">
 <meta property="og:title" content="返回值类型的规范">
-<meta property="og:url" content="http://example.com/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%E3%80%8B/%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%E3%80%8B1-1-%E8%BF%94%E5%9B%9E%E5%80%BC%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%A7%84%E8%8C%83/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%E3%80%8B/%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%E3%80%8B1-1-%E8%BF%94%E5%9B%9E%E5%80%BC%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%A7%84%E8%8C%83/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="参照 Windows 对程序错误的处理中，函数常用返回值的设置，作为C++开发，也应该参照这一标准。  当调用一个 Windows 函数时，它首先要检验传递给它的的各个参数的有效性，然后再设法 执行任务。如果传递了一个无效参数，或者由于某种原因无法执行这项操作，那么操作系统就 会返回一个值，指明该函数在某种程度上运行失败了。表 1 - 1列出了大多数 Windows 函数使用 的返回值的数据类型">
 <meta property="og:locale" content="zh_CN">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -225,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          632 字
+          630 字
         
       </span>
     
@@ -286,7 +290,6 @@
 <p>的返回值的数据类型</p>
 </blockquote>
 <center>Windows 函数常用的返回值类型</center>
-
 <table>
 <thead>
 <tr>
@@ -294,7 +297,8 @@
 <th>表示失败的值</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>void</td>
 <td>该函数的运行不可能失败。Windows 函数的返回值类型很少是 void</td>
 </tr>
@@ -311,15 +315,15 @@
 <td>如果函数运行失败，则返回值是 NULL，否则返回PVOID，以标识数据块的内存地址</td>
 </tr>
 <tr>
-<td>LONG&#x2F;DWORD</td>
-<td>这是个难以处理的值。返回数量的函数通常返回LONG或DWORD。如果由于某种原因，函数无法对想要进行计数的对象进行计数，那么该函数通常返回 0或-1（根据函数而定）。如果调用的函数反悔了LONG&#x2F;DWORD，那么需要阅读相应的函数说明，以确保能正确检查潜在的错误。</td>
+<td>LONG/DWORD</td>
+<td>这是个难以处理的值。返回数量的函数通常返回LONG或DWORD。如果由于某种原因，函数无法对想要进行计数的对象进行计数，那么该函数通常返回 0或-1（根据函数而定）。如果调用的函数反悔了LONG/DWORD，那么需要阅读相应的函数说明，以确保能正确检查潜在的错误。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>一个 <code>Windows</code> 函数返回的错误代码对了解该函数为什么会运行失败尝尝很有用。</p>
 <blockquote>
 <p>从系统内部来讲，当一个Windows函数检测到一个错误时，它会使用一个称为线程本地存储器（thread-local storage）的机制，将相应的错误代码号码与调用的线程关联起来。这将使线程能够互相独立运行，而不会影响各自的错误代码。当函数返回时，它的返回值就能指明一个错误已经发生。若要确定这是个什么错误，则需要调用 <code>GetLastError</code> 函数：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">DWORD GetLastError<br></code></pre></td></tr></table></figure>
-
 </blockquote>
 
                 
@@ -378,7 +382,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>返回值类型的规范</div>
-      <div>http://example.com/D_立志博览群书/《Windows核心编程》/《Windows核心编程》1-1-返回值类型的规范/</div>
+      <div>https://hodlyounger.github.io/D_立志博览群书/《Windows核心编程》/《Windows核心编程》1-1-返回值类型的规范/</div>
     </div>
     <div class="license-meta">
       
@@ -422,9 +426,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/7-1-OSI%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B/" title="OSI参考模型">
+                      <a href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/3-13-%E7%83%AD%E8%A1%A5%E4%B8%81%E6%94%AF%E6%8C%81/" title="热补丁支持">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">OSI参考模型</span>
+                        <span class="hidden-mobile">热补丁支持</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

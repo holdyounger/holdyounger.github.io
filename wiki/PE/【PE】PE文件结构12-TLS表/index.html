@@ -24,23 +24,23 @@
     <meta name="description" content="概述：TLS(TLSDirectory) 的说明和使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【PE】PE文件结构12-TLS表">
-<meta property="og:url" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：TLS(TLSDirectory) 的说明和使用">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240.webp">
-<meta property="og:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240-17038293427993.webp">
-<meta property="og:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141408022.png">
-<meta property="og:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141536960.png">
-<meta property="og:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229142646241.png">
-<meta property="article:published_time" content="2024-01-23T06:08:25.891Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:06.929Z">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240.webp">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240-17038293427993.webp">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141408022.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141536960.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229142646241.png">
+<meta property="article:published_time" content="2024-08-31T01:41:20.167Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.168Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
-<meta property="article:tag" content="Windows&#x2F;PE">
 <meta property="article:tag" content="PE">
+<meta property="article:tag" content="Windows&#x2F;PE">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240.webp">
+<meta name="twitter:image" content="https://hodlyounger.github.io/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240.webp">
   
   
   
@@ -78,11 +78,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -219,8 +223,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-01-23 14:08" pubdate>
-          2024年1月23日 下午
+        <time datetime="2024-08-31 09:41" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -231,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          896 字
+          894 字
         
       </span>
     
@@ -288,33 +292,28 @@
 <p>概述：TLS(TLSDirectory) 的说明和使用</p>
 </blockquote>
 <span id="more"></span>
-
-
-<h2 id="0x01-TLS"><a href="#0x01-TLS" class="headerlink" title="0x01 TLS"></a>0x01 TLS</h2><p>TLS全称线程局部存储器，它用来保存变量或回调函数。</p>
+<h2 id="0x01-tls"><a class="markdownIt-Anchor" href="#0x01-tls"></a> 0x01 TLS</h2>
+<p>TLS全称线程局部存储器，它用来保存变量或回调函数。</p>
 <p>TLS里面的变量和回调函数都在程序入口点（AddressOfEntry）之前执行，也就是说程序在被调试时，还没有在入口点处断下来之前，TLS中的变量和回调函数就已经执行完了，所以TLS可以用作反调试之类的操作。</p>
 <p>TLS中的变量单独存在于每个独立的线程当中，每个线程中对该变量的操作都不会影响到其他线程中的TLS变量。</p>
-<p>TLS变量的创建方法有两种方式，分别是动态方式和静态方式，动态方法会用到TlsAlloc、TlsFree、TlsSetValue、TlsGetValue这几个函数来操作变量，静态方法会用声明__declspec (thread) int xx &#x3D; 1;这样的方式来创建。需要注意的是静态创建的TLS变量不能用于DLL动态库中。</p>
+<p>TLS变量的创建方法有两种方式，分别是动态方式和静态方式，动态方法会用到TlsAlloc、TlsFree、TlsSetValue、TlsGetValue这几个函数来操作变量，静态方法会用声明__declspec (thread) int xx = 1;这样的方式来创建。需要注意的是静态创建的TLS变量不能用于DLL动态库中。</p>
 <p>理论说的多了未免有点枯燥，先写个实例吧，说明变量和回调函数的创建，这样明白的更透彻一点。</p>
-<h2 id="0x02-TLS实例"><a href="#0x02-TLS实例" class="headerlink" title="0x02 TLS实例"></a>0x02 TLS实例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs cpp">__declspec (thread)<span class="hljs-type">int</span> g_nNum = <span class="hljs-number">0x11111111</span>;<br>__declspec (thread)<span class="hljs-type">char</span> g_szStr[] = <span class="hljs-string">&quot;TLS g_nNum = 0x%p ...\r\n&quot;</span>;<br><br><span class="hljs-function"><span class="hljs-type">void</span> NTAPI <span class="hljs-title">t_TlsCallBack_A</span><span class="hljs-params">(PVOID DllHandle, DWORD Reason, PVOID Red)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (DLL_THREAD_DETACH == Reason)<br>	&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_TlsCallBack_A -&gt; ThreadDetach!\r\n&quot;</span>);<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">void</span> NTAPI <span class="hljs-title">t_TlsCallBack_B</span><span class="hljs-params">(PVOID DllHandle, DWORD Reason, PVOID Red)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (DLL_THREAD_DETACH == Reason)<br>	&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_TlsCallBack_B -&gt; ThreadDetach!\r\n&quot;</span>);<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span>  data_seg(<span class="hljs-string">&quot;.CRT$XLB&quot;</span>)</span><br>PIMAGE_TLS_CALLBACK p_thread_callback[] = &#123;<br>	t_TlsCallBack_A,<br>	t_TlsCallBack_B,<br>	<span class="hljs-literal">NULL</span><br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span>  data_seg()</span><br><br><span class="hljs-function">DWORD WINAPI <span class="hljs-title">t_ThreadFun</span><span class="hljs-params">(PVOID pParam)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_Thread -&gt;   first printf:&quot;</span>);<br>	<span class="hljs-built_in">printf</span>(g_szStr, g_nNum);<br>	g_nNum = <span class="hljs-number">0x2222222</span>;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_Thread -&gt; second printf:&quot;</span>);<br>	<span class="hljs-built_in">printf</span>(g_szStr, g_nNum);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><span class="hljs-type">int</span> _tmain()<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;_tmain -&gt; TlsDemo.exe is running...\r\n\r\n&quot;</span>);<br><br>	<span class="hljs-built_in">CreateThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, t_ThreadFun, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>	<span class="hljs-built_in">Sleep</span>(<span class="hljs-number">100</span>);<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\r\n&quot;</span>);<br>	<span class="hljs-built_in">CreateThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, t_ThreadFun, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br><br>	<span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>首先我们看注册TLS变量的方式，本例子使用的是静态方法也就是__declspec (thread)int xx &#x3D; 1;这样的方式来创建，而注册回调函数相对比较麻烦点，我们要声明一个#pragma data_seg(“.CRT$XLB”)这样的宏定义将回调函数包起来，CRT表明使用C RunTime机制，X表示标识名随机，L表示TLS callback section，B可以是B-Y之间任意的字母。</p>
+<h2 id="0x02-tls实例"><a class="markdownIt-Anchor" href="#0x02-tls实例"></a> 0x02 TLS实例</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs cpp">__declspec (thread)<span class="hljs-type">int</span> g_nNum = <span class="hljs-number">0x11111111</span>;<br>__declspec (thread)<span class="hljs-type">char</span> g_szStr[] = <span class="hljs-string">&quot;TLS g_nNum = 0x%p ...\r\n&quot;</span>;<br><br><span class="hljs-function"><span class="hljs-type">void</span> NTAPI <span class="hljs-title">t_TlsCallBack_A</span><span class="hljs-params">(PVOID DllHandle, DWORD Reason, PVOID Red)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (DLL_THREAD_DETACH == Reason)<br>	&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_TlsCallBack_A -&gt; ThreadDetach!\r\n&quot;</span>);<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">void</span> NTAPI <span class="hljs-title">t_TlsCallBack_B</span><span class="hljs-params">(PVOID DllHandle, DWORD Reason, PVOID Red)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (DLL_THREAD_DETACH == Reason)<br>	&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_TlsCallBack_B -&gt; ThreadDetach!\r\n&quot;</span>);<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span>  data_seg(<span class="hljs-string">&quot;.CRT$XLB&quot;</span>)</span><br>PIMAGE_TLS_CALLBACK p_thread_callback[] = &#123;<br>	t_TlsCallBack_A,<br>	t_TlsCallBack_B,<br>	<span class="hljs-literal">NULL</span><br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span>  data_seg()</span><br><br><span class="hljs-function">DWORD WINAPI <span class="hljs-title">t_ThreadFun</span><span class="hljs-params">(PVOID pParam)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_Thread -&gt;   first printf:&quot;</span>);<br>	<span class="hljs-built_in">printf</span>(g_szStr, g_nNum);<br>	g_nNum = <span class="hljs-number">0x2222222</span>;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;t_Thread -&gt; second printf:&quot;</span>);<br>	<span class="hljs-built_in">printf</span>(g_szStr, g_nNum);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><span class="hljs-type">int</span> _tmain()<br>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;_tmain -&gt; TlsDemo.exe is running...\r\n\r\n&quot;</span>);<br><br>	<span class="hljs-built_in">CreateThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, t_ThreadFun, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>	<span class="hljs-built_in">Sleep</span>(<span class="hljs-number">100</span>);<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\r\n&quot;</span>);<br>	<span class="hljs-built_in">CreateThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, t_ThreadFun, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br><br>	<span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>首先我们看注册TLS变量的方式，本例子使用的是静态方法也就是__declspec (thread)int xx = 1;这样的方式来创建，而注册回调函数相对比较麻烦点，我们要声明一个#pragma data_seg(“.CRT$XLB”)这样的宏定义将回调函数包起来，CRT表明使用C RunTime机制，X表示标识名随机，L表示TLS callback section，B可以是B-Y之间任意的字母。</p>
 <p>我们还看见回调函数会在线程被终止时调用，并且调用的顺序跟注册回调函数时相关，其实回调函数不止会在线程终止时调用，还有以下几种情况会被调用。</p>
 <img src="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240.webp" srcset="/img/loading.gif" lazyload class title="PE文件格式学习（十二）：TLS表">
-
 <p>具体的参见代码吧，打印结果如下：</p>
 <img src="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/1240-17038293427993.webp" srcset="/img/loading.gif" lazyload class title="img">
-
 <p>可以看见两个线程对g_nNum的操作其实是互不影响的，在程序运行到入口点之前，g_nNum已经被初始化了，以后每开辟一条新的线程，系统都会拷贝一份TLS变量的副本到该线程中。</p>
-<h2 id="0x03-TLS-解析"><a href="#0x03-TLS-解析" class="headerlink" title="0x03 TLS 解析"></a>0x03 TLS 解析</h2><p>接下来对TLS在PE文件中的结构进行解析。TLS在PE中数据目录表的第10位。</p>
+<h2 id="0x03-tls-解析"><a class="markdownIt-Anchor" href="#0x03-tls-解析"></a> 0x03 TLS 解析</h2>
+<p>接下来对TLS在PE文件中的结构进行解析。TLS在PE中数据目录表的第10位。</p>
 <p>通常一个包含了TLS表的程序，它就会拥有.tls段，这个段里面保存了变量和回调函数的数据，但是TLS表本身的结构体一般存在于.rdata段内。本文的例子程序的TLS表RVA是0x2200，通过转换为offset得到0x1000,我们到0x1000处看看十六进制再对比结构体字段就可以解析出TLS表了。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">_IMAGE_TLS_DIRECTORY32</span> <br>&#123;<br>    DWORD   StartAddressOfRawData;<br>    DWORD   EndAddressOfRawData;<br>    PDWORD  AddressOfIndex;<br>    PIMAGE_TLS_CALLBACK *AddressOfCallBacks;<br>    DWORD   SizeOfZeroFill;<br>    DWORD   Characteristics;<br>&#125; IMAGE_TLS_DIRECTORY32<br></code></pre></td></tr></table></figure>
-
 <p>以上述代码为例：编译 x64-debug 版本后分析如下所示：</p>
 <img src="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141408022.png" srcset="/img/loading.gif" lazyload class title="image-20231229141408022">
-
 <p>可以看到 <code>.tls</code> 段的起始地址为 <code>E200h</code>。 也就是.tls 段的偏移在 E200h位置，跳转到 E200h 看一下。</p>
 <img src="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229141536960.png" srcset="/img/loading.gif" lazyload class title="image-20231229141536960">
-
 <p>从 E2000h 开始就可以使用 _IMAGE_TLS_DIRECTORY32 结构体读取 tls 表了。</p>
 <p>在 tls 段内存中就能看到 TLS 变量了</p>
 <img src="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%8412-TLS%E8%A1%A8/image-20231229142646241.png" srcset="/img/loading.gif" lazyload class title="image-20231229142646241">
@@ -360,9 +359,9 @@
       
         <a href="/tags/Windows/" class="print-no-link">#Windows</a>
       
-        <a href="/tags/Windows-PE/" class="print-no-link">#Windows/PE</a>
-      
         <a href="/tags/PE/" class="print-no-link">#PE</a>
+      
+        <a href="/tags/Windows-PE/" class="print-no-link">#Windows/PE</a>
       
     </div>
   
@@ -375,7 +374,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【PE】PE文件结构12-TLS表</div>
-      <div>http://example.com/wiki/PE/【PE】PE文件结构12-TLS表/</div>
+      <div>https://hodlyounger.github.io/wiki/PE/【PE】PE文件结构12-TLS表/</div>
     </div>
     <div class="license-meta">
       
@@ -387,7 +386,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年1月23日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -429,8 +428,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E7%94%A8%E6%88%B7%E6%80%81%E6%9F%A5%E7%9C%8BPEB%E5%92%8CTEB/" title="【调试技术】用户态查看PEB和TEB">
-                        <span class="hidden-mobile">【调试技术】用户态查看PEB和TEB</span>
+                      <a href="/wiki/PE/%E3%80%90PE%E3%80%91PE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%841/" title="【PE】PE文件结构1">
+                        <span class="hidden-mobile">【PE】PE文件结构1</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

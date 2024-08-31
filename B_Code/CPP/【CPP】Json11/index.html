@@ -24,7 +24,7 @@
     <meta name="description" content="[toc] 1234567891011121314151617181920212223242526std::string strMsg &#x3D;		R&quot;(&#123;			  &quot;user&quot; :&quot;test&quot;,			  &quot;status&quot;:&quot;login&quot;,  &#x2F;&#x2F;登录状态：login、logout			  &quot;r">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【CPP】Json11 用法总结">
-<meta property="og:url" content="http://example.com/B_Code/CPP/%E3%80%90CPP%E3%80%91Json11/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/CPP/%E3%80%90CPP%E3%80%91Json11/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="[toc] 1234567891011121314151617181920212223242526std::string strMsg &#x3D;		R&quot;(&#123;			  &quot;user&quot; :&quot;test&quot;,			  &quot;status&quot;:&quot;login&quot;,  &#x2F;&#x2F;登录状态：login、logout			  &quot;r">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,7 +284,6 @@
                 <p>[toc]</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::string strMsg =<br>		<span class="hljs-string">R&quot;(&#123;</span><br><span class="hljs-string">			  &quot;user&quot; :&quot;test&quot;,</span><br><span class="hljs-string">			  &quot;status&quot;:&quot;login&quot;,  //登录状态：login、logout</span><br><span class="hljs-string">			  &quot;result&quot;:&quot;1&quot;,      //登录和登出结果，1表示成功，0表示失败</span><br><span class="hljs-string">			  &quot;reason&quot;:&quot;&quot;,		 //原因，比如超时退出，准入策略限制导致登录失败等</span><br><span class="hljs-string">			  &quot;token&quot;:&quot;xxx&quot;      //token内容</span><br><span class="hljs-string">			&#125;)&quot;</span>;<br><br>    std::string strMsg_empty = <span class="hljs-string">&quot;&quot;</span>;<br>    Json::object jstest = Json::object&#123;&#125;;<br>    string err;<br>    <span class="hljs-type">const</span> <span class="hljs-keyword">auto</span> json = Json::<span class="hljs-built_in">parse</span>(strMsg_empty, err, JsonParse::COMMENTS);<br><br>    jstest[<span class="hljs-string">&quot;msgtype&quot;</span>] = <span class="hljs-string">&quot;test&quot;</span>;<br>    jstest[<span class="hljs-string">&quot;data&quot;</span>] = (json);<br><br>    Json json1 = <span class="hljs-built_in">Json</span>(jstest);<br>    std::cout &lt;&lt; json1.<span class="hljs-built_in">dump</span>();<br><br>	<span class="hljs-type">const</span> Json obj = Json::<span class="hljs-built_in">object</span>(&#123;<br>		&#123; <span class="hljs-string">&quot;msgtype&quot;</span>, <span class="hljs-string">&quot;TEST&quot;</span> &#125;,<br>		&#123; <span class="hljs-string">&quot;data&quot;</span>, json &#125;,<br>		&#125;);<br><br>    std::cout &lt;&lt; obj.<span class="hljs-built_in">dump</span>() &lt;&lt; std::endl;<br></code></pre></td></tr></table></figure>
 
-
                 
               </div>
             
@@ -335,7 +338,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【CPP】Json11 用法总结</div>
-      <div>http://example.com/B_Code/CPP/【CPP】Json11/</div>
+      <div>https://hodlyounger.github.io/B_Code/CPP/【CPP】Json11/</div>
     </div>
     <div class="license-meta">
       

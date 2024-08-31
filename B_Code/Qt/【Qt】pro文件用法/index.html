@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] 宏判断12345if(contains(DEFINES,OEM_Config)) &#123;    FORMS +&#x3D; $$PWD&#x2F;Form.ui    HEADERS +&#x3D; $$PWD&#x2F;Form.h    SOURCES +&#x3D; $$PWD&#x2F;Form.cpp&#125;    pro文件转vcproj之后的配置 常规项  1234# 设置工具集为$(DefaultPlatformToo">
+    <meta name="description" content="[toc]  宏判断 12345if(contains(DEFINES,OEM_Config)) &#123;    FORMS +&#x3D; $$PWD&#x2F;Form.ui    HEADERS +&#x3D; $$PWD&#x2F;Form.h    SOURCES +&#x3D; $$PWD&#x2F;Form.cpp&#125;  pro文件转vcproj之后的配置  常规项  1234# 设置工具集为$(DefaultPlatformTo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】pro文件用法">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91pro%E6%96%87%E4%BB%B6%E7%94%A8%E6%B3%95/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91pro%E6%96%87%E4%BB%B6%E7%94%A8%E6%B3%95/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 宏判断12345if(contains(DEFINES,OEM_Config)) &#123;    FORMS +&#x3D; $$PWD&#x2F;Form.ui    HEADERS +&#x3D; $$PWD&#x2F;Form.h    SOURCES +&#x3D; $$PWD&#x2F;Form.cpp&#125;    pro文件转vcproj之后的配置 常规项  1234# 设置工具集为$(DefaultPlatformToo">
+<meta property="og:description" content="[toc]  宏判断 12345if(contains(DEFINES,OEM_Config)) &#123;    FORMS +&#x3D; $$PWD&#x2F;Form.ui    HEADERS +&#x3D; $$PWD&#x2F;Form.h    SOURCES +&#x3D; $$PWD&#x2F;Form.cpp&#125;  pro文件转vcproj之后的配置  常规项  1234# 设置工具集为$(DefaultPlatformTo">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.318Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:57.638Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,25 +282,21 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h2 id="宏判断"><a href="#宏判断" class="headerlink" title="宏判断"></a>宏判断</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-keyword">if</span>(contains(DEFINES,OEM_Config)) &#123;<br>    FORMS += $<span class="hljs-variable">$PWD</span>/Form.ui<br>    HEADERS += $<span class="hljs-variable">$PWD</span>/Form.h<br>    SOURCES += $<span class="hljs-variable">$PWD</span>/Form.cpp<br>&#125;<br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="pro文件转vcproj之后的配置"><a href="#pro文件转vcproj之后的配置" class="headerlink" title="pro文件转vcproj之后的配置"></a>pro文件转vcproj之后的配置</h2><ol>
+<h2 id="宏判断"><a class="markdownIt-Anchor" href="#宏判断"></a> 宏判断</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-keyword">if</span>(contains(DEFINES,OEM_Config)) &#123;<br>    FORMS += $<span class="hljs-variable">$PWD</span>/Form.ui<br>    HEADERS += $<span class="hljs-variable">$PWD</span>/Form.h<br>    SOURCES += $<span class="hljs-variable">$PWD</span>/Form.cpp<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="pro文件转vcproj之后的配置"><a class="markdownIt-Anchor" href="#pro文件转vcproj之后的配置"></a> pro文件转vcproj之后的配置</h2>
+<ol>
 <li>常规项</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 设置工具集为</span><br>$(DefaultPlatformToolset)<br><span class="hljs-comment"># 设置sdk版本</span><br>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion(<span class="hljs-string">&#x27;Windows&#x27;</span>, <span class="hljs-string">&#x27;10.0&#x27;</span>))<br></code></pre></td></tr></table></figure>
-
 <ol start="2">
 <li>生成前事件</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">call $(SolutionDir)prompt.bat<br></code></pre></td></tr></table></figure>
-
 <ol start="3">
 <li>prompt.bat</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">@<span class="hljs-built_in">echo</span> off<br><span class="hljs-built_in">echo</span> -----------------------------------------------------<br><span class="hljs-built_in">echo</span> [TrustAgent.pro] 文件有更新时，请重新生成当前工程<br><span class="hljs-built_in">echo</span> 以下配置并不适用于所有人，如有编译报错，请自行修改。<br><span class="hljs-built_in">echo</span> 1. Qt工具集默认配置为环境变量QtPath: 当前系统QtPath:[%QtPath%] （推荐 5.9.9_msvc2015）<br><span class="hljs-built_in">echo</span> 2. 工具集默认配置为: $(DefaultPlatformToolset) （推荐 10.0.19041.0及以上）<br><span class="hljs-built_in">echo</span> 3. SDK默认配置为: $([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion(<span class="hljs-string">&#x27;Windows&#x27;</span>, <span class="hljs-string">&#x27;10.0&#x27;</span>)) （推荐 V142）<br><span class="hljs-built_in">echo</span> -----------------------------------------------------<br><br>@REM <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;%QtPath%&quot;</span> == <span class="hljs-string">&quot;&quot;</span> (<br>@REM     choice /c:yn /m <span class="hljs-string">&quot;当前未配置环境变量，是否打开系统配置页面：&quot;</span><br>@REM     <span class="hljs-keyword">if</span> %errorlevel%==1 (<br>@REM         start ms-settings:about<br>@REM     )<br>@REM )<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -352,7 +352,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】pro文件用法</div>
-      <div>http://example.com/B_Code/Qt/【Qt】pro文件用法/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】pro文件用法/</div>
     </div>
     <div class="license-meta">
       

@@ -24,12 +24,12 @@
     <meta name="description" content="概述：MySQL 8 弱密码预研说明，根据目前的调研结果，暂时只能通过注入并调用的方式来检测，且这种方式会触发 MySQL 防爆破策略。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【弱密码】MySQL8 安装及插件导出">
-<meta property="og:url" content="http://example.com/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AE%89%E8%A3%85%E5%8F%8A%E6%8F%92%E4%BB%B6%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AE%89%E8%A3%85%E5%8F%8A%E6%8F%92%E4%BB%B6%E6%9C%BA%E5%88%B6/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：MySQL 8 弱密码预研说明，根据目前的调研结果，暂时只能通过注入并调用的方式来检测，且这种方式会触发 MySQL 防爆破策略。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:06.934Z">
+<meta property="article:modified_time" content="2024-08-31T01:41:20.160Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="数据库&#x2F;MySQL">
 <meta name="twitter:card" content="summary_large_image">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          448 字
+          444 字
         
       </span>
     
@@ -280,12 +284,8 @@
 <p>概述：MySQL 8 弱密码预研说明，根据目前的调研结果，暂时只能通过注入并调用的方式来检测，且这种方式会触发 MySQL 防爆破策略。</p>
 </blockquote>
 <span id="more"></span>
-
-
-
-<p>mysql 认证相关接口均以插件形式，全局导出了插件的列表 </p>
+<p>mysql 认证相关接口均以插件形式，全局导出了插件的列表</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Cached_authentication_plugins * g_cached_authentication_plugins	<span class="hljs-number">0000000147B</span>B31D0	<span class="hljs-number">13573</span><br></code></pre></td></tr></table></figure>
-
 <p>mysql 8.0.34 版本及之后共有三个插件：</p>
 <ul>
 <li>sha256_password</li>
@@ -294,22 +294,21 @@
 </ul>
 <p>可以获取到这三个插件，但是 mysql 的安全机制上，没有办法调用插件对应的函数接口。在每个插件函数接口的内部都是通过 <code>THD</code> 的变量传递登录信息和登录结果的。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp">THD *thd = current_thd;<br><span class="hljs-keyword">if</span> (!thd-&gt;m_disable_password_validation) &#123;<br>  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">my_validate_password_policy</span>(inbuf, inbuflen)) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>插件导出接口的详细说明可查看这篇文章 <a href="%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-%E5%AF%86%E7%A0%81Function">【弱密码】MySQL8-密码Function</a></p>
-<h2 id="安装及启动"><a href="#安装及启动" class="headerlink" title="安装及启动"></a>安装及启动</h2><ol>
+<h2 id="安装及启动"><a class="markdownIt-Anchor" href="#安装及启动"></a> 安装及启动</h2>
+<ol>
 <li>设置环境变量，path添加 mysql\bin 目录</li>
 <li><code>mysqld install</code></li>
 <li><code>mysqld -–initilalize –-console</code></li>
 <li><code>net start mysql</code></li>
-<li>登录后修改密码 <code>alter user root@localhost identified by &#39;Admin@123&#39;;</code></li>
-<li>创建不同插件的用户 <code>create USER mnpweak2 IDENTIFIED WITH mysql_native_password BY &#39;admin123&#39;;</code></li>
+<li>登录后修改密码 <code>alter user root@localhost identified by 'Admin@123';</code></li>
+<li>创建不同插件的用户 <code>create USER mnpweak2 IDENTIFIED WITH mysql_native_password BY 'admin123';</code></li>
 </ol>
-<h2 id="相关导出接口"><a href="#相关导出接口" class="headerlink" title="相关导出接口"></a>相关导出接口</h2><p>声明</p>
+<h2 id="相关导出接口"><a class="markdownIt-Anchor" href="#相关导出接口"></a> 相关导出接口</h2>
+<p>声明</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> MYSQL * (__stdcall *pfn_mysql_init)(MYSQL *mysql);<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">int</span><span class="hljs-params">(__stdcall *pfn_mysql_options)</span><span class="hljs-params">(MYSQL *mysql, <span class="hljs-keyword">enum</span> mysql_option option, <span class="hljs-type">const</span> <span class="hljs-type">void</span> *arg)</span></span>;<br><span class="hljs-keyword">typedef</span> MYSQL * (__stdcall *pfn_mysql_real_connect)(MYSQL *mysql, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *host, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *user, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *passwd, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *db, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> port, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *unix_socket, <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> clientflag);<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">int</span><span class="hljs-params">(__stdcall *pfn_mysql_query)</span><span class="hljs-params">(MYSQL *mysql, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *q)</span></span>;<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">int</span><span class="hljs-params">(__stdcall *pfn_mysql_real_query)</span><span class="hljs-params">(MYSQL *mysql, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *q, <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> length)</span></span>;<br><span class="hljs-keyword">typedef</span> MYSQL_RES * (__stdcall *pfn_mysql_store_result)(MYSQL *mysql);<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-type">unsigned</span> <span class="hljs-title">int</span><span class="hljs-params">(__stdcall *pfn_mysql_num_fields)</span><span class="hljs-params">(MYSQL_RES *mysql)</span></span>;<br><span class="hljs-keyword">typedef</span> MYSQL_FIELD * (__stdcall *pfn_mysql_fetch_field)(MYSQL_RES *mysql);<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">MYSQL_ROW</span><span class="hljs-params">(__stdcall *pfn_mysql_fetch_row)</span><span class="hljs-params">(MYSQL_RES *mysql)</span></span>;<br><span class="hljs-keyword">typedef</span> <span class="hljs-type">const</span> <span class="hljs-type">char</span> * (__stdcall *pfn_mysql_error)(MYSQL *mysql);<br><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span><span class="hljs-params">(__stdcall *pfn_mysql_close)</span><span class="hljs-params">(MYSQL *sock)</span></span>;<br><span class="hljs-keyword">typedef</span> std::<span class="hljs-built_in">pair</span>&lt;<span class="hljs-type">bool</span>, <span class="hljs-type">bool</span>&gt;(__stdcall *fastAuthenticate)(<span class="hljs-type">const</span> std::string &amp;authorization_id,<br>	<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *random,<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> random_length,<br>	<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *scramble,<br>	<span class="hljs-type">bool</span> check_second);<br><br>	<span class="hljs-comment">// 此外还导出了两个插件</span><br>	st_mysql_plugin				*m_builtin_caching_sha2_password_plugin = <span class="hljs-literal">NULL</span>;<br>	st_mysql_plugin				*m_builtin_mysql_password_plugin = <span class="hljs-literal">NULL</span>;<br></code></pre></td></tr></table></figure>
-
 <p>获取</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp">m_ptr_mysql_init = (pfn_mysql_init)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_init&quot;</span>);<br>m_ptr_mysql_options = (pfn_mysql_options)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_options&quot;</span>);<br>m_ptr_mysql_real_connect = (pfn_mysql_real_connect)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_real_connect&quot;</span>);<br>m_ptr_mysql_query = (pfn_mysql_query)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_query&quot;</span>);<br>m_ptr_mysql_real_query = (pfn_mysql_real_query)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_real_query&quot;</span>);<br>m_ptr_mysql_store_result = (pfn_mysql_store_result)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_store_result&quot;</span>);<br>m_ptr_mysql_num_fields = (pfn_mysql_num_fields)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_num_fields&quot;</span>);<br>m_ptr_mysql_fetch_field = (pfn_mysql_fetch_field)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_fetch_field&quot;</span>);<br>m_ptr_mysql_fetch_row = (pfn_mysql_fetch_row)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_fetch_row&quot;</span>);<br>m_ptr_mysql_error = (pfn_mysql_error)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_error&quot;</span>);<br>m_ptr_mysql_close = (pfn_mysql_close)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;mysql_close&quot;</span>);<br><br>m_builtin_caching_sha2_password_plugin = (st_mysql_plugin*)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;builtin_caching_sha2_password_plugin&quot;</span>);<br>m_builtin_mysql_password_plugin = (st_mysql_plugin*)<span class="hljs-built_in">GetProcAddress</span>(hExe, <span class="hljs-string">&quot;builtin_mysql_password_plugin&quot;</span>);<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -363,7 +362,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【弱密码】MySQL8 安装及插件导出</div>
-      <div>http://example.com/wiki/MySQL8/【弱密码】MySQL8-安装及插件机制/</div>
+      <div>https://hodlyounger.github.io/wiki/MySQL8/【弱密码】MySQL8-安装及插件机制/</div>
     </div>
     <div class="license-meta">
       

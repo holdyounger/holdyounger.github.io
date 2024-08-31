@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] jpg 和 png 图片格式在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：  问题：一个png格式的图片改成后缀为jpg格式的图片时，QLabel无法读取的问题。笔者是通过setStyleSheet()、QImage、QPixmap的接口均尝试过将改后缀后图片设置到QLabel中，均以失败告终。  特此研究了一下这jpg和png两者之间的区别，后续再研究一下Q">
+    <meta name="description" content="[toc]  jpg 和 png 图片格式 在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：  问题：一个png格式的图片改成后缀为jpg格式的图片时，QLabel无法读取的问题。笔者是通过setStyleSheet()、QImage、QPixmap的接口均尝试过将改后缀后图片设置到QLabel中，均以失败告终。  特此研究了一下这jpg和png两者之间的区别，后续再研究一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="png和jpg格式的图片(一)">
-<meta property="og:url" content="http://example.com/Z_%E6%9D%82%E8%AE%B0/png%E5%92%8Cjpg%E6%A0%BC%E5%BC%8F%E5%9B%BE%E7%89%87/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/Z_%E6%9D%82%E8%AE%B0/png%E5%92%8Cjpg%E6%A0%BC%E5%BC%8F%E5%9B%BE%E7%89%87/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] jpg 和 png 图片格式在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：  问题：一个png格式的图片改成后缀为jpg格式的图片时，QLabel无法读取的问题。笔者是通过setStyleSheet()、QImage、QPixmap的接口均尝试过将改后缀后图片设置到QLabel中，均以失败告终。  特此研究了一下这jpg和png两者之间的区别，后续再研究一下Q">
+<meta property="og:description" content="[toc]  jpg 和 png 图片格式 在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：  问题：一个png格式的图片改成后缀为jpg格式的图片时，QLabel无法读取的问题。笔者是通过setStyleSheet()、QImage、QPixmap的接口均尝试过将改后缀后图片设置到QLabel中，均以失败告终。  特此研究了一下这jpg和png两者之间的区别，后续再研究一">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.558Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:52.400Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,7 +282,8 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="jpg-和-png-图片格式"><a href="#jpg-和-png-图片格式" class="headerlink" title="jpg 和 png 图片格式"></a><code>jpg</code> 和 <code>png</code> 图片格式</h1><p>在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：</p>
+<h1 id="jpg-和-png-图片格式"><a class="markdownIt-Anchor" href="#jpg-和-png-图片格式"></a> <code>jpg</code> 和 <code>png</code> 图片格式</h1>
+<p>在写这篇文章之前，笔者在编写一个简单的 Qt 程序时遇到了这样一个问题：</p>
 <blockquote>
 <p>问题：一个<code>png</code>格式的图片改成后缀为<code>jpg</code>格式的图片时，QLabel无法读取的问题。笔者是通过<code>setStyleSheet()</code>、<code>QImage</code>、<code>QPixmap</code>的接口均尝试过将改后缀后图片设置到<code>QLabel</code>中，均以<mark style="background-color:red">失败</mark>告终。</p>
 </blockquote>
@@ -288,8 +293,9 @@
 <li>png支持透明通道</li>
 <li>jpg的图片更适合在网络中传播和使用。</li>
 </ul>
-<h2 id="jpg格式"><a href="#jpg格式" class="headerlink" title="jpg格式"></a><code>jpg</code>格式</h2><blockquote>
-<p><strong>jpg：</strong>是JPEG标准的产物，也是目前网络最为流行的图片格式，jpg格式的图片可以将图像文件压缩到最小格式，在高度压缩率的同时，可以展现是分丰富生动的图像，但是随着压缩比的增大，图片的品质会逐渐降低的。我们现在常用的jpg的标准全程为<code>JPEG 2000标准</code>，有以下几点特性：</p>
+<h2 id="jpg格式"><a class="markdownIt-Anchor" href="#jpg格式"></a> <code>jpg</code>格式</h2>
+<blockquote>
+<p>**jpg：**是JPEG标准的产物，也是目前网络最为流行的图片格式，jpg格式的图片可以将图像文件压缩到最小格式，在高度压缩率的同时，可以展现是分丰富生动的图像，但是随着压缩比的增大，图片的品质会逐渐降低的。我们现在常用的jpg的标准全程为<code>JPEG 2000标准</code>，有以下几点特性：</p>
 <ol>
 <li>高压缩率</li>
 <li>无损压缩和有损压缩</li>
@@ -300,8 +306,9 @@
 <li>基于内容的描述</li>
 </ol>
 </blockquote>
-<h2 id="png格式"><a href="#png格式" class="headerlink" title="png格式"></a><code>png</code>格式</h2><blockquote>
-<p><strong>png：</strong>是一种采用无损压缩算法的位图模式，其设计目的是视图替代GIF和TIFF文件格式，同时增加一下GIF文件格式所不具备的特性。PNG使用从LZ77派生的无损数据压缩算法，一般应用于JAVA程序、网页或S60程序中，原因就是因为png的压缩比更高，生成文件体积小。png图片也有一些特性：</p>
+<h2 id="png格式"><a class="markdownIt-Anchor" href="#png格式"></a> <code>png</code>格式</h2>
+<blockquote>
+<p>**png：**是一种采用无损压缩算法的位图模式，其设计目的是视图替代GIF和TIFF文件格式，同时增加一下GIF文件格式所不具备的特性。PNG使用从LZ77派生的无损数据压缩算法，一般应用于JAVA程序、网页或S60程序中，原因就是因为png的压缩比更高，生成文件体积小。png图片也有一些特性：</p>
 <ol>
 <li>体积小</li>
 <li>无损压缩</li>
@@ -313,7 +320,8 @@
 <p>关于 <code>png</code> 格式还需要说明的是：</p>
 <p>png格式有8位、24位、32位三种形式，其中8位PNG支持两种不同的透明形式（索引透明和alpha透明），24位PNG不支持透明，32位PNG在24位基础上增加了8位透明通道，因此可展现256级透明程度。</p>
 <p>PNG8和PNG24后面的数字则是代表这种PNG格式最多可以索引和存储的颜色值。8代表2的8次方也就是256色，而24则代表2的24次方大概有1600多万色。</p>
-<h1 id="区别：png-和-jpg"><a href="#区别：png-和-jpg" class="headerlink" title="区别：png 和 jpg"></a>区别：<code>png</code> 和 <code>jpg</code></h1><blockquote>
+<h1 id="区别png-和-jpg"><a class="markdownIt-Anchor" href="#区别png-和-jpg"></a> 区别：<code>png</code> 和 <code>jpg</code></h1>
+<blockquote>
 <p>转自百度百科：</p>
 <p>1、<a target="_blank" rel="external nofollow noopener noreferrer" href="https://baike.baidu.com/item/JPEG">JPEG</a>可以对照片（或类似）图像生成更小的文件，这是由于JPEG采用了一种针对照片图像的特定有损编码方法，这种编码适用于低对比，图像颜色过渡平滑，噪声多，且结构不规则的情况下。如果在这种情况下用PNG代替JPEG，文件尺寸增大很多，而图像质量的提高有限。相应的，如果保存文本，线条或类似的边缘清晰，有大块相同颜色区域的图像，PNG格式的压缩效果就要比JPEG好很多，并且不会出现JPEG那样的高对比度区域的图像有损。如果图像既有清晰边缘，又有照片图像的特点，就在在这两种格式之间权衡一下了。JPEG不支持透明度。</p>
 <p>2、由于JPEG是有损压缩，会产生迭代有损，在重复压缩和解码的过程中会不断丢失信息使图像质量下降。由于PNG是无损的，保存将要被编辑的图像来说更加合适。虽然PNG压缩照片图像也有效，但有专门针对照片图像设计的无损压缩格式，比如无损JPEG2000，Adobe DNG等。总的来说这些格式都不能做到适用所有图像。对于将要发布的图像可以保存成JPEG，用JPEG编码一次不会造成明显的图像有损。</p>
@@ -371,7 +379,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>png和jpg格式的图片(一)</div>
-      <div>http://example.com/Z_杂记/png和jpg格式图片/</div>
+      <div>https://hodlyounger.github.io/Z_杂记/png和jpg格式图片/</div>
     </div>
     <div class="license-meta">
       

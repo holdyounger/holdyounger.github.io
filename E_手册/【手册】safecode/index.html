@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="TrustClient 相关1） win api使用宏控制123#ifdef Q_OS_WIN	#include &lt;Windows.h&gt;#endif      内存相关函数段 申请内存  12345678void *zallloc(size_t len) &#123;    void *p &#x3D; malloc(len);    if(p) &#123;        memset(p,">
+    <meta name="description" content="TrustClient 相关  1） win api使用宏控制 123#ifdef Q_OS_WIN	#include &lt;Windows.h&gt;#endif  内存相关  函数段  申请内存  12345678void *zallloc(size_t len) &#123;    void *p &#x3D; malloc(len);    if(p) &#123;        memset(">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【手册】代码规范，安全编码">
-<meta property="og:url" content="http://example.com/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91safecode/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91safecode/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="TrustClient 相关1） win api使用宏控制123#ifdef Q_OS_WIN	#include &lt;Windows.h&gt;#endif      内存相关函数段 申请内存  12345678void *zallloc(size_t len) &#123;    void *p &#x3D; malloc(len);    if(p) &#123;        memset(p,">
+<meta property="og:description" content="TrustClient 相关  1） win api使用宏控制 123#ifdef Q_OS_WIN	#include &lt;Windows.h&gt;#endif  内存相关  函数段  申请内存  12345678void *zallloc(size_t len) &#123;    void *p &#x3D; malloc(len);    if(p) &#123;        memset(">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.482Z">
 <meta property="article:modified_time" content="2024-08-26T09:59:20.827Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -276,34 +280,22 @@
             
               <div class="markdown-body">
                 
-                <h1 id="TrustClient-相关"><a href="#TrustClient-相关" class="headerlink" title="TrustClient 相关"></a>TrustClient 相关</h1><h2 id="1）-win-api使用宏控制"><a href="#1）-win-api使用宏控制" class="headerlink" title="1） win api使用宏控制"></a>1） win api使用宏控制</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> Q_OS_WIN</span><br>	<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;Windows.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
-
-
-
-
-
-<h1 id="内存相关"><a href="#内存相关" class="headerlink" title="内存相关"></a>内存相关</h1><h2 id="函数段"><a href="#函数段" class="headerlink" title="函数段"></a>函数段</h2><ol>
+                <h1 id="trustclient-相关"><a class="markdownIt-Anchor" href="#trustclient-相关"></a> TrustClient 相关</h1>
+<h2 id="1-win-api使用宏控制"><a class="markdownIt-Anchor" href="#1-win-api使用宏控制"></a> 1） win api使用宏控制</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> Q_OS_WIN</span><br>	<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;Windows.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+<h1 id="内存相关"><a class="markdownIt-Anchor" href="#内存相关"></a> 内存相关</h1>
+<h2 id="函数段"><a class="markdownIt-Anchor" href="#函数段"></a> 函数段</h2>
+<ol>
 <li>申请内存</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> *<span class="hljs-title">zallloc</span><span class="hljs-params">(<span class="hljs-type">size_t</span> len)</span> </span>&#123;<br>    <span class="hljs-type">void</span> *p = <span class="hljs-built_in">malloc</span>(len);<br>    <span class="hljs-keyword">if</span>(p) &#123;<br>        <span class="hljs-built_in">memset</span>(p, <span class="hljs-number">0</span>, len);<br>    &#125;<br>    <br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="常用的宏"><a href="#常用的宏" class="headerlink" title="常用的宏"></a>常用的宏</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> safe_free(p) &#123;\</span><br><span class="hljs-meta">	free(p);\</span><br><span class="hljs-meta">	p = NULL;\</span><br><span class="hljs-meta">&#125;\</span><br></code></pre></td></tr></table></figure>
-
-
-
-<h1 id="线程的资源竞争"><a href="#线程的资源竞争" class="headerlink" title="线程的资源竞争"></a>线程的资源竞争</h1><ol>
+<h2 id="常用的宏"><a class="markdownIt-Anchor" href="#常用的宏"></a> 常用的宏</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> safe_free(p) &#123;\</span><br><span class="hljs-meta">	free(p);\</span><br><span class="hljs-meta">	p = NULL;\</span><br><span class="hljs-meta">&#125;\</span><br></code></pre></td></tr></table></figure>
+<h1 id="线程的资源竞争"><a class="markdownIt-Anchor" href="#线程的资源竞争"></a> 线程的资源竞争</h1>
+<ol>
 <li>对<code>链表、边界资源、临界区域</code>的操作一定要<mark style="background-color:red">加锁</mark></li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::mutex mtx; <span class="hljs-comment">// 保护counter</span><br><br>mtx.<span class="hljs-built_in">lock</span>();<br><br><span class="hljs-comment">// 要进行的资源操作</span><br><span class="hljs-built_in">todo</span>();<br><br>mtx.<span class="hljs-built_in">unlock</span>();<br></code></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
 
                 
               </div>
@@ -350,7 +342,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【手册】代码规范，安全编码</div>
-      <div>http://example.com/E_手册/【手册】safecode/</div>
+      <div>https://hodlyounger.github.io/E_手册/【手册】safecode/</div>
     </div>
     <div class="license-meta">
       

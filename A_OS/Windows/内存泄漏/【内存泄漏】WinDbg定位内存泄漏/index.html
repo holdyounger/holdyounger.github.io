@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：使用 Windbg 定位内存泄漏  [toc] windbg 定位内存泄漏主要使用 !heap 命令 使用Windbg检测Windows程序内存泄漏的步骤如下：  启动程序：使用Windbg启动需要检测内存泄漏的程序，可以通过在Windbg中选择“文件”-&gt;“打开程序”来打开程序。 设置符号路径：在Windbg中，可以通过设置符号路径来加载程序的符号信息，方便调试。可以通过在Wind">
+    <meta name="description" content="概述：使用 Windbg 定位内存泄漏  [toc]  windbg 定位内存泄漏 主要使用 !heap 命令 使用Windbg检测Windows程序内存泄漏的步骤如下：  启动程序：使用Windbg启动需要检测内存泄漏的程序，可以通过在Windbg中选择“文件”-&gt;“打开程序”来打开程序。 设置符号路径：在Windbg中，可以通过设置符号路径来加载程序的符号信息，方便调试。可以通过在Wi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【内存泄漏】windbg 定位内存泄漏">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91WinDbg%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91WinDbg%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：使用 Windbg 定位内存泄漏  [toc] windbg 定位内存泄漏主要使用 !heap 命令 使用Windbg检测Windows程序内存泄漏的步骤如下：  启动程序：使用Windbg启动需要检测内存泄漏的程序，可以通过在Windbg中选择“文件”-&gt;“打开程序”来打开程序。 设置符号路径：在Windbg中，可以通过设置符号路径来加载程序的符号信息，方便调试。可以通过在Wind">
+<meta property="og:description" content="概述：使用 Windbg 定位内存泄漏  [toc]  windbg 定位内存泄漏 主要使用 !heap 命令 使用Windbg检测Windows程序内存泄漏的步骤如下：  启动程序：使用Windbg启动需要检测内存泄漏的程序，可以通过在Windbg中选择“文件”-&gt;“打开程序”来打开程序。 设置符号路径：在Windbg中，可以通过设置符号路径来加载程序的符号信息，方便调试。可以通过在Wi">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.015Z">
 <meta property="article:modified_time" content="2024-08-16T10:11:56.646Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,37 +285,33 @@
 <p>概述：使用 Windbg 定位内存泄漏</p>
 </blockquote>
 <p>[toc]</p>
-<h2 id="windbg-定位内存泄漏"><a href="#windbg-定位内存泄漏" class="headerlink" title="windbg 定位内存泄漏"></a>windbg 定位内存泄漏</h2><p>主要使用 <code>!heap</code> 命令</p>
+<h2 id="windbg-定位内存泄漏"><a class="markdownIt-Anchor" href="#windbg-定位内存泄漏"></a> windbg 定位内存泄漏</h2>
+<p>主要使用 <code>!heap</code> 命令</p>
 <p>使用Windbg检测Windows程序内存泄漏的步骤如下：</p>
 <ol>
 <li>启动程序：使用Windbg启动需要检测内存泄漏的程序，可以通过在Windbg中选择“文件”-&gt;“打开程序”来打开程序。</li>
 <li>设置符号路径：在Windbg中，可以通过设置符号路径来加载程序的符号信息，方便调试。可以通过在Windbg中输入“.sympath”命令来设置符号路径，例如：</li>
 </ol>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-title">.sympath+ C:\Symbols</span><br></code></pre></td></tr></table></figure>
-
 <p>其中，C:\Symbols是符号文件的路径。</p>
 <ol>
 <li>启用gflags：gflags是Windows提供的一个工具，可以用来设置程序的调试标志。可以通过在命令行中输入以下命令来启用gflags：</li>
 </ol>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">gflags /<span class="hljs-selector-tag">i</span> your_program<span class="hljs-selector-class">.exe</span> +ust<br></code></pre></td></tr></table></figure>
-
 <p>其中，your_program.exe是需要检测内存泄漏的程序的名称。</p>
 <ol>
 <li>运行程序：在Windbg中，可以通过输入“g”命令来运行程序。</li>
 <li>检测内存泄漏：在程序运行过程中，可以通过输入“!heap -s”命令来查看程序的堆内存使用情况，例如：</li>
 </ol>
 <figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-addition">!heap -s</span><br></code></pre></td></tr></table></figure>
-
 <p>该命令会输出程序的堆内存使用情况，包括已分配的内存块数量、已释放的内存块数量、已分配的内存块总大小、已释放的内存块总大小等信息。</p>
 <ol>
 <li>输出内存泄漏信息：在程序运行结束后，可以通过输入“!heap -stat -h handle”命令来输出内存泄漏信息，例如：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">!heap -<span class="hljs-built_in">stat</span> -h handle<br></code></pre></td></tr></table></figure>
-
 <p>该命令会输出程序中所有未释放的内存块的信息，包括内存块的大小、地址、分配位置等信息。</p>
 <p>需要注意的是，使用Windbg检测内存泄漏需要一定的调试经验和技巧，对程序的性能也会产生一定的影响。因此，在正式发布程序之前，应该关闭gflags功能。可以通过在命令行中输入以下命令来关闭gflags：</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">gflags /<span class="hljs-selector-tag">i</span> your_program<span class="hljs-selector-class">.exe</span> -ust<br></code></pre></td></tr></table></figure>
-
 <p>其中，your_program.exe是需要关闭gflags功能的程序的名称。</p>
 
                 
@@ -375,7 +375,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【内存泄漏】windbg 定位内存泄漏</div>
-      <div>http://example.com/A_OS/Windows/内存泄漏/【内存泄漏】WinDbg定位内存泄漏/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/内存泄漏/【内存泄漏】WinDbg定位内存泄漏/</div>
     </div>
     <div class="license-meta">
       

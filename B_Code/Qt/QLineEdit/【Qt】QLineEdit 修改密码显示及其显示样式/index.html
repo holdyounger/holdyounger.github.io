@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] Qt设置为密码模式参考 QLineEdit::setEchoMode。密码模式总共有两种  QLineEdit::Password QLineEdit::PasswordEchoOnEdit  修改样式QLineEdit 密码样式使用 Unicode 字符表示,密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit 有效Uni">
+    <meta name="description" content="[toc]  Qt设置为密码模式 参考 QLineEdit::setEchoMode。密码模式总共有两种  QLineEdit::Password QLineEdit::PasswordEchoOnEdit   修改样式 QLineEdit 密码样式使用 Unicode 字符表示, 密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】QLineEdit 修改密码模式及其样式">
-<meta property="og:url" content="http://example.com/B_Code/Qt/QLineEdit/%E3%80%90Qt%E3%80%91QLineEdit%20%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E6%98%BE%E7%A4%BA%E5%8F%8A%E5%85%B6%E6%98%BE%E7%A4%BA%E6%A0%B7%E5%BC%8F/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/QLineEdit/%E3%80%90Qt%E3%80%91QLineEdit%20%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E6%98%BE%E7%A4%BA%E5%8F%8A%E5%85%B6%E6%98%BE%E7%A4%BA%E6%A0%B7%E5%BC%8F/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] Qt设置为密码模式参考 QLineEdit::setEchoMode。密码模式总共有两种  QLineEdit::Password QLineEdit::PasswordEchoOnEdit  修改样式QLineEdit 密码样式使用 Unicode 字符表示,密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit 有效Uni">
+<meta property="og:description" content="[toc]  Qt设置为密码模式 参考 QLineEdit::setEchoMode。密码模式总共有两种  QLineEdit::Password QLineEdit::PasswordEchoOnEdit   修改样式 QLineEdit 密码样式使用 Unicode 字符表示, 密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.226Z">
 <meta property="article:modified_time" content="2024-08-16T10:16:38.666Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -277,17 +281,22 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h2 id="Qt设置为密码模式"><a href="#Qt设置为密码模式" class="headerlink" title="Qt设置为密码模式"></a>Qt设置为密码模式</h2><p>参考 <code>QLineEdit::setEchoMode</code>。密码模式总共有两种</p>
+<h2 id="qt设置为密码模式"><a class="markdownIt-Anchor" href="#qt设置为密码模式"></a> Qt设置为密码模式</h2>
+<p>参考 <code>QLineEdit::setEchoMode</code>。密码模式总共有两种</p>
 <ul>
 <li>QLineEdit::Password</li>
 <li>QLineEdit::PasswordEchoOnEdit</li>
 </ul>
-<h2 id="修改样式"><a href="#修改样式" class="headerlink" title="修改样式"></a>修改样式</h2><p>QLineEdit 密码样式使用 Unicode 字符表示,<br>密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit 有效<br><a target="_blank" rel="external nofollow noopener noreferrer" href="https://unicode-table.com/cn/search/">Unicode 值查询网址： https://unicode-table.com/cn/search/</a></p>
-<h3 id="1-默认样式"><a href="#1-默认样式" class="headerlink" title="1. 默认样式"></a>1. 默认样式</h3><p>默认样式是实心圆点 ，Unicode值 9769</p>
-<h3 id="2-自定义样式"><a href="#2-自定义样式" class="headerlink" title="2. 自定义样式"></a>2. 自定义样式</h3><p>参考  <code>Qt 助手</code> 中的提升，搜索 <code>Qt Style Sheets Examples</code> 中关于 <code>QLineEdit</code> 的提示设置即可。</p>
+<h2 id="修改样式"><a class="markdownIt-Anchor" href="#修改样式"></a> 修改样式</h2>
+<p>QLineEdit 密码样式使用 Unicode 字符表示,<br>
+密码样式修改在QLineEdit::Password 、QLineEdit::PasswordEchoOnEdit 有效<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://unicode-table.com/cn/search/">Unicode 值查询网址： https://unicode-table.com/cn/search/</a></p>
+<h3 id="1-默认样式"><a class="markdownIt-Anchor" href="#1-默认样式"></a> 1. 默认样式</h3>
+<p>默认样式是实心圆点 ，Unicode值 9769</p>
+<h3 id="2-自定义样式"><a class="markdownIt-Anchor" href="#2-自定义样式"></a> 2. 自定义样式</h3>
+<p>参考  <code>Qt 助手</code> 中的提升，搜索 <code>Qt Style Sheets Examples</code> 中关于 <code>QLineEdit</code> 的提示设置即可。</p>
 <p><code>*</code> 的 unicode 编码为 9679。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp">QLineEdit[echoMode=<span class="hljs-string">&quot;2&quot;</span>] &#123;<br>      lineedit-password-character: <span class="hljs-number">9679</span>;<br>  &#125;<br><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -348,7 +357,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】QLineEdit 修改密码模式及其样式</div>
-      <div>http://example.com/B_Code/Qt/QLineEdit/【Qt】QLineEdit 修改密码显示及其显示样式/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/QLineEdit/【Qt】QLineEdit 修改密码显示及其显示样式/</div>
     </div>
     <div class="license-meta">
       

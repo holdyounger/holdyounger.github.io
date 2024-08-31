@@ -24,15 +24,15 @@
     <meta name="description" content="概述：windows操作下编译 libssh2 静态库">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【libssh2】 Windows 下 libssh2 编译步骤">
-<meta property="og:url" content="http://example.com/C_OpenSource/%E3%80%90libssh2%E3%80%91libssh2%E7%BC%96%E8%AF%91/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/C_OpenSource/%E3%80%90libssh2%E3%80%91libssh2%E7%BC%96%E8%AF%91/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：windows操作下编译 libssh2 静态库">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-03-12T06:29:26.830Z">
 <meta property="article:modified_time" content="2024-08-26T09:53:04.885Z">
 <meta property="article:author" content="mingming">
-<meta property="article:tag" content="opensource">
 <meta property="article:tag" content="libssh2">
+<meta property="article:tag" content="opensource">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,17 +285,21 @@
 <p>概述：windows操作下编译 libssh2 静态库</p>
 </blockquote>
 <span id="more"></span>
-
 <ol>
-<li><p>运行管理员 CMD</p>
+<li>
+<p>运行管理员 CMD</p>
 </li>
-<li><p>cmd 中运行要编译版本的 vcvars32.bat</p>
+<li>
+<p>cmd 中运行要编译版本的 vcvars32.bat</p>
 </li>
-<li><p>cmake 配置编译环境</p>
+<li>
+<p>cmake 配置编译环境</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">cmake -DBUILD_SHARED_LIBS=<span class="hljs-keyword">ON</span> -DBUILD_STATIC_LIBS=<span class="hljs-keyword">ON</span> -DBUILD_EXAMPLES=<span class="hljs-keyword">OFF</span> -DOPENSSL_ROOT_DIR=<span class="hljs-string">&quot;D:\OpenSSL-3.1-Win32-mtd&quot;</span> -DOPENSSL_CRYPTO_LIBRARY=<span class="hljs-string">&quot;D:\OpenSSL-Win32\lib&quot;</span> -DBUILD_TESTING=<span class="hljs-keyword">OFF</span> -A Win32 . -B <span class="hljs-string">&quot;x86&quot;</span><br></code></pre></td></tr></table></figure>
 </li>
-<li><p>cmake 编译（或者使用sln工程）</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake">cmake --build x86 --config Debug<br><span class="hljs-comment"># x64 Release</span><br>cmake --build x64 --config Release<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>cmake 编译（或者使用sln工程）</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake">cmake --build x86 --config Debug<br><span class="hljs-comment"># x64 Release</span><br>cmake --build x64 --config Release<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
 
                 
@@ -326,9 +334,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/opensource/" class="print-no-link">#opensource</a>
-      
         <a href="/tags/libssh2/" class="print-no-link">#libssh2</a>
+      
+        <a href="/tags/opensource/" class="print-no-link">#opensource</a>
       
     </div>
   
@@ -341,7 +349,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【libssh2】 Windows 下 libssh2 编译步骤</div>
-      <div>http://example.com/C_OpenSource/【libssh2】libssh2编译/</div>
+      <div>https://hodlyounger.github.io/C_OpenSource/【libssh2】libssh2编译/</div>
     </div>
     <div class="license-meta">
       

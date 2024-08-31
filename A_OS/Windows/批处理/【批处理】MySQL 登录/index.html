@@ -24,7 +24,7 @@
     <meta name="description" content="概述：MySQL 登录测试脚本">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【批处理】MySQL 登录">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%89%B9%E5%A4%84%E7%90%86/%E3%80%90%E6%89%B9%E5%A4%84%E7%90%86%E3%80%91MySQL%20%E7%99%BB%E5%BD%95/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%89%B9%E5%A4%84%E7%90%86/%E3%80%90%E6%89%B9%E5%A4%84%E7%90%86%E3%80%91MySQL%20%E7%99%BB%E5%BD%95/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：MySQL 登录测试脚本">
 <meta property="og:locale" content="zh_CN">
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -279,10 +283,8 @@
 <p>概述：MySQL 登录测试脚本</p>
 </blockquote>
 <span id="more"></span>
-
 <p>用于不断尝试登录 MySQL 。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cmd">@<span class="hljs-built_in">echo</span> off  <br><span class="hljs-built_in">setlocal</span> EnableDelayedExpansion  <br>  <br>:loop  <br>mysql -u root -pAdmin123 -e &quot;SELECT <span class="hljs-number">1</span>;&quot;  <br><span class="hljs-keyword">if</span> <span class="hljs-variable">%errorlevel%</span> <span class="hljs-keyword">neq</span> <span class="hljs-number">0</span> (  <br>    <span class="hljs-built_in">echo</span> Attempting to login again...  <br>    <span class="hljs-built_in">ping</span> <span class="hljs-number">127</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> -n <span class="hljs-number">2</span> &gt;<span class="hljs-built_in">nul</span>  <br><span class="hljs-comment">	rem 如果需要更短的间隙使用 choice</span><br><span class="hljs-comment">	rem choice /c X /t 1 /d Y &gt;nul  </span><br>    <span class="hljs-keyword">goto</span> loop  <br>)  <br>  <br><span class="hljs-built_in">echo</span> Logged <span class="hljs-keyword">in</span> successfully!  <br><span class="hljs-built_in">endlocal</span><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -336,7 +338,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【批处理】MySQL 登录</div>
-      <div>http://example.com/A_OS/Windows/批处理/【批处理】MySQL 登录/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/批处理/【批处理】MySQL 登录/</div>
     </div>
     <div class="license-meta">
       

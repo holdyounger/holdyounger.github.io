@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] 前言本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。 泄漏分类# malloc 内存泄漏下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()***\hea">
+    <meta name="description" content="[toc]  前言 本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。  泄漏分类  # malloc 内存泄漏 下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()*">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【内存泄漏】分析实战">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%AE%9E%E6%88%98/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E5%AE%9E%E6%88%98/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 前言本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。 泄漏分类# malloc 内存泄漏下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()***\hea">
+<meta property="og:description" content="[toc]  前言 本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。 关于内存泄漏和分析的文章可查看博客相关文章，有 UMDH 和 vld 两种方式，可根据个人需求展开分析。  泄漏分类  # malloc 内存泄漏 下述日志为一次 malloc  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。 123ntdll.dll!RtlAllocateHeap()*">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.023Z">
 <meta property="article:modified_time" content="2024-08-20T02:11:20.689Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,43 +282,43 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。</p>
+<h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>本文为项目中服务程序的内存泄漏，挑了其中一部分比较常见的内存泄漏进行分析和修改。</p>
 <p>关于内存泄漏和分析的文章可查看博客相关文章，有 <code>UMDH</code> 和 <code>vld</code> 两种方式，可根据个人需求展开分析。</p>
-<h1 id="泄漏分类"><a href="#泄漏分类" class="headerlink" title="泄漏分类"></a>泄漏分类</h1><h2 id="malloc-内存泄漏"><a href="#malloc-内存泄漏" class="headerlink" title="# malloc 内存泄漏"></a># <code>malloc</code> 内存泄漏</h2><p>下述日志为一次 <code>malloc</code>  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。</p>
+<h1 id="泄漏分类"><a class="markdownIt-Anchor" href="#泄漏分类"></a> 泄漏分类</h1>
+<h2 id="malloc-内存泄漏"><a class="markdownIt-Anchor" href="#malloc-内存泄漏"></a> # <code>malloc</code> 内存泄漏</h2>
+<p>下述日志为一次 <code>malloc</code>  未正确释放导致的内存泄漏。这种问题比较常见，不用多说。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs log">ntdll.dll!RtlAllocateHeap()<br>***\heap\malloc_base.cpp (34): XXX.dll!_malloc_base() + 0xF bytes<br>XXX.dll!_event_debugx() + 0x1A7 bytes<br></code></pre></td></tr></table></figure>
-
 <p><mark style="background:green;border-radius:10px;color:white;border:none">解决方案：</mark></p>
 <p>根据提示的位置找到并释放该内存。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">char</span> *ch = (<span class="hljs-type">char</span>*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(<span class="hljs-number">8</span>));<br>free ch;<br>ch = <span class="hljs-literal">NULL</span>;<br></code></pre></td></tr></table></figure>
-
 <p>另外，也可以使用智能指针管理该指针：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">char</span> *ch = (<span class="hljs-type">char</span>*)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">sizeof</span>(<span class="hljs-number">8</span>));<br><span class="hljs-function">shared_ptr&lt;<span class="hljs-type">char</span>&gt; <span class="hljs-title">spCh</span><span class="hljs-params">(ch)</span></span>;<br></code></pre></td></tr></table></figure>
-
-
-
-<h2 id="new-内存泄漏"><a href="#new-内存泄漏" class="headerlink" title="# new 内存泄漏"></a># <code>new</code> 内存泄漏</h2><p>关于 <code>new</code> 的内存泄漏分析写了一段代码用来展示一下：</p>
+<h2 id="new-内存泄漏"><a class="markdownIt-Anchor" href="#new-内存泄漏"></a> # <code>new</code> 内存泄漏</h2>
+<p>关于 <code>new</code> 的内存泄漏分析写了一段代码用来展示一下：</p>
 <p><font size="1">注：代码 Section2 部分为一个崩溃代码，堆内存申请后使用时一处，而在堆内存申请和释放时以及程序结束时释放堆内存时，都 <mark>存在堆溢出检查</mark> ，检查点会抛出异常，导致程序奔溃。</font></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 代码 Section2</span><br><span class="hljs-comment">// 该函数代码还涉及奔溃问题</span><br><span class="hljs-function"><span class="hljs-type">int</span>* <span class="hljs-title">test_heap_alloc</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">int</span>* pTable = <span class="hljs-keyword">new</span> <span class="hljs-built_in">int</span>(<span class="hljs-number">256</span>); <span class="hljs-comment">// 申请一个int结构体变量，初始值为256;</span><br>	<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">256</span>; i++)<br>		pTable[i] = i;<br>	<span class="hljs-keyword">return</span> pTable;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span> <span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>   	<span class="hljs-built_in">test_heap_alloc</span>();<br>    <span class="hljs-comment">// 执行上述代码之后再去下边这句申请堆内存会奔溃。</span><br>    <span class="hljs-type">char</span>* p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">char</span>(<span class="hljs-number">0</span>); <span class="hljs-comment">// 申请一个字节，内容初始化为0</span><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>以下为 vld 生成的泄漏日志：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs log">WARNING: Visual Leak Detector detected memory leaks!<br>---------- Block 1 at 0x010AAC68: 4 bytes ----------<br>  Leak Hash: 0x03729B3D, Count: 1, Total 4 bytes<br>  Call Stack (TID 33760):<br>    ucrtbase.dll!malloc()<br>    d:\agent\_work\3\s\src\vctools\crt\vcstartup\src\heap\new_scalar.cpp (35): vldforptr.exe!operator new() + 0x8 bytes<br>    d:\code_source\c++\vs2019\vldforptr\vldforptr.cpp (45): vldforptr.exe!main() + 0x7 bytes<br>    KERNEL32.DLL!BaseThreadInitThunk() + 0x19 bytes<br>    ntdll.dll!RtlGetAppContainerNamedObjectPath() + 0x11E bytes<br>    ntdll.dll!RtlGetAppContainerNamedObjectPath() + 0xEE bytes<br>  Data:<br>    00 00 00 00                                                  ........ ........<br></code></pre></td></tr></table></figure>
-
 <p><mark style="background:green;border-radius:10px;color:white;border:none">解决方案：</mark></p>
 <p>调用 <code>delete</code> 释放 <code>new</code> 出来的内存。</p>
 <ol>
-<li><p>问题：不确定变量什么时候使用完的，如何释放？</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs CPP"><span class="hljs-comment">// 使用智能指针</span><br><span class="hljs-type">char</span> *ch = <span class="hljs-keyword">new</span> <span class="hljs-type">char</span>[<span class="hljs-number">256</span>];<br><span class="hljs-function">std::shared_ptr&lt;<span class="hljs-type">char</span>&gt; <span class="hljs-title">spCh</span><span class="hljs-params">(ch)</span></span>;<br></code></pre></td></tr></table></figure></li>
+<li>
+<p>问题：不确定变量什么时候使用完的，如何释放？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs CPP"><span class="hljs-comment">// 使用智能指针</span><br><span class="hljs-type">char</span> *ch = <span class="hljs-keyword">new</span> <span class="hljs-type">char</span>[<span class="hljs-number">256</span>];<br><span class="hljs-function">std::shared_ptr&lt;<span class="hljs-type">char</span>&gt; <span class="hljs-title">spCh</span><span class="hljs-params">(ch)</span></span>;<br></code></pre></td></tr></table></figure>
+</li>
 </ol>
-<h3 id="strdup-内存泄漏"><a href="#strdup-内存泄漏" class="headerlink" title="# strdup 内存泄漏"></a># <code>strdup</code> 内存泄漏</h3><p><code>strdup</code>函数说明：</p>
+<h3 id="strdup-内存泄漏"><a class="markdownIt-Anchor" href="#strdup-内存泄漏"></a> # <code>strdup</code> 内存泄漏</h3>
+<p><code>strdup</code>函数说明：</p>
 <p>功能：将字符串拷贝到新建的位置处</p>
 <p>返回值 ：返回一个指向新字符串的指针，该字符串是字符串s的副本，如果分配空间失败，则返回NULL值。新字符串的内存由strdup函数原型内部的malloc（）获得，需用free（）释放。</p>
 <figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs scss">ntdll<span class="hljs-selector-class">.dll</span>!<span class="hljs-built_in">RtlAllocateHeap</span>()<br>minkernel\crts\ucrt\<span class="hljs-attribute">src</span>\appcrt\heap\malloc_base<span class="hljs-selector-class">.cpp</span> (<span class="hljs-number">34</span>): XXX.dll!<span class="hljs-built_in">_malloc_base</span>() + <span class="hljs-number">0</span>xF bytes<br>XXX.dll!<span class="hljs-built_in">BUF_strndup</span>() + <span class="hljs-number">0</span>x8A bytes<br></code></pre></td></tr></table></figure>
-
 <p>把返回内存地址的释放权交给了别的变量，这就很容易忘记释放，所以 <code>strdup</code> 这个函数也很容易造成内存泄漏。</p>
-<h1 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h1><h2 id="malloc-base"><a href="#malloc-base" class="headerlink" title="# _malloc_base"></a># <code>_malloc_base</code></h2><p><code>_malloc_base</code> 就是编译器编译之后的 <code>malloc</code>。</p>
+<h1 id="整理"><a class="markdownIt-Anchor" href="#整理"></a> 整理</h1>
+<h2 id="_malloc_base"><a class="markdownIt-Anchor" href="#_malloc_base"></a> # <code>_malloc_base</code></h2>
+<p><code>_malloc_base</code> 就是编译器编译之后的 <code>malloc</code>。</p>
 <p>查看vld的log可以看到，堆栈显示的 <code>_malloc_base</code> 所在的文件夹为 <code>minkernel\crts\ucrt\src\appcrt\heap\malloc_base.cpp</code>，这个文件就是 <code>malloc</code> 声明和定义的文件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">领导您好！<br>以下内容为本次绩效期间我的工作概述以及自我评价。<br><br>本次绩效期间，我的主要工作内容集中在零信任国信版本和天擎零信任插件部分，同时也负责了部分工行、标板的需求开发（SPA、异常告警、命令行登录等）。零信任国信版本共计发布版本两次，均在发布版本之前完成了需求的开发和bug的修复，涉及的需求十多项，需求提测均通过，在完成需求的同时，整理编写了相应的技术开发文档十多篇，同时也补充了零信任客户端部分配置文件的说明文档。开发同时，针对国信零信任版本的升级故障问题（升级失败，升级检测问题），优化了该部分的逻辑，对整个客户端的无逻辑代码和日志部分进行了优化，以便于后续快速定位和分析问题，国信发布版本期间，为保证出包顺利，解决临时出现的问题，与团队一起解决问题并完成版本发布的任务；零信任插件部分，插件的开发让我学习到了较多框架方面的知识，了解了插件的开发以及团队联调的过程，零信任插件的开发在团队帮助下开发较为顺利，并且按时提测，且完成度较高，故障部分相对较少，调整部分基本为业务方面的逻辑调整。工行和标板的需求也是在计划内完成了需求的开发并提测成功，本次绩效期间，工作充实，如期完成了各项需求开发。不足就是多个需求的开发和提测过程相对较慢，由于环境（<span class="hljs-built_in">tac</span>）问题，在开发自测和提测过程中出现了效果不一致的情况，在以后开发中需要注意该方面问题对开发提测的影响，提测前尽量保证自测完整，需求完善。<br><br>以上就是本期自我评价。<br><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -384,7 +388,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【内存泄漏】分析实战</div>
-      <div>http://example.com/A_OS/Windows/内存泄漏/实战/【内存泄漏】分析实战/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/内存泄漏/实战/【内存泄漏】分析实战/</div>
     </div>
     <div class="license-meta">
       

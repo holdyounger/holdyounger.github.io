@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="Windows 下 Socket相关  Windows socket 的使用一、socket()函数创建套接字Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol);  实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_STREA">
+    <meta name="description" content="Windows 下 Socket相关   Windows socket 的使用  一、socket()函数创建套接字 Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol); 实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_ST">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【网络编程】windows socket使用Demo">
-<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91SOCKET%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91SOCKET%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="Windows 下 Socket相关  Windows socket 的使用一、socket()函数创建套接字Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol);  实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_STREA">
+<meta property="og:description" content="Windows 下 Socket相关   Windows socket 的使用  一、socket()函数创建套接字 Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。 1SOCKET socket(int af, int type, int protocol); 实例，创建TCP套接字： 1SOCKET sock &#x3D; socket(AF_INET, SOCK_ST">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.373Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:56.856Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          864 字
+          865 字
         
       </span>
     
@@ -280,45 +284,49 @@
                 <blockquote>
 <p>Windows 下 Socket相关</p>
 </blockquote>
-<h1 id="Windows-socket-的使用"><a href="#Windows-socket-的使用" class="headerlink" title="Windows socket 的使用"></a>Windows socket 的使用</h1><h2 id="一、socket-函数创建套接字"><a href="#一、socket-函数创建套接字" class="headerlink" title="一、socket()函数创建套接字"></a>一、socket()函数创建套接字</h2><p>Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。</p>
+<h1 id="windows-socket-的使用"><a class="markdownIt-Anchor" href="#windows-socket-的使用"></a> Windows socket 的使用</h1>
+<h2 id="一-socket函数创建套接字"><a class="markdownIt-Anchor" href="#一-socket函数创建套接字"></a> 一、socket()函数创建套接字</h2>
+<p>Windows 不把套接字作为普通文件对待，而是返回 SOCKET 类型的句柄。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">SOCKET <span class="hljs-title">socket</span><span class="hljs-params">(<span class="hljs-type">int</span> af, <span class="hljs-type">int</span> type, <span class="hljs-type">int</span> protocol)</span></span>;<br></code></pre></td></tr></table></figure>
-
 <p>实例，创建TCP套接字：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">SOCKET sock = <span class="hljs-built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="hljs-number">0</span>);  <span class="hljs-comment">//创建TCP套接字</span><br></code></pre></td></tr></table></figure>
-
-<h2 id="二、bind"><a href="#二、bind" class="headerlink" title="二、bind()"></a>二、bind()</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">bind</span><span class="hljs-params">(SOCKET sock, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> sockaddr *addr, <span class="hljs-type">int</span> addrlen)</span></span>;  <span class="hljs-comment">//Windows</span><br></code></pre></td></tr></table></figure>
-
-<p><code>sock </code>为 socket 文件描述符<br><code>addr </code>为 sockaddr 结构体变量的指针<br><code>addrlen </code>为 addr 变量的大小，可由 sizeof() 计算得出。</p>
+<h2 id="二-bind"><a class="markdownIt-Anchor" href="#二-bind"></a> 二、bind()</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">bind</span><span class="hljs-params">(SOCKET sock, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> sockaddr *addr, <span class="hljs-type">int</span> addrlen)</span></span>;  <span class="hljs-comment">//Windows</span><br></code></pre></td></tr></table></figure>
+<p><code>sock </code>为 socket 文件描述符<br>
+<code>addr </code>为 sockaddr 结构体变量的指针<br>
+<code>addrlen </code>为 addr 变量的大小，可由 sizeof() 计算得出。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 创建套接字</span><br>	SOCKET servSock = <span class="hljs-built_in">socket</span>(PF_INET,SOCK_STREAM,IPPROTO_TCP);<br><br>	<span class="hljs-comment">// 绑定套接字</span><br>	<span class="hljs-keyword">struct</span> <span class="hljs-title class_">sockaddr_in</span> sockAddr;<br>	<span class="hljs-built_in">memset</span> (&amp;sockAddr, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(sockAddr)); <span class="hljs-comment">// 每个套接字都用0填充</span><br>	sockAddr.sin_family = PF_INET; <span class="hljs-comment">// 使用IPv4地址</span><br>	sockAddr.sin_addr.s_addr = <span class="hljs-built_in">inet_addr</span>(<span class="hljs-string">&quot;127.0.0.1&quot;</span>);<br>	sockAddr.sin_port = <span class="hljs-built_in">htons</span>(<span class="hljs-number">1234</span>);	<span class="hljs-comment">// 端口</span><br>	<span class="hljs-built_in">bind</span>(servSock, (SOCKADDR*)&amp;sockAddr, <span class="hljs-built_in">sizeof</span>(SOCKADDR));<br></code></pre></td></tr></table></figure>
-
-<h4 id="sockaddr结构体"><a href="#sockaddr结构体" class="headerlink" title="sockaddr结构体"></a>sockaddr结构体</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">sockaddr</span>&#123;<br>    <span class="hljs-type">sa_family_t</span>  sin_family;   <span class="hljs-comment">//地址族（Address Family），也就是地址类型</span><br>    <span class="hljs-type">char</span>         sa_data[<span class="hljs-number">14</span>];  <span class="hljs-comment">//IP地址和端口号</span><br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<h4 id="sockaddr-in-结构体"><a href="#sockaddr-in-结构体" class="headerlink" title="sockaddr_in 结构体"></a>sockaddr_in 结构体</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">sockaddr_in</span>&#123;<br>    <span class="hljs-type">sa_family_t</span>     sin_family;   <span class="hljs-comment">//地址族（Address Family），也就是地址类型</span><br>    <span class="hljs-type">uint16_t</span>        sin_port;     <span class="hljs-comment">//16位的端口号</span><br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">in_addr</span>  sin_addr;     <span class="hljs-comment">//32位IP地址</span><br>    <span class="hljs-type">char</span>            sin_zero[<span class="hljs-number">8</span>];  <span class="hljs-comment">//不使用，一般用0填充</span><br>&#125;;<br></code></pre></td></tr></table></figure>
-
+<h4 id="sockaddr结构体"><a class="markdownIt-Anchor" href="#sockaddr结构体"></a> sockaddr结构体</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">sockaddr</span>&#123;<br>    <span class="hljs-type">sa_family_t</span>  sin_family;   <span class="hljs-comment">//地址族（Address Family），也就是地址类型</span><br>    <span class="hljs-type">char</span>         sa_data[<span class="hljs-number">14</span>];  <span class="hljs-comment">//IP地址和端口号</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+<h4 id="sockaddr_in-结构体"><a class="markdownIt-Anchor" href="#sockaddr_in-结构体"></a> sockaddr_in 结构体</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">sockaddr_in</span>&#123;<br>    <span class="hljs-type">sa_family_t</span>     sin_family;   <span class="hljs-comment">//地址族（Address Family），也就是地址类型</span><br>    <span class="hljs-type">uint16_t</span>        sin_port;     <span class="hljs-comment">//16位的端口号</span><br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">in_addr</span>  sin_addr;     <span class="hljs-comment">//32位IP地址</span><br>    <span class="hljs-type">char</span>            sin_zero[<span class="hljs-number">8</span>];  <span class="hljs-comment">//不使用，一般用0填充</span><br>&#125;;<br></code></pre></td></tr></table></figure>
 <ol>
 <li><code>sin_family </code>和<code>socket()</code>的第一个参数的含义相同，取值也要保持一致。</li>
-<li><code>sin_prot </code>为端口号。uint16_t 的长度为两个字节，理论上端口号的取值范围为 0<del>65536，但 0</del>1023 的端口一般由系统分配给特定的服务程序，例如 Web 服务的端口号为 80，FTP 服务的端口号为 21，所以我们的程序要尽量在 1024~65536 之间分配端口号。端口号需要用 <code>htons() </code>函数转换，后面会讲解为什么。</li>
+<li><code>sin_prot </code>为端口号。uint16_t 的长度为两个字节，理论上端口号的取值范围为 0~65536，但 0~1023 的端口一般由系统分配给特定的服务程序，例如 Web 服务的端口号为 80，FTP 服务的端口号为 21，所以我们的程序要尽量在 1024~65536 之间分配端口号。端口号需要用 <code>htons() </code>函数转换，后面会讲解为什么。</li>
 <li><code>sin_addr </code>是 struct in_addr 结构体类型的变量，下面会详细讲解。</li>
 <li><code>sin_zero[8]</code>是多余的8个字节，没有用，一般使用<code> memset()</code> 函数填充为 0。上面的代码中，先用 <code>memset()</code> 将结构体的全部字节填充为 0，再给前3个成员赋值，剩下的 <code>sin_zero </code>自然就是 0 了。</li>
 </ol>
-<h4 id="in-addr-结构体"><a href="#in-addr-结构体" class="headerlink" title="in_addr 结构体"></a>in_addr 结构体</h4><p>sockaddr_in 的第3个成员是 in_addr 类型的结构体，该结构体只包含一个成员，如下所示：</p>
+<h4 id="in_addr-结构体"><a class="markdownIt-Anchor" href="#in_addr-结构体"></a> in_addr 结构体</h4>
+<p>sockaddr_in 的第3个成员是 in_addr 类型的结构体，该结构体只包含一个成员，如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">in_addr</span>&#123;<br>    <span class="hljs-type">in_addr_t</span>  s_addr;  <span class="hljs-comment">//32位的IP地址</span><br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<p><code>in_addr_t </code>在头文件 &lt;netinet&#x2F;in.h&gt; 中定义，等价于 unsigned long，长度为4个字节。也就是说，<code>s_addr </code>是一个整数，而IP地址是一个字符串，所以需要** inet_addr() **函数进行转换，例如：</p>
+<p><code>in_addr_t </code>在头文件 &lt;netinet/in.h&gt; 中定义，等价于 unsigned long，长度为4个字节。也就是说，<code>s_addr </code>是一个整数，而IP地址是一个字符串，所以需要** inet_addr() **函数进行转换，例如：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> ip = <span class="hljs-built_in">inet_addr</span>(<span class="hljs-string">&quot;127.0.0.1&quot;</span>);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%ld\n&quot;</span>, ip);<br></code></pre></td></tr></table></figure>
-
-<p>运行结果：<br><code>16777343</code></p>
-<h2 id="三、connect-函数"><a href="#三、connect-函数" class="headerlink" title="三、connect() 函数"></a>三、connect() 函数</h2><p>参数与<code>bind()</code>相同。</p>
+<p>运行结果：<br>
+<code>16777343</code></p>
+<h2 id="三-connect-函数"><a class="markdownIt-Anchor" href="#三-connect-函数"></a> 三、connect() 函数</h2>
+<p>参数与<code>bind()</code>相同。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">connect</span><span class="hljs-params">(SOCKET sock, <span class="hljs-type">const</span> <span class="hljs-keyword">struct</span> sockaddr *serv_addr, <span class="hljs-type">int</span> addrlen)</span></span>;  <span class="hljs-comment">//Windows</span><br></code></pre></td></tr></table></figure>
-
-<h2 id="四、listen-函数"><a href="#四、listen-函数" class="headerlink" title="四、listen() 函数"></a>四、listen() 函数</h2><p>通过 listen() 函数可以让套接字进入被动监听状态，它的原型为：</p>
+<h2 id="四-listen-函数"><a class="markdownIt-Anchor" href="#四-listen-函数"></a> 四、listen() 函数</h2>
+<p>通过 listen() 函数可以让套接字进入被动监听状态，它的原型为：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">listen</span><span class="hljs-params">(SOCKET sock, <span class="hljs-type">int</span> backlog)</span></span>;  <span class="hljs-comment">//Windows</span><br></code></pre></td></tr></table></figure>
-
 <p><code>sock </code>为需要进入监听状态的套接字，<code>backlog </code>为请求队列的最大长度。</p>
-<p><strong>被动监听：</strong>是指当没有客户端请求时，套接字处于“睡眠”状态，只有当接收到客户端请求时，套接字才会被“唤醒”来响应请求。<br>如果将 backlog 的值设置为 <strong>SOMAXCONN</strong>，就由系统来决定请求队列长度，这个值一般比较大，可能是几百，或者更多。<br>当请求队列满时，就不再接收新的请求，对于 <strong>Linux</strong>，客户端会收到 **ECONNREFUSED **错误，对于 <strong>Windows</strong>，客户端会收到 **WSAECONNREFUSED **错误。<br><strong>注意：</strong><code>listen()</code>只是让套接字处于监听状态，并没有接收请求。接收请求需要使用<code>accept()</code>函数。</p>
-<h2 id="五、accept-函数"><a href="#五、accept-函数" class="headerlink" title="五、accept() 函数"></a>五、accept() 函数</h2><p>当套接字处于监听状态时，可以通过 <code>accept()</code>函数来接收客户端请求。它的原型为：</p>
+<p>**被动监听：**是指当没有客户端请求时，套接字处于“睡眠”状态，只有当接收到客户端请求时，套接字才会被“唤醒”来响应请求。<br>
+如果将 backlog 的值设置为 <strong>SOMAXCONN</strong>，就由系统来决定请求队列长度，这个值一般比较大，可能是几百，或者更多。<br>
+当请求队列满时，就不再接收新的请求，对于 <strong>Linux</strong>，客户端会收到 **ECONNREFUSED **错误，对于 <strong>Windows</strong>，客户端会收到 **WSAECONNREFUSED **错误。<br>
+<strong>注意：</strong><code>listen()</code>只是让套接字处于监听状态，并没有接收请求。接收请求需要使用<code>accept()</code>函数。</p>
+<h2 id="五-accept-函数"><a class="markdownIt-Anchor" href="#五-accept-函数"></a> 五、accept() 函数</h2>
+<p>当套接字处于监听状态时，可以通过 <code>accept()</code>函数来接收客户端请求。它的原型为：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">SOCKET <span class="hljs-title">accept</span><span class="hljs-params">(SOCKET sock, <span class="hljs-keyword">struct</span> sockaddr *addr, <span class="hljs-type">int</span> *addrlen)</span></span>;  <span class="hljs-comment">//Windows</span><br></code></pre></td></tr></table></figure>
-
 <p>它的参数与 listen() 和 connect() 是相同的：<code>sock</code>为服务器端套接字，<code>addr</code>为 sockaddr_in 结构体变量，<code>addrlen</code>为参数 addr 的长度，可由 <code>sizeof()</code> 求得。</p>
 
                 
@@ -375,7 +383,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【网络编程】windows socket使用Demo</div>
-      <div>http://example.com/B_Code/网络编程/【网络编程】SOCKET相关函数/</div>
+      <div>https://hodlyounger.github.io/B_Code/网络编程/【网络编程】SOCKET相关函数/</div>
     </div>
     <div class="license-meta">
       

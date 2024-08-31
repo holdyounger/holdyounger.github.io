@@ -21,21 +21,21 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="title: 【调试技术】windbg内核调试categories:  - Windows  - Windbgwiki: dbgskill 概述： 参考：WinDbg (内核模式) 入门 - Windows drivers | Microsoft Learn  命令整理-辅助类1eb ntdll!ShowSnaps 1  线程等待原因1234567891011121314151617181920">
+    <meta name="description" content="概述：windbg 内核调试的一些记录 参考：WinDbg (内核模式) 入门 - Windows drivers | Microsoft Learn">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oone">
-<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91windbg%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95/index.html">
+<meta property="og:title" content="【调试技术】windbg内核调试">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91windbg%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="title: 【调试技术】windbg内核调试categories:  - Windows  - Windbgwiki: dbgskill 概述： 参考：WinDbg (内核模式) 入门 - Windows drivers | Microsoft Learn  命令整理-辅助类1eb ntdll!ShowSnaps 1  线程等待原因1234567891011121314151617181920">
+<meta property="og:description" content="概述：windbg 内核调试的一些记录 参考：WinDbg (内核模式) 入门 - Windows drivers | Microsoft Learn">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-01-23T06:08:19.502Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:08.926Z">
+<meta property="article:published_time" content="2024-08-31T01:41:20.250Z">
+<meta property="article:modified_time" content="2024-08-31T13:42:03.735Z">
 <meta property="article:author" content="mingming">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>oone</title>
+  <title>【调试技术】windbg内核调试 - oone</title>
 
   <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -69,11 +69,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -199,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text></span>
+            <span id="subtitle" data-typed-text="【调试技术】windbg内核调试"></span>
           
         </div>
 
@@ -210,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-01-23 14:08" pubdate>
-          2024年1月23日 下午
+        <time datetime="2024-08-31 09:41" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -222,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          483 字
+          480 字
         
       </span>
     
@@ -270,20 +274,20 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">【调试技术】windbg内核调试</h1>
             
             
               <div class="markdown-body">
                 
-                <hr>
-<h2 id="title-【调试技术】windbg内核调试categories-Windows-Windbgwiki-dbgskill"><a href="#title-【调试技术】windbg内核调试categories-Windows-Windbgwiki-dbgskill" class="headerlink" title="title: 【调试技术】windbg内核调试categories:  - Windows  - Windbgwiki: dbgskill"></a>title: 【调试技术】windbg内核调试<br>categories:<br>  - Windows<br>  - Windbg<br>wiki: dbgskill</h2><blockquote>
-<p>概述：</p>
+                <blockquote>
+<p>概述：windbg 内核调试的一些记录</p>
 <p>参考：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/getting-started-with-windbg--kernel-mode-">WinDbg (内核模式) 入门 - Windows drivers | Microsoft Learn</a></p>
 </blockquote>
-<h2 id="命令整理-辅助类"><a href="#命令整理-辅助类" class="headerlink" title="命令整理-辅助类"></a>命令整理-辅助类</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">eb ntdll!ShowSnaps 1<br></code></pre></td></tr></table></figure>
-
-<h2 id="线程等待原因"><a href="#线程等待原因" class="headerlink" title="线程等待原因"></a>线程等待原因</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">KWAIT_REASON</span><br>&#123;<br>    Executive,<br>    FreePage,<br>    PageIn,<br>    PoolAllocation,<br>    DelayExecution,<br>    Suspended,<br>    UserRequest,<br>    WrExecutive,<br>    WrFreePage,<br>    WrPageIn,<br>    WrPoolAllocation,<br>    WrDelayExecution,<br>    WrSuspended,<br>    WrUserRequest,<br>    WrEventPair,<br>    WrQueue,<br>    WrLpcReceive,<br>    WrLpcReply,<br>    WrVirtualMemory,<br>    WrPageOut,<br>    WrRendezvous,<br>    Spare2,<br>    Spare3,<br>    Spare4,<br>    Spare5,<br>    Spare6,<br>    WrKernel,<br>    MaximumWaitReason<br>&#125;;<br></code></pre></td></tr></table></figure>
-
+<span id="more"></span>
+<h2 id="命令整理-辅助类"><a class="markdownIt-Anchor" href="#命令整理-辅助类"></a> 命令整理-辅助类</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">eb ntdll!ShowSnaps 1<br></code></pre></td></tr></table></figure>
+<h2 id="线程等待原因"><a class="markdownIt-Anchor" href="#线程等待原因"></a> 线程等待原因</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">KWAIT_REASON</span><br>&#123;<br>    Executive,<br>    FreePage,<br>    PageIn,<br>    PoolAllocation,<br>    DelayExecution,<br>    Suspended,<br>    UserRequest,<br>    WrExecutive,<br>    WrFreePage,<br>    WrPageIn,<br>    WrPoolAllocation,<br>    WrDelayExecution,<br>    WrSuspended,<br>    WrUserRequest,<br>    WrEventPair,<br>    WrQueue,<br>    WrLpcReceive,<br>    WrLpcReply,<br>    WrVirtualMemory,<br>    WrPageOut,<br>    WrRendezvous,<br>    Spare2,<br>    Spare3,<br>    Spare4,<br>    Spare5,<br>    Spare6,<br>    WrKernel,<br>    MaximumWaitReason<br>&#125;;<br></code></pre></td></tr></table></figure>
 <p><code>KWAIT_REASON</code>是一个枚举类型，定义在Windows内核中，用于表示进程或线程等待的原因。以下是每个枚举值的含义：</p>
 <ul>
 <li><code>Executive</code>: 进程或线程正在等待执行。</li>
@@ -361,8 +365,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
-      <div>http://example.com/wiki/调试技术/【调试技术】windbg内核调试/</div>
+      <div>【调试技术】windbg内核调试</div>
+      <div>https://hodlyounger.github.io/wiki/调试技术/【调试技术】windbg内核调试/</div>
     </div>
     <div class="license-meta">
       
@@ -374,7 +378,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年1月23日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -406,9 +410,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E9%9A%8F%E6%89%8B%E8%AE%B0/" title="【调试技术】windbg 随手记">
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%88%86%E6%9E%90%E5%AE%9E%E6%88%98/" title="【调试技术】分析实战">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【调试技术】windbg 随手记</span>
+                        <span class="hidden-mobile">【调试技术】分析实战</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -416,8 +420,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" title="Windbg 基础命令">
-                        <span class="hidden-mobile">Windbg 基础命令</span>
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E9%9A%8F%E6%89%8B%E8%AE%B0/" title="【调试技术】windbg 随手记">
+                        <span class="hidden-mobile">【调试技术】windbg 随手记</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

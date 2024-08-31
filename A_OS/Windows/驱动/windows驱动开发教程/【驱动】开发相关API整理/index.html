@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：驱动开发过程中，相关API的学习整理  [toc] WdfDriverCreateWdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一些常">
+    <meta name="description" content="概述：驱动开发过程中，相关API的学习整理  [toc]  WdfDriverCreate WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【驱动】开发相关API整理">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3API%E6%95%B4%E7%90%86/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3API%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：驱动开发过程中，相关API的学习整理  [toc] WdfDriverCreateWdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一些常">
+<meta property="og:description" content="概述：驱动开发过程中，相关API的学习整理  [toc]  WdfDriverCreate WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.086Z">
 <meta property="article:modified_time" content="2024-08-26T07:10:16.710Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,7 +285,8 @@
 <p>概述：驱动开发过程中，相关API的学习整理</p>
 </blockquote>
 <p>[toc]</p>
-<h4 id="WdfDriverCreate"><a href="#WdfDriverCreate" class="headerlink" title="WdfDriverCreate"></a>WdfDriverCreate</h4><p>WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。</p>
+<h4 id="wdfdrivercreate"><a class="markdownIt-Anchor" href="#wdfdrivercreate"></a> WdfDriverCreate</h4>
+<p>WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。</p>
 <p>WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一些常见的参数：</p>
 <ul>
 <li>DriverName: 驱动程序的名称，用于在调试和日志记录中标识驱动程序。</li>
@@ -291,7 +296,8 @@
 <li>DispatchTable: 一个包含驱动程序处理 IRP 请求的回调函数的表。</li>
 <li>RegistryPath: 驱动程序在注册表中的路径，用于存储配置信息和设置。</li>
 </ul>
-<h4 id="WdfDeviceCreate"><a href="#WdfDeviceCreate" class="headerlink" title="WdfDeviceCreate"></a>WdfDeviceCreate</h4><p>WdfDeviceCreate 是 Windows Driver Frameworks (WDF) 中的一个函数，用于创建设备对象并初始化与设备相关的数据结构。它是 WDF 中非常重要和常用的函数之一。</p>
+<h4 id="wdfdevicecreate"><a class="markdownIt-Anchor" href="#wdfdevicecreate"></a> WdfDeviceCreate</h4>
+<p>WdfDeviceCreate 是 Windows Driver Frameworks (WDF) 中的一个函数，用于创建设备对象并初始化与设备相关的数据结构。它是 WDF 中非常重要和常用的函数之一。</p>
 <p>WdfDeviceCreate 函数需要填写一个 WDFDEVICE_INIT 结构体来定义设备的属性和行为。以下是一些常见的参数：</p>
 <ul>
 <li>Driver: 指向驱动程序的指针，用于关联设备和驱动程序。</li>
@@ -370,7 +376,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【驱动】开发相关API整理</div>
-      <div>http://example.com/A_OS/Windows/驱动/windows驱动开发教程/【驱动】开发相关API整理/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/驱动/windows驱动开发教程/【驱动】开发相关API整理/</div>
     </div>
     <div class="license-meta">
       
@@ -414,9 +420,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7/" title="【驱动】开发相关工具">
+                      <a href="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84wfp%E9%A9%B1%E5%8A%A8/" title="【驱动】一个完整的wfp驱动">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【驱动】开发相关工具</span>
+                        <span class="hidden-mobile">【驱动】一个完整的wfp驱动</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -424,8 +430,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87(VS2022)/" title="【驱动】Visual Studio 2022 驱动开发环境准备">
-                        <span class="hidden-mobile">【驱动】Visual Studio 2022 驱动开发环境准备</span>
+                      <a href="/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7/" title="【驱动】开发相关工具">
+                        <span class="hidden-mobile">【驱动】开发相关工具</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

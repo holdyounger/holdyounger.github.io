@@ -24,7 +24,7 @@
     <meta name="description" content="概述：.Net 反序列及漏洞相关自洽记录。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【.Net】反序列化漏洞探索">
-<meta property="og:url" content="http://example.com/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%8E%A2%E7%B4%A2/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/CSharp/%E3%80%90.Net%E3%80%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%8E%A2%E7%B4%A2/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：.Net 反序列及漏洞相关自洽记录。">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          585 字
+          584 字
         
       </span>
     
@@ -280,36 +284,38 @@
 <p>概述：.Net 反序列及漏洞相关自洽记录。</p>
 </blockquote>
 <span id="more"></span>
-
 <p><strong>免责声明：本文所涉及的信息安全技术知识仅供参考</strong>和学习之用，并不构成任何明示或暗示的保证。读者在使用本文提供的信息时，应自行判断其适用性，并承担由此产生的一切风险和责任。本文作者对于读者基于本文内容所做出的任何行为或决定不承担任何责任。在任何情况下，本文作者不对因使用本文内容而导致的任何直接、间接、特殊或后果性损失承担责任。<strong>读者在使用本文内容时应当遵守当地法律法规，并保证不违反任何相关法律法规。</strong></p>
-<h2 id="开源项目和文章推荐"><a href="#开源项目和文章推荐" class="headerlink" title="开源项目和文章推荐"></a>开源项目和文章推荐</h2><p>项目：</p>
+<h2 id="开源项目和文章推荐"><a class="markdownIt-Anchor" href="#开源项目和文章推荐"></a> 开源项目和文章推荐</h2>
+<p>项目：</p>
 <ol>
-<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/Ivan1ee/NET-Deserialize/tree/master">Ivan1ee&#x2F;NET-Deserialize: 总结了 20+.Net 反序列化文章，持续更新</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/Ivan1ee/NET-Deserialize/tree/master">Ivan1ee/NET-Deserialize: 总结了 20+.Net 反序列化文章，持续更新</a></li>
 </ol>
 <p>文章：</p>
 <ol>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cn-sec.com/archives/675298.html">【最新漏洞预警】开源组件漏洞之 CVE-2021-23758 AjaxPro.NET 反序列化漏洞 | CN-SEC 中文网</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.h3c.com/cn/d_202112/1519681_30003_0.htm">AjaxPro.NET 反序列化漏洞(CVE-2021-23758)-新华三集团-H3C</a></li>
 </ol>
-<h2 id="反序列化说明"><a href="#反序列化说明" class="headerlink" title="反序列化说明"></a>反序列化说明</h2><p>在 .NET 中，反序列化漏洞通常是由于不安全地处理序列化的数据而产生的。当应用程序反序列化来自不受信任来源的数据时，攻击者可能会构造恶意的序列化数据，从而在反序列化过程中触发任意代码执行或其他恶意行为。</p>
+<h2 id="反序列化说明"><a class="markdownIt-Anchor" href="#反序列化说明"></a> 反序列化说明</h2>
+<p>在 .NET 中，反序列化漏洞通常是由于不安全地处理序列化的数据而产生的。当应用程序反序列化来自不受信任来源的数据时，攻击者可能会构造恶意的序列化数据，从而在反序列化过程中触发任意代码执行或其他恶意行为。</p>
 <p>.NET 框架提供了多种序列化机制，如二进制格式化程序（BinaryFormatter）、SOAP 格式化程序（SoapFormatter）、数据契约序列化程序（DataContractSerializer）等。这些序列化机制在默认情况下可能不安全，因为它们可能允许攻击者利用某些类型的安全漏洞。</p>
-<h2 id="Net-反序列化常见相关函数"><a href="#Net-反序列化常见相关函数" class="headerlink" title=".Net 反序列化常见相关函数"></a>.Net 反序列化常见相关函数</h2><p>目前已经有发现的相关反序列漏洞涉及的函数包括但不限于以下所示相关函数：</p>
+<h2 id="net-反序列化常见相关函数"><a class="markdownIt-Anchor" href="#net-反序列化常见相关函数"></a> .Net 反序列化常见相关函数</h2>
+<p>目前已经有发现的相关反序列漏洞涉及的函数包括但不限于以下所示相关函数：</p>
 <ol>
 <li>XmlSerializer</li>
 <li>NetDataContractSerializer</li>
 <li>FastJson</li>
 <li>BinaryFormatter</li>
-<li>Json.Net</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="http://Json.Net">Json.Net</a></li>
 <li>.Net Remoting</li>
 <li>SoapFormatter</li>
-<li>DataContractSerializer </li>
+<li>DataContractSerializer</li>
 <li>LosFormatter</li>
-<li>ObjectStateFormatter <a href="%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90.md">【.Net】可执行文件结构分析.md</a> </li>
+<li>ObjectStateFormatter <a href="%E3%80%90.Net%E3%80%91%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90.md">【.Net】可执行文件结构分析.md</a></li>
 <li>JavaScriptSerializer</li>
 </ol>
-<h2 id="堆栈实例"><a href="#堆栈实例" class="headerlink" title="堆栈实例"></a>堆栈实例</h2><p>可查看文章 <a href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E7%95%85%E6%8D%B7%E9%80%9A/%E3%80%90CVE-2021-23758%E3%80%91Ajax.NET_Professional_%E4%B8%AD%E7%9A%84RCE%E6%BC%8F%E6%B4%9E/" title="【CVE-2021-23758】Ajax .NET Professional 中的 RCE 漏洞">【CVE-2021-23758】Ajax .NET Professional 中的 RCE 漏洞</a> 中的分析。关键调用如下所示：</p>
+<h2 id="堆栈实例"><a class="markdownIt-Anchor" href="#堆栈实例"></a> 堆栈实例</h2>
+<p>可查看文章 <a href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E7%95%85%E6%8D%B7%E9%80%9A/%E3%80%90CVE-2021-23758%E3%80%91Ajax.NET_Professional_%E4%B8%AD%E7%9A%84RCE%E6%BC%8F%E6%B4%9E/" title="【CVE-2021-23758】Ajax .NET Professional 中的 RCE 漏洞">【CVE-2021-23758】Ajax .NET Professional 中的 RCE 漏洞</a> 中的分析。关键调用如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs log">AjaxPro.2.dll!AjaxPro.JavaScriptDeserializer.DeserializeCustomObject(AjaxPro.JavaScriptObject o, System.Type type) <br>AjaxPro.2.dll!AjaxPro.JavaScriptDeserializer.Deserialize(AjaxPro.IJavaScriptObject o, System.Type type) <br>AjaxPro.2.dll!AjaxPro.XmlHttpRequestProcessor.RetreiveParameters() <br>AjaxPro.2.dll!AjaxPro.AjaxProcHelper.Run() <br>AjaxPro.2.dll!AjaxPro.AjaxSyncHttpHandler.ProcessRequest(System.Web.HttpContext context)<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -363,7 +369,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【.Net】反序列化漏洞探索</div>
-      <div>http://example.com/B_Code/CSharp/【.Net】反序列化探索/</div>
+      <div>https://hodlyounger.github.io/B_Code/CSharp/【.Net】反序列化探索/</div>
     </div>
     <div class="license-meta">
       

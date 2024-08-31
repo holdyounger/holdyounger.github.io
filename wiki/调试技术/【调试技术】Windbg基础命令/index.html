@@ -21,27 +21,27 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="本文介绍windbg中的一些基础命令： [toc] 基础命令   说明 命令 用法 描述    说明 命令 用法 描述   帮助 ? ?? 表达式 显示常规命令计算表达式的值   .help .help 显示元命令(以 . 开头的命令)    .hh .hh.hh bp 打开windbg help文档打开windbg help文档，并自动输入bp命令进行搜索    版本 version  显示调试">
+    <meta name="description" content="概述：记录 windbg 调试中的一些基础命令，方便查询，WinDbg Preview 版本自带了 Local Help 手册，可以使用自带的。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windbg 基础命令">
-<meta property="og:url" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:title" content="【调试技术】Windbg 基础命令">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="本文介绍windbg中的一些基础命令： [toc] 基础命令   说明 命令 用法 描述    说明 命令 用法 描述   帮助 ? ?? 表达式 显示常规命令计算表达式的值   .help .help 显示元命令(以 . 开头的命令)    .hh .hh.hh bp 打开windbg help文档打开windbg help文档，并自动输入bp命令进行搜索    版本 version  显示调试">
+<meta property="og:description" content="概述：记录 windbg 调试中的一些基础命令，方便查询，WinDbg Preview 版本自带了 Local Help 手册，可以使用自带的。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png">
-<meta property="og:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/3.png">
-<meta property="og:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/4.png">
-<meta property="og:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/5.png">
-<meta property="article:published_time" content="2024-01-23T06:08:19.498Z">
-<meta property="article:modified_time" content="2024-08-30T15:12:08.926Z">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/3.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/4.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/5.png">
+<meta property="article:published_time" content="2024-08-31T01:41:20.245Z">
+<meta property="article:modified_time" content="2024-08-31T13:46:10.395Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows&#x2F;Windbg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png">
   
   
   
-  <title>Windbg 基础命令 - oone</title>
+  <title>【调试技术】Windbg 基础命令 - oone</title>
 
   <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -75,11 +75,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -205,7 +209,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Windbg 基础命令"></span>
+            <span id="subtitle" data-typed-text="【调试技术】Windbg 基础命令"></span>
           
         </div>
 
@@ -216,8 +220,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-01-23 14:08" pubdate>
-          2024年1月23日 下午
+        <time datetime="2024-08-31 09:41" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -276,241 +280,256 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Windbg 基础命令</h1>
+            <h1 id="seo-header">【调试技术】Windbg 基础命令</h1>
             
             
               <div class="markdown-body">
                 
-                <p>本文介绍windbg中的一些基础命令：</p>
-<p>[toc]</p>
-<h3 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h3><table>
+                <blockquote>
+<p>概述：记录 windbg 调试中的一些基础命令，方便查询，WinDbg Preview 版本自带了 Local Help 手册，可以使用自带的。</p>
+</blockquote>
+<span id="more"></span>
+<h3 id="基础命令"><a class="markdownIt-Anchor" href="#基础命令"></a> 基础命令</h3>
+<table>
 <thead>
 <tr>
-<th align="left">说明</th>
-<th align="left">命令</th>
-<th align="left">用法</th>
-<th align="left">描述</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">用法</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">说明</td>
-<td align="left">命令</td>
-<td align="left">用法</td>
-<td align="left">描述</td>
+<tbody>
+<tr>
+<td style="text-align:left">说明</td>
+<td style="text-align:left">命令</td>
+<td style="text-align:left">用法</td>
+<td style="text-align:left">描述</td>
 </tr>
 <tr>
-<td align="left">帮助</td>
-<td align="left">?</td>
-<td align="left">?? 表达式</td>
-<td align="left">显示常规命令计算表达式的值</td>
+<td style="text-align:left">帮助</td>
+<td style="text-align:left">?</td>
+<td style="text-align:left">?? 表达式</td>
+<td style="text-align:left">显示常规命令计算表达式的值</td>
 </tr>
 <tr>
-<td align="left">.help</td>
-<td align="left">.help</td>
-<td align="left">显示元命令(以 . 开头的命令)</td>
-<td align="left"></td>
+<td style="text-align:left">.help</td>
+<td style="text-align:left">.help</td>
+<td style="text-align:left">显示元命令(以 . 开头的命令)</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.hh</td>
-<td align="left">.hh.hh bp</td>
-<td align="left">打开windbg help文档打开windbg help文档，并自动输入bp命令进行搜索</td>
-<td align="left"></td>
+<td style="text-align:left">.hh</td>
+<td style="text-align:left">.hh.hh bp</td>
+<td style="text-align:left">打开windbg help文档打开windbg help文档，并自动输入bp命令进行搜索</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">版本</td>
-<td align="left">version</td>
-<td align="left"></td>
-<td align="left">显示调试器和调试目标版本</td>
+<td style="text-align:left">版本</td>
+<td style="text-align:left">version</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示调试器和调试目标版本</td>
 </tr>
 <tr>
-<td align="left">vercommand</td>
-<td align="left"></td>
-<td align="left">显示调试器启动时的命令行</td>
-<td align="left"></td>
+<td style="text-align:left">vercommand</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示调试器启动时的命令行</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">vertarget</td>
-<td align="left"></td>
-<td align="left">显示调试目标系统信息</td>
-<td align="left"></td>
+<td style="text-align:left">vertarget</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示调试目标系统信息</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">清空屏幕</td>
-<td align="left">.cls</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">清空屏幕</td>
+<td style="text-align:left">.cls</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">查看异常信息</td>
-<td align="left">.ecxr</td>
-<td align="left"></td>
-<td align="left">显示异常信息的上下文</td>
+<td style="text-align:left">查看异常信息</td>
+<td style="text-align:left">.ecxr</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示异常信息的上下文</td>
 </tr>
 <tr>
-<td align="left">.lastevent</td>
-<td align="left"></td>
-<td align="left">显示最近一次发生的异常信息或事件</td>
-<td align="left"></td>
+<td style="text-align:left">.lastevent</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示最近一次发生的异常信息或事件</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.exr -1</td>
-<td align="left"></td>
-<td align="left">显示最近一次的异常记录</td>
-<td align="left"></td>
+<td style="text-align:left">.exr -1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示最近一次的异常记录</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">!analyze</td>
-<td align="left">!analyze -v!analyze -hang!analyze -f</td>
-<td align="left">显示当前异常信息分析线程栈，看是否有线程blocking其他线程See an exception analysis even when the debugger does not detect an exception.</td>
-<td align="left"></td>
+<td style="text-align:left">!analyze</td>
+<td style="text-align:left">!analyze -v!analyze -hang!analyze -f</td>
+<td style="text-align:left">显示当前异常信息分析线程栈，看是否有线程blocking其他线程See an exception analysis even when the debugger does not detect an exception.</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">寄存器</td>
-<td align="left">r</td>
-<td align="left"></td>
-<td align="left">显示各寄存器的值</td>
+<td style="text-align:left">寄存器</td>
+<td style="text-align:left">r</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示各寄存器的值</td>
 </tr>
 <tr>
-<td align="left">时间</td>
-<td align="left">.time</td>
-<td align="left"></td>
-<td align="left">显示system&#x2F;process&#x2F;kernel&#x2F;user time</td>
+<td style="text-align:left">时间</td>
+<td style="text-align:left">.time</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">显示system/process/kernel/user time</td>
 </tr>
 <tr>
-<td align="left">Switch between 32-bit and 64-bit mode</td>
-<td align="left">!wow64exts.sw<br>.load wow64exts</td>
-<td align="left"></td>
-<td align="left">查看64位机器上生成的32位程序的dmp时，需要使用此命令转换一下模式!wow64exts.help 可查看相关帮助信息</td>
+<td style="text-align:left">Switch between 32-bit and 64-bit mode</td>
+<td style="text-align:left">!wow64exts.sw<br>.load wow64exts</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">查看64位机器上生成的32位程序的dmp时，需要使用此命令转换一下模式!wow64exts.help 可查看相关帮助信息</td>
 </tr>
-</tbody></table>
-<h3 id="调试命令"><a href="#调试命令" class="headerlink" title="调试命令"></a>调试命令</h3><table>
+</tbody>
+</table>
+<h3 id="调试命令"><a class="markdownIt-Anchor" href="#调试命令"></a> 调试命令</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left">示例</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">g</td>
-<td align="left">继续执行</td>
-<td align="left"></td>
+<tbody>
+<tr>
+<td style="text-align:left">g</td>
+<td style="text-align:left">继续执行</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">gu</td>
-<td align="left">执行到当前函数返回 step out</td>
-<td align="left"></td>
+<td style="text-align:left">gu</td>
+<td style="text-align:left">执行到当前函数返回 step out</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">p</td>
-<td align="left">单步调试 step over</td>
-<td align="left"></td>
+<td style="text-align:left">p</td>
+<td style="text-align:left">单步调试 step over</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">t</td>
-<td align="left">step into</td>
-<td align="left"></td>
+<td style="text-align:left">t</td>
+<td style="text-align:left">step into</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">q</td>
-<td align="left">结束调试会话&#x2F;退出</td>
-<td align="left"></td>
+<td style="text-align:left">q</td>
+<td style="text-align:left">结束调试会话/退出</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.restart</td>
-<td align="left">重新启动调试目标</td>
-<td align="left"></td>
+<td style="text-align:left">.restart</td>
+<td style="text-align:left">重新启动调试目标</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.detach</td>
-<td align="left">分离调试目标</td>
-<td align="left"></td>
+<td style="text-align:left">.detach</td>
+<td style="text-align:left">分离调试目标</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.attach</td>
-<td align="left">附加到存在的进程，参数为16进制的PID</td>
-<td align="left">.attach 0x123</td>
+<td style="text-align:left">.attach</td>
+<td style="text-align:left">附加到存在的进程，参数为16进制的PID</td>
+<td style="text-align:left">.attach 0x123</td>
 </tr>
 <tr>
-<td align="left">.create</td>
-<td align="left">创建一个新的进程进行调试</td>
-<td align="left">例如调试cmd.exe.create cmd</td>
+<td style="text-align:left">.create</td>
+<td style="text-align:left">创建一个新的进程进行调试</td>
+<td style="text-align:left">例如调试cmd.exe.create cmd</td>
 </tr>
 <tr>
-<td align="left">.dbgdbg</td>
-<td align="left">启动另一个调试器来调试当前调试器</td>
-<td align="left"></td>
+<td style="text-align:left">.dbgdbg</td>
+<td style="text-align:left">启动另一个调试器来调试当前调试器</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.opendump</td>
-<td align="left">打开dmp文件</td>
-<td align="left">.opendump d:\dump\360tray.dmp</td>
+<td style="text-align:left">.opendump</td>
+<td style="text-align:left">打开dmp文件</td>
+<td style="text-align:left">.opendump d:\dump\360tray.dmp</td>
 </tr>
-</tbody></table>
-<h3 id="模块信息"><a href="#模块信息" class="headerlink" title="模块信息"></a>模块信息</h3><table>
+</tbody>
+</table>
+<h3 id="模块信息"><a class="markdownIt-Anchor" href="#模块信息"></a> 模块信息</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left"></th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left"></th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">lm</td>
-<td align="left">显示加载的模块信息，exe和dll等</td>
-<td align="left"></td>
+<tbody>
+<tr>
+<td style="text-align:left">lm</td>
+<td style="text-align:left">显示加载的模块信息，exe和dll等</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">lmvm 模块名lm v m 模块名</td>
-<td align="left">查看指定模块详细信息，比如查看360tray.exe中加载的appd.dll的信息示例： lmvm appd</td>
-<td align="left"></td>
+<td style="text-align:left">lmvm 模块名lm v m 模块名</td>
+<td style="text-align:left">查看指定模块详细信息，比如查看360tray.exe中加载的appd.dll的信息示例： lmvm appd</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left"></td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h3 id="调试符号"><a href="#调试符号" class="headerlink" title="调试符号"></a>调试符号</h3><table>
+</tbody>
+</table>
+<h3 id="调试符号"><a class="markdownIt-Anchor" href="#调试符号"></a> 调试符号</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left">示例</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">ld</td>
-<td align="left">加载模块的调试符号</td>
-<td align="left">ld appdld *</td>
+<tbody>
+<tr>
+<td style="text-align:left">ld</td>
+<td style="text-align:left">加载模块的调试符号</td>
+<td style="text-align:left">ld appdld *</td>
 </tr>
 <tr>
-<td align="left">ln</td>
-<td align="left">搜索相邻符号（距离指定地址最近的符号）</td>
-<td align="left">ln 722d0000</td>
+<td style="text-align:left">ln</td>
+<td style="text-align:left">搜索相邻符号（距离指定地址最近的符号）</td>
+<td style="text-align:left">ln 722d0000</td>
 </tr>
 <tr>
-<td align="left">x</td>
-<td align="left">显示匹配参数类型的符号</td>
-<td align="left">显示kernel32.dll所有以Create开头的符号x kernel32!Create*</td>
+<td style="text-align:left">x</td>
+<td style="text-align:left">显示匹配参数类型的符号</td>
+<td style="text-align:left">显示kernel32.dll所有以Create开头的符号x kernel32!Create*</td>
 </tr>
 <tr>
-<td align="left">.sympath</td>
-<td align="left">设置符号文件路径</td>
-<td align="left">.sympath d:\dump</td>
+<td style="text-align:left">.sympath</td>
+<td style="text-align:left">设置符号文件路径</td>
+<td style="text-align:left">.sympath d:\dump</td>
 </tr>
 <tr>
-<td align="left">.symfix</td>
-<td align="left">设置系统符号存放位置</td>
-<td align="left">设置系统符号存放位置</td>
+<td style="text-align:left">.symfix</td>
+<td style="text-align:left">设置系统符号存放位置</td>
+<td style="text-align:left">设置系统符号存放位置</td>
 </tr>
 <tr>
-<td align="left">.reload</td>
-<td align="left">Reload symbol information for all modules**</td>
-<td align="left"></td>
+<td style="text-align:left">.reload</td>
+<td style="text-align:left">Reload symbol information for all modules**</td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><table>
+</tbody>
+</table>
+<h3 id="进程"><a class="markdownIt-Anchor" href="#进程"></a> 进程</h3>
+<table>
 <thead>
 <tr>
 <th>命令</th>
@@ -518,7 +537,8 @@
 <th>示例</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>.process</td>
 <td>显示当前进程的EPROCESS</td>
 <td></td>
@@ -533,316 +553,330 @@
 <td>查看系统当前所有进程</td>
 <td></td>
 </tr>
-</tbody></table>
-<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><table>
+</tbody>
+</table>
+<h3 id="线程"><a class="markdownIt-Anchor" href="#线程"></a> 线程</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left">示例</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">~</td>
-<td align="left">显示所有线程信息</td>
-<td align="left"></td>
+<tbody>
+<tr>
+<td style="text-align:left">~</td>
+<td style="text-align:left">显示所有线程信息</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left"><del>* [Command]</del>. [Command]~#[Command]</td>
-<td align="left">为所有线程执行指定命令为当前线程执行指定命令为导致当前异常或调试事件的线程执行指定命令</td>
-<td align="left">查看所有线程的栈信息：~* k</td>
+<td style="text-align:left">~* [Command]~. [Command]~#[Command]</td>
+<td style="text-align:left">为所有线程执行指定命令为当前线程执行指定命令为导致当前异常或调试事件的线程执行指定命令</td>
+<td style="text-align:left">查看所有线程的栈信息：~* k</td>
 </tr>
 <tr>
-<td align="left"><del>Number</del> Number s</td>
-<td align="left">显示序号为Number的线程切换当前线程为序号Number的线程</td>
-<td align="left">显示10号线程：<del>10切换到10号线程：</del> 10 s</td>
+<td style="text-align:left"><sub>Number</sub> Number s</td>
+<td style="text-align:left">显示序号为Number的线程切换当前线程为序号Number的线程</td>
+<td style="text-align:left">显示10号线程：<sub>10切换到10号线程：</sub> 10 s</td>
 </tr>
 <tr>
-<td align="left">~~[TID]</td>
-<td align="left">线程ID为TID的线程</td>
-<td align="left"></td>
+<td style="text-align:left">~~[TID]</td>
+<td style="text-align:left">线程ID为TID的线程</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">~ Number n~ Number m</td>
-<td align="left">SuspendThread 增加线程的挂起计数ResumeThread 减少线程的挂起计数</td>
-<td align="left">~ 10 n~10 m</td>
+<td style="text-align:left">~ Number n~ Number m</td>
+<td style="text-align:left">SuspendThread 增加线程的挂起计数ResumeThread 减少线程的挂起计数</td>
+<td style="text-align:left">~ 10 n~10 m</td>
 </tr>
 <tr>
-<td align="left">~ Number f~ Number u</td>
-<td align="left">Freeze thread 冻结线程Unfreeze thread 解冻线程控制被调试的线程的冻结状态, 与上面两个命令类似（处于冻结状态时恢复目标执行时这个线程不会恢复执行，这个状态是调试器维护的一个状态，执行~ 线程号 n 增加挂起计数后，执行g运行时该线程也不会运行）</td>
-<td align="left"></td>
+<td style="text-align:left">~ Number f~ Number u</td>
+<td style="text-align:left">Freeze thread 冻结线程Unfreeze thread 解冻线程控制被调试的线程的冻结状态, 与上面两个命令类似（处于冻结状态时恢复目标执行时这个线程不会恢复执行，这个状态是调试器维护的一个状态，执行~ 线程号 n 增加挂起计数后，执行g运行时该线程也不会运行）</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">~ Number s</td>
-<td align="left">在恢复执行命令g前加线程限定符，可以只恢复指定的线程执行（只对该线程调用ResumeThread使其恢复执行，其他线程仍处于挂起状态）</td>
-<td align="left"></td>
+<td style="text-align:left">~ Number s</td>
+<td style="text-align:left">在恢复执行命令g前加线程限定符，可以只恢复指定的线程执行（只对该线程调用ResumeThread使其恢复执行，其他线程仍处于挂起状态）</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">!runaway</td>
-<td align="left">显示每个线程运行时间，可以方便找到消耗cpu时间长的线程</td>
-<td align="left"></td>
+<td style="text-align:left">!runaway</td>
+<td style="text-align:left">显示每个线程运行时间，可以方便找到消耗cpu时间长的线程</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">.ttime</td>
-<td align="left">display thread times (user + kernel mode)</td>
-<td align="left"></td>
+<td style="text-align:left">.ttime</td>
+<td style="text-align:left">display thread times (user + kernel mode)</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">!gle!gle -all</td>
-<td align="left">displays the last error value for the current thread -&gt;GetLastErrordisplays the last error value for all threads</td>
-<td align="left"></td>
+<td style="text-align:left">!gle!gle -all</td>
+<td style="text-align:left">displays the last error value for the current thread -&gt;GetLastErrordisplays the last error value for all threads</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">!error</td>
-<td align="left">decodes and displays information about an error value.Specifies one of the following error codes:Win32WinsockNTSTATUSNetAPI</td>
-<td align="left"></td>
+<td style="text-align:left">!error</td>
+<td style="text-align:left">decodes and displays information about an error value.Specifies one of the following error codes:Win32WinsockNTSTATUSNetAPI</td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><table>
+</tbody>
+</table>
+<h3 id="栈"><a class="markdownIt-Anchor" href="#栈"></a> 栈</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left">示例</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">k</td>
-<td align="left">显示EBP，返回地址和源文件信息（如果有私有符号的话）</td>
-<td align="left"></td>
+<tbody>
+<tr>
+<td style="text-align:left">k</td>
+<td style="text-align:left">显示EBP，返回地址和源文件信息（如果有私有符号的话）</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">kb</td>
-<td align="left">显示EBP，返回地址，函数参数及源文件信息（如果有私有符号的话）</td>
-<td align="left"></td>
+<td style="text-align:left">kb</td>
+<td style="text-align:left">显示EBP，返回地址，函数参数及源文件信息（如果有私有符号的话）</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">k L</td>
-<td align="left">L选项表示不显示源文件信息，也可以用于其他命令比如 kb L， kv L或写为 kL，kbL，kvL</td>
-<td align="left"></td>
+<td style="text-align:left">k L</td>
+<td style="text-align:left">L选项表示不显示源文件信息，也可以用于其他命令比如 kb L， kv L或写为 kL，kbL，kvL</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">kv</td>
-<td align="left">在kb的基础上增加显示FPO（栈指针省略）信息和调用协议（调用协议仅支持On x86-based processors）</td>
-<td align="left"></td>
+<td style="text-align:left">kv</td>
+<td style="text-align:left">在kb的基础上增加显示FPO（栈指针省略）信息和调用协议（调用协议仅支持On x86-based processors）</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">kpkP</td>
-<td align="left">根据私有符号文件中的函数原型信息自动显示参数信息P为大写，表示每个参数占一行</td>
-<td align="left"></td>
+<td style="text-align:left">kpkP</td>
+<td style="text-align:left">根据私有符号文件中的函数原型信息自动显示参数信息P为大写，表示每个参数占一行</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">kn</td>
-<td align="left">在k命令的基础上，每行前显示栈帧的序号</td>
-<td align="left"></td>
+<td style="text-align:left">kn</td>
+<td style="text-align:left">在k命令的基础上，每行前显示栈帧的序号</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">kn f</td>
-<td align="left">f选项表示显示每两个相邻栈帧的内存距离，即栈帧基地址的差值</td>
-<td align="left"></td>
+<td style="text-align:left">kn f</td>
+<td style="text-align:left">f选项表示显示每两个相邻栈帧的内存距离，即栈帧基地址的差值</td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h3 id="查看-修改-搜索内存数据"><a href="#查看-修改-搜索内存数据" class="headerlink" title="查看&#x2F;修改&#x2F;搜索内存数据"></a>查看&#x2F;修改&#x2F;搜索内存数据</h3><table>
+</tbody>
+</table>
+<h3 id="查看修改搜索内存数据"><a class="markdownIt-Anchor" href="#查看修改搜索内存数据"></a> 查看/修改/搜索内存数据</h3>
+<table>
 <thead>
 <tr>
-<th align="left">说明</th>
-<th align="left">命令</th>
-<th align="left">描述</th>
-<th align="left">示例</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">查看内存数据  命令格式：d{a|b|c|d|D|f|p|q|u|w|W} [Options] [Range]dy{b|d} [Options] [Range]d [Options] [Range]</td>
-<td align="left">da</td>
-<td align="left">ASCII字符</td>
-<td align="left">Range指定要显示的内存范围，有如下几种表示方法：起始地址+终止地址比如：dd 0012fd9c 0012fda8起始地址+L&#x2F;l+元素个数比如：dd 0012fd9c L4  或  dd 0012fd9c l4终止地址+L&#x2F;l+负号+元素个数比如：dd 0012fda8 L-4   或   dd 0012fda8 l-4</td>
+<tbody>
+<tr>
+<td style="text-align:left">查看内存数据  命令格式：d{a|b|c|d|D|f|p|q|u|w|W} [Options] [Range]dy{b|d} [Options] [Range]d [Options] [Range]</td>
+<td style="text-align:left">da</td>
+<td style="text-align:left">ASCII字符</td>
+<td style="text-align:left">Range指定要显示的内存范围，有如下几种表示方法：起始地址+终止地址比如：dd 0012fd9c 0012fda8起始地址+L/l+元素个数比如：dd 0012fd9c L4  或  dd 0012fd9c l4终止地址+L/l+负号+元素个数比如：dd 0012fda8 L-4   或   dd 0012fda8 l-4</td>
 </tr>
 <tr>
-<td align="left">du</td>
-<td align="left">Unicode字符</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">du</td>
+<td style="text-align:left">Unicode字符</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dc</td>
-<td align="left">DWORD和ASCII码</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dc</td>
+<td style="text-align:left">DWORD和ASCII码</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dd</td>
-<td align="left">DWORD</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dd</td>
+<td style="text-align:left">DWORD</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dD</td>
-<td align="left">双精度浮点数</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dD</td>
+<td style="text-align:left">双精度浮点数</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">df</td>
-<td align="left">单精度浮点数</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">df</td>
+<td style="text-align:left">单精度浮点数</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dp</td>
-<td align="left">指针</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dp</td>
+<td style="text-align:left">指针</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dq</td>
-<td align="left">四字&#x2F;8字节</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dq</td>
+<td style="text-align:left">四字/8字节</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">dw</td>
-<td align="left">一个字&#x2F;2字节</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dw</td>
+<td style="text-align:left">一个字/2字节</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">查看局部变量<strong>dv</strong> [<em>Flags</em>] [<em>Pattern</em>]</td>
-<td align="left">dv</td>
-<td align="left">查看局部变量</td>
-<td align="left">dv 02sample!gGlo*dv命令可以带有通配符, 来查看具有某命名模式的变量.</td>
+<td style="text-align:left">查看局部变量<strong>dv</strong> [<em>Flags</em>] [<em>Pattern</em>]</td>
+<td style="text-align:left">dv</td>
+<td style="text-align:left">查看局部变量</td>
+<td style="text-align:left">dv 02sample!gGlo*dv命令可以带有通配符, 来查看具有某命名模式的变量.</td>
 </tr>
 <tr>
-<td align="left">dv &#x2F;i</td>
-<td align="left">查看局部变量, 并显示符号的类型和参数类型.</td>
-<td align="left"></td>
-<td align="left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png" srcset="/img/loading.gif" lazyload class width="2"></td>
+<td style="text-align:left">dv /i</td>
+<td style="text-align:left">查看局部变量, 并显示符号的类型和参数类型.</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/2.png" srcset="/img/loading.gif" lazyload class width="2"></td>
 </tr>
 <tr>
-<td align="left">dv &#x2F;t</td>
-<td align="left">查看局部变量, 并显示每个局部变量的数据类型</td>
-<td align="left"></td>
-<td align="left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/3.png" srcset="/img/loading.gif" lazyload class width="3"></td>
+<td style="text-align:left">dv /t</td>
+<td style="text-align:left">查看局部变量, 并显示每个局部变量的数据类型</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/3.png" srcset="/img/loading.gif" lazyload class width="3"></td>
 </tr>
 <tr>
-<td align="left">dv &#x2F;V</td>
-<td align="left">查看局部变量, 并显示变量的存储位置</td>
-<td align="left"></td>
-<td align="left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/4.png" srcset="/img/loading.gif" lazyload class width="4"></td>
+<td style="text-align:left">dv /V</td>
+<td style="text-align:left">查看局部变量, 并显示变量的存储位置</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/4.png" srcset="/img/loading.gif" lazyload class width="4"></td>
 </tr>
 <tr>
-<td align="left">dv &#x2F;V VariableName</td>
-<td align="left">查看指定名称的变量</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">dv /V VariableName</td>
+<td style="text-align:left">查看指定名称的变量</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">查看复合类型变量</td>
-<td align="left">dt</td>
-<td align="left">Display Type的缩写. 当变量的类型为复合类型, 比如说结构体或者类, 那么dv命令只会显示变量的地址. dt命令可以将一块内存按照某个数据类型来解析, 其中的数据类型需要作为参数被传递给dt命令.-b：递归显示所有子类型-r ：指定显示深度，-r0表示不显示子类型-y：附加搜索选项，只显示某个匹配的字段</td>
-<td align="left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/5.png" srcset="/img/loading.gif" lazyload class width="5"></td>
+<td style="text-align:left">查看复合类型变量</td>
+<td style="text-align:left">dt</td>
+<td style="text-align:left">Display Type的缩写. 当变量的类型为复合类型, 比如说结构体或者类, 那么dv命令只会显示变量的地址. dt命令可以将一块内存按照某个数据类型来解析, 其中的数据类型需要作为参数被传递给dt命令.-b：递归显示所有子类型-r ：指定显示深度，-r0表示不显示子类型-y：附加搜索选项，只显示某个匹配的字段</td>
+<td style="text-align:left"><img src="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/5.png" srcset="/img/loading.gif" lazyload class width="5"></td>
 </tr>
 <tr>
-<td align="left">编辑内存数据</td>
-<td align="left">按字符串方式编辑命令格式：e{a|u|za|zu} Address “String”</td>
-<td align="left">其中a和u分别代表不是以0结尾的ASCII和Unicode字符串，za和zu分别代表以0结尾的ASCII和Unicode字符串</td>
-<td align="left">ezu  12fc94 “Debug”   修改0012fc94地址的内容为Unicode字符串”Debug”</td>
+<td style="text-align:left">编辑内存数据</td>
+<td style="text-align:left">按字符串方式编辑命令格式：e{a|u|za|zu} Address “String”</td>
+<td style="text-align:left">其中a和u分别代表不是以0结尾的ASCII和Unicode字符串，za和zu分别代表以0结尾的ASCII和Unicode字符串</td>
+<td style="text-align:left">ezu  12fc94 “Debug”   修改0012fc94地址的内容为Unicode字符串&quot;Debug&quot;</td>
 </tr>
 <tr>
-<td align="left">按数值方式编辑命令格式：e{b|d|D|f|p|q|w} Address [Values]</td>
-<td align="left">Values指定新的值，如果命令中没有指定该值，则Windbg会以交互式方式让用户输入</td>
-<td align="left">ew 12fc94 41 41 41 41 41 将0012fc94地址开始的5个WORD都改为0x41</td>
-<td align="left"></td>
+<td style="text-align:left">按数值方式编辑命令格式：e{b|d|D|f|p|q|w} Address [Values]</td>
+<td style="text-align:left">Values指定新的值，如果命令中没有指定该值，则Windbg会以交互式方式让用户输入</td>
+<td style="text-align:left">ew 12fc94 41 41 41 41 41 将0012fc94地址开始的5个WORD都改为0x41</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">搜索内存数据</td>
-<td align="left">指定范围搜索任何ANSII或UNICODE字符串命令格式：s -[[Flags]] sa|su Range</td>
-<td align="left">[Flags]用来指定搜索选项：L&#x2F;l+整数   指定字符串的最小长度s          将搜索结果保存起来r          在保存的结果中搜索 Range指定内存范围，写法与d命令的Range参数一样</td>
-<td align="left">s -[L5] sa poi(nt!PsInitialSystemProcess) L200在nt!PsInitialSystemProcess变量所指地址开始的512字节（0x200）范围内搜索任何长度不小于5的ANSII字符串</td>
+<td style="text-align:left">搜索内存数据</td>
+<td style="text-align:left">指定范围搜索任何ANSII或UNICODE字符串命令格式：s -[[Flags]] sa|su Range</td>
+<td style="text-align:left">[Flags]用来指定搜索选项：L/l+整数   指定字符串的最小长度s          将搜索结果保存起来r          在保存的结果中搜索 Range指定内存范围，写法与d命令的Range参数一样</td>
+<td style="text-align:left">s -[L5] sa poi(nt!PsInitialSystemProcess) L200在nt!PsInitialSystemProcess变量所指地址开始的512字节（0x200）范围内搜索任何长度不小于5的ANSII字符串</td>
 </tr>
 <tr>
-<td align="left">指定内存地址范围内搜索与指定对象相同类型的对象命令格式：s -[[Flags]]v Range Object</td>
-<td align="left">Object ： Specifies the address of an object or the address of a pointer to an object</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">指定内存地址范围内搜索与指定对象相同类型的对象命令格式：s -[[Flags]]v Range Object</td>
+<td style="text-align:left">Object ： Specifies the address of an object or the address of a pointer to an object</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">指定范围内搜索某一内容模式命令格式：s -[[[Flags]Type]] Range Pattern</td>
-<td align="left">Type指定要搜索内容的数据类型，即决定匹配搜索内容的方式。取值可以为：b（字节），w（字），d（双字），q（四字），a（ASCII字符串），u（Unicode字符串）。如果不指定，默认为b。 Pattern指定要搜索的内容</td>
-<td align="left">s -u  0x400000 L2a000 “AdvDbg”从0x400000开始的2a000范围内搜索Unicode字符串”AdvDbg”</td>
-<td align="left"></td>
+<td style="text-align:left">指定范围内搜索某一内容模式命令格式：s -[[[Flags]Type]] Range Pattern</td>
+<td style="text-align:left">Type指定要搜索内容的数据类型，即决定匹配搜索内容的方式。取值可以为：b（字节），w（字），d（双字），q（四字），a（ASCII字符串），u（Unicode字符串）。如果不指定，默认为b。 Pattern指定要搜索的内容</td>
+<td style="text-align:left">s -u  0x400000 L2a000 “AdvDbg&quot;从0x400000开始的2a000范围内搜索Unicode字符串&quot;AdvDbg”</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">在当前进程的所有模块中进行搜索!for_each_module s-a @#Base @#End “Debugger”</td>
-<td align="left">在每个模块中搜索字符串” Debugger”其中@#Base和@#End是!for_each_module定义的别名，其他的还有：@#ModuleName（模块名称），@#SymbolFileName（符号文件名称），@#Size（模块大小），@#SymbolType（符号文件类型）</td>
-<td align="left"></td>
-<td align="left"></td>
+<td style="text-align:left">在当前进程的所有模块中进行搜索!for_each_module s-a @#Base @#End “Debugger”</td>
+<td style="text-align:left">在每个模块中搜索字符串&quot; Debugger&quot;其中@#Base和@#End是!for_each_module定义的别名，其他的还有：@#ModuleName（模块名称），@#SymbolFileName（符号文件名称），@#Size（模块大小），@#SymbolType（符号文件类型）</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h3 id="设置断点"><a href="#设置断点" class="headerlink" title="设置断点"></a>设置断点</h3><table>
+</tbody>
+</table>
+<h3 id="设置断点"><a class="markdownIt-Anchor" href="#设置断点"></a> 设置断点</h3>
+<table>
 <thead>
 <tr>
-<th align="left">命令</th>
-<th align="left">说明</th>
-<th align="left">示例</th>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">命令</td>
-<td align="left">说明</td>
-<td align="left">示例</td>
+<tbody>
+<tr>
+<td style="text-align:left">命令</td>
+<td style="text-align:left">说明</td>
+<td style="text-align:left">示例</td>
 </tr>
 <tr>
-<td align="left">bp</td>
-<td align="left">设置断点命令格式： bp[ID号] [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”] Options选项可用的值：&#x2F;1  断点被命中一次后自动删除，即一次命中断点&#x2F;p  只用于内核调试中，&#x2F;p后跟一个EPROCESS结构的地址，即对指定的进程设置断点&#x2F;t  只用于内核调试中，&#x2F;t后跟一个ETHREAD结构的地址，即对指定的线程设置断点&#x2F;c 和 &#x2F;C 指定中断给用户的最大函数调用深度和最小函数调用深度举例：bp &#x2F;c5 MSVCR80D!printf 只有当函数调用栈深度浅于5时才中断。 Address表达方式：使用模块名加函数符号：bp LocalVar!FuncC  或带偏移值 bp LocalVar!FuncC+9直接使用内存地址：bp 00401089如果使用完全的调试符号，调试符号中包含源代码行信息，可以用： bp｀模块名!XXX.cpp:行号｀ ， 其中｀为重音符号对于C++的类方法，可以使用类名双冒号(::)或双下划线(__)来连接类名和方法名： bp MyClass::MyMethod  或 bp MyClass__MyMethod 或 bp @@(MyClass::MyMethod)</td>
-<td align="left">（1）bp LocalVar!FuncC+9  其中 LocalVar为模块名称，FuncC为函数名称，9为偏移 （2）bp 00401089   在指定的地址上下断点 （3）bp MSVCR80D!printf + 3  2 “kv; da poi(ebp+8)”  在printf的入口偏移3的地址处下断点(为了让建立栈帧的代码执行完)，当第2次命中断点时中断到调试器，并自动执行kv和da poi(ebp+8)命令。  其中，da poi(ebp+8)用来显示printf的第一个参数所指定的字符串。</td>
+<td style="text-align:left">bp</td>
+<td style="text-align:left">设置断点命令格式： bp[ID号] [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”] Options选项可用的值：/1  断点被命中一次后自动删除，即一次命中断点/p  只用于内核调试中，/p后跟一个EPROCESS结构的地址，即对指定的进程设置断点/t  只用于内核调试中，/t后跟一个ETHREAD结构的地址，即对指定的线程设置断点/c 和 /C 指定中断给用户的最大函数调用深度和最小函数调用深度举例：bp /c5 MSVCR80D!printf 只有当函数调用栈深度浅于5时才中断。 Address表达方式：使用模块名加函数符号：bp LocalVar!FuncC  或带偏移值 bp LocalVar!FuncC+9直接使用内存地址：bp 00401089如果使用完全的调试符号，调试符号中包含源代码行信息，可以用： bp｀模块名!XXX.cpp:行号｀ ， 其中｀为重音符号对于C++的类方法，可以使用类名双冒号(::)或双下划线(__)来连接类名和方法名： bp MyClass::MyMethod  或 bp MyClass__MyMethod 或 bp @@(MyClass::MyMethod)</td>
+<td style="text-align:left">（1）bp LocalVar!FuncC+9  其中 LocalVar为模块名称，FuncC为函数名称，9为偏移 （2）bp 00401089   在指定的地址上下断点 （3）bp MSVCR80D!printf + 3  2 “kv; da poi(ebp+8)”  在printf的入口偏移3的地址处下断点(为了让建立栈帧的代码执行完)，当第2次命中断点时中断到调试器，并自动执行kv和da poi(ebp+8)命令。  其中，da poi(ebp+8)用来显示printf的第一个参数所指定的字符串。</td>
 </tr>
 <tr>
-<td align="left">bu</td>
-<td align="left">用于对尚未被加载模块中的代码设置断点命令格式： bu[ID号] [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”]</td>
-<td align="left">对于调试动态加载模块的入口函数和初始化代码比较有用，比如对于即插即用设备的驱动程序。可以使用如下命令在入口函数处设置断点： bu  MyDriver!DriverEntry</td>
+<td style="text-align:left">bu</td>
+<td style="text-align:left">用于对尚未被加载模块中的代码设置断点命令格式： bu[ID号] [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”]</td>
+<td style="text-align:left">对于调试动态加载模块的入口函数和初始化代码比较有用，比如对于即插即用设备的驱动程序。可以使用如下命令在入口函数处设置断点： bu  MyDriver!DriverEntry</td>
 </tr>
 <tr>
-<td align="left">bm</td>
-<td align="left">用于设置一批断点命令格式：bm [Options] SymbolPattern [第几次命中断点时中断到调试器] [“一组命令，用分号隔开”] bm命令要求目标模块的调试符号有类型信息，这通常需要私有符号文件，如果对公共符号文件的模块使用bm命令，会提示错误信息。解决这个问题的方法是使用 &#x2F;a 开关，强制针对所有匹配的符号设置断点，无论是数据还是代码，建议只有在确信所有符号是函数时才使用。</td>
-<td align="left">bm MSVCR80D!print* 对MSVCR80D中所有print开头的函数设置断点</td>
+<td style="text-align:left">bm</td>
+<td style="text-align:left">用于设置一批断点命令格式：bm [Options] SymbolPattern [第几次命中断点时中断到调试器] [“一组命令，用分号隔开”] bm命令要求目标模块的调试符号有类型信息，这通常需要私有符号文件，如果对公共符号文件的模块使用bm命令，会提示错误信息。解决这个问题的方法是使用 /a 开关，强制针对所有匹配的符号设置断点，无论是数据还是代码，建议只有在确信所有符号是函数时才使用。</td>
+<td style="text-align:left">bm MSVCR80D!print* 对MSVCR80D中所有print开头的函数设置断点</td>
 </tr>
 <tr>
-<td align="left">ba</td>
-<td align="left">设置读，写，执行断点命令格式：ba[ID号] Access  Size [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”]其中Access指定触发断点的访问方式，Size指定访问的长度。 Access的取值如下：e  读取和执行指令时触发断点，即访问代码硬件断点r   读取和写入数据时触发断点w  写入数据时触发断点i   执行I&#x2F;O访问时触发断点   Size的取值如下：对于访问代码硬件断点，它的值应该为1对于x86系统，可以为1，2，4，分别表示1字节访问，字访问和双字访问对于x64系统，可以为1，2，4， 8对于安腾系统，可以为1 - 0x80000000间的任意2次方值</td>
-<td align="left">ba  r1 0041717c  对地址0041717c的1字节访问，字访问和双字访问（读写）都会触发该断点</td>
+<td style="text-align:left">ba</td>
+<td style="text-align:left">设置读，写，执行断点命令格式：ba[ID号] Access  Size [Options] [Address [第几次命中断点时中断到调试器]] [“一组命令，用分号隔开”]其中Access指定触发断点的访问方式，Size指定访问的长度。 Access的取值如下：e  读取和执行指令时触发断点，即访问代码硬件断点r   读取和写入数据时触发断点w  写入数据时触发断点i   执行I/O访问时触发断点   Size的取值如下：对于访问代码硬件断点，它的值应该为1对于x86系统，可以为1，2，4，分别表示1字节访问，字访问和双字访问对于x64系统，可以为1，2，4， 8对于安腾系统，可以为1 - 0x80000000间的任意2次方值</td>
+<td style="text-align:left">ba  r1 0041717c  对地址0041717c的1字节访问，字访问和双字访问（读写）都会触发该断点</td>
 </tr>
 <tr>
-<td align="left">bl</td>
-<td align="left">列出当前所有断点</td>
-<td align="left"></td>
+<td style="text-align:left">bl</td>
+<td style="text-align:left">列出当前所有断点</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">bc  断点号</td>
-<td align="left">删除断点</td>
-<td align="left">断点号可以使用*来通配所有断点，使用 - 来表示一个范围，或者使用逗号来指定多个断点号</td>
+<td style="text-align:left">bc  断点号</td>
+<td style="text-align:left">删除断点</td>
+<td style="text-align:left">断点号可以使用*来通配所有断点，使用 - 来表示一个范围，或者使用逗号来指定多个断点号</td>
 </tr>
 <tr>
-<td align="left">bd  断点号</td>
-<td align="left">禁用断点</td>
-<td align="left"></td>
+<td style="text-align:left">bd  断点号</td>
+<td style="text-align:left">禁用断点</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">be  断点号</td>
-<td align="left">启用断点</td>
-<td align="left"></td>
+<td style="text-align:left">be  断点号</td>
+<td style="text-align:left">启用断点</td>
+<td style="text-align:left"></td>
 </tr>
 <tr>
-<td align="left">sxe ld:[dll名称]</td>
-<td align="left">加载某个DLL时下断点 bu wininet!DllMain  与 sxe ld:wininet 效果相同bp kernel32!LoadLibraryW &#x2F;bp kernel32!LoadLibraryA</td>
-<td align="left">sxe ld:wininet加载wininet时下断点sxe ld:* &#x2F; sxe ud:*  匹配所有DLL模块</td>
+<td style="text-align:left">sxe ld:[dll名称]</td>
+<td style="text-align:left">加载某个DLL时下断点 bu wininet!DllMain  与 sxe ld:wininet 效果相同bp kernel32!LoadLibraryW /bp kernel32!LoadLibraryA</td>
+<td style="text-align:left">sxe ld:wininet加载wininet时下断点sxe ld:* / sxe ud:*  匹配所有DLL模块</td>
 </tr>
 <tr>
-<td align="left">sxe ud:[dll名称]</td>
-<td align="left">卸载某个DLL时下断点</td>
-<td align="left"></td>
+<td style="text-align:left">sxe ud:[dll名称]</td>
+<td style="text-align:left">卸载某个DLL时下断点</td>
+<td style="text-align:left"></td>
 </tr>
-</tbody></table>
-<h2 id="查看句柄信息"><a href="#查看句柄信息" class="headerlink" title="查看句柄信息"></a>查看句柄信息</h2><table>
+</tbody>
+</table>
+<h2 id="查看句柄信息"><a class="markdownIt-Anchor" href="#查看句柄信息"></a> 查看句柄信息</h2>
+<table>
 <thead>
 <tr>
 <th>命令</th>
@@ -850,7 +884,8 @@
 <th>示例</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>!handle</td>
 <td>扩展显示目标系统中一个或所有进程拥有的句柄的信息</td>
 <td></td>
@@ -865,7 +900,8 @@
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -918,8 +954,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Windbg 基础命令</div>
-      <div>http://example.com/wiki/调试技术/【调试技术】Windbg基础命令/</div>
+      <div>【调试技术】Windbg 基础命令</div>
+      <div>https://hodlyounger.github.io/wiki/调试技术/【调试技术】Windbg基础命令/</div>
     </div>
     <div class="license-meta">
       
@@ -931,7 +967,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年1月23日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -963,9 +999,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91windbg%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95/" title>
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91Windbg%E9%9A%8F%E6%89%8B%E8%AE%B0/" title="【调试技术】windbg 随手记">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile"></span>
+                        <span class="hidden-mobile">【调试技术】windbg 随手记</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

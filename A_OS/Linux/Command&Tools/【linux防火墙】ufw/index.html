@@ -24,7 +24,7 @@
     <meta name="description" content="概述：防火墙是计算机安全的重要组成部分。在Linux中，UFW（Uncomplicated Firewall）是一个开源防火墙工具，可用于实现网络安全策略。它提供了一个简化的命令行接口，使得设置防火墙规则更加容易。在本文中，我们将介绍如何在Linux上使用UFW实现防火墙和安全策略。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【linux防火墙】命令——ufw">
-<meta property="og:url" content="http://example.com/A_OS/Linux/Command&Tools/%E3%80%90linux%E9%98%B2%E7%81%AB%E5%A2%99%E3%80%91ufw/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Linux/Command&Tools/%E3%80%90linux%E9%98%B2%E7%81%AB%E5%A2%99%E3%80%91ufw/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：防火墙是计算机安全的重要组成部分。在Linux中，UFW（Uncomplicated Firewall）是一个开源防火墙工具，可用于实现网络安全策略。它提供了一个简化的命令行接口，使得设置防火墙规则更加容易。在本文中，我们将介绍如何在Linux上使用UFW实现防火墙和安全策略。">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,64 +285,45 @@
 <p>概述：防火墙是计算机安全的重要组成部分。在Linux中，UFW（Uncomplicated Firewall）是一个开源防火墙工具，可用于实现网络安全策略。它提供了一个简化的命令行接口，使得设置防火墙规则更加容易。在本文中，我们将介绍如何在Linux上使用UFW实现防火墙和安全策略。</p>
 </blockquote>
 <span id="more"></span>
-
-
 <p>[toc]</p>
-<h1 id="安装UFW"><a href="#安装UFW" class="headerlink" title="安装UFW"></a>安装UFW</h1><p>许多Linux发行版都默认安装了UFW。如果你的Linux发行版没有安装，你可以使用以下命令来安装：</p>
+<h1 id="安装ufw"><a class="markdownIt-Anchor" href="#安装ufw"></a> 安装UFW</h1>
+<p>许多Linux发行版都默认安装了UFW。如果你的Linux发行版没有安装，你可以使用以下命令来安装：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo apt-get install ufw <span class="hljs-comment"># Ubuntu和Debian</span><br></code></pre></td></tr></table></figure>
-
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo yum install ufw <span class="hljs-comment"># CentOS和Fedora</span><br></code></pre></td></tr></table></figure>
-
-<h1 id="设置UFW规则"><a href="#设置UFW规则" class="headerlink" title="设置UFW规则"></a>设置UFW规则</h1><p>在使用UFW之前，必须启用它。使用以下命令来启用UFW：</p>
+<h1 id="设置ufw规则"><a class="markdownIt-Anchor" href="#设置ufw规则"></a> 设置UFW规则</h1>
+<p>在使用UFW之前，必须启用它。使用以下命令来启用UFW：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw <span class="hljs-built_in">enable</span><br></code></pre></td></tr></table></figure>
-
-
 <p>默认情况下，UFW将拒绝所有传入连接和允许所有传出连接。要添加其他规则，可以使用以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw allow [port]/[protocol]<br></code></pre></td></tr></table></figure>
-
-
 <p>例如，启用SSH连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw allow ssh<br></code></pre></td></tr></table></figure>
-
-
 <p>默认情况下，UFW假定TCP协议。如果要允许其他协议，可以使用以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw allow [port]/[protocol]<br></code></pre></td></tr></table></figure>
-
-
 <p>例如，启用UDP连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw allow 53/udp<br></code></pre></td></tr></table></figure>
-
-
 <p>您还可以使用其他选项指定源地址，目标地址和应用程序。</p>
-<h1 id="限制IP访问"><a href="#限制IP访问" class="headerlink" title="限制IP访问"></a>限制IP访问</h1><p>除了端口，还可以使用UFW限制对特定IP的访问。例如，要拒绝来自IP地址为192.168.1.100的所有连接：</p>
+<h1 id="限制ip访问"><a class="markdownIt-Anchor" href="#限制ip访问"></a> 限制IP访问</h1>
+<p>除了端口，还可以使用UFW限制对特定IP的访问。例如，要拒绝来自IP地址为192.168.1.100的所有连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw deny from 192.168.1.100<br></code></pre></td></tr></table></figure>
-
-
 <p>或者，要允许仅该IP地址访问您的网站：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw allow from 192.168.1.100 to any port 80<br></code></pre></td></tr></table></figure>
-
-<h1 id="修改默认策略"><a href="#修改默认策略" class="headerlink" title="修改默认策略"></a>修改默认策略</h1><p>您可以通过修改默认策略来更改UFW的行为。要允许所有传入连接并拒绝所有传出连接：</p>
+<h1 id="修改默认策略"><a class="markdownIt-Anchor" href="#修改默认策略"></a> 修改默认策略</h1>
+<p>您可以通过修改默认策略来更改UFW的行为。要允许所有传入连接并拒绝所有传出连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw default deny outgoing<br></code></pre></td></tr></table></figure>
-
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw default allow incoming<br></code></pre></td></tr></table></figure>
-
-
 <p>或者，要拒绝所有传入连接并允许所有传出连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw default allow outgoing<br></code></pre></td></tr></table></figure>
-
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw default deny incoming<br></code></pre></td></tr></table></figure>
-
-<h1 id="撤消规则"><a href="#撤消规则" class="headerlink" title="撤消规则"></a>撤消规则</h1><p>如果您需要删除规则，可以使用以下命令：</p>
+<h1 id="撤消规则"><a class="markdownIt-Anchor" href="#撤消规则"></a> 撤消规则</h1>
+<p>如果您需要删除规则，可以使用以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw delete [规则号]<br></code></pre></td></tr></table></figure>
-
-
 <p>规则号是规则列表中的数字序号，从1开始。</p>
-<h1 id="禁用UFW"><a href="#禁用UFW" class="headerlink" title="禁用UFW"></a>禁用UFW</h1><p>要禁用UFW并删除所有规则，可以使用以下命令：</p>
+<h1 id="禁用ufw"><a class="markdownIt-Anchor" href="#禁用ufw"></a> 禁用UFW</h1>
+<p>要禁用UFW并删除所有规则，可以使用以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw <span class="hljs-built_in">disable</span><br></code></pre></td></tr></table></figure>
-
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo ufw reset<br></code></pre></td></tr></table></figure>
-
-<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>在Linux上使用UFW可以轻松实现防火墙和安全策略。UFW提供了一种简单的方式来控制入站和出站流量，并且易于使用和配置。通过设置良好的规则，可以增强系统的安全性。</p>
+<h1 id="结论"><a class="markdownIt-Anchor" href="#结论"></a> 结论</h1>
+<p>在Linux上使用UFW可以轻松实现防火墙和安全策略。UFW提供了一种简单的方式来控制入站和出站流量，并且易于使用和配置。通过设置良好的规则，可以增强系统的安全性。</p>
 
                 
               </div>
@@ -401,7 +386,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【linux防火墙】命令——ufw</div>
-      <div>http://example.com/A_OS/Linux/Command&amp;Tools/【linux防火墙】ufw/</div>
+      <div>https://hodlyounger.github.io/A_OS/Linux/Command&amp;Tools/【linux防火墙】ufw/</div>
     </div>
     <div class="license-meta">
       
@@ -445,9 +430,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_OS/Linux/Command&amp;Tools/%E3%80%90Linux%E3%80%91ls/" title="【Linux】ls命令详解">
+                      <a href="/A_OS/Linux/Linux%E5%86%85%E6%A0%B8%E5%88%86%E6%9E%90%E9%85%8D%E5%A5%97%E5%AE%9E%E9%AA%8C/1%20%E5%AE%8C%E6%88%90%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%BD%AC%E8%BA%B2%E5%88%B0%E7%A8%8B%E5%BA%8F%E5%86%85%E6%A0%B8%E4%BB%A3%E7%A0%81/" title="linux 内核1 完成一个简单的时间片轮转躲到程序内核代码">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【Linux】ls命令详解</span>
+                        <span class="hidden-mobile">linux 内核1 完成一个简单的时间片轮转躲到程序内核代码</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -455,8 +440,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/A_OS/Linux/Command&amp;Tools/Linux%E6%9F%A5%E8%AF%A2%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%9F%90%E4%B8%AA%E8%BD%AF%E4%BB%B6/" title="Linux查询是否安装了某个软件">
-                        <span class="hidden-mobile">Linux查询是否安装了某个软件</span>
+                      <a href="/A_OS/Linux/Command&amp;Tools/%E3%80%90Linux%E3%80%91ls/" title="【Linux】ls命令详解">
+                        <span class="hidden-mobile">【Linux】ls命令详解</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

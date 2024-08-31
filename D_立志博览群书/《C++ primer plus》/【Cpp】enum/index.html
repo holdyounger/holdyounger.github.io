@@ -24,7 +24,7 @@
     <meta name="description" content="概述：C++枚举的说明和使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【C++】枚举">
-<meta property="og:url" content="http://example.com/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AC++%20primer%20plus%E3%80%8B/%E3%80%90Cpp%E3%80%91enum/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AC++%20primer%20plus%E3%80%8B/%E3%80%90Cpp%E3%80%91enum/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：C++枚举的说明和使用">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,87 +285,80 @@
 <p>概述：C++枚举的说明和使用</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h1 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h1><p>C++的枚举工具提供了另一种创建符号常量的方式，这种方式可以代替<code>const</code>。还允许定义新类型，但必须按严格的限制执行。使用<code>enum</code>的句法与<code>struct</code>类似。</p>
+<h1 id="枚举"><a class="markdownIt-Anchor" href="#枚举"></a> 枚举</h1>
+<p>C++的枚举工具提供了另一种创建符号常量的方式，这种方式可以代替<code>const</code>。还允许定义新类型，但必须按严格的限制执行。使用<code>enum</code>的句法与<code>struct</code>类似。</p>
 <p><code>enum color &#123; red, orange, blue, green, red, black&#125;</code></p>
 <p>这条语句定义了一个名为<code>color</code>的新类型，它的取值范围为<code>red, orange, blue, green, red, black</code>，称为符号常量，同时将<code>0~5</code>分别对应于<code>red~black</code>。在默认情况下，<code>0</code>对应的是<code>red</code>,<code>5</code>对应的是<code>black</code>,其他以此类推。</p>
-<h2 id="声明与使用"><a href="#声明与使用" class="headerlink" title="声明与使用"></a>声明与使用</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp">color cor1; <span class="hljs-comment">//定义了一个类型为color的变量cor1</span><br><span class="hljs-comment">//枚举变量的赋值</span><br>cor1 = red; <span class="hljs-comment">//正常赋值</span><br>cor1 = <span class="hljs-number">20</span>; <span class="hljs-comment">//非法，20不是枚举变量</span><br></code></pre></td></tr></table></figure>
-
+<h2 id="声明与使用"><a class="markdownIt-Anchor" href="#声明与使用"></a> 声明与使用</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp">color cor1; <span class="hljs-comment">//定义了一个类型为color的变量cor1</span><br><span class="hljs-comment">//枚举变量的赋值</span><br>cor1 = red; <span class="hljs-comment">//正常赋值</span><br>cor1 = <span class="hljs-number">20</span>; <span class="hljs-comment">//非法，20不是枚举变量</span><br></code></pre></td></tr></table></figure>
 <p>由此可以看出，枚举变量的赋值受到限制，与程序员的定义有关。</p>
 <ul>
-<li><p>对枚举而言，它的操作符只有赋值运算符<code>=</code>，这就意味着枚举变量不能执行<code>++、--、+、—</code>等<code>等号</code>以外的操作。</p>
+<li>
+<p>对枚举而言，它的操作符只有赋值运算符<code>=</code>，这就意味着枚举变量不能执行<code>++、--、+、—</code>等<code>等号</code>以外的操作。</p>
 </li>
-<li><p>枚举量是整形，可被提升为int类型，但int类型不能自动转换为枚举类型</p>
+<li>
+<p>枚举量是整形，可被提升为int类型，但int类型不能自动转换为枚举类型</p>
 </li>
-<li><p>枚举可以进行强制类型转换，但不确定其结果，如<code>cor1 = spectrum(100);</code></p>
+<li>
+<p>枚举可以进行强制类型转换，但不确定其结果，如<code>cor1 = spectrum(100);</code></p>
 </li>
-<li><p>如果只打算使用常量，而不创建枚举类型的变量，则可以省略枚举类型的名称 <code>enum &#123;red,orange&#125;</code>；</p>
+<li>
+<p>如果只打算使用常量，而不创建枚举类型的变量，则可以省略枚举类型的名称 <code>enum &#123;red,orange&#125;</code>；</p>
 </li>
 </ul>
-<h2 id="设置枚举的值"><a href="#设置枚举的值" class="headerlink" title="设置枚举的值"></a>设置枚举的值</h2><p>可以使用赋值运算符显式地来设置枚举量的值：</p>
+<h2 id="设置枚举的值"><a class="markdownIt-Anchor" href="#设置枚举的值"></a> 设置枚举的值</h2>
+<p>可以使用赋值运算符显式地来设置枚举量的值：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">bits</span> &#123;one = <span class="hljs-number">1</span>, two = <span class="hljs-number">2</span>, three = <span class="hljs-number">3</span>&#125;;<br></code></pre></td></tr></table></figure>
-
 <p>但是，指定的值必须是整数。也可以只显式的设置其中一部分的值，默认情况下，枚举的 第一个常量始终是从<code>0</code>开始的，这一点需要注意。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">digits</span> &#123;zero, one = <span class="hljs-number">0</span>, two, three = <span class="hljs-number">1</span>&#125;;<br></code></pre></td></tr></table></figure>
-
 <p>这里，<code>zero</code>和<code>one</code>的枚举量都为<code>0</code>,<code>two</code>和<code>three</code>都是<code>1</code>。</p>
 <p>除了可以将<code>int</code>类型的值赋值给枚举量，还可以使用<code>long</code>和<code>long long</code>类型的值。</p>
-<h2 id="枚举的取值范围"><a href="#枚举的取值范围" class="headerlink" title="枚举的取值范围"></a>枚举的取值范围</h2><p>现在有指定了枚举量的枚举如下所示：</p>
+<h2 id="枚举的取值范围"><a class="markdownIt-Anchor" href="#枚举的取值范围"></a> 枚举的取值范围</h2>
+<p>现在有指定了枚举量的枚举如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">enum</span> <span class="hljs-title">bits</span><span class="hljs-params">(one = <span class="hljs-number">1</span>, two = <span class="hljs-number">2</span>,four = <span class="hljs-number">4</span>,eight = <span class="hljs-number">8</span>&#125;;</span></span><br><span class="hljs-params"><span class="hljs-function">bits myflag;</span></span><br><span class="hljs-params"><span class="hljs-function">myflag = bits(<span class="hljs-number">6</span>);</span></span><br></code></pre></td></tr></table></figure>
-
 <p>问：</p>
 <div align="center" style="filter:blur(5);">
     上述赋值是否合法
-
-<pre><code class="hljs">    合法，虽然`6`不是枚举量，但它位于枚举定义的取值范围内。
+<pre><code class="hljs">	合法，虽然`6`不是枚举量，但它位于枚举定义的取值范围内。
 </code></pre>
 </div>
-
-
 <p>关于取值范围的定义（参考C++ primer 第六版）：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">enum</span> <span class="hljs-title">bigstep</span><span class="hljs-params">(firat,second = <span class="hljs-number">100</span>, third&#125;;</span></span><br></code></pre></td></tr></table></figure>
-
 <blockquote>
 <p>首先，要找出上限，需要知道枚举量的最大值。找到大于这个最大值的、最小的2的幂，将它减去1，得到的便是取值范围的上限。例如，定义的bigstep的最大值枚举值是101。在2的幂中，比这个数大的最小值为128，因此取值范围的上限为127。要计算下限，需要知道枚举量的最小值。如果它不小于0，则取值范围的下限为0∶否则，采用与寻找上限方式相同的方式，但加上负号。</p>
 <hr>
 <p>例如，如果最小的枚举量为-6，而比它小的、最大的2的幂是-8（加上负号），因此下限为-7。选择用多少空间来存储枚举由编译器决定。对于取值范围较小的枚举，使用一个字节或更少的空间∶而对于包含 long类型值的枚举，则使用4个字节。</p>
 </blockquote>
-<h2 id="应用实例"><a href="#应用实例" class="headerlink" title="应用实例"></a>应用实例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;main.h&quot;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-keyword">enum</span> <span class="hljs-title class_">myFlag</span> &#123;<br>	one,<br>	two = <span class="hljs-number">0</span>,<br>	three,<br>	four = <span class="hljs-number">1</span><br>&#125;;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	cout &lt;&lt; three &lt;&lt; endl;<br>	myFlag flag = <span class="hljs-built_in">myFlag</span>(<span class="hljs-number">0</span>);<br>	cout &lt;&lt; flag &lt;&lt; endl;<br>	<span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
+<h2 id="应用实例"><a class="markdownIt-Anchor" href="#应用实例"></a> 应用实例</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;main.h&quot;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-keyword">enum</span> <span class="hljs-title class_">myFlag</span> &#123;<br>	one,<br>	two = <span class="hljs-number">0</span>,<br>	three,<br>	four = <span class="hljs-number">1</span><br>&#125;;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	cout &lt;&lt; three &lt;&lt; endl;<br>	myFlag flag = <span class="hljs-built_in">myFlag</span>(<span class="hljs-number">0</span>);<br>	cout &lt;&lt; flag &lt;&lt; endl;<br>	<span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>输出结果：</p>
 <div style="background:black;color:white">1<br>0<br></div>
-
 <hr>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br> <br>    <span class="hljs-keyword">enum</span> <span class="hljs-title class_">color</span> &#123; red=<span class="hljs-number">1</span>, green, blue &#125;;<br> <br>    <span class="hljs-keyword">enum</span>  <span class="hljs-title class_">color</span> favorite_color;<br> <br>    <span class="hljs-comment">/* 用户输入数字来选择颜色 */</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;请输入你喜欢的颜色: (1. red, 2. green, 3. blue): &quot;</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%u&quot;</span>, &amp;favorite_color);<br> <br>    <span class="hljs-comment">/* 输出结果 */</span><br>    <span class="hljs-keyword">switch</span> (favorite_color)<br>    &#123;<br>    <span class="hljs-keyword">case</span> red:<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;你喜欢的颜色是红色&quot;</span>);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> green:<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;你喜欢的颜色是绿色&quot;</span>);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> blue:<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;你喜欢的颜色是蓝色&quot;</span>);<br>        <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">default</span>:<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;你没有选择你喜欢的颜色&quot;</span>);<br>    &#125;<br> <br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <div style="background:black;color:white">请输入你喜欢的颜色: (1. red, 2. green, 3. blue): 1
 <br>你喜欢的颜色是红色</div>
-
-
-
-<h1 id="枚举进阶"><a href="#枚举进阶" class="headerlink" title="枚举进阶"></a>枚举进阶</h1><h2 id="1-位运算支持"><a href="#1-位运算支持" class="headerlink" title="1. 位运算支持"></a>1. 位运算支持</h2><blockquote>
+<h1 id="枚举进阶"><a class="markdownIt-Anchor" href="#枚举进阶"></a> 枚举进阶</h1>
+<h2 id="1-位运算支持"><a class="markdownIt-Anchor" href="#1-位运算支持"></a> 1. 位运算支持</h2>
+<blockquote>
 <p>在使用枚举时结合到 <mark>2进制</mark> 的强大，对枚举值自由的进行异或运算。</p>
 </blockquote>
 <p>举例一：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">AttributeTargets</span><br>&#123;<br>     Assembly = <span class="hljs-number">0x0001</span>,<br>     Class = <span class="hljs-number">0x0002</span>,<br>     Struct = <span class="hljs-number">0x0004</span><br>     ...<br>&#125;;<br></code></pre></td></tr></table></figure>
-
 <p>举例二：</p>
 <p>但是在</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">FileAccess</span><br>&#123;<br>     Read = <span class="hljs-number">0x1</span>,<br>     Write = <span class="hljs-number">0x2</span>,<br>     ReadWrite = Read | Write<br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<h2 id="2-0值"><a href="#2-0值" class="headerlink" title="2. 0值"></a>2. 0值</h2><p>为简单枚举提供一个 0 值枚举量，可以考虑将其命名为 <code>None</code>。如果这个名对于特定的枚举不合适的时候，可以自行找一个准确的。</p>
+<h2 id="2-0值"><a class="markdownIt-Anchor" href="#2-0值"></a> 2. 0值</h2>
+<p>为简单枚举提供一个 0 值枚举量，可以考虑将其命名为 <code>None</code>。如果这个名对于特定的枚举不合适的时候，可以自行找一个准确的。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Compression</span><br>&#123;<br>     None = <span class="hljs-number">0</span>,<br>     GZip,<br>     Deflate<br>&#125;;<br></code></pre></td></tr></table></figure>
-
-<h2 id="3-用枚举代替define"><a href="#3-用枚举代替define" class="headerlink" title="3. 用枚举代替define"></a>3. 用枚举代替<code>define</code></h2><blockquote>
+<h2 id="3-用枚举代替define"><a class="markdownIt-Anchor" href="#3-用枚举代替define"></a> 3. 用枚举代替<code>define</code></h2>
+<blockquote>
 <p>在合适的情况下尽量使用枚举类型，而不是静态常量或 “#define” 值 。枚举 类型是一个具有一个静态常量集合的结构体。如果遵守这些规范，定义枚举类型，而不是带 有静态常量的结构体，您便会得到额外的编译器和反射支持，在调试代码时也能更加直观。</p>
 </blockquote>
 <p>Good:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><br><span class="hljs-keyword">enum</span> <span class="hljs-title class_">Color</span><br>&#123;<br>     Red,<br>     Green,<br>     Blue<br>&#125;;<br></code></pre></td></tr></table></figure>
-
 <p>bad:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">const</span> <span class="hljs-type">int</span> RED = <span class="hljs-number">0</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> GREEN = <span class="hljs-number">1</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">int</span> BLUE = <span class="hljs-number">2</span>;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RED 0</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> GREEN 1</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BLUE 2</span><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -417,7 +414,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【C++】枚举</div>
-      <div>http://example.com/D_立志博览群书/《C++ primer plus》/【Cpp】enum/</div>
+      <div>https://hodlyounger.github.io/D_立志博览群书/《C++ primer plus》/【Cpp】enum/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。 工具推荐：diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【权限与会话】Windows 令牌">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91Windows%20%E4%BB%A4%E7%89%8C/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。 工具推荐：diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.">
 <meta property="og:locale" content="zh_CN">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,11 +284,11 @@
                 
                 <blockquote>
 <p>概述：Winodws 令牌详解，关于 windows 初始令牌、主令牌，模拟令牌，关联令牌等概念的说明。</p>
-<p>工具推荐：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/diversenok/TokenUniverse">diversenok&#x2F;TokenUniverse: An advanced tool for working with access tokens and Windows security policy.</a></p>
+<p>工具推荐：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/diversenok/TokenUniverse">diversenok/TokenUniverse: An advanced tool for working with access tokens and Windows security policy.</a></p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-初始令牌"><a href="#0x01-初始令牌" class="headerlink" title="0x01 初始令牌"></a>0x01 初始令牌</h2><p>初始令牌也称访问令牌，是描述进程或线程的安全上下文的对象。令牌中的信息包括与进程或线程关联的用户帐户的标识和特权信息。</p>
+<h2 id="0x01-初始令牌"><a class="markdownIt-Anchor" href="#0x01-初始令牌"></a> 0x01 初始令牌</h2>
+<p>初始令牌也称访问令牌，是描述进程或线程的安全上下文的对象。令牌中的信息包括与进程或线程关联的用户帐户的标识和特权信息。</p>
 <p>当用户登录时，系统通过将<strong>用户密码与安全数据库</strong>（如域认证中的NTDS或本地认证中的SAM文件）中存储的信息进行比较来验证用户密码。</p>
 <p>如果密码经过验证，则系统将生成<strong>访问令牌</strong>。代表该用户执行的每个进程都有此访问令牌的副本。（通常我们在输入密码登陆进入Windows界面时就是一个生成访问令牌的过程）当线程与安全对象进行交互或尝试执行需要特权的系统任务时，系统使用访问令牌来标识用户。</p>
 <p>访问令牌包含以下信息：</p>
@@ -294,7 +298,6 @@
     A --> D["标识当前登录会话(logon session)的登录SID"]
     A --> E["特权（privilege）:用户或用户组拥有的特权列表"]
     A --> F["其他数据"]</pre>
-
 <p>Access Token的组成</p>
 <ol>
 <li>用户账户的安全标识符(SID)</li>
@@ -310,20 +313,26 @@
 <li>目前的模拟等级</li>
 <li>其他统计的数据</li>
 </ol>
-<h3 id="初始令牌的创建过程"><a href="#初始令牌的创建过程" class="headerlink" title="初始令牌的创建过程"></a>初始令牌的创建过程</h3><p>Windows Access Token 创建过程，可以参考下 《深入解析 Windows 操作系统 第6版》第六章第8节相关描述</p>
+<h3 id="初始令牌的创建过程"><a class="markdownIt-Anchor" href="#初始令牌的创建过程"></a> 初始令牌的创建过程</h3>
+<p>Windows Access Token 创建过程，可以参考下 《深入解析 Windows 操作系统 第6版》第六章第8节相关描述</p>
 <ol>
-<li><p>登录主要分为两种形式，一种是非交互式的，一种是交互式的</p>
+<li>
+<p>登录主要分为两种形式，一种是非交互式的，一种是交互式的</p>
 <ul>
-<li><p>非交互式的，用户在输入用户名和密码后，由 <code>WinLogon</code> 调用 LSASS(Local Security Authority Subsystem Service) 中的相关函数（<code>LasLogonUser</code>）传递登录信息给认证包	</p>
+<li>
+<p>非交互式的，用户在输入用户名和密码后，由 <code>WinLogon</code> 调用 LSASS(Local Security Authority Subsystem Service) 中的相关函数（<code>LasLogonUser</code>）传递登录信息给认证包</p>
 </li>
-<li><p>对于交互式登录，Windows使用两个标准的认证包∶ <code>Kerberos</code> 和 <code>MSV1_0</code></p>
+<li>
+<p>对于交互式登录，Windows使用两个标准的认证包∶ <code>Kerberos</code> 和 <code>MSV1_0</code></p>
 </li>
 </ul>
 </li>
-<li><p>认证通过后，LSASS 在本地策略中查找该用户有哪些允许的访问，包括交互方式、网络方式、批方式或服务方式，如果当前所请求的登录不符合数据库中允许</p>
+<li>
+<p>认证通过后，LSASS 在本地策略中查找该用户有哪些允许的访问，包括交互方式、网络方式、批方式或服务方式，如果当前所请求的登录不符合数据库中允许</p>
 <p>的访问方式，则此次登录被终止。如果当前请求的登录是允许的，则 LSASS 会加入一些额外的安全ID(SID)，然后在策略数据库中查找用户所有SID的已经被授予的权限，并且把这些特权加入到用户的访问令牌中。</p>
 </li>
-<li><p>当 LSASS 已经积累了所有这些必要的信息时，会调用执行体来创建 &#x3D;&#x3D;访问令牌&#x3D;&#x3D;。执行体</p>
+<li>
+<p>当 LSASS 已经积累了所有这些必要的信息时，会调用执行体来创建 <mark>访问令牌</mark>。执行体</p>
 <ul>
 <li>为交互式登录或服务方式登录创建一个主访问令牌</li>
 <li>为网络方式登录创建一个模仿令牌</li>
@@ -335,17 +344,23 @@
 <blockquote>
 <p>之后，则是通过 WinLogon 中的令牌创建进程、线程。 进程持有一个主令牌，线程则使用的模拟令牌。</p>
 </blockquote>
-<h2 id="0x02-授权令牌和模拟令牌"><a href="#0x02-授权令牌和模拟令牌" class="headerlink" title="0x02 授权令牌和模拟令牌"></a>0x02 授权令牌和模拟令牌</h2><p>访问令牌（Access Token）是Windows操作系统用描述进程或者线程安全上下文的一个对象。</p>
+<h2 id="0x02-授权令牌和模拟令牌"><a class="markdownIt-Anchor" href="#0x02-授权令牌和模拟令牌"></a> 0x02 授权令牌和模拟令牌</h2>
+<p>访问令牌（Access Token）是Windows操作系统用描述进程或者线程安全上下文的一个对象。</p>
 <p>Windows下有两种类型的Token令牌：授权令牌和模拟令牌。</p>
-<h3 id="授权令牌（Delegation-Token）"><a href="#授权令牌（Delegation-Token）" class="headerlink" title="授权令牌（Delegation Token）"></a>授权令牌（Delegation Token）</h3><p>也叫主令牌，是由 Windows 内核创建并分配给进程的默认访问令牌，每一个进程有一个主令牌，它描述了与当前进程相关的用户帐户的安全上下文。用于交互式登录（如rdp登录访问）。</p>
-<h3 id="模拟令牌（Impersonation-Token）"><a href="#模拟令牌（Impersonation-Token）" class="headerlink" title="模拟令牌（Impersonation Token）"></a>模拟令牌（Impersonation Token）</h3><p>所在进程的主令牌会自动附加到当前的线程上，作为线程的安全上下文。而线程可以运行在另一个非主令牌的访问令牌下执行，而这个令牌被称为模拟令牌。用于非交互式的会话（利用WMI进行远程访问）。</p>
+<h3 id="授权令牌delegation-token"><a class="markdownIt-Anchor" href="#授权令牌delegation-token"></a> 授权令牌（Delegation Token）</h3>
+<p>也叫主令牌，是由 Windows 内核创建并分配给进程的默认访问令牌，每一个进程有一个主令牌，它描述了与当前进程相关的用户帐户的安全上下文。用于交互式登录（如rdp登录访问）。</p>
+<h3 id="模拟令牌impersonation-token"><a class="markdownIt-Anchor" href="#模拟令牌impersonation-token"></a> 模拟令牌（Impersonation Token）</h3>
+<p>所在进程的主令牌会自动附加到当前的线程上，作为线程的安全上下文。而线程可以运行在另一个非主令牌的访问令牌下执行，而这个令牌被称为模拟令牌。用于非交互式的会话（利用WMI进行远程访问）。</p>
 <hr>
 <p><em>注：两种令牌会在系统重启或者关机后才会全部清除，不然将会一直在内存中存留。也就是说，如果机器不关机或者重启的话，就会存在散落的令牌。在系统注销后，具有授权令牌的用户会变为模拟令牌 Impersonation Token，但依然有效。默认情况下，当前用户只能看到当前用户自己和比自己权限低的所有访问令牌。</em></p>
-<p>每个进程都有一个主要令牌，用于描述与该进程关联的用户帐户的安全上下文。默认情况下，当进程的线程与安全对象进行交互时，系统使用主令牌。<br>此外，线程可以模拟客户端帐户。模拟允许线程使用客户端的安全上下文与安全对象进行交互。模拟客户端的线程同时具有主令牌和模拟令牌。（出现这种情况是因为服务操作是在寄宿进程中执行，在默认的情况下，服务操作是否具有足够的权限访问某个资源（比如文件）取决于执行寄宿进程Windows帐号的权限设置，而与作为客户端的Windows帐号无关。在有多情况下，我们希望服务操作执行在基于客户端的安全上下文中执行，以解决执行服务进行的帐号权限不足的问题。简单来说就是我们希望不同客户端来访问服务时，服务可以模拟客户端的身份去访问服务，而不是用自己的主进程Token身份去访问。）</p>
-<h3 id="为什么使用模拟令牌"><a href="#为什么使用模拟令牌" class="headerlink" title="为什么使用模拟令牌"></a>为什么使用模拟令牌</h3><p>使用模拟令牌有助于实现权限分离。即使进程本身可能拥有较高的权限，但通过模拟令牌，可以以较低权限的用户身份执行一些敏感操作，从而减小潜在的安全风险。</p>
+<p>每个进程都有一个主要令牌，用于描述与该进程关联的用户帐户的安全上下文。默认情况下，当进程的线程与安全对象进行交互时，系统使用主令牌。<br>
+此外，线程可以模拟客户端帐户。模拟允许线程使用客户端的安全上下文与安全对象进行交互。模拟客户端的线程同时具有主令牌和模拟令牌。（出现这种情况是因为服务操作是在寄宿进程中执行，在默认的情况下，服务操作是否具有足够的权限访问某个资源（比如文件）取决于执行寄宿进程Windows帐号的权限设置，而与作为客户端的Windows帐号无关。在有多情况下，我们希望服务操作执行在基于客户端的安全上下文中执行，以解决执行服务进行的帐号权限不足的问题。简单来说就是我们希望不同客户端来访问服务时，服务可以模拟客户端的身份去访问服务，而不是用自己的主进程Token身份去访问。）</p>
+<h3 id="为什么使用模拟令牌"><a class="markdownIt-Anchor" href="#为什么使用模拟令牌"></a> 为什么使用模拟令牌</h3>
+<p>使用模拟令牌有助于实现权限分离。即使进程本身可能拥有较高的权限，但通过模拟令牌，可以以较低权限的用户身份执行一些敏感操作，从而减小潜在的安全风险。</p>
 <p>除权限分离以外，Windows 令牌机制带来了单点登录和访问控制等众多好处。</p>
 <p>管理员登录时，将为用户创建两个单独的访问令牌：标准用户访问令牌和管理员访问令牌。标准用户访问令牌包含与管理员访问令牌相同的特定于用户的信息，但删除了管理员的 Windows 特权和 SID。此外，执行 explorer.exe 也通过标准令牌来显示桌面，而 explorer.exe 是父进程，所有其他用户启动的进程都从中继承其访问令牌。因此，除非用户批准应用程序使用完整的管理访问令牌，否则所有应用程序都会以标准用户身份运行。</p>
-<h2 id="0x03-关于令牌的补充"><a href="#0x03-关于令牌的补充" class="headerlink" title="0x03 关于令牌的补充"></a>0x03 关于令牌的补充</h2><ul>
+<h2 id="0x03-关于令牌的补充"><a class="markdownIt-Anchor" href="#0x03-关于令牌的补充"></a> 0x03 关于令牌的补充</h2>
+<ul>
 <li>Token 在系统重启后会清除</li>
 </ul>
 
@@ -412,7 +427,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【权限与会话】Windows 令牌</div>
-      <div>http://example.com/A_OS/Windows/权限与会话/【权限与会话】Windows 令牌/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/权限与会话/【权限与会话】Windows 令牌/</div>
     </div>
     <div class="license-meta">
       

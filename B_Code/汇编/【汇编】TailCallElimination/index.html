@@ -24,17 +24,17 @@
     <meta name="description" content="概述：Tail Call Elimination（尾调用消除）是一种编译优化技术，旨在减少因函数调用而产生的栈空间使用，特别是在递归调用或尾调用频繁的场景中。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【汇编】Tail Call Elimination">
-<meta property="og:url" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：Tail Call Elimination（尾调用消除）是一种编译优化技术，旨在减少因函数调用而产生的栈空间使用，特别是在递归调用或尾调用频繁的场景中。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/IMG-20240827085552279.png">
-<meta property="article:published_time" content="2024-08-24T13:33:47.922Z">
-<meta property="article:modified_time" content="2024-08-27T10:35:46.822Z">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/IMG-20240827085552279.png">
+<meta property="article:published_time" content="2024-08-31T01:35:29.193Z">
+<meta property="article:modified_time" content="2024-08-31T01:35:29.193Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="汇编">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/IMG-20240827085552279.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/IMG-20240827085552279.png">
   
   
   
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -213,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-24 21:33" pubdate>
-          2024年8月24日 晚上
+        <time datetime="2024-08-31 09:35" pubdate>
+          2024年8月31日 上午
         </time>
       </span>
     
@@ -282,36 +286,30 @@
 <p>概述：Tail Call Elimination（尾调用消除）是一种编译优化技术，旨在减少因函数调用而产生的栈空间使用，特别是在递归调用或尾调用频繁的场景中。</p>
 </blockquote>
 <span id="more"></span>
-
 <p>参考文章：</p>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://codemachine.com/articles/x64_deep_dive.html">CodeMachine - Article - X64 Deep Dive</a></li>
 </ul>
-<h2 id="1-Tail-Call-Elimination"><a href="#1-Tail-Call-Elimination" class="headerlink" title="1. Tail Call Elimination"></a>1. Tail Call Elimination</h2><blockquote>
-<p>[!note] 尾调用是指一个函数在其返回语句中调用另一个函数，且该调用是该函数的最后一条指令。尾调用消除（TCO）则是一种编译器优化技术，它能够在<font color="#f79646">不增加调用栈深度</font>的情况下，将尾调用转化为一种类似于跳转（goto）的操作，从而避免在调用栈上创建新的栈帧。</p>
-</blockquote>
-<p>X64编译器可以通过将函数的最后一次调用替换为跳转到被调用方来优化该调用。这避免了为被调用方设置堆栈帧的开销。调用方和被调用方共享相同的堆栈帧，被调用方直接返回给调用方的调用方。当调用方和被调用方具有相同的参数时，这尤其有益，因为如果相关参数已经在所需的寄存器中，并且这些寄存器没有更改，则不必重新加载它们。</p>
+<h2 id="1-tail-call-elimination"><a class="markdownIt-Anchor" href="#1-tail-call-elimination"></a> 1. Tail Call Elimination</h2>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>尾调用是指一个函数在其返回语句中调用另一个函数，且该调用是该函数的最后一条指令。尾调用消除（TCO）则是一种编译器优化技术，它能够在<font color="#f79646">不增加调用栈深度</font>的情况下，将尾调用转化为一种类似于跳转（goto）的操作，从而避免在调用栈上创建新的栈帧。</div>
+</summary></details><p>X64编译器可以通过将函数的最后一次调用替换为跳转到被调用方来优化该调用。这避免了为被调用方设置堆栈帧的开销。调用方和被调用方共享相同的堆栈帧，被调用方直接返回给调用方的调用方。当调用方和被调用方具有相同的参数时，这尤其有益，因为如果相关参数已经在所需的寄存器中，并且这些寄存器没有更改，则不必重新加载它们。</p>
 <p>图 1 显示了在调用 Function4时 Function1中的尾部调用消除。Function1跳转到 Function4，当 Function4完成执行时，它直接返回到 Function1的调用方。</p>
 <p>调用过程大致如下所示：</p>
 <img src="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91TailCallElimination/IMG-20240827085552279.png" srcset="/img/loading.gif" lazyload class title="调用示例">
-
-<h2 id="2-原理"><a href="#2-原理" class="headerlink" title="2. 原理"></a>2. 原理</h2><blockquote>
-<p>[!info] 简单说就是减少创建堆栈的过程</p>
-</blockquote>
-<p>在传统的函数调用中，每当一个函数被调用时，<font color="#f79646">都会在调用栈上创建一个新的栈帧来保存函数的局部变量、参数以及返回地址等信息</font>。而在尾调用的情况下，由于被调用的函数是调用函数的最后一条指令，且调用函数在被调用函数返回后没有其他操作需要执行，因此理论上可以不需要保存调用函数的栈帧信息。</p>
+<h2 id="2-原理"><a class="markdownIt-Anchor" href="#2-原理"></a> 2. 原理</h2>
+<details class="custom-callout info" open><summary class="callout-title"><div class="callout-icon"></div><div>简单说就是减少创建堆栈的过程</div>
+</summary></details><p>在传统的函数调用中，每当一个函数被调用时，<font color="#f79646">都会在调用栈上创建一个新的栈帧来保存函数的局部变量、参数以及返回地址等信息</font>。而在尾调用的情况下，由于被调用的函数是调用函数的最后一条指令，且调用函数在被调用函数返回后没有其他操作需要执行，因此理论上可以不需要保存调用函数的栈帧信息。</p>
 <p>编译器在检测到尾调用时，会优化这个调用过程，使其不再在调用栈上创建新的栈帧，而是直接复用当前栈帧，将参数和返回地址等信息更新为被调用函数所需的信息，并跳转到被调用函数的执行入口。这样，当被调用函数返回时，就可以直接返回到调用函数的调用者处，而不需要再经过调用函数的栈帧。</p>
-<h2 id="3-说明"><a href="#3-说明" class="headerlink" title="3. 说明"></a>3. 说明</h2><p>这里以快速排序为例</p>
-<blockquote>
-<p>[!info] 参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.geeksforgeeks.org/tail-call-elimination/">Tail Call Elimination - GeeksforGeeks</a></p>
-</blockquote>
-<p>常规的写法如下所示，通过递归调用最终达到对整个数据排序的目的。</p>
+<h2 id="3-说明"><a class="markdownIt-Anchor" href="#3-说明"></a> 3. 说明</h2>
+<p>这里以快速排序为例</p>
+<details class="custom-callout info" open><summary class="callout-title"><div class="callout-icon"></div><div>参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.geeksforgeeks.org/tail-call-elimination/">Tail Call Elimination - GeeksforGeeks</a></div>
+</summary></details><p>常规的写法如下所示，通过递归调用最终达到对整个数据排序的目的。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/* Tail recursive function for QuickSort </span><br><span class="hljs-comment">arr[] --&gt; Array to be sorted, </span><br><span class="hljs-comment">low --&gt; Starting index, </span><br><span class="hljs-comment">high --&gt; Ending index */</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-type">int</span> arr[], <span class="hljs-type">int</span> low, <span class="hljs-type">int</span> high)</span> </span><br><span class="hljs-function"></span>&#123; <br>	<span class="hljs-keyword">if</span> (low &lt; high) <br>	&#123; <br>		<span class="hljs-comment">/* pi is partitioning index, arr[p] is now </span><br><span class="hljs-comment">		at right place */</span><br>		<span class="hljs-type">int</span> pi = <span class="hljs-built_in">partition</span>(arr, low, high); <br><br>		<span class="hljs-comment">// Separately sort elements before </span><br>		<span class="hljs-comment">// partition and after partition </span><br>		<span class="hljs-built_in">quickSort</span>(arr, low, pi - <span class="hljs-number">1</span>); <br>		<span class="hljs-built_in">quickSort</span>(arr, pi + <span class="hljs-number">1</span>, high); <br>	&#125; <br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>这里就可以考虑使用 Tail Call Elimination 来进行替换优化</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/* QuickSort after tail call elimination </span><br><span class="hljs-comment">arr[] --&gt; Array to be sorted, </span><br><span class="hljs-comment">low --&gt; Starting index, </span><br><span class="hljs-comment">high --&gt; Ending index */</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-type">int</span> arr[], <span class="hljs-type">int</span> low, <span class="hljs-type">int</span> high)</span> </span><br><span class="hljs-function"></span>&#123; <br>start: <br>	<span class="hljs-keyword">if</span> (low &lt; high) <br>	&#123; <br>		<span class="hljs-comment">/* pi is partitioning index, arr[p] is now </span><br><span class="hljs-comment">		at right place */</span><br>		<span class="hljs-type">int</span> pi = <span class="hljs-built_in">partition</span>(arr, low, high); <br><br>		<span class="hljs-comment">// Separately sort elements before </span><br>		<span class="hljs-comment">// partition and after partition </span><br>		<span class="hljs-built_in">quickSort</span>(arr, low, pi - <span class="hljs-number">1</span>); <br><br>		<span class="hljs-comment">// Update parameters of recursive call </span><br>		<span class="hljs-comment">// and replace recursive call with goto </span><br>		low = pi+<span class="hljs-number">1</span>; <br>		high = high; <br>		<span class="hljs-keyword">goto</span> start; <br>	&#125; <br>&#125; <br><span class="hljs-comment">// See below link for complete running code </span><br><span class="hljs-comment">// https://ide.geeksforgeeks.org/dbq4yl </span><br></code></pre></td></tr></table></figure>
-
 <p>这么做的目的是为了让编译器可以识别到尾调用消除。添加 <code>start</code> 标签，并且在尾部添加 <code>goto</code> 即可。</p>
-<h2 id="4-尾部调用消除的堆栈管理"><a href="#4-尾部调用消除的堆栈管理" class="headerlink" title="4. 尾部调用消除的堆栈管理"></a>4. 尾部调用消除的堆栈管理</h2><p>递归使用堆栈来跟踪函数调用。每次函数调用时，一个新的帧被推送到包含本地变量和调用数据的堆栈上。<font color="#f79646">假设一个堆栈帧需要 O (1) ，即常量内存空间，那么对于 N 个递归调用内存需要 O (N)。</font></p>
+<h2 id="4-尾部调用消除的堆栈管理"><a class="markdownIt-Anchor" href="#4-尾部调用消除的堆栈管理"></a> 4. 尾部调用消除的堆栈管理</h2>
+<p>递归使用堆栈来跟踪函数调用。每次函数调用时，一个新的帧被推送到包含本地变量和调用数据的堆栈上。<font color="#f79646">假设一个堆栈帧需要 O (1) ，即常量内存空间，那么对于 N 个递归调用内存需要 O (N)。</font></p>
 <p><font color="#f79646">尾调用消除降低了从 O (N)到 O (1)的递归的空间复杂度。当函数调用被消除时，不会创建新的堆栈帧，函数将在常量内存空间中执行。</font></p>
 <p>函数可以在常量内存空间中执行，因为在尾递归函数中，在调用语句之后没有语句，所以不需要保留父函数的状态和框架。子函数被调用并立即完成，它不必将控制返回给父函数。</p>
 <p>由于不会对返回的值执行任何计算，也不会留下任何语句供执行，因此可以根据当前函数调用的要求修改当前框架。因此，不需要保留以前函数调用的堆栈帧，函数在常量内存空间中执行。这使得尾部递归更快，内存友好。</p>
@@ -368,7 +366,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【汇编】Tail Call Elimination</div>
-      <div>http://example.com/B_Code/汇编/【汇编】TailCallElimination/</div>
+      <div>https://hodlyounger.github.io/B_Code/汇编/【汇编】TailCallElimination/</div>
     </div>
     <div class="license-meta">
       
@@ -380,7 +378,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月24日</div>
+          <div>2024年8月31日</div>
         </div>
       
       
@@ -412,9 +410,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/" title="【汇编】【实验楼】汇编教程笔记">
+                      <a href="/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/weread/%E4%B8%AA%E4%BA%BA%E6%88%90%E9%95%BF/%E4%B8%89%E5%88%86%E5%81%9A%E4%BA%8B%20%E4%B8%83%E5%88%86%E5%81%9A%E4%BA%BA%EF%BC%88%E5%85%A8%E9%9B%86%EF%BC%89-%E9%99%88%E7%8E%B2/" title="三分做事 七分做人（全集）">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【汇编】【实验楼】汇编教程笔记</span>
+                        <span class="hidden-mobile">三分做事 七分做人（全集）</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -422,8 +420,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%B1%87%E7%BC%96%E5%AF%BC%E8%AF%BB/" title="【汇编】汇编导读">
-                        <span class="hidden-mobile">【汇编】汇编导读</span>
+                      <a href="/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/" title="【网络编程】获取网络连接状态">
+                        <span class="hidden-mobile">【网络编程】获取网络连接状态</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

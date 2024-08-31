@@ -21,21 +21,21 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：本文主要介绍如何在浏览器查看DNS缓存，同时罗列了DNS查询的一些顺序  [toc] DNS 缓存与解析DNS 缓存分类1、浏览器缓存浏览器会根据一定频率缓存DNS记录； 2、本地DNS缓存如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存； 3、本地HOSTS文件HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 C:\Windows\System32">
+    <meta name="description" content="概述：本文主要介绍如何在浏览器查看DNS缓存，同时罗列了DNS查询的一些顺序  [toc]  DNS 缓存与解析  DNS 缓存分类  1、浏览器缓存 浏览器会根据一定频率缓存DNS记录；  2、本地DNS缓存 如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存；  3、本地HOSTS文件 HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 C:\Window">
 <meta property="og:type" content="article">
 <meta property="og:title" content="查看浏览器DNS缓存">
-<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：本文主要介绍如何在浏览器查看DNS缓存，同时罗列了DNS查询的一些顺序  [toc] DNS 缓存与解析DNS 缓存分类1、浏览器缓存浏览器会根据一定频率缓存DNS记录； 2、本地DNS缓存如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存； 3、本地HOSTS文件HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 C:\Windows\System32">
+<meta property="og:description" content="概述：本文主要介绍如何在浏览器查看DNS缓存，同时罗列了DNS查询的一些顺序  [toc]  DNS 缓存与解析  DNS 缓存分类  1、浏览器缓存 浏览器会根据一定频率缓存DNS记录；  2、本地DNS缓存 如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存；  3、本地HOSTS文件 HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 C:\Window">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/IMG-20240814090304474.png">
+<meta property="og:image" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/IMG-20240814090304474.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.370Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:56.898Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="DNS">
 <meta property="article:tag" content="缓存">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/IMG-20240814090304474.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/IMG-20240814090304474.png">
   
   
   
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -226,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          968 字
+          965 字
         
       </span>
     
@@ -283,41 +287,56 @@
 <p>概述：本文主要介绍如何在浏览器查看DNS缓存，同时罗列了DNS查询的一些顺序</p>
 </blockquote>
 <p>[toc]</p>
-<h1 id="DNS-缓存与解析"><a href="#DNS-缓存与解析" class="headerlink" title="DNS 缓存与解析"></a>DNS 缓存与解析</h1><h2 id="DNS-缓存分类"><a href="#DNS-缓存分类" class="headerlink" title="DNS 缓存分类"></a>DNS 缓存分类</h2><h4 id="1、浏览器缓存"><a href="#1、浏览器缓存" class="headerlink" title="1、浏览器缓存"></a>1、浏览器缓存</h4><p>浏览器会根据一定频率缓存DNS记录；</p>
-<h4 id="2、本地DNS缓存"><a href="#2、本地DNS缓存" class="headerlink" title="2、本地DNS缓存"></a>2、本地DNS缓存</h4><p>如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存；</p>
-<h4 id="3、本地HOSTS文件"><a href="#3、本地HOSTS文件" class="headerlink" title="3、本地HOSTS文件"></a>3、本地HOSTS文件</h4><p>HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 <code>C:\Windows\System32\drivers\etc</code></p>
-<h4 id="4、路由器DNS缓存"><a href="#4、路由器DNS缓存" class="headerlink" title="4、路由器DNS缓存"></a>4、路由器DNS缓存</h4><p>我们常用的路由器也带有自动缓存功能，路由器DNS被篡改会造成域名劫持，将访问网址定位到另外一个服务器；</p>
-<h4 id="5、递归服务器缓存"><a href="#5、递归服务器缓存" class="headerlink" title="5、递归服务器缓存"></a>5、递归服务器缓存</h4><p>递归服务器在将解析结果告知客户端的同时，将记录缓存下来，当下次请求同一个域名时，直接会将记录返回，而无需再进行全球查询。</p>
-<h2 id="DNS-解析顺序"><a href="#DNS-解析顺序" class="headerlink" title="DNS 解析顺序"></a>DNS 解析顺序</h2><p>DNS解析顺序是 “先查缓存，再递归解析”，查询顺序为：浏览器缓存 -&gt; 系统缓存 -&gt; 路由器缓存 -&gt; 递归服务器缓存 -&gt; 递归查询</p>
+<h1 id="dns-缓存与解析"><a class="markdownIt-Anchor" href="#dns-缓存与解析"></a> DNS 缓存与解析</h1>
+<h2 id="dns-缓存分类"><a class="markdownIt-Anchor" href="#dns-缓存分类"></a> DNS 缓存分类</h2>
+<h4 id="1-浏览器缓存"><a class="markdownIt-Anchor" href="#1-浏览器缓存"></a> 1、浏览器缓存</h4>
+<p>浏览器会根据一定频率缓存DNS记录；</p>
+<h4 id="2-本地dns缓存"><a class="markdownIt-Anchor" href="#2-本地dns缓存"></a> 2、本地DNS缓存</h4>
+<p>如果浏览器缓存中找不到解析记录，就会去询问操作系统中的缓存；</p>
+<h4 id="3-本地hosts文件"><a class="markdownIt-Anchor" href="#3-本地hosts文件"></a> 3、本地HOSTS文件</h4>
+<p>HOSTS是记录域名与IP地址一一映射关系的本地文件，Windows系统中位于 <code>C:\Windows\System32\drivers\etc</code></p>
+<h4 id="4-路由器dns缓存"><a class="markdownIt-Anchor" href="#4-路由器dns缓存"></a> 4、路由器DNS缓存</h4>
+<p>我们常用的路由器也带有自动缓存功能，路由器DNS被篡改会造成域名劫持，将访问网址定位到另外一个服务器；</p>
+<h4 id="5-递归服务器缓存"><a class="markdownIt-Anchor" href="#5-递归服务器缓存"></a> 5、递归服务器缓存</h4>
+<p>递归服务器在将解析结果告知客户端的同时，将记录缓存下来，当下次请求同一个域名时，直接会将记录返回，而无需再进行全球查询。</p>
+<h2 id="dns-解析顺序"><a class="markdownIt-Anchor" href="#dns-解析顺序"></a> DNS 解析顺序</h2>
+<p>DNS解析顺序是 “先查缓存，再递归解析”，查询顺序为：浏览器缓存 -&gt; 系统缓存 -&gt; 路由器缓存 -&gt; 递归服务器缓存 -&gt; 递归查询</p>
 <p>以 <code>www.baidu.com</code> 这个域名为例进行查询，具体流程如下：</p>
-<h3 id="1-搜索浏览器自带的DNS缓存"><a href="#1-搜索浏览器自带的DNS缓存" class="headerlink" title="1. 搜索浏览器自带的DNS缓存"></a>1. 搜索浏览器自带的DNS缓存</h3><blockquote>
-<p>当收到访问请求后，浏览器首先会查询浏览器自身的DNS缓存，这个缓存时间比较短（chrome:&#x2F;&#x2F;net-internals&#x2F;#dns 这里可以查询缓存的dns记录），且只能容纳 1000条缓存，如果缓存中有对应条目，返回结果，解析到此结束。</p>
+<h3 id="1-搜索浏览器自带的dns缓存"><a class="markdownIt-Anchor" href="#1-搜索浏览器自带的dns缓存"></a> 1. 搜索浏览器自带的DNS缓存</h3>
+<blockquote>
+<p>当收到访问请求后，浏览器首先会查询浏览器自身的DNS缓存，这个缓存时间比较短（chrome://net-internals/#dns 这里可以查询缓存的dns记录），且只能容纳 1000条缓存，如果缓存中有对应条目，返回结果，解析到此结束。</p>
 </blockquote>
-<p>在chrome打开 <code>chrome://net-internals/#dns</code> </p>
+<p>在chrome打开 <code>chrome://net-internals/#dns</code></p>
 <img src="/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/DNS/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E6%9F%A5%E7%9C%8B%E6%B5%8F%E8%A7%88%E5%99%A8DNS%E7%BC%93%E5%AD%98/IMG-20240814090304474.png" srcset="/img/loading.gif" lazyload class title="image-20230822093936706">
-
 <p>如上所示，浏览器解析到了 <code>www.baidu.com</code> 的ip</p>
-<h3 id="2-查询操作系统缓存和hosts本地文件"><a href="#2-查询操作系统缓存和hosts本地文件" class="headerlink" title="2. 查询操作系统缓存和hosts本地文件"></a>2. 查询操作系统缓存和hosts本地文件</h3><blockquote>
+<h3 id="2-查询操作系统缓存和hosts本地文件"><a class="markdownIt-Anchor" href="#2-查询操作系统缓存和hosts本地文件"></a> 2. 查询操作系统缓存和hosts本地文件</h3>
+<blockquote>
 <p>如果浏览器缓存中没有找到对应条目（<code>ipconfig/displaydns</code>可以查看），操作系统也会有一个域名解析的过程，浏览器会先搜索操作系统的DNS缓存中是否有这个域名解析记录，如果有返回结果，解析结束。</p>
 <p>此外，电脑本地文件HOSTS中可以设定域名到IP地址的指向关系。如果HOSTS文件中保存有该域名的记录，浏览器会首先使用这个IP地址，并将其结果缓存下来，缓存时间同样受域名失效时间和缓存空间大小决定。</p>
 </blockquote>
-<h3 id="3-查询路由器缓存"><a href="#3-查询路由器缓存" class="headerlink" title="3. 查询路由器缓存"></a>3. 查询路由器缓存</h3><blockquote>
+<h3 id="3-查询路由器缓存"><a class="markdownIt-Anchor" href="#3-查询路由器缓存"></a> 3. 查询路由器缓存</h3>
+<blockquote>
 <p>如果浏览器和操作系统中没有域名解析记录，就会查询路由器中的DNS缓存，如果路由器DNS缓存中有解析条目，直接返回结果，解析结束。</p>
 </blockquote>
-<h3 id="4-递归解析服务器缓存"><a href="#4-递归解析服务器缓存" class="headerlink" title="4. 递归解析服务器缓存"></a>4. 递归解析服务器缓存</h3><blockquote>
+<h3 id="4-递归解析服务器缓存"><a class="markdownIt-Anchor" href="#4-递归解析服务器缓存"></a> 4. 递归解析服务器缓存</h3>
+<blockquote>
 <p>如果本机和路由器DNS缓存中没有该域名的解析记录，浏览器就会向递归服务器发起请求，如果递归服务器缓存有该域名解析条目，返回结果，解析结束。</p>
 </blockquote>
-<h3 id="5-查询根域名服务器"><a href="#5-查询根域名服务器" class="headerlink" title="5. 查询根域名服务器"></a>5. 查询根域名服务器</h3><blockquote>
+<h3 id="5-查询根域名服务器"><a class="markdownIt-Anchor" href="#5-查询根域名服务器"></a> 5. 查询根域名服务器</h3>
+<blockquote>
 <p>如果递归服务器缓存中没有结果，就会委托递归服务器发起全球查询，首先递归服务器会向根域名服务器发起解析请求。根域名服务器告知.com顶级域名服务器地址。</p>
 </blockquote>
-<h3 id="6-查询顶级域名服务器"><a href="#6-查询顶级域名服务器" class="headerlink" title="6. 查询顶级域名服务器"></a>6. 查询顶级域名服务器</h3><blockquote>
+<h3 id="6-查询顶级域名服务器"><a class="markdownIt-Anchor" href="#6-查询顶级域名服务器"></a> 6. 查询顶级域名服务器</h3>
+<blockquote>
 <p>递归服务器向.com顶级域名服务器发起DNS请求，.com顶级服务器告知example.com所属权威域名服务器地址。</p>
 </blockquote>
-<h3 id="7-查询权威域名服务器"><a href="#7-查询权威域名服务器" class="headerlink" title="7. 查询权威域名服务器"></a>7. 查询权威域名服务器</h3><blockquote>
-<p>递归服务器向example.com的权威域名服务器地址发起请求，权威服务器告知<a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.example.com所对应的ip地址./">www.example.com所对应的IP地址。</a></p>
+<h3 id="7-查询权威域名服务器"><a class="markdownIt-Anchor" href="#7-查询权威域名服务器"></a> 7. 查询权威域名服务器</h3>
+<blockquote>
+<p>递归服务器向example.com的权威域名服务器地址发起请求，权威服务器告知www.example.com所对应的IP地址。</p>
 </blockquote>
-<h3 id="8-返回解析结果"><a href="#8-返回解析结果" class="headerlink" title="8. 返回解析结果"></a>8. 返回解析结果</h3><blockquote>
-<p>得到<a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.example.com的ip地址后,递归服务器将结果告知客户端,客户端对该ip地址发起访问.整个dns解析流程到此结束./">www.example.com的IP地址后，递归服务器将结果告知客户端，客户端对该IP地址发起访问。整个DNS解析流程到此结束。</a></p>
+<h3 id="8-返回解析结果"><a class="markdownIt-Anchor" href="#8-返回解析结果"></a> 8. 返回解析结果</h3>
+<blockquote>
+<p>得到www.example.com的IP地址后，递归服务器将结果告知客户端，客户端对该IP地址发起访问。整个DNS解析流程到此结束。</p>
 </blockquote>
 
                 
@@ -381,7 +400,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>查看浏览器DNS缓存</div>
-      <div>http://example.com/B_Code/网络编程/DNS/【网络编程】查看浏览器DNS缓存/</div>
+      <div>https://hodlyounger.github.io/B_Code/网络编程/DNS/【网络编程】查看浏览器DNS缓存/</div>
     </div>
     <div class="license-meta">
       

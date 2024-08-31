@@ -24,7 +24,7 @@
     <meta name="description" content="概述：C++ 友元">
 <meta property="og:type" content="article">
 <meta property="og:title" content="友元">
-<meta property="og:url" content="http://example.com/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AC++%20primer%20plus%E3%80%8B/%E7%AC%AC11%E7%AB%A0%20%E4%BD%BF%E7%94%A8%E7%B1%BB/%E3%80%90CPP%E3%80%91%E5%8F%8B%E5%85%83/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/D_%E7%AB%8B%E5%BF%97%E5%8D%9A%E8%A7%88%E7%BE%A4%E4%B9%A6/%E3%80%8AC++%20primer%20plus%E3%80%8B/%E7%AC%AC11%E7%AB%A0%20%E4%BD%BF%E7%94%A8%E7%B1%BB/%E3%80%90CPP%E3%80%91%E5%8F%8B%E5%85%83/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：C++ 友元">
 <meta property="og:locale" content="zh_CN">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -282,43 +286,37 @@
 <p>概述：C++ 友元</p>
 </blockquote>
 <span id="more"></span>
-
-
 <p>[toc]</p>
-<h1 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h1><p>C++ 提供了另外一种形式的访问权限：友元。友元有3种：</p>
+<h1 id="友元"><a class="markdownIt-Anchor" href="#友元"></a> 友元</h1>
+<p>C++ 提供了另外一种形式的访问权限：友元。友元有3种：</p>
 <ul>
 <li>友元函数</li>
 <li>友元类</li>
 <li>友元成员函数</li>
 </ul>
 <p>通过让函数成为类的友元，可以赋予该函数与类的成员函数相同的访问权限。</p>
-<h1 id="为何需要友元"><a href="#为何需要友元" class="headerlink" title="为何需要友元"></a>为何需要友元</h1><blockquote>
+<h1 id="为何需要友元"><a class="markdownIt-Anchor" href="#为何需要友元"></a> 为何需要友元</h1>
+<blockquote>
 <p>在为类重载二元运算符时（带两个参数的运算符）常常需要友元。将 Time 对象乘以实数就属于这种情况。</p>
 </blockquote>
 <p>下面的语句：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">A = B * <span class="hljs-number">2.75</span>；<br></code></pre></td></tr></table></figure>
-
 <p>将被转换成：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">A = B.<span class="hljs-keyword">operator</span>*(<span class="hljs-number">2.75</span>);<br></code></pre></td></tr></table></figure>
-
 <p>但下面的语句又如何呢?</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">A = <span class="hljs-number">2.75</span> * B;<br></code></pre></td></tr></table></figure>
-
 <p>从概念上说，<code>2.75*B</code> 与 <code>B*2.75</code> 相同，但第一个表达式不对应于成员函数，因为2.75不是 Timer 类型的对象。记住，左侧的操作数应是调用对象，但2.75不是对象。因此，编译器不能使用成员函数调用来替换该表达式。</p>
 <p>解决这个难题的一种方式是，告知每个人（包括程序员自己），只能按 <code>B*2.75</code> 的格式编写，不能写成<code>2.75*B</code>。这是一种对服务器友好-客户警惕的（server-friendly, client-beware)解决方案，与OOP无关。</p>
 <p>当然，上述的问题也有解决方案——非成员函数。非成员函数不是由对象调用的，它使用的所有值（包括对象）都是显式参数。这样，编译器能够将下面的表达式:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">A = <span class="hljs-number">2.75</span> * B;<br></code></pre></td></tr></table></figure>
-
 <p>与下面的非成员函数调用匹配：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">A = <span class="hljs-keyword">operator</span>*(<span class="hljs-number">2.75</span>,B);<br></code></pre></td></tr></table></figure>
-
 <p>该函数的原型如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs CPP">Time <span class="hljs-keyword">operator</span>*(<span class="hljs-type">double</span> m, <span class="hljs-type">const</span> Time &amp;t);<br></code></pre></td></tr></table></figure>
-
 <p>对于非成员重载运算符函数来说，运算符表达式左边的操作数对应于运算符函数的第一个参数，运算符表达式右边的操作数对应于运算符函数的第二个参数。而原来的成员函数可以访问类的私有成员，它们被称为友元函数。</p>
-<h1 id="创建友元"><a href="#创建友元" class="headerlink" title="创建友元"></a>创建友元</h1><p>创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字 <code>friend</code>:</p>
+<h1 id="创建友元"><a class="markdownIt-Anchor" href="#创建友元"></a> 创建友元</h1>
+<p>创建友元函数的第一步是将其原型放在类声明中，并在原型声明前加上关键字 <code>friend</code>:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">friend</span> Time <span class="hljs-keyword">operator</span>*(<span class="hljs-type">double</span> m, <span class="hljs-type">const</span> Time &amp; t);<br></code></pre></td></tr></table></figure>
-
 <p>该原型意味着下面两点：</p>
 <ul>
 <li>虽然 <code>operator*()</code> 函数是在类声明中声明的，但它不是成员函数，因此不能使用成员运算符来调用；</li>
@@ -326,8 +324,7 @@
 </ul>
 <p>第二步是编写函数定义。因为它不是成员函数，所以不要使用 Time:: 限定符。另外，不要在定义中使用关键字 <code>friend</code>，定义如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Time <span class="hljs-keyword">operator</span>*(<span class="hljs-type">double</span> m,<span class="hljs-type">const</span> Tlme &amp; t)<span class="hljs-comment">// frlend not ued in definition</span><br>&#123;<br>    Time result; <br>    <span class="hljs-type">long</span> totalminutes = t.hours * m * <span class="hljs-number">60</span> + t.minutes * m;<br>    result.hours = totalminutes/<span class="hljs-number">60</span>;<br>    result.minutes = totalminutes % <span class="hljs-number">60</span>;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>总之，类的友元函数是非成员函数，其访问权限与成员函数相同。 </p>
+<p>总之，类的友元函数是非成员函数，其访问权限与成员函数相同。</p>
 
                 
               </div>
@@ -392,7 +389,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>友元</div>
-      <div>http://example.com/D_立志博览群书/《C++ primer plus》/第11章 使用类/【CPP】友元/</div>
+      <div>https://hodlyounger.github.io/D_立志博览群书/《C++ primer plus》/第11章 使用类/【CPP】友元/</div>
     </div>
     <div class="license-meta">
       

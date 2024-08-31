@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="使用 QWebEnginueView 控件后，如果父窗体设置了一下属性，就会导致窗口不显示或半透明。 12setWindowFlags(Qt::FramelessWindowHint);setAttribute(Qt::WA_TranslucentBackground);  解决办法： QWebEngineView在顶层窗口为透明无标题栏的情况下有问题_shanql的博客-CSDN博客">
+    <meta name="description" content="使用 QWebEnginueView 控件后，如果父窗体设置了一下属性，就会导致窗口不显示或半透明。 12setWindowFlags(Qt::FramelessWindowHint);setAttribute(Qt::WA_TranslucentBackground); 解决办法： QWebEngineView在顶层窗口为透明无标题栏的情况下有问题_shanql的博客-CSDN博客">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】窗体不显示或半透明">
-<meta property="og:url" content="http://example.com/B_Code/Qt/QWebEngineView/%E3%80%90Qt%E3%80%91%E7%AA%97%E4%BD%93%E4%B8%8D%E6%98%BE%E7%A4%BA%E6%88%96%E7%AA%97%E4%BD%93%E5%8D%8A%E9%80%8F%E6%98%8E/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/QWebEngineView/%E3%80%90Qt%E3%80%91%E7%AA%97%E4%BD%93%E4%B8%8D%E6%98%BE%E7%A4%BA%E6%88%96%E7%AA%97%E4%BD%93%E5%8D%8A%E9%80%8F%E6%98%8E/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="使用 QWebEnginueView 控件后，如果父窗体设置了一下属性，就会导致窗口不显示或半透明。 12setWindowFlags(Qt::FramelessWindowHint);setAttribute(Qt::WA_TranslucentBackground);  解决办法： QWebEngineView在顶层窗口为透明无标题栏的情况下有问题_shanql的博客-CSDN博客">
+<meta property="og:description" content="使用 QWebEnginueView 控件后，如果父窗体设置了一下属性，就会导致窗口不显示或半透明。 12setWindowFlags(Qt::FramelessWindowHint);setAttribute(Qt::WA_TranslucentBackground); 解决办法： QWebEngineView在顶层窗口为透明无标题栏的情况下有问题_shanql的博客-CSDN博客">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.232Z">
 <meta property="article:modified_time" content="2024-08-16T10:17:09.785Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -278,7 +282,6 @@
                 
                 <p>使用 QWebEnginueView 控件后，如果父窗体设置了一下属性，就会导致窗口不显示或半透明。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">setWindowFlags</span>(Qt::FramelessWindowHint);<br><span class="hljs-built_in">setAttribute</span>(Qt::WA_TranslucentBackground);<br></code></pre></td></tr></table></figure>
-
 <p>解决办法：</p>
 <p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/s634772208/article/details/124791501">QWebEngineView在顶层窗口为透明无标题栏的情况下有问题_shanql的博客-CSDN博客</a></p>
 
@@ -341,7 +344,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】窗体不显示或半透明</div>
-      <div>http://example.com/B_Code/Qt/QWebEngineView/【Qt】窗体不显示或窗体半透明/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/QWebEngineView/【Qt】窗体不显示或窗体半透明/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="概述：windows route命令的用法|查看路由|修改路由|删除路由">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【cmd】route">
-<meta property="og:url" content="http://example.com/A_OS/Windows/cmd/%E3%80%90cmd%E3%80%91route/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/cmd/%E3%80%90cmd%E3%80%91route/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：windows route命令的用法|查看路由|修改路由|删除路由">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          914 字
+          913 字
         
       </span>
     
@@ -281,79 +285,49 @@
 <p>概述：windows route命令的用法|查看路由|修改路由|删除路由</p>
 </blockquote>
 <span id="more"></span>
-
-
-
 <p>Route 命令</p>
-<p>  Route命令用于在本地IP路由表中显示和修改条目。在排除网络故障时常会用到。</p>
-<p>  使用不带参数的Route或 <code>Route /?</code> 可以显示帮助。</p>
+<p>Route命令用于在本地IP路由表中显示和修改条目。在排除网络故障时常会用到。</p>
+<p>使用不带参数的Route或 <code>Route /?</code> 可以显示帮助。</p>
 <p>语法：</p>
-<p>  <code>route [-f] [-p] [command [destination] [mask netmask] [gateway] [metric] [if interface]</code></p>
+<p><code>route [-f] [-p] [command [destination] [mask netmask] [gateway] [metric] [if interface]</code></p>
 <p>-f 选项</p>
-<p>  <code>Route –f</code> 命令清除所有网关项的路由表。如果该参数与某个命令组合使用，路由表将在运行命令前清除。</p>
-<p>  如下图所示，执行 <code>route –f</code> 命令后，再用 <code>route print</code> 打印路由表时，可看到路由表为空。</p>
+<p><code>Route –f</code> 命令清除所有网关项的路由表。如果该参数与某个命令组合使用，路由表将在运行命令前清除。</p>
+<p>如下图所示，执行 <code>route –f</code> 命令后，再用 <code>route print</code> 打印路由表时，可看到路由表为空。</p>
 <p>-p 选项</p>
-<p>  与 <code>route add</code> 命令结合使用时，将路由设备为在系统引导期间保持不变。</p>
-<p>  默认情况下，重新启动系统时，不保存路由。</p>
-<p>  当在 <code>route add</code> 命令中加入-p参数时，<code>route print</code> 命令就能看到永久路由了。</p>
-<h1 id="route-print"><a href="#route-print" class="headerlink" title="route print"></a>route print</h1><p>Print命令</p>
-<p>  接下来，我们将介绍Print、Add、Delete、Chance四个常用的Command命令。</p>
-<p>  Route print命令显示IP路由表的完整内容，如下图所示：首先显示了当前主机的所有接口列表，接下来显示IPv4路由表和IPv4永久路由，可以看到，我的IPv4路由表有两个默认网关，且无手动添加的IPv4永久路由。</p>
-<p>  使用route print命令时，目标或网关可以为通配符，通配符指定为星号“*”。</p>
+<p>与 <code>route add</code> 命令结合使用时，将路由设备为在系统引导期间保持不变。</p>
+<p>默认情况下，重新启动系统时，不保存路由。</p>
+<p>当在 <code>route add</code> 命令中加入-p参数时，<code>route print</code> 命令就能看到永久路由了。</p>
+<h1 id="route-print"><a class="markdownIt-Anchor" href="#route-print"></a> route print</h1>
+<p>Print命令</p>
+<p>接下来，我们将介绍Print、Add、Delete、Chance四个常用的Command命令。</p>
+<p>Route print命令显示IP路由表的完整内容，如下图所示：首先显示了当前主机的所有接口列表，接下来显示IPv4路由表和IPv4永久路由，可以看到，我的IPv4路由表有两个默认网关，且无手动添加的IPv4永久路由。</p>
+<p>使用route print命令时，目标或网关可以为通配符，通配符指定为星号“*”。</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cmd">Route <span class="hljs-built_in">print</span> -<span class="hljs-number">4</span> #命令只显示IPv4的路由表信息。<br><br>Route <span class="hljs-built_in">print</span> -<span class="hljs-number">6</span> #命令只显示IPv6的路由表信息。<br><br>Route <span class="hljs-built_in">print</span> <span class="hljs-number">192</span>* #命令只显示那些匹配<span class="hljs-number">192</span>*的项。<br></code></pre></td></tr></table></figure>
-
-
-
-<h1 id="route-add"><a href="#route-add" class="headerlink" title="route add"></a>route add</h1><p>例1：若要添加带有 192.168.12.1 默认网关地址的默认路由，</p>
+<h1 id="route-add"><a class="markdownIt-Anchor" href="#route-add"></a> route add</h1>
+<p>例1：若要添加带有 192.168.12.1 默认网关地址的默认路由，</p>
   <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route add <span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">12</span>.<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
-
-
 <p>例2：若要向带有 255.255.0.0 子网掩码和 10.27.0.1 下一跃点地址的 10.41.0.0 目标中添加一个路由</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route add <span class="hljs-number">10</span>.<span class="hljs-number">41</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">27</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
-
-
-
 <p>例3：若要向带有 255.255.0.0 子网掩码和 10.27.0.1 下一跃点地址的 10.41.0.0 目标中添加一个永久路由</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route -p add <span class="hljs-number">10</span>.<span class="hljs-number">41</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">27</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
-
-
-
 <p>例4：若要向带有 255.255.0.0 子网掩码、10.27.0.1 下一跃点地址且其成本值标为 7 的 10.41.0.0 目标中添加一个路由</p>
  <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route add <span class="hljs-number">10</span>.<span class="hljs-number">41</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">27</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> metric <span class="hljs-number">7</span><br></code></pre></td></tr></table></figure>
-
-
-
 <p>例5：若要向带有 255.255.0.0 子网掩码、10.27.0.1 下一跃点地址且使用 0x3 接口索引的 10.41.0.0 目标中添加一个路由</p>
   <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route add <span class="hljs-number">10</span>.<span class="hljs-number">41</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">27</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> <span class="hljs-number">0</span>x3<br></code></pre></td></tr></table></figure>
-
-
-
 <p>如果未给出if，它将尝试查找给定网关的最佳接口。</p>
 <p>例6：若本地的IP地址为172.16.1.100，网关为172.16.1.254，现有一条ADSL线路，路由器的地址为172.168.1.200，通过该地址可访问Internet。如何做到既想上网，又想访问网络内的资源？只需按以下三步操作即可</p>
 <figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dns">第一步：将本地的网关地址由<span class="hljs-number">172.16.1.254</span>改为<span class="hljs-number">172.16.1.200</span><br><br>第二步：route delete <span class="hljs-number">0.0.0.0</span> mask <span class="hljs-number">0.0.0.0</span> <span class="hljs-number">172.16.1.254</span><br><br>第三步：route add <span class="hljs-number">172.16.0.0</span> mask <span class="hljs-number">255.255.0.0</span> <span class="hljs-number">172.16.1.100</span> -p metric <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
-
 <p>Delete命令</p>
-<p>  Route delete命令删除路由。</p>
-<p>  使用route delete命令时，目标或网关可以为通配符，通配符指定为星号“*”。</p>
+<p>Route delete命令删除路由。</p>
+<p>使用route delete命令时，目标或网关可以为通配符，通配符指定为星号“*”。</p>
 <p>例1：若要删除到带有 255.255.0.0 子网掩码的 10.41.0.0 目标的路由</p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route delete <span class="hljs-number">10</span>.<span class="hljs-number">41</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
-
-
-
-
 <p>例2：若要删除以 10. 起始的 IP 路由表中的所有路由</p>
  <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route delete <span class="hljs-number">10</span>.\*<br></code></pre></td></tr></table></figure>
-
-
-
 <p>Change命令</p>
-<p>  Route change命令只用于修改网关和&#x2F;或跃点数</p>
+<p>Route change命令只用于修改网关和/或跃点数</p>
 <p>例1：若要将带有 10.100.0.0 目标和 255.255.0.0 子网掩码的下一跃点地址从 10.100.0.1 修改为 10.100.0.254</p>
  <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">route change <span class="hljs-number">10</span>.<span class="hljs-number">100</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> mask <span class="hljs-number">255</span>.<span class="hljs-number">255</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> <span class="hljs-number">10</span>.<span class="hljs-number">100</span>.<span class="hljs-number">0</span>.<span class="hljs-number">254</span><br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -416,7 +390,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【cmd】route</div>
-      <div>http://example.com/A_OS/Windows/cmd/【cmd】route/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/cmd/【cmd】route/</div>
     </div>
     <div class="license-meta">
       

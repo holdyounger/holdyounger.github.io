@@ -24,7 +24,7 @@
     <meta name="description" content="概述：通过 COM 对象操作网卡">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【网络编程】【Windows】C++ 通过 COM 组件 启用\禁用\查看 网卡状态">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91COM%E6%9F%A5%E7%9C%8B%E7%BD%91%E5%8D%A1%E7%8A%B6%E6%80%81/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91COM%E6%9F%A5%E7%9C%8B%E7%BD%91%E5%8D%A1%E7%8A%B6%E6%80%81/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：通过 COM 对象操作网卡">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -280,12 +284,9 @@
 <p>概述：通过 COM 对象操作网卡</p>
 </blockquote>
 <span id="more"></span>
-
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;NetCon.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">ChangeNetState</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-built_in">CoInitialize</span>(<span class="hljs-literal">NULL</span>);<br>    INetConnectionManager* pNetManager;<br>    INetConnection* pNetConnection;<br>    IEnumNetConnection* pEnum;<br><br>    <span class="hljs-keyword">if</span> (S_OK != <span class="hljs-built_in">CoCreateInstance</span>(CLSID_ConnectionManager, <span class="hljs-literal">NULL</span>, CLSCTX_SERVER, IID_INetConnectionManager, (<span class="hljs-type">void</span>**)&amp;pNetManager))<br>    &#123;<br>        <span class="hljs-keyword">return</span> ;<br>    &#125;<br><br>    pNetManager-&gt;<span class="hljs-built_in">EnumConnections</span>(NCME_DEFAULT, &amp;pEnum);<br>    pNetManager-&gt;<span class="hljs-built_in">Release</span>();<br>    <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> == pEnum)<br>    &#123;<br>        <span class="hljs-keyword">return</span> ;<br>    &#125;<br><br>    ULONG celtFetched;<br>    <span class="hljs-keyword">while</span> (pEnum-&gt;<span class="hljs-built_in">Next</span>(<span class="hljs-number">1</span>, &amp;pNetConnection, &amp;celtFetched) == S_OK)<br>    &#123;<br>        NETCON_PROPERTIES* properties;<br>        pNetConnection-&gt;<span class="hljs-built_in">GetProperties</span>(&amp;properties);<br>        <span class="hljs-comment">//properties-&gt;pszwName; //网络连接的名称</span><br>        <span class="hljs-comment">//properties-&gt;pszwDeviceName; //网卡名称</span><br>        <span class="hljs-comment">//properties-&gt;Status;     //状态</span><br><br>        <span class="hljs-comment">//pNetConnection-&gt;Disconnect(); //禁用网卡</span><br>        <span class="hljs-comment">//pNetConnection-&gt;Connect();    //启用网卡</span><br>    &#125;<br>    <span class="hljs-built_in">CoUninitialize</span>();<br>    <span class="hljs-keyword">return</span> ;<br>&#125;<br><br></code></pre></td></tr></table></figure>
-
 <p><code>NETCON_PROPERTIES</code> 结构体使用的变量为宽字符，在打印时需要在程序入口调用以下函数才能正确输出。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">setlocale</span>(LC_CTYPE, <span class="hljs-string">&quot;chs&quot;</span>);<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -346,7 +347,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【网络编程】【Windows】C++ 通过 COM 组件 启用\禁用\查看 网卡状态</div>
-      <div>http://example.com/A_OS/Windows/网络helper/【网络编程】COM查看网卡状态/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/网络helper/【网络编程】COM查看网卡状态/</div>
     </div>
     <div class="license-meta">
       

@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：本文主要翻译来自微软官方博客的文章 The Security Descriptor Definition Language of Love (Part 2) | Microsoft Learn，主要描述了 SDDL 的详细含义及结构。 相关链接：  SID 字符串 - Win32 apps | Microsoft Learn   ACE 字符串 ACE 字符串 - Win32 apps |">
+    <meta name="description" content="概述：本文主要翻译来自微软官方博客的文章 The Security Descriptor Definition Language of Love (Part 2) | Microsoft Learn，主要描述了 SDDL 的详细含义及结构。 相关链接：  SID 字符串 - Win32 apps | Microsoft Learn    ACE 字符串  ACE 字符串 - Win32 apps">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【权限与会话】SDDL（翻译）">
-<meta property="og:url" content="http://example.com/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91SDDL/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91SDDL/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：本文主要翻译来自微软官方博客的文章 The Security Descriptor Definition Language of Love (Part 2) | Microsoft Learn，主要描述了 SDDL 的详细含义及结构。 相关链接：  SID 字符串 - Win32 apps | Microsoft Learn   ACE 字符串 ACE 字符串 - Win32 apps |">
+<meta property="og:description" content="概述：本文主要翻译来自微软官方博客的文章 The Security Descriptor Definition Language of Love (Part 2) | Microsoft Learn，主要描述了 SDDL 的详细含义及结构。 相关链接：  SID 字符串 - Win32 apps | Microsoft Learn    ACE 字符串  ACE 字符串 - Win32 apps">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-04T16:00:00.000Z">
 <meta property="article:modified_time" content="2024-08-16T10:33:09.956Z">
@@ -72,11 +72,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -285,22 +289,24 @@
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/sid-strings">SID 字符串 - Win32 apps | Microsoft Learn</a></li>
 </ol>
 </blockquote>
-<h2 id="ACE-字符串"><a href="#ACE-字符串" class="headerlink" title="ACE 字符串"></a>ACE 字符串</h2><ul>
+<h2 id="ace-字符串"><a class="markdownIt-Anchor" href="#ace-字符串"></a> ACE 字符串</h2>
+<ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows/win32/secauthz/ace-strings?redirectedfrom=MSDN">ACE 字符串 - Win32 apps | Microsoft Learn</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/en-us/windows/win32/secauthz/security-descriptor-definition-language-for-conditional-aces-">Security Descriptor Definition Language for Conditional ACEs - Win32 apps | Microsoft Learn</a></li>
 </ul>
-<h3 id="ACE-格式"><a href="#ACE-格式" class="headerlink" title="ACE 格式"></a>ACE 格式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ace">AceType**;AceFlags;Rights;ObjectGuid;InheritObjectGuid;AccountSid;(ConditionalExpression)**<br></code></pre></td></tr></table></figure>
+<h3 id="ace-格式"><a class="markdownIt-Anchor" href="#ace-格式"></a> ACE 格式</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ace">AceType**;AceFlags;Rights;ObjectGuid;InheritObjectGuid;AccountSid;(ConditionalExpression)**<br></code></pre></td></tr></table></figure>
+<h2 id="示例"><a class="markdownIt-Anchor" href="#示例"></a> 示例</h2>
+<p>如下所示为本地系统服务的ACE的定义</p>
+<pre class="highlight"><code class="cpp"><span class="hljs-comment">//</span>
+<span class="hljs-comment">// Create a security descriptors to ACL named events:</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// LocalSystem:&quot;0:SYG:SYD:(A;;GA;;;SY) &quot;</span>
+<span class="hljs-comment">// O:SYowner == local system</span>
+<span class="hljs-comment">// G:SYgroup == local system</span>
+<span class="hljs-comment">// D:no dacl flags(A; ;GA; ; ;SY) one ACE -- ACCESS_ALLOWED, GENERIC_ALL, trustee == LocalSystem</span>
 
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>如下所示为本地系统服务的ACE的定义</p>
-<pre><code class="cpp">//
-// Create a security descriptors to ACL named events:
-//
-// LocalSystem:&quot;0:SYG:SYD:(A;;GA;;;SY) &quot;
-// O:SYowner == local system
-// G:SYgroup == local system
-// D:no dacl flags(A; ;GA; ; ;SY) one ACE -- ACCESS_ALLOWED, GENERIC_ALL, trustee == LocalSystem
-
-#define LOCAL_SYSTEM_SD L&quot;O:SYG:SYD:(A;;GA;;;SY)&quot;
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> LOCAL_SYSTEM_SD <span class="hljs-string">L&quot;O:SYG:SYD:(A;;GA;;;SY)&quot;</span></span>
 </code></pre>
 
                 
@@ -366,7 +372,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【权限与会话】SDDL（翻译）</div>
-      <div>http://example.com/A_OS/Windows/权限与会话/【权限与会话】SDDL/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/权限与会话/【权限与会话】SDDL/</div>
     </div>
     <div class="license-meta">
       

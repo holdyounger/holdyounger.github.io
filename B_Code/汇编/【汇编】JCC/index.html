@@ -24,7 +24,7 @@
     <meta name="description" content="概述: JCC 汇编指令">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【汇编】JCC">
-<meta property="og:url" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91JCC/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91JCC/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述: JCC 汇编指令">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          931 字
         
       </span>
     
@@ -234,7 +238,7 @@
         
         
         
-          9 分钟
+          8 分钟
         
       </span>
     
@@ -280,8 +284,8 @@
 <p>概述: JCC 汇编指令</p>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-指令全英"><a href="#0x01-指令全英" class="headerlink" title="0x01 指令全英"></a>0x01 指令全英</h2><table>
+<h2 id="0x01-指令全英"><a class="markdownIt-Anchor" href="#0x01-指令全英"></a> 0x01 指令全英</h2>
+<table>
 <thead>
 <tr>
 <th>指令</th>
@@ -289,20 +293,21 @@
 <th>FALG</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>A</td>
 <td>above</td>
-<td>ZF&#x3D;0 OR CF&#x3D;0</td>
+<td>ZF=0 OR CF=0</td>
 </tr>
 <tr>
 <td>B</td>
 <td>blow</td>
-<td>CF&#x3D;1</td>
+<td>CF=1</td>
 </tr>
 <tr>
 <td>E</td>
 <td>equal</td>
-<td>ZF&#x3D;1</td>
+<td>ZF=1</td>
 </tr>
 <tr>
 <td>N</td>
@@ -312,47 +317,50 @@
 <tr>
 <td>C</td>
 <td>carry</td>
-<td>CF&#x3D;1</td>
+<td>CF=1</td>
 </tr>
 <tr>
 <td>G</td>
 <td>great</td>
-<td>SF&#x3D;&#x3D;OF &amp;&amp; ZF&#x3D;0</td>
+<td>SF==OF &amp;&amp; ZF=0</td>
 </tr>
 <tr>
 <td>L</td>
 <td>less</td>
-<td>SF!&#x3D;OF</td>
+<td>SF!=OF</td>
 </tr>
 <tr>
 <td>O</td>
 <td>overflow</td>
-<td>OF&#x3D;1</td>
+<td>OF=1</td>
 </tr>
 <tr>
 <td>P</td>
 <td>parity even 奇偶</td>
-<td>PF&#x3D;1</td>
+<td>PF=1</td>
 </tr>
 <tr>
 <td>S</td>
 <td>sign为负</td>
-<td>SF&#x3D;1</td>
+<td>SF=1</td>
 </tr>
 <tr>
 <td>Z</td>
 <td>zero为0</td>
-<td>ZF&#x3D;1</td>
+<td>ZF=1</td>
 </tr>
-</tbody></table>
-<h2 id="0x02-基于特定标志位值的跳转"><a href="#0x02-基于特定标志位值的跳转" class="headerlink" title="0x02 基于特定标志位值的跳转"></a>0x02 基于特定标志位值的跳转</h2><table>
+</tbody>
+</table>
+<h2 id="0x02-基于特定标志位值的跳转"><a class="markdownIt-Anchor" href="#0x02-基于特定标志位值的跳转"></a> 0x02 基于特定标志位值的跳转</h2>
+<table>
 <thead>
 <tr>
 <th>指令</th>
 <th>说明</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>JC</td>
 <td>进位跳转（进位标志位置 1）</td>
 </tr>
@@ -361,7 +369,7 @@
 <td>无进位跳转（进位标志位清零）</td>
 </tr>
 <tr>
-<td>JZ&#x2F;JE</td>
+<td>JZ/JE</td>
 <td>结果为零则跳转（相等时跳转）</td>
 </tr>
 <tr>
@@ -392,8 +400,10 @@
 <td>JNO</td>
 <td>结果没有溢出则跳转</td>
 </tr>
-</tbody></table>
-<h2 id="0x03-JCC满足条件时跳转"><a href="#0x03-JCC满足条件时跳转" class="headerlink" title="0x03 JCC满足条件时跳转"></a>0x03 JCC满足条件时跳转</h2><table>
+</tbody>
+</table>
+<h2 id="0x03-jcc满足条件时跳转"><a class="markdownIt-Anchor" href="#0x03-jcc满足条件时跳转"></a> 0x03 JCC满足条件时跳转</h2>
+<table>
 <thead>
 <tr>
 <th>操作码</th>
@@ -401,30 +411,31 @@
 <th>说明</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>77 <strong>cb</strong></td>
 <td>JA <strong>rel8</strong></td>
-<td>高于（CF&#x3D;0 且 ZF&#x3D;0）时短跳转</td>
+<td>高于（CF=0 且 ZF=0）时短跳转</td>
 </tr>
 <tr>
 <td>73 <strong>cb</strong></td>
 <td>JAE <strong>rel8</strong></td>
-<td>高于或等于 (CF&#x3D;0) 时短跳转</td>
+<td>高于或等于 (CF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>72 <strong>cb</strong></td>
 <td>JB <strong>rel8</strong></td>
-<td>低于 (CF&#x3D;1) 时短跳转</td>
+<td>低于 (CF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>76 <strong>cb</strong></td>
 <td>JBE <strong>rel8</strong></td>
-<td>低于或等于（CF&#x3D;1 或  ZF&#x3D;1）时短跳转</td>
+<td>低于或等于（CF=1 或  ZF=1）时短跳转</td>
 </tr>
 <tr>
 <td>72 <strong>cb</strong></td>
 <td>JC <strong>rel8</strong></td>
-<td>进位 (CF&#x3D;1) 时短跳转</td>
+<td>进位 (CF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>E3 <strong>cb</strong></td>
@@ -439,17 +450,17 @@
 <tr>
 <td>74 <strong>cb</strong></td>
 <td>JE <strong>rel8</strong></td>
-<td>等于 (ZF&#x3D;1) 时短跳转</td>
+<td>等于 (ZF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>7F <strong>cb</strong></td>
 <td>JG <strong>rel8</strong></td>
-<td>大于（ZF&#x3D;0 且 SF&#x3D;OF）时短跳转</td>
+<td>大于（ZF=0 且 SF=OF）时短跳转</td>
 </tr>
 <tr>
 <td>7D <strong>cb</strong></td>
 <td>JGE <strong>rel8</strong></td>
-<td>大于或等于 (SF&#x3D;OF) 时短跳转</td>
+<td>大于或等于 (SF=OF) 时短跳转</td>
 </tr>
 <tr>
 <td>7C <strong>cb</strong></td>
@@ -459,42 +470,42 @@
 <tr>
 <td>7E <strong>cb</strong></td>
 <td>JLE <strong>rel8</strong></td>
-<td>小于或等于（ZF&#x3D;1 或  SF&lt;&gt;OF）时短跳转</td>
+<td>小于或等于（ZF=1 或  SF&lt;&gt;OF）时短跳转</td>
 </tr>
 <tr>
 <td>76 <strong>cb</strong></td>
 <td>JNA <strong>rel8</strong></td>
-<td>不高于（CF&#x3D;1 或 ZF&#x3D;1）时短跳转</td>
+<td>不高于（CF=1 或 ZF=1）时短跳转</td>
 </tr>
 <tr>
 <td>72 <strong>cb</strong></td>
 <td>JNAE <strong>rel8</strong></td>
-<td>不高于或等于 (CF&#x3D;1) 时短跳转</td>
+<td>不高于或等于 (CF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>73 <strong>cb</strong></td>
 <td>JNB <strong>rel8</strong></td>
-<td>不低于 (CF&#x3D;0) 时短跳转</td>
+<td>不低于 (CF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>77 <strong>cb</strong></td>
 <td>JNBE <strong>rel8</strong></td>
-<td>不低于或等于（CF&#x3D;0 或  ZF&#x3D;0）时短跳转</td>
+<td>不低于或等于（CF=0 或  ZF=0）时短跳转</td>
 </tr>
 <tr>
 <td>73 <strong>cb</strong></td>
 <td>JNC <strong>rel8</strong></td>
-<td>无进位 (CF&#x3D;0) 时短跳转</td>
+<td>无进位 (CF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>75 <strong>cb</strong></td>
 <td>JNE <strong>rel8</strong></td>
-<td>不相等 (ZF&#x3D;0) 时短跳转</td>
+<td>不相等 (ZF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>7E <strong>cb</strong></td>
 <td>JNG <strong>rel8</strong></td>
-<td>不大于（ZF&#x3D;1 或  SF&lt;&gt;OF）时短跳转</td>
+<td>不大于（ZF=1 或  SF&lt;&gt;OF）时短跳转</td>
 </tr>
 <tr>
 <td>7C <strong>cb</strong></td>
@@ -509,17 +520,17 @@
 <tr>
 <td>7F <strong>cb</strong></td>
 <td>JNLE <strong>rel8</strong></td>
-<td>不小于或等于（ZF&#x3D;0 且  SF&#x3D;OF）时短跳转</td>
+<td>不小于或等于（ZF=0 且  SF=OF）时短跳转</td>
 </tr>
 <tr>
 <td>71 <strong>cb</strong></td>
 <td>JNO <strong>rel8</strong></td>
-<td>不上溢 (OF&#x3D;0) 时短跳转</td>
+<td>不上溢 (OF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>7B <strong>cb</strong></td>
 <td>JNP <strong>rel8</strong></td>
-<td>奇校验 (PF&#x3D;0) 时短跳转</td>
+<td>奇校验 (PF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>79 <strong>cb</strong></td>
@@ -529,79 +540,80 @@
 <tr>
 <td>75 <strong>cb</strong></td>
 <td>JNZ <strong>rel8</strong></td>
-<td>不为零 (ZF&#x3D;0) 时短跳转</td>
+<td>不为零 (ZF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>70 <strong>cb</strong></td>
 <td>JO <strong>rel8</strong></td>
-<td>上溢 (OF&#x3D;1) 时短跳转</td>
+<td>上溢 (OF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>7A <strong>cb</strong></td>
 <td>JP <strong>rel8</strong></td>
-<td>偶校验 (PF&#x3D;1) 时短跳转</td>
+<td>偶校验 (PF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>7A <strong>cb</strong></td>
 <td>JPE <strong>rel8</strong></td>
-<td>偶校验 (PF&#x3D;1) 时短跳转</td>
+<td>偶校验 (PF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>7B <strong>cb</strong></td>
 <td>JPO <strong>rel8</strong></td>
-<td>奇校验 (PF&#x3D;0) 时短跳转</td>
+<td>奇校验 (PF=0) 时短跳转</td>
 </tr>
 <tr>
 <td>78 <strong>cb</strong></td>
 <td>JS <strong>rel8</strong></td>
-<td>负数 (SF&#x3D;1) 时短跳转</td>
+<td>负数 (SF=1) 时短跳转</td>
 </tr>
 <tr>
 <td>74 <strong>cb</strong></td>
 <td>JZ <strong>rel8</strong></td>
-<td>为零 (ZF&#x3D;1) 时短跳转</td>
+<td>为零 (ZF=1) 时短跳转</td>
 </tr>
 <tr>
-<td>0F 87 <strong>cw&#x2F;cd</strong></td>
-<td>JA <strong>rel16&#x2F;32</strong></td>
-<td>高于（CF&#x3D;0 且 ZF&#x3D;0）时近跳转</td>
+<td>0F 87 <strong>cw/cd</strong></td>
+<td>JA <strong>rel16/32</strong></td>
+<td>高于（CF=0 且 ZF=0）时近跳转</td>
 </tr>
 <tr>
-<td>0F 83 <strong>cw&#x2F;cd</strong></td>
-<td>JAE <strong>rel16&#x2F;32</strong></td>
-<td>高于或等于 (CF&#x3D;0) 时近跳转</td>
+<td>0F 83 <strong>cw/cd</strong></td>
+<td>JAE <strong>rel16/32</strong></td>
+<td>高于或等于 (CF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 82 <strong>cw&#x2F;cd</strong></td>
-<td>JB <strong>rel16&#x2F;32</strong></td>
-<td>低于 (CF&#x3D;1) 时近跳转</td>
+<td>0F 82 <strong>cw/cd</strong></td>
+<td>JB <strong>rel16/32</strong></td>
+<td>低于 (CF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 86 <strong>cw&#x2F;cd</strong></td>
-<td>JBE <strong>rel16&#x2F;32</strong></td>
-<td>低于或等于（CF&#x3D;1 或  ZF&#x3D;1）时近跳转</td>
+<td>0F 86 <strong>cw/cd</strong></td>
+<td>JBE <strong>rel16/32</strong></td>
+<td>低于或等于（CF=1 或  ZF=1）时近跳转</td>
 </tr>
 <tr>
-<td>0F 82 <strong>cw&#x2F;cd</strong></td>
-<td>JC <strong>rel16&#x2F;32</strong></td>
-<td>进位 (CF&#x3D;1) 时近跳转</td>
+<td>0F 82 <strong>cw/cd</strong></td>
+<td>JC <strong>rel16/32</strong></td>
+<td>进位 (CF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 84 <strong>cw&#x2F;cd</strong></td>
-<td>JE <strong>rel16&#x2F;32</strong></td>
-<td>相等 (ZF&#x3D;1) 时近跳转</td>
+<td>0F 84 <strong>cw/cd</strong></td>
+<td>JE <strong>rel16/32</strong></td>
+<td>相等 (ZF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 84 <strong>cw&#x2F;cd</strong></td>
-<td>JZ <strong>rel16&#x2F;32</strong></td>
-<td>为 0 (ZF&#x3D;1) 时近跳转</td>
+<td>0F 84 <strong>cw/cd</strong></td>
+<td>JZ <strong>rel16/32</strong></td>
+<td>为 0 (ZF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8F <strong>cw&#x2F;cd</strong></td>
-<td>JG <strong>rel16&#x2F;32</strong></td>
-<td>大于（ZF&#x3D;0 且  SF&#x3D;OF）时近跳转</td>
+<td>0F 8F <strong>cw/cd</strong></td>
+<td>JG <strong>rel16/32</strong></td>
+<td>大于（ZF=0 且  SF=OF）时近跳转</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <table>
 <thead>
 <tr>
@@ -610,122 +622,124 @@
 <th>说明</th>
 </tr>
 </thead>
-<tbody><tr>
-<td>0F 8D <strong>cw&#x2F;cd</strong></td>
-<td>JGE <strong>rel16&#x2F;32</strong></td>
-<td>大于或等于 (SF&#x3D;OF) 时近跳转</td>
+<tbody>
+<tr>
+<td>0F 8D <strong>cw/cd</strong></td>
+<td>JGE <strong>rel16/32</strong></td>
+<td>大于或等于 (SF=OF) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8C <strong>cw&#x2F;cd</strong></td>
-<td>JL <strong>rel16&#x2F;32</strong></td>
+<td>0F 8C <strong>cw/cd</strong></td>
+<td>JL <strong>rel16/32</strong></td>
 <td>小于 (SF&lt;&gt;OF)  时近跳转</td>
 </tr>
 <tr>
-<td>0F 8E <strong>cw&#x2F;cd</strong></td>
-<td>JLE <strong>rel16&#x2F;32</strong></td>
-<td>小于或等于（ZF&#x3D;1 或  SF&lt;&gt;OF）时近跳转</td>
+<td>0F 8E <strong>cw/cd</strong></td>
+<td>JLE <strong>rel16/32</strong></td>
+<td>小于或等于（ZF=1 或  SF&lt;&gt;OF）时近跳转</td>
 </tr>
 <tr>
-<td>0F 86 <strong>cw&#x2F;cd</strong></td>
-<td>JNA <strong>rel16&#x2F;32</strong></td>
-<td>不高于（CF&#x3D;1 或 ZF&#x3D;1）时近跳转</td>
+<td>0F 86 <strong>cw/cd</strong></td>
+<td>JNA <strong>rel16/32</strong></td>
+<td>不高于（CF=1 或 ZF=1）时近跳转</td>
 </tr>
 <tr>
-<td>0F 82 <strong>cw&#x2F;cd</strong></td>
-<td>JNAE <strong>rel16&#x2F;32</strong></td>
-<td>不高于或等于 (CF&#x3D;1) 时近跳转</td>
+<td>0F 82 <strong>cw/cd</strong></td>
+<td>JNAE <strong>rel16/32</strong></td>
+<td>不高于或等于 (CF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 83 <strong>cw&#x2F;cd</strong></td>
-<td>JNB <strong>rel16&#x2F;32</strong></td>
-<td>不低于 (CF&#x3D;0) 时近跳转</td>
+<td>0F 83 <strong>cw/cd</strong></td>
+<td>JNB <strong>rel16/32</strong></td>
+<td>不低于 (CF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 87 <strong>cw&#x2F;cd</strong></td>
-<td>JNBE <strong>rel16&#x2F;32</strong></td>
-<td>不低于或等于（CF&#x3D;0 或  ZF&#x3D;0）时近跳转</td>
+<td>0F 87 <strong>cw/cd</strong></td>
+<td>JNBE <strong>rel16/32</strong></td>
+<td>不低于或等于（CF=0 或  ZF=0）时近跳转</td>
 </tr>
 <tr>
-<td>0F 83 <strong>cw&#x2F;cd</strong></td>
-<td>JNC <strong>rel16&#x2F;32</strong></td>
-<td>无进位 (CF&#x3D;0) 时近跳转</td>
+<td>0F 83 <strong>cw/cd</strong></td>
+<td>JNC <strong>rel16/32</strong></td>
+<td>无进位 (CF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 85 <strong>cw&#x2F;cd</strong></td>
-<td>JNE <strong>rel16&#x2F;32</strong></td>
-<td>不相等 (ZF&#x3D;0) 时近跳转</td>
+<td>0F 85 <strong>cw/cd</strong></td>
+<td>JNE <strong>rel16/32</strong></td>
+<td>不相等 (ZF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8E <strong>cw&#x2F;cd</strong></td>
-<td>JNG <strong>rel16&#x2F;32</strong></td>
-<td>不大于（ZF&#x3D;1 或  SF&lt;&gt;OF）时近跳转</td>
+<td>0F 8E <strong>cw/cd</strong></td>
+<td>JNG <strong>rel16/32</strong></td>
+<td>不大于（ZF=1 或  SF&lt;&gt;OF）时近跳转</td>
 </tr>
 <tr>
-<td>0F 8C <strong>cw&#x2F;cd</strong></td>
-<td>JNGE <strong>rel16&#x2F;32</strong></td>
+<td>0F 8C <strong>cw/cd</strong></td>
+<td>JNGE <strong>rel16/32</strong></td>
 <td>不大于或等于 (SF&lt;&gt;OF)  时近跳转</td>
 </tr>
 <tr>
-<td>0F 8D <strong>cw&#x2F;cd</strong></td>
-<td>JNL <strong>rel16&#x2F;32</strong></td>
+<td>0F 8D <strong>cw/cd</strong></td>
+<td>JNL <strong>rel16/32</strong></td>
 <td>不小于 (SF＝OF) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8F <strong>cw&#x2F;cd</strong></td>
-<td>JNLE <strong>rel16&#x2F;32</strong></td>
-<td>不小于或等于（ZF&#x3D;0 且  SF&#x3D;OF）时近跳转</td>
+<td>0F 8F <strong>cw/cd</strong></td>
+<td>JNLE <strong>rel16/32</strong></td>
+<td>不小于或等于（ZF=0 且  SF=OF）时近跳转</td>
 </tr>
 <tr>
-<td>0F 81 <strong>cw&#x2F;cd</strong></td>
-<td>JNO <strong>rel16&#x2F;32</strong></td>
-<td>不上溢 (OF&#x3D;0) 时近跳转</td>
+<td>0F 81 <strong>cw/cd</strong></td>
+<td>JNO <strong>rel16/32</strong></td>
+<td>不上溢 (OF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8B <strong>cw&#x2F;cd</strong></td>
-<td>JNP <strong>rel16&#x2F;32</strong></td>
-<td>奇校验 (PF&#x3D;0) 时近跳转</td>
+<td>0F 8B <strong>cw/cd</strong></td>
+<td>JNP <strong>rel16/32</strong></td>
+<td>奇校验 (PF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 89 <strong>cw&#x2F;cd</strong></td>
-<td>JNS <strong>rel16&#x2F;32</strong></td>
+<td>0F 89 <strong>cw/cd</strong></td>
+<td>JNS <strong>rel16/32</strong></td>
 <td>正数 (SF＝0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 85 <strong>cw&#x2F;cd</strong></td>
-<td>JNZ <strong>rel16&#x2F;32</strong></td>
-<td>不为零 (ZF&#x3D;0) 时近跳转</td>
+<td>0F 85 <strong>cw/cd</strong></td>
+<td>JNZ <strong>rel16/32</strong></td>
+<td>不为零 (ZF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 80 <strong>cw&#x2F;cd</strong></td>
-<td>JO <strong>rel16&#x2F;32</strong></td>
-<td>上溢 (OF&#x3D;1) 时近跳转</td>
+<td>0F 80 <strong>cw/cd</strong></td>
+<td>JO <strong>rel16/32</strong></td>
+<td>上溢 (OF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8A <strong>cw&#x2F;cd</strong></td>
-<td>JP <strong>rel16&#x2F;32</strong></td>
-<td>偶校验 (PF&#x3D;1) 时近跳转</td>
+<td>0F 8A <strong>cw/cd</strong></td>
+<td>JP <strong>rel16/32</strong></td>
+<td>偶校验 (PF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8A <strong>cw&#x2F;cd</strong></td>
-<td>JPE <strong>rel16&#x2F;32</strong></td>
-<td>偶校验 (PF&#x3D;1) 时近跳转</td>
+<td>0F 8A <strong>cw/cd</strong></td>
+<td>JPE <strong>rel16/32</strong></td>
+<td>偶校验 (PF=1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 8B <strong>cw&#x2F;cd</strong></td>
-<td>JPO <strong>rel16&#x2F;32</strong></td>
-<td>奇校验 (PF&#x3D;0) 时近跳转</td>
+<td>0F 8B <strong>cw/cd</strong></td>
+<td>JPO <strong>rel16/32</strong></td>
+<td>奇校验 (PF=0) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 88 <strong>cw&#x2F;cd</strong></td>
-<td>JS <strong>rel16&#x2F;32</strong></td>
+<td>0F 88 <strong>cw/cd</strong></td>
+<td>JS <strong>rel16/32</strong></td>
 <td>负数 (SF＝1) 时近跳转</td>
 </tr>
 <tr>
-<td>0F 84 <strong>cw&#x2F;cd</strong></td>
-<td>JZ <strong>rel16&#x2F;32</strong></td>
-<td>为 0 (ZF&#x3D;1) 时近跳转</td>
+<td>0F 84 <strong>cw/cd</strong></td>
+<td>JZ <strong>rel16/32</strong></td>
+<td>为 0 (ZF=1) 时近跳转</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -779,7 +793,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【汇编】JCC</div>
-      <div>http://example.com/B_Code/汇编/【汇编】JCC/</div>
+      <div>https://hodlyounger.github.io/B_Code/汇编/【汇编】JCC/</div>
     </div>
     <div class="license-meta">
       

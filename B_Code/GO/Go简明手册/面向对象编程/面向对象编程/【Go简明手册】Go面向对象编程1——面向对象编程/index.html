@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。 自定义类型Go 语言的中结构体 struct 与 C++、JAVA 中的类 class 相似，但 Go 放弃了">
+    <meta name="description" content="Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。  自定义类型 Go 语言的中结构体 struct 与 C++、JAVA 中的类 class 相似，但 Go 放弃">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go面向对象编程1——面向对象编程">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B1%E2%80%94%E2%80%94%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/%E3%80%90Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C%E3%80%91Go%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B1%E2%80%94%E2%80%94%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。 自定义类型Go 语言的中结构体 struct 与 C++、JAVA 中的类 class 相似，但 Go 放弃了">
+<meta property="og:description" content="Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。  自定义类型 Go 语言的中结构体 struct 与 C++、JAVA 中的类 class 相似，但 Go 放弃">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.204Z">
 <meta property="article:modified_time" content="2024-08-26T07:23:08.898Z">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -226,7 +230,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          577 字
+          583 字
         
       </span>
     
@@ -279,18 +283,17 @@
             
               <div class="markdown-body">
                 
-                <p> Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。</p>
-<h4 id="自定义类型"><a href="#自定义类型" class="headerlink" title="自定义类型"></a>自定义类型</h4><p>Go 语言的中结构体 <code>struct</code> 与 C++、JAVA 中的类 <code>class</code> 相似，但 Go 放弃了传统面向对象的诸多特性，只保留了组合。</p>
+                <p>Go 语言的代码是以包结构来组织的，且如果标示符（变量名，函数名，自定义类型等）如果以大写字母开头那么这些标示符是可以导出的，可以在任何导入了定义该标示符的包的包中直接使用。Go 语言中的面向对象和 C++，Java 中的面向对象不同，因为 Go 语言不支持继承，Go 语言只支持组合。</p>
+<h4 id="自定义类型"><a class="markdownIt-Anchor" href="#自定义类型"></a> 自定义类型</h4>
+<p>Go 语言的中结构体 <code>struct</code> 与 C++、JAVA 中的类 <code>class</code> 相似，但 Go 放弃了传统面向对象的诸多特性，只保留了组合。</p>
 <ul>
 <li><strong>type</strong> typeName typeSpecification</li>
 </ul>
 <p>其中，<code>typeName</code> 可以是一个包或者函数内唯一合法的 Go 标示符。<code>typeSpecification</code> 可以是任何内置的类型，一个接口或者是一个结构体。所谓结构体，它的字段是由其他类型或者接口组成。例如我们通过结构体定义了一下类型：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ColorPoint <span class="hljs-keyword">struct</span> &#123;<br>    color.Color     <span class="hljs-comment">// 匿名字段(嵌入)</span><br>    x, y <span class="hljs-type">int</span>        <span class="hljs-comment">// 具名字段(聚合)</span><br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>以上代码我们通过结构体自定义了类型 <code>ColorPoint</code>，结构体中 <code>color.Color</code> 字段是 Color 包的类型 color，这个字段没有名字，所以被称为匿名的，也是嵌入字段。字段 <code>x</code> 和 <code>y</code> 是有变量名的，所以被称为具名字段。假如我们创建了类型 <code>ColorPoint</code> 的一个值 <code>point</code>（通过语法：<code>point := ColorPoint&#123;&#125;</code> 创建），那么这些字段可以通过 <code>point.Color</code>、<code>point.x</code>、<code>point.y</code> 访问。其他面向对象语言中的”类 (<code>class</code>)”、”对象 (<code>object</code>)”、”实例 (<code>instance</code>)”在 Go 语言中我们完全避开使用。相反的我们使用”类型 (<code>type</code>)”和其对应的”值”，其中自定义类型的值可以包含方法。</p>
+<p>以上代码我们通过结构体自定义了类型 <code>ColorPoint</code>，结构体中 <code>color.Color</code> 字段是 Color 包的类型 color，这个字段没有名字，所以被称为匿名的，也是嵌入字段。字段 <code>x</code> 和 <code>y</code> 是有变量名的，所以被称为具名字段。假如我们创建了类型 <code>ColorPoint</code> 的一个值 <code>point</code>（通过语法：<code>point := ColorPoint&#123;&#125;</code> 创建），那么这些字段可以通过 <code>point.Color</code>、<code>point.x</code>、<code>point.y</code> 访问。其他面向对象语言中的&quot;类 (<code>class</code>)&quot;、“对象 (<code>object</code>)”、&quot;实例 (<code>instance</code>)&quot;在 Go 语言中我们完全避开使用。相反的我们使用&quot;类型 (<code>type</code>)“和其对应的&quot;值”，其中自定义类型的值可以包含方法。</p>
 <p>定义了结构体后如何创建并初始化一个对象实例呢？Go 语言支持以下几种方法进行实现：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//先定义一个结构体Man</span><br><span class="hljs-keyword">type</span> Man <span class="hljs-keyword">struct</span>&#123;<br>    name <span class="hljs-type">string</span><br>    age <span class="hljs-type">int</span><br>&#125;<br><span class="hljs-comment">//对象创建与初始化</span><br>man := <span class="hljs-built_in">new</span>(Man)<br>man := &amp;Man&#123;&#125;<br>man := &amp;Man&#123;<span class="hljs-string">&quot;Tom&quot;</span>, <span class="hljs-number">18</span>&#125;<br>man := &amp;Man&#123;name: <span class="hljs-string">&quot;Tom&quot;</span>, age: <span class="hljs-number">18</span>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>为了更加方便的创建对象，我们一般会使用一个全局函数来完成对象的创建，这和传统的“构造函数”类似。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewMan</span><span class="hljs-params">(name <span class="hljs-type">string</span>, age <span class="hljs-type">int</span>)</span></span> *Man &#123;<br>    <span class="hljs-keyword">return</span> &amp;Man&#123;name, age&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -373,7 +376,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Go面向对象编程1——面向对象编程</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/面向对象编程/面向对象编程/【Go简明手册】Go面向对象编程1——面向对象编程/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/面向对象编程/面向对象编程/【Go简明手册】Go面向对象编程1——面向对象编程/</div>
     </div>
     <div class="license-meta">
       

@@ -24,7 +24,7 @@
     <meta name="description" content="概述：RootDSE 属性描述及使用 参考链接：  RootDSE (AD 架构) - Win32 apps | Microsoft Learn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【AD】RootDSE">
-<meta property="og:url" content="http://example.com/A_OS/Windows/AD/%E3%80%90AD%E3%80%91RootDSE/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/AD/%E3%80%90AD%E3%80%91RootDSE/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：RootDSE 属性描述及使用 参考链接：  RootDSE (AD 架构) - Win32 apps | Microsoft Learn">
 <meta property="og:locale" content="zh_CN">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -223,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          325 字
+          320 字
         
       </span>
     
@@ -284,20 +288,16 @@
 </ul>
 </blockquote>
 <span id="more"></span>
-
-<h2 id="0x01-roorDSE"><a href="#0x01-roorDSE" class="headerlink" title="0x01 roorDSE"></a>0x01 roorDSE</h2><p>rootDSE 是每个目录服务器上的已知可靠位置，用于获取域、架构和配置容器的可分辨名称，以及有关服务器及其目录数据树内容的其他数据。 这些属性很少在特定服务器上发生更改。 应用程序可以在启动时读取这些属性，并在整个会话中使用它们。</p>
+<h2 id="0x01-roordse"><a class="markdownIt-Anchor" href="#0x01-roordse"></a> 0x01 roorDSE</h2>
+<p>rootDSE 是每个目录服务器上的已知可靠位置，用于获取域、架构和配置容器的可分辨名称，以及有关服务器及其目录数据树内容的其他数据。 这些属性很少在特定服务器上发生更改。 应用程序可以在启动时读取这些属性，并在整个会话中使用它们。</p>
 <p>总之，应用程序应使用无服务器绑定绑定到当前域上的目录，使用 rootDSE 获取命名空间的可分辨名称，并使用该可分辨名称绑定到命名空间中的对象。</p>
 <p>在 LDAP 3.0 中，rootDSE 定义为目录服务器上的目录数据树的根。 rootDSE 不属于任何命名空间。 rootDSE 的用途是提供有关目录服务器的数据。 下面是用于绑定到 rootDSE 的绑定字符串。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">LDAP:<span class="hljs-comment">//&lt;servername&gt;/rootDSE</span><br></code></pre></td></tr></table></figure>
-
 <p>servername &lt;&gt; 是服务器的 DNS 名称。 servername &lt;&gt; 是可选的，如以下格式所示。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Cpp">LDAP:<span class="hljs-comment">//rootDSE</span><br></code></pre></td></tr></table></figure>
-
-<h2 id="0x02-rootDSE的使用"><a href="#0x02-rootDSE的使用" class="headerlink" title="0x02 rootDSE的使用"></a>0x02 rootDSE的使用</h2><p>参考代码：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/outflanknl/C2-Tool-Collection/blob/e371a38c717edaf1650923575ab33bee0dd3e0ee/BOF/SprayAD/SOURCE/SprayAD.c">C2-Tool-Collection&#x2F;BOF&#x2F;SprayAD&#x2F;SOURCE&#x2F;SprayAD.c at e371a38c717edaf1650923575ab33bee0dd3e0ee · outflanknl&#x2F;C2-Tool-Collection</a></p>
+<h2 id="0x02-rootdse的使用"><a class="markdownIt-Anchor" href="#0x02-rootdse的使用"></a> 0x02 rootDSE的使用</h2>
+<p>参考代码：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/outflanknl/C2-Tool-Collection/blob/e371a38c717edaf1650923575ab33bee0dd3e0ee/BOF/SprayAD/SOURCE/SprayAD.c">C2-Tool-Collection/BOF/SprayAD/SOURCE/SprayAD.c at e371a38c717edaf1650923575ab33bee0dd3e0ee · outflanknl/C2-Tool-Collection</a></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp">hr = <span class="hljs-built_in">ADsOpenObject</span>(<span class="hljs-string">L&quot;LDAP://rootDSE&quot;</span>,<br>		<span class="hljs-literal">NULL</span>,<br>		<span class="hljs-literal">NULL</span>,<br>		ADS_USE_SEALING | ADS_USE_SIGNING | ADS_SECURE_AUTHENTICATION, <span class="hljs-comment">// Use Kerberos encryption</span><br>		IADsIID,<br>		(<span class="hljs-type">void</span>**)&amp;pRoot);<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">FAILED</span>(hr)) &#123;<br>		<span class="hljs-built_in">Debug_ErrorStr</span>(<span class="hljs-string">L&quot;Failed to get rootDSE.\n&quot;</span>);<br>		<span class="hljs-keyword">goto</span> CleanUp;<br>	&#125;<br></code></pre></td></tr></table></figure>
-
-
-
 
                 
               </div>
@@ -358,7 +358,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【AD】RootDSE</div>
-      <div>http://example.com/A_OS/Windows/AD/【AD】RootDSE/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/AD/【AD】RootDSE/</div>
     </div>
     <div class="license-meta">
       

@@ -21,14 +21,14 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述: 程序中或者脚本中要打开系统设置界面时，可以使用如下方式和接口  [toc] 使用 Win32 API1::ShellExecute(hWnd, &quot;open&quot;, &quot;ms-settings:about&quot;, ...);  KeyBoard Win+R启动命令行Win+R 在输入框直接输入启动的界面命令即可。   Command Line(cmd.exe)">
+    <meta name="description" content="概述: 程序中或者脚本中要打开系统设置界面时，可以使用如下方式和接口  [toc]  使用 Win32 API 1::ShellExecute(hWnd, &quot;open&quot;, &quot;ms-settings:about&quot;, ...);  KeyBoard Win+R启动命令行 Win+R 在输入框直接输入启动的界面命令即可。   Command Line(cmd.e">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Windows】Win 10&#x2F;11 通过命令行打开系统设置页面">
-<meta property="og:url" content="http://example.com/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述: 程序中或者脚本中要打开系统设置界面时，可以使用如下方式和接口  [toc] 使用 Win32 API1::ShellExecute(hWnd, &quot;open&quot;, &quot;ms-settings:about&quot;, ...);  KeyBoard Win+R启动命令行Win+R 在输入框直接输入启动的界面命令即可。   Command Line(cmd.exe)">
+<meta property="og:description" content="概述: 程序中或者脚本中要打开系统设置界面时，可以使用如下方式和接口  [toc]  使用 Win32 API 1::ShellExecute(hWnd, &quot;open&quot;, &quot;ms-settings:about&quot;, ...);  KeyBoard Win+R启动命令行 Win+R 在输入框直接输入启动的界面命令即可。   Command Line(cmd.e">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/IMG-20240816095713239.png">
+<meta property="og:image" content="https://hodlyounger.github.io/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/IMG-20240816095713239.png">
 <meta property="article:published_time" content="2023-10-27T01:24:02.025Z">
 <meta property="article:modified_time" content="2024-08-16T01:57:13.265Z">
 <meta property="article:author" content="mingming">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="ms-settings">
 <meta property="article:tag" content="快捷方式">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/IMG-20240816095713239.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/IMG-20240816095713239.png">
   
   
   
@@ -74,11 +74,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -227,7 +231,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          641 字
+          635 字
         
       </span>
     
@@ -284,23 +288,25 @@
 <p>概述: 程序中或者脚本中要打开系统设置界面时，可以使用如下方式和接口</p>
 </blockquote>
 <p>[toc]</p>
-<h1 id="使用-Win32-API"><a href="#使用-Win32-API" class="headerlink" title="使用 Win32 API"></a>使用 Win32 API</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">::<span class="hljs-built_in">ShellExecute</span>(hWnd, <span class="hljs-string">&quot;open&quot;</span>, <span class="hljs-string">&quot;ms-settings:about&quot;</span>, ...);<br></code></pre></td></tr></table></figure>
-
-<h1 id="KeyBoard-Win-R启动命令行"><a href="#KeyBoard-Win-R启动命令行" class="headerlink" title="KeyBoard Win+R启动命令行"></a>KeyBoard Win+R启动命令行</h1><p><kbd>Win+R</kbd> 在输入框直接输入启动的界面命令即可。</p>
+<h1 id="使用-win32-api"><a class="markdownIt-Anchor" href="#使用-win32-api"></a> 使用 Win32 API</h1>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">::<span class="hljs-built_in">ShellExecute</span>(hWnd, <span class="hljs-string">&quot;open&quot;</span>, <span class="hljs-string">&quot;ms-settings:about&quot;</span>, ...);<br></code></pre></td></tr></table></figure>
+<h1 id="keyboard-winr启动命令行"><a class="markdownIt-Anchor" href="#keyboard-winr启动命令行"></a> KeyBoard Win+R启动命令行</h1>
+<p><kbd>Win+R</kbd> 在输入框直接输入启动的界面命令即可。</p>
 <img src="/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E9%A1%B5/IMG-20240816095713239.png" srcset="/img/loading.gif" lazyload class title="image-20230814095627601">
-
-<h1 id="Command-Line-cmd-exe"><a href="#Command-Line-cmd-exe" class="headerlink" title="Command Line(cmd.exe)"></a>Command Line(cmd.exe)</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">start ms-settings:about<br></code></pre></td></tr></table></figure>
-
-<h1 id="启动说明对照表"><a href="#启动说明对照表" class="headerlink" title="启动说明对照表"></a>启动说明对照表</h1><table>
+<h1 id="command-linecmdexe"><a class="markdownIt-Anchor" href="#command-linecmdexe"></a> Command Line(cmd.exe)</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">start ms-settings:about<br></code></pre></td></tr></table></figure>
+<h1 id="启动说明对照表"><a class="markdownIt-Anchor" href="#启动说明对照表"></a> 启动说明对照表</h1>
+<table>
 <thead>
 <tr>
 <th>Settings page</th>
-<th>Uri &#x2F; Setting Name</th>
+<th>Uri / Setting Name</th>
 <th>Category</th>
 </tr>
 </thead>
-<tbody><tr>
-<td>About (device name&#x2F;specification)</td>
+<tbody>
+<tr>
+<td>About (device name/specification)</td>
 <td>ms-settings:about</td>
 <td>Windows</td>
 </tr>
@@ -330,12 +336,12 @@
 <td>Accessibility</td>
 </tr>
 <tr>
-<td>Airplane mode (wireless&#x2F;bluetooth)</td>
+<td>Airplane mode (wireless/bluetooth)</td>
 <td>ms-settings:network-airplanemode</td>
 <td>Network</td>
 </tr>
 <tr>
-<td>Airplane mode (wireless&#x2F;bluetooth)</td>
+<td>Airplane mode (wireless/bluetooth)</td>
 <td>ms-settings:proximity</td>
 <td>Network</td>
 </tr>
@@ -665,7 +671,7 @@
 <td>Network</td>
 </tr>
 <tr>
-<td>Manage sound devices (disable&#x2F;test)</td>
+<td>Manage sound devices (disable/test)</td>
 <td>ms-settings:sound-devices</td>
 <td>Audio</td>
 </tr>
@@ -805,7 +811,7 @@
 <td>Privacy</td>
 </tr>
 <tr>
-<td>Recovery - Reset&#x2F;Advanced startup</td>
+<td>Recovery - Reset/Advanced startup</td>
 <td>ms-settings:recovery</td>
 <td>Windows</td>
 </tr>
@@ -1069,7 +1075,8 @@
 <td>ms-settings:yourinfo</td>
 <td>Security</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
                 
               </div>
@@ -1134,7 +1141,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Windows】Win 10/11 通过命令行打开系统设置页面</div>
-      <div>http://example.com/A_OS/Windows/API/【winapi】命令行打开系统设置页/</div>
+      <div>https://hodlyounger.github.io/A_OS/Windows/API/【winapi】命令行打开系统设置页/</div>
     </div>
     <div class="license-meta">
       

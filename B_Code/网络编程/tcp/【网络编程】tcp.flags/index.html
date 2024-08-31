@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="tcp.flags 说明在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:  SYN: 标志位SYN&#x3D;1,用于TCP三次握手中的 SYN 数据包,请求建立连接  ACK: 标志位ACK&#x3D;1,确认接收到的数据  FIN: 标志位FIN&#x3D;1,请求关闭连接  RST: 标志位RST&#x3D;1,重置连接  PSH: 标志位PS">
+    <meta name="description" content="tcp.flags 说明 在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:   SYN: 标志位SYN&#x3D;1,用于TCP三次握手中的 SYN 数据包,请求建立连接   ACK: 标志位ACK&#x3D;1,确认接收到的数据   FIN: 标志位FIN&#x3D;1,请求关闭连接   RST: 标志位RST&#x3D;1,重置连接   PSH: 标志位PSH&#x3D;1,接收方应立即传送此">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【网络编程】tcp.flags 说明">
-<meta property="og:url" content="http://example.com/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/tcp/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91tcp.flags/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/tcp/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91tcp.flags/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="tcp.flags 说明在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:  SYN: 标志位SYN&#x3D;1,用于TCP三次握手中的 SYN 数据包,请求建立连接  ACK: 标志位ACK&#x3D;1,确认接收到的数据  FIN: 标志位FIN&#x3D;1,请求关闭连接  RST: 标志位RST&#x3D;1,重置连接  PSH: 标志位PS">
+<meta property="og:description" content="tcp.flags 说明 在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:   SYN: 标志位SYN&#x3D;1,用于TCP三次握手中的 SYN 数据包,请求建立连接   ACK: 标志位ACK&#x3D;1,确认接收到的数据   FIN: 标志位FIN&#x3D;1,请求关闭连接   RST: 标志位RST&#x3D;1,重置连接   PSH: 标志位PSH&#x3D;1,接收方应立即传送此">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.391Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:56.891Z">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -224,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          421 字
+          407 字
         
       </span>
     
@@ -277,46 +281,68 @@
             
               <div class="markdown-body">
                 
-                <h1 id="tcp-flags-说明"><a href="#tcp-flags-说明" class="headerlink" title="tcp.flags 说明"></a>tcp.flags 说明</h1><p>在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:</p>
+                <h1 id="tcpflags-说明"><a class="markdownIt-Anchor" href="#tcpflags-说明"></a> tcp.flags 说明</h1>
+<p>在Wireshark的过滤器中,tcp.flags可以用于过滤各种TCP标志位。它包含以下项目:</p>
 <ul>
-<li><p>SYN: 标志位SYN&#x3D;1,用于TCP三次握手中的 SYN 数据包,请求建立连接</p>
+<li>
+<p>SYN: 标志位SYN=1,用于TCP三次握手中的 SYN 数据包,请求建立连接</p>
 </li>
-<li><p>ACK: 标志位ACK&#x3D;1,确认接收到的数据</p>
+<li>
+<p>ACK: 标志位ACK=1,确认接收到的数据</p>
 </li>
-<li><p>FIN: 标志位FIN&#x3D;1,请求关闭连接</p>
+<li>
+<p>FIN: 标志位FIN=1,请求关闭连接</p>
 </li>
-<li><p>RST: 标志位RST&#x3D;1,重置连接</p>
+<li>
+<p>RST: 标志位RST=1,重置连接</p>
 </li>
-<li><p>PSH: 标志位PSH&#x3D;1,接收方应立即传送此报文的数据,而不等待其他数据</p>
+<li>
+<p>PSH: 标志位PSH=1,接收方应立即传送此报文的数据,而不等待其他数据</p>
 </li>
-<li><p>URG: 标志位URG&#x3D;1,此报文包含紧急数据</p>
+<li>
+<p>URG: 标志位URG=1,此报文包含紧急数据</p>
 </li>
-<li><p>ECE: ECN Echo, 标志位ECE&#x3D;1,回复ECN设置的通知</p>
+<li>
+<p>ECE: ECN Echo, 标志位ECE=1,回复ECN设置的通知</p>
 </li>
-<li><p>CWR: Congestion Window Reduced,标志位CWR&#x3D;1,通知发送方拥塞窗口已经减少</p>
+<li>
+<p>CWR: Congestion Window Reduced,标志位CWR=1,通知发送方拥塞窗口已经减少</p>
 </li>
 </ul>
 <p>这些标志位可以单独使用,也可以组合使用。例如:</p>
 <ul>
-<li><p>SYN+ACK: 服务端响应的SYN+ACK数据包,同意建立连接并确认SYN</p>
+<li>
+<p>SYN+ACK: 服务端响应的SYN+ACK数据包,同意建立连接并确认SYN</p>
 </li>
-<li><p>FIN+ACK: 确认对端的FIN的数据包,同时自身也请求关闭连接</p>
+<li>
+<p>FIN+ACK: 确认对端的FIN的数据包,同时自身也请求关闭连接</p>
 </li>
 </ul>
 <p>在Wireshark的过滤器中,可以使用这些标志位进行过滤,例如:- SYN 过滤SYN数据包</p>
 <ul>
-<li><p>ACK 过滤ACK数据包 </p>
+<li>
+<p>ACK 过滤ACK数据包</p>
 </li>
-<li><p>FIN 过滤FIN数据包</p>
+<li>
+<p>FIN 过滤FIN数据包</p>
 </li>
-<li><p>RST 过滤RST数据包</p>
+<li>
+<p>RST 过滤RST数据包</p>
 </li>
-<li><p>tcp.flags.syn&#x3D;&#x3D;1 过滤SYN标志位为1的数据包</p>
+<li>
+<p>tcp.flags.syn==1 过滤SYN标志位为1的数据包</p>
 </li>
-<li><p>tcp.flags.syn&#x3D;&#x3D; &amp;&amp; tcp.flags.ack&#x3D;&#x3D;1 过滤同时包含SYN和ACK标志位的数据包</p>
+<li>
+<p>tcp.flags.syn== &amp;&amp; tcp.flags.ack==1 过滤同时包含SYN和ACK标志位的数据包</p>
 </li>
 </ul>
-<p>通过过滤不同的标志位或标志位组合,可以分析出TCP连接的握手、数据传输和释放过程。当然,除了这些标志位外,过滤器中 tcp 还包含其他字段,例如:- srcport 源端口<br>  - dstport 目标端口<br>  - seq 序列号<br>  - ack 确认号<br>  - window_size 窗口大小<br>  - payload:可以过滤包含特定数据的包<br>  - 等等</p>
+<p>通过过滤不同的标志位或标志位组合,可以分析出TCP连接的握手、数据传输和释放过程。当然,除了这些标志位外,过滤器中 tcp 还包含其他字段,例如:- srcport 源端口<br>
+- dstport 目标端口<br>
+- seq 序列号<br>
+- ack 确认号<br>
+- window_size 窗口大小<br>
+- payload:可以过滤包含特定数据的包<br>
+- 等等</p>
 
                 
               </div>
@@ -379,7 +405,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【网络编程】tcp.flags 说明</div>
-      <div>http://example.com/B_Code/网络编程/tcp/【网络编程】tcp.flags/</div>
+      <div>https://hodlyounger.github.io/B_Code/网络编程/tcp/【网络编程】tcp.flags/</div>
     </div>
     <div class="license-meta">
       

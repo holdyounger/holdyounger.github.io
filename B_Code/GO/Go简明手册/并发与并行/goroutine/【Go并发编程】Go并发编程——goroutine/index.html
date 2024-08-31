@@ -24,7 +24,7 @@
     <meta name="description" content="goroutine 是 Go 语言并行设计的核心。goroutine 是一种比线程更轻量的实现，十几个 goroutine 可能在底层就是几个线程。 不同的是，Golang 在 runtime、系统调用等多方面对 goroutine 调度进行了封装和处理，当遇到长时间执行或者进行系统调用时，会主动把当前 goroutine 的 CPU (P) 转让出去，让其他 goroutine 能被调度并执行，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go并发编程——goroutine">
-<meta property="og:url" content="http://example.com/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/goroutine/%E3%80%90Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E3%80%91Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E2%80%94%E2%80%94goroutine/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/GO/Go%E7%AE%80%E6%98%8E%E6%89%8B%E5%86%8C/%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C/goroutine/%E3%80%90Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E3%80%91Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E2%80%94%E2%80%94goroutine/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="goroutine 是 Go 语言并行设计的核心。goroutine 是一种比线程更轻量的实现，十几个 goroutine 可能在底层就是几个线程。 不同的是，Golang 在 runtime、系统调用等多方面对 goroutine 调度进行了封装和处理，当遇到长时间执行或者进行系统调用时，会主动把当前 goroutine 的 CPU (P) 转让出去，让其他 goroutine 能被调度并执行，">
 <meta property="og:locale" content="zh_CN">
@@ -73,11 +73,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,11 +285,9 @@
                 
                 <p><code>goroutine</code> 是 Go 语言并行设计的核心。<code>goroutine</code> 是一种比线程更轻量的实现，十几个 <code>goroutine</code> 可能在底层就是几个线程。 不同的是，Golang 在 runtime、系统调用等多方面对 <code>goroutine</code> 调度进行了封装和处理，当遇到长时间执行或者进行系统调用时，会主动把当前 <code>goroutine</code> 的 CPU (P) 转让出去，让其他 <code>goroutine</code> 能被调度并执行，也就是 Golang 从语言层面支持了协程。要使用 <code>goroutine</code> 只需要简单的在需要执行的函数前添加 <code>go</code> 关键字即可。当执行 <code>goroutine</code> 时候，Go 语言立即返回，接着执行剩余的代码，<code>goroutine</code> 不阻塞主线程。下面我们通过一小段代码来讲解 <code>go</code> 的使用：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//首先我们先实现一个 Add()函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Add</span><span class="hljs-params">(a, b <span class="hljs-type">int</span>)</span></span> &#123;<br>    c := a + b<br>    fmt.Println(c)<br>&#125;<br><br><span class="hljs-keyword">go</span> Add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>) <span class="hljs-comment">//使用go关键字让函数并发执行</span><br></code></pre></td></tr></table></figure>
-
 <p>Go 的并发执行就是这么简单，当在一个函数前加上 <code>go</code> 关键字，该函数就会在一个新的 goroutine 中并发执行，当该函数执行完毕时，这个新的 goroutine 也就结束了。不过需要注意的是，如果该函数具有返回值，那么返回值会被丢弃。所以什么时候用 <code>go</code> 还需要酌情考虑。</p>
 <p>接着我们通过一个案例来体验一下 Go 的并发到底是怎么样的。新建源文件 <code>goroutine.go</code>，输入以下代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;fmt&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Add</span><span class="hljs-params">(a, b <span class="hljs-type">int</span>)</span></span> &#123;<br>    c := a + b<br>    fmt.Println(c)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ &#123;<br>        <span class="hljs-keyword">go</span> Add(i, i)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
 <p>执行 <code>goroutine.go</code> 文件会发现屏幕上什么都没有，但程序并不会报错，这是什么原因呢？原来当主程序执行到 for 循环时启动了 10 个 <code>goroutine</code>，然后主程序就退出了，而启动的 10 个 <code>goroutine</code> 还没来得及执行 <code>Add()</code> 函数，所以程序不会有任何输出。也就是说主 <code>goroutine</code> 并不会等待其他 <code>goroutine</code> 执行结束。那么如何解决这个问题呢？Go 语言提供的信道（<code>channel</code>）就是专门解决并发通信问题的，下一节我们将详细介绍。</p>
 
                 
@@ -367,7 +369,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Go并发编程——goroutine</div>
-      <div>http://example.com/B_Code/GO/Go简明手册/并发与并行/goroutine/【Go并发编程】Go并发编程——goroutine/</div>
+      <div>https://hodlyounger.github.io/B_Code/GO/Go简明手册/并发与并行/goroutine/【Go并发编程】Go并发编程——goroutine/</div>
     </div>
     <div class="license-meta">
       

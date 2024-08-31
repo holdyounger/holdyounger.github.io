@@ -24,7 +24,7 @@
     <meta name="description" content="概述: 汇编命令整理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【汇编】命令整理">
-<meta property="og:url" content="http://example.com/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述: 汇编命令整理">
 <meta property="og:locale" content="zh_CN">
@@ -71,11 +71,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -281,42 +285,47 @@
 <p>概述: 汇编命令整理</p>
 </blockquote>
 <span id="more"></span>
-
 <p>[toc]</p>
-<h4 id="COMISS"><a href="#COMISS" class="headerlink" title="COMISS"></a>COMISS</h4><p>COMISS（Compare Or Ordered Move SIMD Single）指令是x86指令集中的一条比较指令，用于比较两个单精度浮点数或单精度寄存器，并设置标志位。它也可以将比较结果移动到另一个寄存器或内存位置。</p>
+<h4 id="comiss"><a class="markdownIt-Anchor" href="#comiss"></a> COMISS</h4>
+<p>COMISS（Compare Or Ordered Move SIMD Single）指令是x86指令集中的一条比较指令，用于比较两个单精度浮点数或单精度寄存器，并设置标志位。它也可以将比较结果移动到另一个寄存器或内存位置。</p>
 <p>具体来说，COMISS指令将两个单精度浮点数或单精度寄存器进行比较，并设置标志位ZF（Zero Flag，零标志位）、PF（Parity Flag，奇偶标志位）和CF（Carry Flag，进位标志位）。它可以将比较结果移动到目标寄存器或内存位置。</p>
 <p>例如，以下是一条COMISS指令的示例代码：</p>
 <figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gcode">复制代码<br><br>comiss xm<span class="hljs-name">m1</span>, xm<span class="hljs-name">m2</span>   ; 比较xm<span class="hljs-name">m1</span>和xm<span class="hljs-name">m2</span>寄存器中的单精度浮点数<br></code></pre></td></tr></table></figure>
-
 <p>该指令会将两个寄存器中的单精度浮点数进行比较，并设置相应的标志位。然后，可以将比较结果移动到另一个寄存器或内存位置。</p>
 <p>需要注意的是，COMISS指令只能用于单精度浮点数的比较，不能用于双精度浮点数的比较。</p>
-<h4 id="CVTSD2SS"><a href="#CVTSD2SS" class="headerlink" title="CVTSD2SS"></a>CVTSD2SS</h4><p>CVTSD2SS 是 Intel C&#x2F;C++ 编译器的一个指令，用于将 64 位双精度浮点数转换为 32 位单精度浮点数。在此过程中，源操作数（SRC）被读取并转换为 32 位单精度浮点数，然后存储在目标操作数（DEST）中。</p>
+<h4 id="cvtsd2ss"><a class="markdownIt-Anchor" href="#cvtsd2ss"></a> CVTSD2SS</h4>
+<p>CVTSD2SS 是 Intel C/C++ 编译器的一个指令，用于将 64 位双精度浮点数转换为 32 位单精度浮点数。在此过程中，源操作数（SRC）被读取并转换为 32 位单精度浮点数，然后存储在目标操作数（DEST）中。</p>
 <p>注意，以上信息仅供参考。在实际编程中，如果你使用 CVTSD2SS 指令，你需要参考 Intel 处理器的架构和相关文档，以确保你的代码可以在目标硬件上正确执行。</p>
-<h4 id="JAE"><a href="#JAE" class="headerlink" title="JAE"></a>JAE</h4><blockquote>
+<h4 id="jae"><a class="markdownIt-Anchor" href="#jae"></a> JAE</h4>
+<blockquote>
 <p>在汇编语言中，JAE（Jump if Above or Equal）指令是一种根据无符号整数比较的结果进行条件转移的指令。</p>
 <p>当CF（Carry Flag）为0且ZF（Zero Flag）为0时，表示前面的操作结果是无符号整数大于（Above）或等于（Equal）的情况，此时执行跳转操作。</p>
 <p>例如，假设当前指令的地址为0x1000，下一条指令的地址为0x1001，而某个无符号整数的比较结果使得CF为0且ZF为0，那么执行JAE指令后，程序将会跳转到地址0x1001处执行下一条指令。</p>
 <p>需要注意的是，具体的指令用法和语法可能会因为不同的汇编语言而略有不同，具体需要参考对应的汇编语言文档或手册。</p>
 </blockquote>
-<h4 id="JE"><a href="#JE" class="headerlink" title="JE"></a>JE</h4><blockquote>
+<h4 id="je"><a class="markdownIt-Anchor" href="#je"></a> JE</h4>
+<blockquote>
 <p>在汇编语言中，JE指令全称为“Jump if Equal”，也被称为“Jump if Zero”。它根据标志寄存器中的零标志位(ZF)的值来判断是否进行跳转。当ZF为1时，表示前面的操作结果为零，则跳转到目标地址执行；当ZF为0时，则不进行跳转。</p>
 </blockquote>
-<h4 id="JP"><a href="#JP" class="headerlink" title="JP"></a>JP</h4><blockquote>
+<h4 id="jp"><a class="markdownIt-Anchor" href="#jp"></a> JP</h4>
+<blockquote>
 <p>在汇编语言中，JP（Jump if Parity）指令是一种根据奇偶标志位PF（Parity Flag）的状态进行跳转的条件转移指令。</p>
 <p>当PF为1时，表示前面操作的结果具有偶数个1位（即低8位有偶数个1），此时执行跳转操作；当PF为0时，表示前面操作的结果具有奇数个1位（即低8位有奇数个1），此时不执行跳转操作。</p>
 <p>例如，假设当前指令的地址为0x1000，下一条指令的地址为0x1001，而某个操作的结果使得PF为1，那么执行JP指令后，程序将会跳转到地址0x1001处执行下一条指令。</p>
 <p>需要注意的是，具体的指令用法和语法可能会因为不同的汇编语言而略有不同，具体需要参考对应的汇编语言文档或手册。</p>
 </blockquote>
-<h4 id="DD"><a href="#DD" class="headerlink" title="DD"></a>DD</h4><blockquote>
+<h4 id="dd"><a class="markdownIt-Anchor" href="#dd"></a> DD</h4>
+<blockquote>
 <p>DD 作为伪操作命令，用于定义操作数占用的字节数，即DoubleWord的缩写，表示4个字节（32位）。</p>
 </blockquote>
-<h4 id="movaps"><a href="#movaps" class="headerlink" title="movaps"></a>movaps</h4><p>movaps是x86指令集中的一种指令，用于将对齐的封装好的128位数据从源地址移动到目标地址。这个指令通常用于处理SSE（Streaming SIMD Extensions）寄存器之间的数据传送。</p>
-<p>在movaps指令中，”aps”表示”Aligned Packed Single”，即对齐的封装好的单精度浮点数。它要求源地址和目标地址都是16字节对齐的，以确保数据传送的效率。</p>
+<h4 id="movaps"><a class="markdownIt-Anchor" href="#movaps"></a> movaps</h4>
+<p>movaps是x86指令集中的一种指令，用于将对齐的封装好的128位数据从源地址移动到目标地址。这个指令通常用于处理SSE（Streaming SIMD Extensions）寄存器之间的数据传送。</p>
+<p>在movaps指令中，“aps&quot;表示&quot;Aligned Packed Single”，即对齐的封装好的单精度浮点数。它要求源地址和目标地址都是16字节对齐的，以确保数据传送的效率。</p>
 <p>例如，假设有两个SSE寄存器xmm0和xmm1，以及一个内存地址addr，那么可以使用以下指令将xmm0中的数据移动到addr所指向的内存中：</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs x86asm">复制代码<br><br><span class="hljs-keyword">movaps</span> [addr], <span class="hljs-built_in">xmm0</span><br></code></pre></td></tr></table></figure>
-
 <p>这个指令将会将xmm0中的128位数据（即4个单精度浮点数）对齐地存储在addr所指向的内存地址中。</p>
-<h4 id="movss"><a href="#movss" class="headerlink" title="movss"></a>movss</h4><blockquote>
+<h4 id="movss"><a class="markdownIt-Anchor" href="#movss"></a> movss</h4>
+<blockquote>
 <p>movss 是x86指令集中的一种单精度移动指令，用于将单精度浮点数（32位）从一个位置移动到另一个位置。这个指令可以用于寄存器之间、存储器和寄存器之间、存储器之间的数据传送。</p>
 </blockquote>
 
@@ -374,7 +383,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【汇编】命令整理</div>
-      <div>http://example.com/B_Code/汇编/【汇编】基础命令/</div>
+      <div>https://hodlyounger.github.io/B_Code/汇编/【汇编】基础命令/</div>
     </div>
     <div class="license-meta">
       

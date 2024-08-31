@@ -21,12 +21,12 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="[toc] 事件过滤器1void QObject::installEventFilter(QObject *filterObj)  1bool eventFilter(QObject *obj, QEvent *event);  Qt的事件过滤由以上两个方法实现，首先安装一个事件过滤器，然后重写 bool eventFilter(QObject *obj, QEvent *event)。 filt">
+    <meta name="description" content="[toc]  事件过滤器 1void QObject::installEventFilter(QObject *filterObj) 1bool eventFilter(QObject *obj, QEvent *event); Qt的事件过滤由以上两个方法实现，首先安装一个事件过滤器，然后重写 bool eventFilter(QObject *obj, QEvent *event)。 filt">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Qt】事件过滤器（eventFilter）">
-<meta property="og:url" content="http://example.com/B_Code/Qt/%E3%80%90Qt%E3%80%91%E8%BF%87%E6%BB%A4%E5%99%A8/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/B_Code/Qt/%E3%80%90Qt%E3%80%91%E8%BF%87%E6%BB%A4%E5%99%A8/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="[toc] 事件过滤器1void QObject::installEventFilter(QObject *filterObj)  1bool eventFilter(QObject *obj, QEvent *event);  Qt的事件过滤由以上两个方法实现，首先安装一个事件过滤器，然后重写 bool eventFilter(QObject *obj, QEvent *event)。 filt">
+<meta property="og:description" content="[toc]  事件过滤器 1void QObject::installEventFilter(QObject *filterObj) 1bool eventFilter(QObject *obj, QEvent *event); Qt的事件过滤由以上两个方法实现，首先安装一个事件过滤器，然后重写 bool eventFilter(QObject *obj, QEvent *event)。 filt">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.240Z">
 <meta property="article:modified_time" content="2024-08-15T09:19:57.312Z">
@@ -70,11 +70,15 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -277,25 +281,23 @@
               <div class="markdown-body">
                 
                 <p>[toc]</p>
-<h1 id="事件过滤器"><a href="#事件过滤器" class="headerlink" title="事件过滤器"></a>事件过滤器</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">QObject::installEventFilter</span><span class="hljs-params">(QObject *filterObj)</span></span><br></code></pre></td></tr></table></figure>
-
+<h1 id="事件过滤器"><a class="markdownIt-Anchor" href="#事件过滤器"></a> 事件过滤器</h1>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">QObject::installEventFilter</span><span class="hljs-params">(QObject *filterObj)</span></span><br></code></pre></td></tr></table></figure>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">eventFilter</span><span class="hljs-params">(QObject *obj, QEvent *event)</span></span>;<br></code></pre></td></tr></table></figure>
-
 <p>Qt的事件过滤由以上两个方法实现，首先安装一个事件过滤器，然后重写 <code>bool eventFilter(QObject *obj, QEvent *event)</code>。</p>
 <p><code>filterObj</code>表示事件筛选器对象，它接收发送到此<code>QObject</code>对象的所有事件。筛选器可以停止事件，也可以将事件转发给此<code>QObject</code>对象。事件过滤器<code>filterObj</code>通过它的<code>eventFilter()</code>函数接收事件。</p>
-<h2 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h2><blockquote>
+<h2 id="简单实现"><a class="markdownIt-Anchor" href="#简单实现"></a> 简单实现</h2>
+<blockquote>
 <p>当鼠标进入 <code>lineEdit</code> 的时候并且操作时 <code>HoverEnter</code> 的时候，则修改 <code>QLabel</code> 的颜色。</p>
 </blockquote>
 <ol>
 <li>安装事件过滤器</li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">ui-&gt;lineEdit-&gt;<span class="hljs-built_in">installEventFilter</span>(<span class="hljs-keyword">this</span>);<br></code></pre></td></tr></table></figure>
-
 <ol start="2">
 <li>重写 <code>eventFilter()</code></li>
 </ol>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Widget::eventFilter</span><span class="hljs-params">(QObject *wcg, QEvent *event)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (wcg == ui-&gt;lineEdit)<br>    &#123;<br>        <span class="hljs-keyword">if</span>(event-&gt;<span class="hljs-built_in">type</span>() == QEvent::HoverEnter)<br>        &#123;<br>            ui-&gt;label_2-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;进入&quot;</span>));<br>            ui-&gt;label_2-&gt;<span class="hljs-built_in">setStyleSheet</span>(<span class="hljs-string">&quot;QLabel&#123;color:red;&#125;&quot;</span>);<br>            <span class="hljs-built_in">qDebug</span>() &lt;&lt; <span class="hljs-string">&quot;进入&quot;</span> &lt;&lt; endl;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(event-&gt;<span class="hljs-built_in">type</span>() == QEvent::HoverLeave)<br>        &#123;<br>            ui-&gt;label_2-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;离开&quot;</span>));<br>            ui-&gt;label_2-&gt;<span class="hljs-built_in">setStyleSheet</span>(<span class="hljs-string">&quot;QLabel&#123;color:green;&#125;&quot;</span>);<br>            <span class="hljs-built_in">qDebug</span>() &lt;&lt; <span class="hljs-string">&quot;离开&quot;</span> &lt;&lt; endl;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> QWidget::<span class="hljs-built_in">eventFilter</span>(wcg,event);<br>&#125;<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -349,7 +351,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Qt】事件过滤器（eventFilter）</div>
-      <div>http://example.com/B_Code/Qt/【Qt】过滤器/</div>
+      <div>https://hodlyounger.github.io/B_Code/Qt/【Qt】过滤器/</div>
     </div>
     <div class="license-meta">
       
