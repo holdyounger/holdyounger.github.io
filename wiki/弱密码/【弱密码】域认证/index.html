@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：Windows 域认证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【弱密码】域认证">
+<meta property="og:url" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：Windows 域认证">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ringlcy.github.io/assets/img/Visio-KerberosComms.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903115343532.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050711.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050844.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_authentication_service.jpeg">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/clipboard-1599141249879.png">
+<meta property="og:image" content="https://hodlyounger.github.io/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_ticket_granting_service.jpeg">
+<meta property="article:published_time" content="2024-09-02T03:25:38.596Z">
+<meta property="article:modified_time" content="2024-09-03T07:35:21.334Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="域">
+<meta property="article:tag" content="弱密码">
+<meta property="article:tag" content="域用户">
+<meta property="article:tag" content="Windows&#x2F;域">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ringlcy.github.io/assets/img/Visio-KerberosComms.png">
+  
+  
+  
+  <title>【弱密码】域认证 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【弱密码】域认证"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-02 11:25" pubdate>
+          2024年9月2日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【弱密码】域认证</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：Windows 域认证</p>
+</blockquote>
+<span id="more"></span>
+<p>相关文章推荐：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8DCSync%E5%AF%BC%E5%87%BA%E5%9F%9F%E5%86%85%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7hash%E7%9A%84%E6%96%B9%E6%B3%95">域渗透——利用 DCSync 导出域内所有用户 hash 的方法</a></li>
+</ul>
+<p>#MD4 #NTLM #mimikatz #横向渗透</p>
+<p>在阅读之前你可能还需要补充的知识：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cloud.tencent.com/developer/article/1915427">内网渗透 | 域渗透之Dcsync的利用实战-腾讯云开发者社区-腾讯云</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.extrahop.com/blog/dcsync-definition-and-protection">What is DCSync and How to Protect Against It | ExtraHop</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.thehacker.recipes/ad/movement/kerberos/ptt">Pass the ticket | The Hacker Recipes</a></li>
+<li>Kerberos相关
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://en.hackndo.com/kerberos/">Kerberos in Active Directory - hackndo</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://qili93.github.io/%E6%8A%80%E6%9C%AF%E8%A7%A3%E8%AF%BB/2017/03/14/kerebros-auth/">Kerberos认证原理详解</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="域认证"><a class="markdownIt-Anchor" href="#域认证"></a> 域认证</h2>
+<p><img src="https://ringlcy.github.io/assets/img/Visio-KerberosComms.png" srcset="/img/loading.gif" lazyload alt="Visio-KerberosComms"></p>
+<p>#kerberos<br>
+域认证采用 <a href="Kerberos">Kerberos</a> 协议的认证机制，有一个可信的第三方机构 KDC 的参与。</p>
+<p>Kerberos</p>
+<p>#kerberos</p>
+<ul>
+<li><code>kerbose</code> 是一种网络认证协议，其设计目标是通过密钥系统为 <code>客户机/服务器</code> 应用提供强大的认证服务。</li>
+<li>该认证过程的视线不依赖于主机操作系统的认证，无需基于主机地址的信任，不要求网络上所有主机的物理安全，并假定网络上传送的数据包可以被任意的读取、修改和插入数据。</li>
+<li>在以上情况下，<code>Kerberos</code> 作为一种可信任的第三方认证服务，是通过传统的密码技术（如：共享密钥）执行认证服务的。</li>
+</ul>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>参与认证的三个角色：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li>Client</li>
+<li>Server</li>
+<li>KDC (Key Distribution Center)<br>
+= DC (Domain Controller)<br>
+= AD (Account Database) + AS (Authenication Service) + (TGS Ticket Granting Service)<br>
+从物理层面看，AD 与 AS，TGS，KDC 均为与控制器（Domain Controller）。</li>
+</ul>
+</div>
+</details><h3 id="kerberos-认证协议的基本概念"><a class="markdownIt-Anchor" href="#kerberos-认证协议的基本概念"></a> Kerberos 认证协议的基本概念</h3>
+<ul>
+<li><strong>票据（Ticket）</strong>:<br>
+是网络对象互相访问的凭证</li>
+<li>TGT (Ticket Granting Ticket)：<br>
+用来生成 Ticket 的 Ticket</li>
+<li><strong>AD (Account Database)</strong>:<br>
+存储域中所有用户的用户名和对应的 <code>NTLM Hash</code>，可以理解为域中的 <code>SAM</code> 数据库，<code>KDC</code> 可以从 AD 中提取域中所有用户的 <code>NTLM Hash</code>，这是 <code>Kerberos</code> 协议能够成功实现的基础。</li>
+<li><strong>KDC (Key Distribution Center)</strong>：<br>
+密钥分发中心，负责管理票据、认证票据、分发票据，里面包含两个服务： <code>AS</code> 和 <code>TGS</code></li>
+<li><strong>AS (Authentication Server)</strong>：<br>
+身份认证服务，为 <code>Client</code> 生成 <code>TGT</code> 的服务，也用来完成对 <code>Client</code> 的身份验证</li>
+<li><strong>TGS (Ticket Granting Server)</strong>：<br>
+票据授予服务，为 <code>Client</code> 生成允许对某个服务访问的 <code>Ticket</code> ，就是 Client 从 AS 那里拿到 TGT 之后，来 TGS 这里再申请对某个特定服务或服务器访问的 Ticket，只有获取到这个 Ticket，Client 才有权限去访问对应的服务，该服务提供的票据也称为 TGS 或者叫 #白银票据 。</li>
+<li><strong>TGT (Ticket Granting Ticket)</strong>：<br>
+由身份认证服务授予的票据（ #黄金票据 ），用于身份认证，存储在内存，默认有效期为 10 小时。<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>注意：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><code>Client</code> 密钥、<code>TGS</code> 密钥和 <code>Service</code> 密钥均为对应用户的 <code>NTLM Hash</code></li>
+<li><code>TGS</code> 密钥 == <code>KDC Hash</code> == <code>krbtgt</code> 用户的 <code>NTLM Hash</code></li>
+<li><code>Server</code> 和 <code>Service</code> 可以当做一个东西，就是 <code>Client</code> 想要访问的服务器或者服务</li>
+<li><code>Client/(TGT/Server) SessionKey</code> 可以看做客户端与 <code>TGS</code> 服务和尝试登录的 <code>Server</code> 之间会话用来加密的密钥，而 <code>(Client/TGT/Service)</code> 密钥（上面提到的三个实际为 NTLM Hash 的密钥）是用来加密会话密钥的密钥，为了保证会话密钥的传输安全，这些加密方式均为对称加密</li>
+</ul>
+<p>参与认证的三个角色的 <code>NTLM Hash</code> 是三个密钥，这三个 NTLM Hash 的唯一作用是确保会话密钥 <code>SessionKey</code> 的安全传输</p>
+</div>
+</details></li>
+</ul>
+<h3 id="黄金票据-golden-ticket"><a class="markdownIt-Anchor" href="#黄金票据-golden-ticket"></a> 黄金票据 (Golden Ticket)</h3>
+<p>如下所示为黄金票据和白银票据的生成过程</p>
+<img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903115343532.png" srcset="/img/loading.gif" lazyload class title="黄金票据生成过程">
+<p>黄金门票是伪造的 TGT。这意味着我们绕过下图 [[kerberos认证]] 的步骤 1-2，在那里我们向 DC 证明我们是谁  <strong>可以说有了金票就有了域内的最高权限</strong></p>
+<p>每个用户的 Ticket 都是由 krbtgt 的密码 Hash 来生成的，那么，我们如果拿到了 krbtgt 的密码 Hash，其实就可以伪造任意用户的 TICKET,</p>
+<p>对于攻击者来说，实际上只要拿到了域控权限，就可以直接导出 krbtgt 的 Hash 值，，再通过 mimikatz 即可生成任意用户任何权限的 Ticket，也就是 Golden Ticket。</p>
+<h3 id="白银票据-siliver-ticket"><a class="markdownIt-Anchor" href="#白银票据-siliver-ticket"></a> 白银票据 (Siliver Ticket)</h3>
+<p>Silver Tickets（下面称银票）就是伪造的 ST（Service Ticket），因为在 TGT 已经在 PAC 里限定了给 Client 授权的服务（通过 SID 的值） <strong>就是说计算机已经固定了</strong>，所以银票只能访问指定服务。</p>
+<p>银票是伪造的 TGS 门票。所以现在，我们跳过了与 DC 上的 K DC 进行的所有通信（下图 [[kerberos认证]]中的步骤 1-4），只与我们希望直接访问的服务进行接口</p>
+<img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050711.png" srcset="/img/loading.gif" lazyload class title="白银票据认证流程">
+<p></p>
+<h2 id="kerberos-认证流程"><a class="markdownIt-Anchor" href="#kerberos-认证流程"></a> kerberos 认证流程</h2>
+ <img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050844.png" srcset="/img/loading.gif" lazyload class title="Kerberos 认证示意图">
+<h4 id="1-authentication-service-exchange"><a class="markdownIt-Anchor" href="#1-authentication-service-exchange"></a> <strong>1. Authentication Service Exchange</strong></h4>
+<p>。具体过程如下：</p>
+<p>Client 向 KDC 的 Authentication Service 发送 <font color="#f79646">Authentication Service Request（KRB_AS_REQ）</font>, 为了确保 KRB_AS_REQ 仅限于自己和 KDC 知道，Client 使用自己的 Master Key 对 KRB_AS_REQ 的主体部分进行加密（<font color="#f79646">KDC 可以通过 Domain 的 Account Database 获得该 Client 的 Master Key</font>）。KRB_AS_REQ 的大体包含以下的内容：</p>
+<ul>
+<li><code>Pre-authentication data</code>：包含用以证明自己身份的信息。说白了，就是证明自己知道自己声称的那个 account 的 Password。一般地，它的内容是一个被 Client 的 Master key 加密过的 Timestamp。</li>
+<li><code>Client name &amp; realm</code>: 简单地说就是 Domain name\Client</li>
+<li><code>Server Name</code>：注意这里的 Server Name 并不是 Client 真正要访问的 Server 的名称，而我们也说了 TGT 是和 Server 无关的（Client 只能使用 Ticket，而不是 TGT 去访问 Server）。这里的 Server Name 实际上是<strong>KDC 的 Ticket Granting Service 的 Server Name</strong>。</li>
+</ul>
+<img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_authentication_service.jpeg" srcset="/img/loading.gif" lazyload class title="img">
+<img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/clipboard-1599141249879.png" srcset="/img/loading.gif" lazyload class title="img">
+<h4 id="2-ticket-granting-service-exchange"><a class="markdownIt-Anchor" href="#2-ticket-granting-service-exchange"></a> <strong>2. Ticket Granting Service Exchange</strong></h4>
+<p>TGS（Ticket Granting Service）Exchange 通过 Client 向 KDC 中的 TGS（Ticket Granting Service）发送 Ticket Granting Service Request（KRB_TGS_REQ）开始。KRB_TGS_REQ 大体包含以下的内容：</p>
+<ul>
+<li><code>TGT</code>：Client 通过 AS Exchange 获得的 Ticket Granting Ticket，TGT 被 KDC 的 Master Key 进行加密。</li>
+<li><code>Authenticator</code>：用以证明当初 TGT 的拥有者是否就是自己，所以它必须以 TGT 的颁发方（KDC）给自己（Client）的 Session Key（SKDC-Client：Logon Session Key）来进行加密。</li>
+<li><code>Client name &amp; realm</code>: 简单地说就是 Domain name\Client。</li>
+<li><code>Server name &amp; realm</code>: 简单地说就是 Domain name\Server，这回是 Client 试图访问的那个 Server。</li>
+</ul>
+<img src="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_ticket_granting_service.jpeg" srcset="/img/loading.gif" lazyload class title="img">
+<p>TGS 收到 KRB_TGS_REQ 在发给 Client 真正的 Ticket 之前，先得验证 Client 提供的那个 TGT 是否是 AS 颁发给它的。于是它需要验证 Client 提供的 Authenticator，但是 Authentication 是通过 Logon Session Key（SKDC-Client）进行加密的，而自己并没有保存这个 Session Key。所以 TGS 先得通过自己的 Master Key 对 Client 提供的 TGT 进行解密，从而获得这个 Logon Session Key（SKDC-Client），再通过这个 Logon Session Key（SKDC-Client）解密 Authenticator 进行验证。验证通过向对方发送 Ticket Granting Service Response（KRB_TGS_REP）。这个 KRB_TGS_REP 有两部分组成：使用 Logon Session Key（SKDC-Client）加密过用于 Client 和 Server 的 Session Key（SServer-Client）和使用 Server 的 Master Key 进行加密的 Ticket。该 Ticket 大体包含以下一些内容：</p>
+<ul>
+<li>Session Key：SServer-Client。</li>
+<li>Client name &amp; realm: 简单地说就是 Domain name\Client。</li>
+<li>PAC</li>
+<li>End time: Ticket 的到期时间。</li>
+</ul>
+<p>Client 收到 KRB_TGS_REP，使用 Logon Session Key（SKDC-Client）解密第一部分后获得 Session Key（SServer-Client）。有了 Session Key 和 Ticket，Client 就可以之间和 Server 进行交互，而无须在通过 KDC 作中间人了。</p>
+<h4 id="3-clientserver-exchange"><a class="markdownIt-Anchor" href="#3-clientserver-exchange"></a> <strong>3. Client/Server Exchange</strong></h4>
+<p>Client 通过 TGS Exchange 获得 Client 和 Server 的 Session Key（SServer-Client），随后创建用于证明自己就是 Ticket 的真正所有者的 Authenticator，并使用 Session Key（SServer-Client）进行加密。最后将这个被加密过的 Authenticator 和 Ticket 作为 Application Service Request（KRB_AP_REQ）发送给 Server。除了上述两项内容之外，KRB_AP_REQ 还包含一个 Flag 用于表示 Client 是否需要进行双向验证（Mutual Authentication）。</p>
+<p>Server 接收到 KRB_AP_REQ 之后，通过自己的 Master Key 解密 Ticket，从而获得 Session Key（SServer-Client）。通过 Session Key（SServer-Client）解密 Authenticator，进而验证对方的身份，验证成功，让 Client 访问需要访问的资源，否则直接拒绝对方的请求。</p>
+<h2 id="获取域用户-hash"><a class="markdownIt-Anchor" href="#获取域用户-hash"></a> 获取域用户 hash</h2>
+<h3 id="使用-mimikatz"><a class="markdownIt-Anchor" href="#使用-mimikatz"></a> 使用 mimikatz</h3>
+<p>可参考 [[【mimikatz】#获取域用户]] 一节。</p>
+<p>更详细的命令帮助手册可查看 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://tools.thehacker.recipes/mimikatz/modules/lsadump/dcsync">dcsync | The Hacker Tools</a></p>
+<h2 id="域用户-hash"><a class="markdownIt-Anchor" href="#域用户-hash"></a> 域用户 Hash</h2>
+<p>在 Windows 系统中，比较常见是从系统导出来的 NTLM hash，可以通过 Hashcat 能够破解出明文密码。</p>
+<p>Hashcat 支持超过 200 种高度优化的 hash 算法，其中和 NTLM hash 相关的有 4 个，分别为 <code>NetNTLMv1</code>、<code>NetNTLMv1+ESS</code>、<code>NetNTLMv2</code> 和 <code>NTLM</code>。关于 hashcat 的使用可以参考 <a href="/wiki/弱密码/【弱密码】hashcat使用/">hashcat 用法</a></p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/" class="category-chain-item">弱密码</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9F%9F/" class="print-no-link">#域</a>
+      
+        <a href="/tags/%E5%BC%B1%E5%AF%86%E7%A0%81/" class="print-no-link">#弱密码</a>
+      
+        <a href="/tags/%E5%9F%9F%E7%94%A8%E6%88%B7/" class="print-no-link">#域用户</a>
+      
+        <a href="/tags/Windows-%E5%9F%9F/" class="print-no-link">#Windows/域</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【弱密码】域认证</div>
+      <div>https://hodlyounger.github.io/wiki/弱密码/【弱密码】域认证/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91.Net%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" title="【.Net】.Net逆向分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【.Net】.Net逆向分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E8%84%9A%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" title="【WinDbg】脚本">
+                        <span class="hidden-mobile">【WinDbg】脚本</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
