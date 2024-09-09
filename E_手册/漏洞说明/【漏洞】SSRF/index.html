@@ -21,15 +21,15 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：SSRF漏洞说明，原理、挖掘点、漏洞利用、修复建议">
+    <meta name="description" content="概述：SSRF 漏洞说明，原理、挖掘点、漏洞利用、修复建议">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SSRF漏洞">
 <meta property="og:url" content="https://hodlyounger.github.io/E_%E6%89%8B%E5%86%8C/%E6%BC%8F%E6%B4%9E%E8%AF%B4%E6%98%8E/%E3%80%90%E6%BC%8F%E6%B4%9E%E3%80%91SSRF/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：SSRF漏洞说明，原理、挖掘点、漏洞利用、修复建议">
+<meta property="og:description" content="概述：SSRF 漏洞说明，原理、挖掘点、漏洞利用、修复建议">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-06-03T09:10:00.393Z">
-<meta property="article:modified_time" content="2024-08-17T12:21:40.117Z">
+<meta property="article:published_time" content="2024-09-05T01:13:59.267Z">
+<meta property="article:modified_time" content="2024-09-05T01:39:14.175Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="漏洞">
 <meta name="twitter:card" content="summary_large_image">
@@ -215,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-06-03 17:10" pubdate>
-          2024年6月3日 下午
+        <time datetime="2024-09-05 09:13" pubdate>
+          2024年9月5日 上午
         </time>
       </span>
     
@@ -281,55 +281,54 @@
               <div class="markdown-body">
                 
                 <blockquote>
-<p>概述：SSRF漏洞说明，原理、挖掘点、漏洞利用、修复建议</p>
+<p>概述：SSRF 漏洞说明，原理、挖掘点、漏洞利用、修复建议</p>
 </blockquote>
 <span id="more"></span>
-<h2 id="0x01-介绍ssrf漏洞"><a class="markdownIt-Anchor" href="#0x01-介绍ssrf漏洞"></a> 0x01 介绍SSRF漏洞</h2>
-<p><mark>SSRF</mark> (Server-Side Request Forgery,服务器端请求伪造)是一种由攻击者构造请求，由服务端发起请求的安全漏洞。一般情况下，SSRF 攻击的目标是外网无法访问的内部系统(正因为请求是由服务端发起的，所以服务端能请求到与自身相连而与外网隔离的内部系统)。</p>
+<h2 id="0x01-介绍-ssrf-漏洞"><a class="markdownIt-Anchor" href="#0x01-介绍-ssrf-漏洞"></a> 0x01 介绍 SSRF 漏洞</h2>
+<p><mark>SSRF</mark> (Server-Side Request Forgery，服务器端请求伪造)是一种由攻击者构造请求，由服务端发起请求的安全漏洞。一般情况下，SSRF 攻击的目标是外网无法访问的内部系统(正因为请求是由服务端发起的，所以服务端能请求到与自身相连而与外网隔离的内部系统)。</p>
 <blockquote>
 <p>通俗的说：就是我们传递参数，服务器代替我们去访问。</p>
 </blockquote>
-<h2 id="0x02-ssrf漏洞原理"><a class="markdownIt-Anchor" href="#0x02-ssrf漏洞原理"></a> 0x02 SSRF漏洞原理</h2>
-<p>SSRF的形成大多是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。例如，黑客操作服务端从指定URL地址获取网页文本内容，加载指定地址的图片等，利用的是服务端的请求伪造。SSRF利用存在缺陷的Web<br>
-应用作为代理攻击远程和本地的服务器。<br>
+<h2 id="0x02-ssrf-漏洞原理"><a class="markdownIt-Anchor" href="#0x02-ssrf-漏洞原理"></a> 0x02 SSRF 漏洞原理</h2>
+<p>SSRF 的形成大多是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。例如，黑客操作服务端从指定 URL 地址获取网页文本内容，加载指定地址的图片等，利用的是服务端的请求伪造。<font color="#f79646">SSRF 利用存在缺陷的 Web 应用作为代理攻击远程和本地的服务器</font>。<br>
 主要攻击方式如下所示。</p>
 <ul>
-<li>对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息。</li>
+<li>对外网、服务器所在内网、本地进行端口扫描，获取一些服务的 banner 信息。</li>
 <li>攻击运行在内网或本地的应用程序。</li>
-<li>对内网Web应用进行指纹识别，识别企业内部的资产信息。</li>
-<li>攻击内外网的Web应用，主要是使用HTTP GET请求就可以实现的攻击(比如struts2、SQli等)。</li>
-<li>利用file协议读取本地文件等。</li>
+<li>对内网 Web 应用进行指纹识别，识别企业内部的资产信息。</li>
+<li>攻击内外网的 Web 应用，主要是使用 HTTP GET 请求就可以实现的攻击(比如 struts2、SQli 等)。</li>
+<li>利用 file 协议读取本地文件等。</li>
 </ul>
 <p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://payloads.net/ssrf.php?url=192.168.1.10:3306">http://payloads.net/ssrf.php?url=192.168.1.10:3306</a></p>
 <p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://payloads.net/ssrf.php?url=file:///c:/windows/win.ini">http://payloads.net/ssrf.php?url=file:///c:/windows/win.ini</a></p>
 <h2 id="ssrf-漏洞验证方式"><a class="markdownIt-Anchor" href="#ssrf-漏洞验证方式"></a> SSRF 漏洞验证方式</h2>
 <ol>
-<li>排除法：浏览器f12查看源代码看是否是在本地进行了请求</li>
+<li>排除法：浏览器 f12 查看源代码看是否是在本地进行了请求</li>
 </ol>
 <p>比如：该资源地址类型为 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://www.xxx.com/a.php?image=URL,URL%E5%8F%82%E6%95%B0%E8%8B%A5%E6%98%AF%E5%85%B6%E4%BB%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%9C%B0%E5%9D%80%E5%B0%B1%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8SSRF%E6%BC%8F%E6%B4%9E">http://www.xxx.com/a.php?image=URL,URL参数若是其他服务器地址就可能存在SSRF漏洞</a></p>
 <ol start="2">
 <li>
-<p>dnslog等工具进行测试，看是否被访问(可以在盲打后台，用例中将当前准备请求的url和参数编码成base64，这样盲打后台解码后就知道是哪台机器哪个cgi触发的请求)</p>
+<p>dnslog 等工具进行测试，看是否被访问(可以在盲打后台，用例中将当前准备请求的 url 和参数编码成 base64，这样盲打后台解码后就知道是哪台机器哪个 cgi 触发的请求)</p>
 </li>
 <li>
-<p>抓包分析发送的请求是不是通过服务器发送的，如果不是客户端发出的请求，则有可能是存在漏洞。接着找存在HTTP服务的内网地址</p>
+<p>抓包分析发送的请求是不是通过服务器发送的，如果不是客户端发出的请求，则有可能是存在漏洞。接着找存在 HTTP 服务的内网地址</p>
 <ul>
 <li>
-<p>从漏洞平台中的历史漏洞寻找泄漏的存在web应用内网地址</p>
+<p>从漏洞平台中的历史漏洞寻找泄漏的存在 web 应用内网地址</p>
 </li>
 <li>
 <p>通过二级域名暴力猜解工具模糊猜测内网地址</p>
 </li>
 <li>
-<p>通过file协议读取内网信息获取相关地址</p>
+<p>通过 file 协议读取内网信息获取相关地址</p>
 </li>
 </ul>
 </li>
 <li>
-<p>直接返回的Banner、title、content等信息</p>
+<p>直接返回的 Banner、title、content 等信息</p>
 </li>
 <li>
-<p>留意布尔型SSRF，通过判断两次不同请求结果的差异来判断是否存在SSRF，类似布尔型sql盲注方法。</p>
+<p>留意布尔型 SSRF，通过判断两次不同请求结果的差异来判断是否存在 SSRF，类似布尔型 sql 盲注方法。</p>
 </li>
 </ol>
 <h2 id="0x04-ssrf-漏洞利用方式"><a class="markdownIt-Anchor" href="#0x04-ssrf-漏洞利用方式"></a> 0x04 SSRF 漏洞利用方式</h2>
@@ -343,21 +342,21 @@
 <h2 id="0x05-ssrf-漏洞挖点"><a class="markdownIt-Anchor" href="#0x05-ssrf-漏洞挖点"></a> 0x05 SSRF 漏洞挖点</h2>
 <ol>
 <li>社交分享功能：获取超链接的标题等内容进行显示</li>
-<li>转码服务：通过URL地址把原地址的网页内容调优使其适合手机屏幕浏览</li>
+<li>转码服务：通过 URL 地址把原地址的网页内容调优使其适合手机屏幕浏览</li>
 <li>在线翻译：给网址翻译对应网页的内容</li>
-<li>图片加载/下载：例如富文本编辑器中的点击下载图片到本地；通过URL地址加载或下载图片</li>
-<li>图片/文章收藏功能：主要其会取URL地址中title以及文本的内容作为显示以求一个好的用具体验</li>
-<li>云服务厂商：它会远程执行一些命令来判断网站是否存活等，所以如果可以捕获相应的信息，就可以进行ssrf测试</li>
-<li>网站采集，网站抓取的地方：一些网站会针对你输入的url进行一些信息采集工作</li>
-<li>数据库内置功能：数据库的比如mongodb的copyDatabase函数</li>
+<li>图片加载/下载：例如富文本编辑器中的点击下载图片到本地；通过 URL 地址加载或下载图片</li>
+<li>图片/文章收藏功能：主要其会取 URL 地址中 title 以及文本的内容作为显示以求一个好的用具体验</li>
+<li>云服务厂商：它会远程执行一些命令来判断网站是否存活等，所以如果可以捕获相应的信息，就可以进行 ssrf 测试</li>
+<li>网站采集，网站抓取的地方：一些网站会针对你输入的 url 进行一些信息采集工作</li>
+<li>数据库内置功能：数据库的比如 mongodb 的 copyDatabase 函数</li>
 <li>邮件系统：比如接收邮件服务器地址</li>
-<li>编码处理, 属性信息处理，文件处理：比如ffpmg，ImageMagick，docx，pdf，xml处理器等</li>
-<li>未公开的api实现以及其他扩展调用URL的功能：可以利用google 语法加上这些关键字去寻找SSRF漏洞</li>
-<li>从远程服务器请求资源（upload from url 如discuz！；import &amp; expost rss feed 如web blog；使用了xml引擎对象的地方 如wordpress xmlrpc.php）</li>
+<li>编码处理, 属性信息处理，文件处理：比如 ffpmg，ImageMagick，docx，pdf，xml 处理器等</li>
+<li>未公开的 api 实现以及其他扩展调用 URL 的功能：可以利用 google 语法加上这些关键字去寻找 SSRF 漏洞</li>
+<li>从远程服务器请求资源（upload from url 如 discuz！；import &amp; expost rss feed 如 web blog；使用了 xml 引擎对象的地方 如 wordpress xmlrpc.php）</li>
 </ol>
 <h2 id="0x06-ssrf-相关漏洞"><a class="markdownIt-Anchor" href="#0x06-ssrf-相关漏洞"></a> 0x06 SSRF 相关漏洞</h2>
 <ul>
-<li>CVE-2021-26855</li>
+<li><a href="../../A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/Exchange/%E3%80%90CVE-2021-26855%E3%80%91RCE%E6%BC%8F%E6%B4%9E">【CVE-2021-26855】RCE 漏洞 | CVE-2021-26855</a></li>
 </ul>
 
                 
@@ -424,7 +423,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年6月3日</div>
+          <div>2024年9月5日</div>
         </div>
       
       
@@ -456,9 +455,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/Exchange/%E3%80%90CVE-2020-0688%E3%80%91exchange%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="【CVE-2020-0688】exchange远程代码执行漏洞复现">
+                      <a href="/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91hashcat%E4%BD%BF%E7%94%A8/" title="【弱密码】hashcat使用">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【CVE-2020-0688】exchange远程代码执行漏洞复现</span>
+                        <span class="hidden-mobile">【弱密码】hashcat使用</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -466,8 +465,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/B_Code/Python/%E3%80%90POC%E3%80%91pocsuite%20%E7%94%A8%E6%B3%95/" title="【POC】pocsuite 用法">
-                        <span class="hidden-mobile">【POC】pocsuite 用法</span>
+                      <a href="/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91Stellar%E4%B8%BB%E9%A2%98%E7%94%A8%E6%B3%95/" title="【手册】Stellar 主题用法">
+                        <span class="hidden-mobile">【手册】Stellar 主题用法</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

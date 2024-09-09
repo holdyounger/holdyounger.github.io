@@ -294,10 +294,10 @@
 </blockquote>
 <h2 id="0x01-前言"><a class="markdownIt-Anchor" href="#0x01-前言"></a> 0x01 前言</h2>
 <p>学习 UAC 避免不了 appinfo、consent、RPC 这三个关键点。当然，整个 UAC 的流程也不能只有这三点，还涉及到用户会话、安全策略、ACL、DACL、SACL等等概念。都是需要去了解和深入的。而安全策略我们都知道，有比较多的字段策略都是保存在注册表中的。这里就包括 <mark>用户账户控制：管理员批准模式中管理员的提升权限提示的行为</mark></p>
-<style>.idrqsorbpnhk{zoom:50%;}</style><img src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152010027.png" srcset="/img/loading.gif" lazyload class="idrqsorbpnhk" alt="用户账户控制：管理员批准模式中管理员的提升权限提示的行为">
+<style>.cnzyrtkdhxry{zoom:50%;}</style><img src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152010027.png" srcset="/img/loading.gif" lazyload class="cnzyrtkdhxry" alt="用户账户控制：管理员批准模式中管理员的提升权限提示的行为">
 <h2 id="0x02-uac-提权中的处理"><a class="markdownIt-Anchor" href="#0x02-uac-提权中的处理"></a> 0x02 UAC 提权中的处理</h2>
 <p>从何说起？就是UAC的提权过程中创建 consent 进程的时候。如下图所示，在 <code>AiLaunchConstnUI</code> 函数中，首先根据传入的 <code>CreateFlags</code> 来确定要检查的用户，这里分两种情况，一个管理员用户，一个普通用户。两个字段在注册表中的值所对应的策略和处理是一致的。如下所示，查询的注册表目录为 <code>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System</code></p>
-<style>.jkwilrszyerr{zoom: 80%;}</style><img src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152958819.png" srcset="/img/loading.gif" lazyload class="jkwilrszyerr" alt="AiLaunchConesentUI">
+<style>.qvrspvsbfzdd{zoom: 80%;}</style><img src="/A_OS/Windows/%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D/%E3%80%90%E6%9D%83%E9%99%90%E4%B8%8E%E4%BC%9A%E8%AF%9D%E3%80%91%E7%94%B1appinfo%E8%B0%88%E8%B0%88UAC%E7%BA%A7%E5%88%AB/image-20231201152958819.png" srcset="/img/loading.gif" lazyload class="qvrspvsbfzdd" alt="AiLaunchConesentUI">
 <p>可以看到 <code>ConsentPromptBehavior</code> 策略值也是 UAC 提权中的一个判断点。接下来就 <code>ConsentPromptBehavior</code> 值描述一下。</p>
 <h2 id="0x03-consentpromptbehavior"><a class="markdownIt-Anchor" href="#0x03-consentpromptbehavior"></a> 0x03 ConsentPromptBehavior</h2>
 <p>ConsentPromptBehavior 值对应了五个级别，分别如下表所示：</p>

@@ -28,8 +28,8 @@
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：DCSync 介绍及渗透，获取用户 hash，对 Dcsync 的检测及防护">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-09-03T03:23:00.742Z">
-<meta property="article:modified_time" content="2024-09-03T07:40:51.575Z">
+<meta property="article:published_time" content="2024-09-05T01:13:59.251Z">
+<meta property="article:modified_time" content="2024-09-05T01:56:33.189Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="域">
 <meta property="article:tag" content="域渗透">
@@ -217,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-09-03 11:23" pubdate>
-          2024年9月3日 上午
+        <time datetime="2024-09-05 09:13" pubdate>
+          2024年9月5日 上午
         </time>
       </span>
     
@@ -240,7 +240,7 @@
         
         
         
-          13 分钟
+          14 分钟
         
       </span>
     
@@ -291,6 +291,7 @@
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-DCSync">域渗透——DCSync</a> - 阅力值 ⭐⭐⭐⭐</li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://h0ny.github.io/posts/DCSync/">DCSync | h0ny’s blog</a> - 阅力值 ⭐⭐⭐</li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://shu1l.github.io/2020/08/05/dcsync-yu-dcshadow-gong-ji-xue-xi/">DCSync与DCshadow攻击学习 - Shu1L’s blog</a>  - 阅力值 ⭐⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.riskivy.com/dcshadow/#DCShadow-2">揭秘DCShadow - 斗象能力中心</a> - 阅力值 ⭐⭐⭐⭐⭐</li>
 </ul>
 <h2 id="1-dcsync"><a class="markdownIt-Anchor" href="#1-dcsync"></a> 1. DCSync</h2>
 <h3 id="11-dcsync-是什么"><a class="markdownIt-Anchor" href="#11-dcsync-是什么"></a> 1.1. DCSync 是什么</h3>
@@ -298,10 +299,8 @@
 <h3 id="12-dcsync-渗透的由来"><a class="markdownIt-Anchor" href="#12-dcsync-渗透的由来"></a> 1.2. DCSync 渗透的由来</h3>
 <p>DCSync 是域渗透中经常会用到的技术，其被整合在了 [[…/…/…/C_OpenSource/【mimikatz】|【mimikatz】]] 中。在 DCSync 功能出现之前，要想获得域用户的哈希，需要登录域控制器，在域控制器上执行代码才能获得域用户的哈希。</p>
 <p>2015 年 8 月，Benjamin Delpy（神器 Mimikatz 的作者）和 Vincent Le Toux 发布了新版本的 Mimikatz，新增加了 DCSync 功能。该功能可以模仿一个域控制器，从真实的域控制器中请求数据，例如用户的哈希。该功能最大的特点就是不用登陆域控制器，即可远程通过域数据同步复制的方式获得域控制器上的的数据。不要尝试在公司的域内执行这种操作，除了权限问题，还有一些比较常见的防护策略，详见后文检测与防护相关。</p>
-<blockquote>
-<p>注意：DCSync 攻击的对象如果是只读域控制器 (RODC)，则会失效，因为 RODC 是不能参与复制同步数据到其他 DC 的。</p>
-</blockquote>
-<p><span style="color:#fff88f"> 在默认情况下，只有 Administrators、Domain Controllers 和 Enterprise Domain Admins 组内的用户有权限使用 DCSync，但我们可以对域内普通用户添加 ACL (Access Control List) 实现普通用户也能调用 DCSync 功能。</span></p>
+<details class="custom-callout warning" open><summary class="callout-title"><div class="callout-icon"></div><div>注意：DCSync 攻击的对象如果是只读域控制器 (RODC)，则会失效，因为 RODC 是不能参与复制同步数据到其他 DC 的。</div>
+</summary></details><p><font color="#f79646">在默认情况下，只有 Administrators、Domain Controllers 和 Enterprise Domain Admins 组内的用户有权限使用 DCSync，但我们可以对域内普通用户添加 ACL (Access Control List) 实现普通用户也能调用 DCSync 功能。</font></p>
 <h2 id="2-利用-dcsync-获取-hash"><a class="markdownIt-Anchor" href="#2-利用-dcsync-获取-hash"></a> 2. 利用 DCSync 获取 Hash</h2>
 <p><strong>利用条件：</strong></p>
 <p>获得以下任一用户的权限：</p>
@@ -499,7 +498,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年9月3日</div>
+          <div>2024年9月5日</div>
         </div>
       
       
@@ -531,9 +530,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/A_%E5%86%85%E5%8A%9F/A_winsafe/%E3%80%90WinSafe%E3%80%91WinSafe%20%E7%B4%A2%E5%BC%95/" title="【WinSafe】WinSafe 索引">
+                      <a href="/A_%E5%86%85%E5%8A%9F/A_winsafe/%E3%80%90%E5%9F%9F%E6%B8%97%E9%80%8F%E3%80%91DCSync%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90/" title="【域渗透】DCSync 流量分析">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【WinSafe】WinSafe 索引</span>
+                        <span class="hidden-mobile">【域渗透】DCSync 流量分析</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -541,8 +540,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/B_Code/CSharp/%E3%80%90.Net%E3%80%91.Net%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" title="【.Net】.Net逆向分析">
-                        <span class="hidden-mobile">【.Net】.Net逆向分析</span>
+                      <a href="/A_%E5%86%85%E5%8A%9F/A_winsafe/%E3%80%90WinSafe%E3%80%91WinSafe%20%E7%B4%A2%E5%BC%95/" title="【WinSafe】WinSafe 索引">
+                        <span class="hidden-mobile">【WinSafe】WinSafe 索引</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
