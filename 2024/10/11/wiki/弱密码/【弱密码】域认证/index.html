@@ -1,0 +1,871 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：Windows 域认证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【弱密码】域认证">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：Windows 域认证">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/Visio-KerberosComms.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903115343532.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050711.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050844.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_authentication_service.jpeg">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/clipboard-1599141249879.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_ticket_granting_service.jpeg">
+<meta property="article:published_time" content="2024-10-11T01:39:49.390Z">
+<meta property="article:modified_time" content="2024-10-11T01:39:49.391Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="域">
+<meta property="article:tag" content="弱密码">
+<meta property="article:tag" content="域用户">
+<meta property="article:tag" content="Windows&#x2F;域">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/Visio-KerberosComms.png">
+  
+  
+  
+  <title>【弱密码】域认证 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【弱密码】域认证"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-11 09:39" pubdate>
+          2024年10月11日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【弱密码】域认证</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：Windows 域认证</p>
+</blockquote>
+<span id="more"></span>
+<p><strong>相关文章推荐：</strong></p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8DCSync%E5%AF%BC%E5%87%BA%E5%9F%9F%E5%86%85%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7hash%E7%9A%84%E6%96%B9%E6%B3%95">域渗透——利用 DCSync 导出域内所有用户 hash 的方法</a> - 阅力值 ⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://en.hackndo.com/kerberos-silver-golden-tickets/">Silver &amp; Golden Tickets - hackndo</a> - 阅力值 ⭐⭐⭐</li>
+</ul>
+<p>#MD4 #NTLM #mimikatz #横向渗透</p>
+<p>**在阅读之前你可能还需要补充的知识：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.hackingarticles.in/credential-dumping-domain-cache-credential/#:~:text=This%20is%20known%20as%20Domain%20Cache">Credential Dumping: Domain Cache Credential - Hacking Articles</a> - 阅力值 ⭐⭐⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/archive/blogs/instan/cached-logons-and-cachedlogonscount">Cached logons and CachedLogonsCount | Microsoft Learn</a> - 阅力值 ⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cloud.tencent.com/developer/article/1915427">内网渗透 | 域渗透之Dcsync的利用实战-腾讯云开发者社区-腾讯云</a> - 阅力值 ⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.extrahop.com/blog/dcsync-definition-and-protection">What is DCSync and How to Protect Against It | ExtraHop</a> - 阅力值 ⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.thehacker.recipes/ad/movement/kerberos/ptt">Pass the ticket | The Hacker Recipes</a> - 阅力值 ⭐⭐</li>
+<li>Kerberos相关
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://en.hackndo.com/kerberos/">Kerberos in Active Directory - hackndo</a> - 阅力值 ⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://qili93.github.io/%E6%8A%80%E6%9C%AF%E8%A7%A3%E8%AF%BB/2017/03/14/kerebros-auth/">Kerberos认证原理详解</a> - 阅力值 ⭐⭐⭐<br>
+<strong>在线工具：</strong></li>
+</ul>
+</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://xdtool.com/ntlm?">NTLM密码加密-在线工具箱</a><br>
+<strong>Crack</strong>:</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://posts.slayerlabs.com/windows-cred-guide/">Windows Credential Harvesting Quick Guide</a> - 阅力值 ⭐⭐⭐</li>
+</ul>
+<h2 id="域认证"><a class="markdownIt-Anchor" href="#域认证"></a> 域认证</h2>
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/Visio-KerberosComms.png" srcset="/img/loading.gif" lazyload class title="Visio-KerberosComms">
+<p>#kerberos<br>
+域认证采用 <a href="Kerberos">Kerberos</a> 协议的认证机制，有一个可信的第三方机构 KDC 的参与。</p>
+<p>Kerberos</p>
+<p>#kerberos</p>
+<ul>
+<li><code>kerbose</code> 是一种网络认证协议，其设计目标是通过密钥系统为 <code>客户机/服务器</code> 应用提供强大的认证服务。</li>
+<li>该认证过程的视线不依赖于主机操作系统的认证，无需基于主机地址的信任，不要求网络上所有主机的物理安全，并假定网络上传送的数据包可以被任意的读取、修改和插入数据。</li>
+<li>在以上情况下，<code>Kerberos</code> 作为一种可信任的第三方认证服务，是通过传统的密码技术（如：共享密钥）执行认证服务的。</li>
+</ul>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>参与认证的三个角色：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li>Client</li>
+<li>Server</li>
+<li>KDC (Key Distribution Center)<br>
+= DC (Domain Controller)<br>
+= AD (Account Database) + AS (Authenication Service) + (TGS Ticket Granting Service)<br>
+从物理层面看，AD 与 AS，TGS，KDC 均为与控制器（Domain Controller）。</li>
+</ul>
+</div>
+</details><h3 id="kerberos-认证协议的基本概念"><a class="markdownIt-Anchor" href="#kerberos-认证协议的基本概念"></a> Kerberos 认证协议的基本概念</h3>
+<ul>
+<li><strong>票据（Ticket）</strong>:<br>
+是网络对象互相访问的凭证</li>
+<li>TGT (Ticket Granting Ticket)：<br>
+用来生成 Ticket 的 Ticket</li>
+<li><strong>AD (Account Database)</strong>:<br>
+存储域中所有用户的用户名和对应的 <code>NTLM Hash</code>，可以理解为域中的 <code>SAM</code> 数据库，<code>KDC</code> 可以从 AD 中提取域中所有用户的 <code>NTLM Hash</code>，这是 <code>Kerberos</code> 协议能够成功实现的基础。</li>
+<li><strong>KDC (Key Distribution Center)</strong>：<br>
+密钥分发中心，负责管理票据、认证票据、分发票据，里面包含两个服务： <code>AS</code> 和 <code>TGS</code></li>
+<li><strong>AS (Authentication Server)</strong>：<br>
+身份认证服务，为 <code>Client</code> 生成 <code>TGT</code> 的服务，也用来完成对 <code>Client</code> 的身份验证</li>
+<li><strong>TGS (Ticket Granting Server)</strong>：<br>
+票据授予服务，为 <code>Client</code> 生成允许对某个服务访问的 <code>Ticket</code> ，就是 Client 从 AS 那里拿到 TGT 之后，来 TGS 这里再申请对某个特定服务或服务器访问的 Ticket，只有获取到这个 Ticket，Client 才有权限去访问对应的服务，该服务提供的票据也称为 TGS 或者叫 #白银票据 。</li>
+<li><strong>TGT (Ticket Granting Ticket)</strong>：<br>
+由身份认证服务授予的票据（ #黄金票据 ），用于身份认证，存储在内存，默认有效期为 10 小时。<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>注意：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><code>Client</code> 密钥、<code>TGS</code> 密钥和 <code>Service</code> 密钥均为对应用户的 <code>NTLM Hash</code></li>
+<li><code>TGS</code> 密钥 == <code>KDC Hash</code> == <code>krbtgt</code> 用户的 <code>NTLM Hash</code></li>
+<li><code>Server</code> 和 <code>Service</code> 可以当做一个东西，就是 <code>Client</code> 想要访问的服务器或者服务</li>
+<li><code>Client/(TGT/Server) SessionKey</code> 可以看做客户端与 <code>TGS</code> 服务和尝试登录的 <code>Server</code> 之间会话用来加密的密钥，而 <code>(Client/TGT/Service)</code> 密钥（上面提到的三个实际为 NTLM Hash 的密钥）是用来加密会话密钥的密钥，为了保证会话密钥的传输安全，这些加密方式均为对称加密</li>
+</ul>
+<p>参与认证的三个角色的 <code>NTLM Hash</code> 是三个密钥，这三个 NTLM Hash 的唯一作用是确保会话密钥 <code>SessionKey</code> 的安全传输</p>
+</div>
+</details></li>
+</ul>
+<h3 id="黄金票据-golden-ticket"><a class="markdownIt-Anchor" href="#黄金票据-golden-ticket"></a> 黄金票据 (Golden Ticket)</h3>
+<p>如下所示为黄金票据和白银票据的生成过程</p>
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903115343532.png" srcset="/img/loading.gif" lazyload class title="黄金票据生成过程">
+<p>黄金门票是伪造的 TGT。这意味着我们绕过下图 [[kerberos认证]] 的步骤 1-2，在那里我们向 DC 证明我们是谁  <strong>可以说有了金票就有了域内的最高权限</strong></p>
+<p>每个用户的 Ticket 都是由 krbtgt 的密码 Hash 来生成的，那么，我们如果拿到了 krbtgt 的密码 Hash，其实就可以伪造任意用户的 TICKET,</p>
+<p>对于攻击者来说，实际上只要拿到了域控权限，就可以直接导出 krbtgt 的 Hash 值，，再通过 mimikatz 即可生成任意用户任何权限的 Ticket，也就是 Golden Ticket。</p>
+<h3 id="白银票据-siliver-ticket"><a class="markdownIt-Anchor" href="#白银票据-siliver-ticket"></a> 白银票据 (Siliver Ticket)</h3>
+<p>Silver Tickets（下面称银票）就是伪造的 ST（Service Ticket），因为在 TGT 已经在 PAC 里限定了给 Client 授权的服务（通过 SID 的值） <strong>就是说计算机已经固定了</strong>，所以银票只能访问指定服务。</p>
+<p>银票是伪造的 TGS 门票。所以现在，我们跳过了与 DC 上的 K DC 进行的所有通信（下图 [[kerberos认证]]中的步骤 1-4），只与我们希望直接访问的服务进行接口</p>
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050711.png" srcset="/img/loading.gif" lazyload class title="白银票据认证流程">
+<p></p>
+<h2 id="kerberos-认证流程"><a class="markdownIt-Anchor" href="#kerberos-认证流程"></a> kerberos 认证流程</h2>
+ <img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/IMG-20240903141050844.png" srcset="/img/loading.gif" lazyload class title="Kerberos 认证示意图">
+<h4 id="1-authentication-service-exchange"><a class="markdownIt-Anchor" href="#1-authentication-service-exchange"></a> <strong>1. Authentication Service Exchange</strong></h4>
+<p>。具体过程如下：</p>
+<p>Client 向 KDC 的 Authentication Service 发送 <font color="#f79646">Authentication Service Request（KRB_AS_REQ）</font>, 为了确保 KRB_AS_REQ 仅限于自己和 KDC 知道，Client 使用自己的 Master Key 对 KRB_AS_REQ 的主体部分进行加密（<font color="#f79646">KDC 可以通过 Domain 的 Account Database 获得该 Client 的 Master Key</font>）。KRB_AS_REQ 的大体包含以下的内容：</p>
+<ul>
+<li><code>Pre-authentication data</code>：包含用以证明自己身份的信息。说白了，就是证明自己知道自己声称的那个 account 的 Password。一般地，它的内容是一个被 Client 的 Master key 加密过的 Timestamp。</li>
+<li><code>Client name &amp; realm</code>: 简单地说就是 Domain name\Client</li>
+<li><code>Server Name</code>：注意这里的 Server Name 并不是 Client 真正要访问的 Server 的名称，而我们也说了 TGT 是和 Server 无关的（Client 只能使用 Ticket，而不是 TGT 去访问 Server）。这里的 Server Name 实际上是<strong>KDC 的 Ticket Granting Service 的 Server Name</strong>。</li>
+</ul>
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_authentication_service.jpeg" srcset="/img/loading.gif" lazyload class title="img">
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/clipboard-1599141249879.png" srcset="/img/loading.gif" lazyload class title="img">
+<h4 id="2-ticket-granting-service-exchange"><a class="markdownIt-Anchor" href="#2-ticket-granting-service-exchange"></a> <strong>2. Ticket Granting Service Exchange</strong></h4>
+<p>TGS（Ticket Granting Service）Exchange 通过 Client 向 KDC 中的 TGS（Ticket Granting Service）发送 Ticket Granting Service Request（KRB_TGS_REQ）开始。KRB_TGS_REQ 大体包含以下的内容：</p>
+<ul>
+<li><code>TGT</code>：Client 通过 AS Exchange 获得的 Ticket Granting Ticket，TGT 被 KDC 的 Master Key 进行加密。</li>
+<li><code>Authenticator</code>：用以证明当初 TGT 的拥有者是否就是自己，所以它必须以 TGT 的颁发方（KDC）给自己（Client）的 Session Key（SKDC-Client：Logon Session Key）来进行加密。</li>
+<li><code>Client name &amp; realm</code>: 简单地说就是 Domain name\Client。</li>
+<li><code>Server name &amp; realm</code>: 简单地说就是 Domain name\Server，这回是 Client 试图访问的那个 Server。</li>
+</ul>
+<img src="/2024/10/11/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91%E5%9F%9F%E8%AE%A4%E8%AF%81/kerberos_ticket_granting_service.jpeg" srcset="/img/loading.gif" lazyload class title="img">
+<p>TGS 收到 KRB_TGS_REQ 在发给 Client 真正的 Ticket 之前，先得验证 Client 提供的那个 TGT 是否是 AS 颁发给它的。于是它需要验证 Client 提供的 Authenticator，但是 Authentication 是通过 Logon Session Key（SKDC-Client）进行加密的，而自己并没有保存这个 Session Key。所以 TGS 先得通过自己的 Master Key 对 Client 提供的 TGT 进行解密，从而获得这个 Logon Session Key（SKDC-Client），再通过这个 Logon Session Key（SKDC-Client）解密 Authenticator 进行验证。验证通过向对方发送 Ticket Granting Service Response（KRB_TGS_REP）。这个 KRB_TGS_REP 有两部分组成：使用 Logon Session Key（SKDC-Client）加密过用于 Client 和 Server 的 Session Key（SServer-Client）和使用 Server 的 Master Key 进行加密的 Ticket。该 Ticket 大体包含以下一些内容：</p>
+<ul>
+<li>Session Key：SServer-Client。</li>
+<li>Client name &amp; realm: 简单地说就是 Domain name\Client。</li>
+<li>PAC</li>
+<li>End time: Ticket 的到期时间。</li>
+</ul>
+<p>Client 收到 KRB_TGS_REP，使用 Logon Session Key（SKDC-Client）解密第一部分后获得 Session Key（SServer-Client）。有了 Session Key 和 Ticket，Client 就可以之间和 Server 进行交互，而无须在通过 KDC 作中间人了。</p>
+<h4 id="3-clientserver-exchange"><a class="markdownIt-Anchor" href="#3-clientserver-exchange"></a> <strong>3. Client/Server Exchange</strong></h4>
+<p>Client 通过 TGS Exchange 获得 Client 和 Server 的 Session Key（SServer-Client），随后创建用于证明自己就是 Ticket 的真正所有者的 Authenticator，并使用 Session Key（SServer-Client）进行加密。最后将这个被加密过的 Authenticator 和 Ticket 作为 Application Service Request（KRB_AP_REQ）发送给 Server。除了上述两项内容之外，KRB_AP_REQ 还包含一个 Flag 用于表示 Client 是否需要进行双向验证（Mutual Authentication）。</p>
+<p>Server 接收到 KRB_AP_REQ 之后，通过自己的 Master Key 解密 Ticket，从而获得 Session Key（SServer-Client）。通过 Session Key（SServer-Client）解密 Authenticator，进而验证对方的身份，验证成功，让 Client 访问需要访问的资源，否则直接拒绝对方的请求。</p>
+<h2 id="获取域用户-hash"><a class="markdownIt-Anchor" href="#获取域用户-hash"></a> 获取域用户 hash</h2>
+<h3 id="使用-mimikatz"><a class="markdownIt-Anchor" href="#使用-mimikatz"></a> 使用 mimikatz</h3>
+<p>可参考 [[【mimikatz】#获取域用户]] 一节。</p>
+<p>更详细的命令帮助手册可查看 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://tools.thehacker.recipes/mimikatz/modules/lsadump/dcsync">dcsync | The Hacker Tools</a></p>
+<h2 id="域用户-hash"><a class="markdownIt-Anchor" href="#域用户-hash"></a> 域用户 Hash</h2>
+<p>在 Windows 系统中，比较常见是从系统导出来的 NTLM hash，可以通过 Hashcat 能够破解出明文密码。</p>
+<p>Hashcat 支持超过 200 种高度优化的 hash 算法，其中和 NTLM hash 相关的有 4 个，分别为 <code>NetNTLMv1</code>、<code>NetNTLMv1+ESS</code>、<code>NetNTLMv2</code> 和 <code>NTLM</code>。关于 hashcat 的使用可以参考 <a href="/2024/09/10/wiki/弱密码/【弱密码】hashcat使用/">hashcat 用法</a></p>
+<h3 id="域用户-hash-获取"><a class="markdownIt-Anchor" href="#域用户-hash-获取"></a> 域用户 Hash 获取</h3>
+<h4 id="方案一-mimikatz"><a class="markdownIt-Anchor" href="#方案一-mimikatz"></a> 方案一 mimikatz</h4>
+<p>使用 mimikatz 是可以获取到与用户的相关信息的，命令手册 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://tools.thehacker.recipes/mimikatz/modules/lsadump/dcsync">dcsync | The Hacker Tools</a>。</p>
+<p>但是 mimikatz 是基于 <a href="../../A_%E5%86%85%E5%8A%9F/WinSafe/%E3%80%90%E5%9F%9F%E6%B8%97%E9%80%8F%E3%80%91DCSync.md">DCSync</a> 的，而 DCSync 又是很容易被 IDS/IPS 作为攻击标志的点，这就导致 mimikatz 的这个方案还是在使用场景上有缺陷。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mimikatz.exe <span class="hljs-string">&quot;lsadump::dcsync /domain:ms.test.com /all /csv&quot;</span><br></code></pre></td></tr></table></figure>
+<h4 id="方案二-quarkspwdump"><a class="markdownIt-Anchor" href="#方案二-quarkspwdump"></a> 方案二 quarkspwdump</h4>
+<p><strong>QuarkspwDump 说明</strong>： <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/peterdocter/quarkspwdump">peterdocter/quarkspwdump: Quarks PwDump is a native Win32 tool to extract credentials from Windows operating systems.</a></p>
+<p>使用 quarkspwdump 获取域用户 hash。这个主要是从内存中提取用户的 Hash。与实际的有出入。</p>
+<p></p>
+<h3 id="域用户-hash-crash"><a class="markdownIt-Anchor" href="#域用户-hash-crash"></a> 域用户 Hash Crash</h3>
+<p>域用户 Hash 和本地用户 hash 一致，都是使用 MD4 加密。</p>
+<h2 id="域缓存-hash"><a class="markdownIt-Anchor" href="#域缓存-hash"></a> 域缓存 hash</h2>
+<p>定义可以看 <a href="/2024/09/05/A_内功/WinSafe/【域渗透】域Hash缓存/">【域渗透】域Hash缓存</a></p>
+<h3 id="使用-mimikatz-提取"><a class="markdownIt-Anchor" href="#使用-mimikatz-提取"></a> 使用 mimikatz 提取</h3>
+<p><strong>查询命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">privilege::debug<br>token::elevate<br>lsadump::cache<br></code></pre></td></tr></table></figure>
+<h3 id="quarkspwdump"><a class="markdownIt-Anchor" href="#quarkspwdump"></a> quarkspwdump</h3>
+<p><strong>查询命令</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">quarkspwdump -dhdc<br></code></pre></td></tr></table></figure>
+<h3 id="域缓存-hash-crash"><a class="markdownIt-Anchor" href="#域缓存-hash-crash"></a> 域缓存 hash Crash</h3>
+<p><strong>相关参考文章</strong></p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cryptanalysis.tymyrddin.dev/docs/hashes/dcc2">DCC2 Hash — Beyond the readable</a> - 阅力值 ⭐⭐⭐</li>
+</ul>
+<p>域缓存 hash 使用的加密方式略有不同：</p>
+<ul>
+<li>windows vista 以前使用的是 DCC，也就是 Domain Cached Credentials (DCC), MS Cache</li>
+<li>windows vista 之后都是用的 DCC2，也就是 Domain Cached Credentials 2 (DCC2), MS Cache 2</li>
+</ul>
+<h4 id="dcc-crash"><a class="markdownIt-Anchor" href="#dcc-crash"></a> DCC Crash</h4>
+<p><strong>工具</strong></p>
+<p>借助 hashcat 来探测</p>
+<p><strong>format</strong></p>
+<p>使用 hashcat 破解，破解 DCC 的形式如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>1100</th>
+<th>Domain Cached Credentials (DCC), MS Cache</th>
+<th>4dd8965d1d476fa0d026722989a6b772:3060147285011</th>
+</tr>
+</thead>
+</table>
+<p><strong>使用示例</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&#123;MsCache&#125;:&#123;uername&#125;<br><br>hashcat -m 1100 -w 4 -a 3 4dd8965d1d476fa0d026722989a6b772:3060147285011<br></code></pre></td></tr></table></figure>
+<p></p>
+<h4 id="dcc2-crash"><a class="markdownIt-Anchor" href="#dcc2-crash"></a> DCC2 Crash</h4>
+<p><strong>工具</strong></p>
+<p>主要借助 hashcat 来探测</p>
+<p><strong>format</strong></p>
+<p>使用 hashcat 破解 DCC2 的形式如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>2100</th>
+<th>Domain Cached Credentials 2 (DCC2), MS Cache 2</th>
+<th>$DCC2$10240#tom#e4e938d12fe5974dc42a90120bd9c90f</th>
+</tr>
+</thead>
+</table>
+<p><strong>使用示例</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$DCC2<span class="hljs-variable">$10240</span><span class="hljs-comment">#&#123;username&#125;#&#123;MsCacheV2&#125;</span><br><br>hashcat -m 2100 -w 4 -a 3 $DCC2<span class="hljs-variable">$10240</span><span class="hljs-comment">#tom#e4e938d12fe5974dc42a90120bd9c90f</span><br></code></pre></td></tr></table></figure>
+<h4 id="相关代码"><a class="markdownIt-Anchor" href="#相关代码"></a> 相关代码</h4>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://openwall.info/wiki/john/MSCash2">MSCash2 Algorithm [Openwall Community Wiki]</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://openwall.info/wiki/john/MSCash2_simple_code">MSCash 2 code (simple) [Openwall Community Wiki]</a></li>
+</ul>
+<p><strong>实测可用</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * dcc2_tst.c  A &#x27;very&#x27; simple OpenSSL primative only test app, showing the</span><br><span class="hljs-comment"> * MSCASH2 format.</span><br><span class="hljs-comment"> * Written June 24, 2011, Jim Fougeron.  Placed in public domain</span><br><span class="hljs-comment"> * This is a very slow, but easier to understand mscash2 hash computation program</span><br><span class="hljs-comment"> * It has been written 100% with oSSL primative functions (SHA1 and MD4).  It does</span><br><span class="hljs-comment"> * not use any hmac primatives.    This pbkdf2 &#x27;has&#x27; been reduced some, since we</span><br><span class="hljs-comment"> * know a &#x27;little&#x27; info.  1. the key will always be smaller than SHA_DIGEST_LENGTH</span><br><span class="hljs-comment"> * thus we can remove an initial sha reduction.  2. we only use lower 128 bites, so</span><br><span class="hljs-comment"> * only xor the first 4 words, not first 5</span><br><span class="hljs-comment"> *</span><br><span class="hljs-comment"> * If the program is run with no params, then user=admin and pass=password is used</span><br><span class="hljs-comment"> * arguments -p=PASSWORD  and -u=USER can be used to change the pass / user</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> _MSC_VER</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;openssl/sha.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;openssl/md4.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;libssl.lib&quot;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;libcrypto.lib&quot;</span>)</span><br><br> <span class="hljs-comment">/*</span><br><span class="hljs-comment">  * This function is derived from IEEE Std 802.11-2004, Clause H.4.</span><br><span class="hljs-comment">  * The main construction is from PKCS#5 v2.0.  It is tweaked a little</span><br><span class="hljs-comment">  * to remove some code not needed for our SHA1-128 output.</span><br><span class="hljs-comment">  */</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pbkdf2</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> key[], <span class="hljs-type">size_t</span> key_len,</span></span><br><span class="hljs-params"><span class="hljs-function">	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> salt[], <span class="hljs-type">size_t</span> salt_len,</span></span><br><span class="hljs-params"><span class="hljs-function">	<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> rounds,</span></span><br><span class="hljs-params"><span class="hljs-function">	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> digest[])</span></span><br><span class="hljs-function"></span>&#123;<br>	SHA_CTX ctx1, ctx2, tmp_ctx1, tmp_ctx2;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> ipad[SHA_CBLOCK + <span class="hljs-number">1</span>], opad[SHA_CBLOCK + <span class="hljs-number">1</span>], tmp_hash[SHA_DIGEST_LENGTH];<br>	<span class="hljs-type">unsigned</span> i, j;<br><br>	<span class="hljs-built_in">memset</span>(ipad, <span class="hljs-number">0x36</span>, <span class="hljs-built_in">sizeof</span>(ipad));<br>	<span class="hljs-built_in">memset</span>(opad, <span class="hljs-number">0x5C</span>, <span class="hljs-built_in">sizeof</span>(opad));<br><br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; key_len; i++) &#123;<br>		ipad[i] ^= key[i];<br>		opad[i] ^= key[i];<br>	&#125;<br><br>	<span class="hljs-built_in">SHA1_Init</span>(&amp;ctx1);<br>	<span class="hljs-built_in">SHA1_Init</span>(&amp;ctx2);<br><br>	<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx1, ipad, SHA_CBLOCK);<br>	<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx2, opad, SHA_CBLOCK);<br><br>	<span class="hljs-built_in">memcpy</span>(&amp;tmp_ctx1, &amp;ctx1, <span class="hljs-built_in">sizeof</span>(SHA_CTX));<br>	<span class="hljs-built_in">memcpy</span>(&amp;tmp_ctx2, &amp;ctx2, <span class="hljs-built_in">sizeof</span>(SHA_CTX));<br><br>	<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx1, salt, salt_len);<br>	<span class="hljs-built_in">SHA1_Final</span>(tmp_hash, &amp;ctx1);<br><br>	<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx2, tmp_hash, SHA_DIGEST_LENGTH);<br>	<span class="hljs-built_in">SHA1_Final</span>(tmp_hash, &amp;ctx2);<br><br>	<span class="hljs-built_in">memcpy</span>(digest, tmp_hash, SHA_DIGEST_LENGTH);<br><br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; rounds; i++)<br>	&#123;<br>		<span class="hljs-built_in">memcpy</span>(&amp;ctx1, &amp;tmp_ctx1, <span class="hljs-built_in">sizeof</span>(SHA_CTX));<br>		<span class="hljs-built_in">memcpy</span>(&amp;ctx2, &amp;tmp_ctx2, <span class="hljs-built_in">sizeof</span>(SHA_CTX));<br><br>		<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx1, tmp_hash, SHA_DIGEST_LENGTH);<br>		<span class="hljs-built_in">SHA1_Final</span>(tmp_hash, &amp;ctx1);<br><br>		<span class="hljs-built_in">SHA1_Update</span>(&amp;ctx2, tmp_hash, SHA_DIGEST_LENGTH);<br>		<span class="hljs-built_in">SHA1_Final</span>(tmp_hash, &amp;ctx2);<br><br>		<span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">4</span>; j++)<br>			((<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>*)digest)[j] ^= ((<span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>*)tmp_hash)[j];<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// simple &#x27;to-unicode&#x27;, adds null bytes. !WARNING! no overflow logic.</span><br><span class="hljs-function"><span class="hljs-type">unsigned</span> <span class="hljs-title">to_unicode</span><span class="hljs-params">(<span class="hljs-type">char</span>* u16, <span class="hljs-type">char</span>* a8)</span> </span>&#123;<br>	<span class="hljs-type">unsigned</span> cnt = <span class="hljs-built_in">strlen</span>(a8);<br>	<span class="hljs-keyword">while</span> (*a8) &#123;<br>		*u16++ = *a8++;  *u16++ = <span class="hljs-number">0</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> cnt &lt;&lt; <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">char</span> <span class="hljs-title">hexdigit</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span> </span>&#123; <span class="hljs-comment">// one hex digit</span><br>	<span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">10</span>) <span class="hljs-keyword">return</span> i + <span class="hljs-string">&#x27;0&#x27;</span>;<br>	<span class="hljs-keyword">return</span> (i - <span class="hljs-number">10</span>) + <span class="hljs-string">&#x27;a&#x27;</span>;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">char</span>* <span class="hljs-title">to_hex</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* digest)</span> </span>&#123;  <span class="hljs-comment">// convert 16 byte digest to 32 byte hex</span><br>	<span class="hljs-type">static</span> <span class="hljs-type">char</span> buf[<span class="hljs-number">33</span>];<br>	<span class="hljs-type">char</span>* cp = buf;<br>	<span class="hljs-type">int</span> i;<br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">16</span>; ++i) &#123;<br>		*cp++ = <span class="hljs-built_in">hexdigit</span>(*digest &gt;&gt; <span class="hljs-number">4</span>); *cp++ = <span class="hljs-built_in">hexdigit</span>(*digest++ &amp; <span class="hljs-number">0xF</span>);<br>	&#125;<br>	*cp = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">return</span> buf;<br>&#125;<br><br><span class="hljs-comment">/*</span><br><span class="hljs-comment"> * usage:  dcc2_tst [-p=pass] [-u=username]</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">dcc2_tst</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span>** argv)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">char</span>* username = (<span class="hljs-type">char</span>*)<span class="hljs-string">&quot;shimingming&quot;</span>, * password = (<span class="hljs-type">char</span>*)<span class="hljs-string">&quot;Admin@123&quot;</span>;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> username_lc[<span class="hljs-number">22</span>], salt[<span class="hljs-number">44</span>], pass_unicode[<span class="hljs-number">128</span> + <span class="hljs-number">2</span>], md4hash[<span class="hljs-number">16</span>], digest[<span class="hljs-number">20</span>];<br>	<span class="hljs-type">unsigned</span> salt_len, pass_len;<br>	MD4_CTX ctx;<br>	<span class="hljs-type">int</span> i;<br><br>	<span class="hljs-comment">// see if -p= or -u= was used.  If so, then use them.</span><br>	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">1</span>; i &lt; argc; ++i) &#123;<br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strncmp</span>(argv[i], <span class="hljs-string">&quot;-p=&quot;</span>, <span class="hljs-number">3</span>)) password = &amp;argv[i][<span class="hljs-number">3</span>];<br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strncmp</span>(argv[i], <span class="hljs-string">&quot;-u=&quot;</span>, <span class="hljs-number">3</span>)) username = &amp;argv[i][<span class="hljs-number">3</span>];<br>	&#125;<br><br>	<span class="hljs-comment">// low case user name (the salt), and convert to unicode.</span><br>	<span class="hljs-built_in">strncpy</span>((<span class="hljs-type">char</span>*)username_lc, username, <span class="hljs-number">21</span>);<br>	username_lc[<span class="hljs-number">21</span>] = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">strlen</span>(username) != <span class="hljs-built_in">strlen</span>((<span class="hljs-type">char</span>*)username_lc)) <span class="hljs-keyword">return</span> !!<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Error, the user name is longer than 21 bytes.  Aborting\n&quot;</span>);<br>	salt_len = <span class="hljs-built_in">to_unicode</span>((<span class="hljs-type">char</span>*)salt, <span class="hljs-built_in">strlwr</span>((<span class="hljs-type">char</span>*)username_lc));<br><br>	<span class="hljs-comment">// pasword to unicode</span><br>	pass_len = <span class="hljs-built_in">to_unicode</span>((<span class="hljs-type">char</span>*)pass_unicode, password);<br><br>	<span class="hljs-comment">// now get NTLM of the password (MD4 of unicode)</span><br><br>	<span class="hljs-built_in">MD4_Init</span>(&amp;ctx);<br>	<span class="hljs-built_in">MD4_Update</span>(&amp;ctx, pass_unicode, pass_len);<br>	<span class="hljs-built_in">MD4_Final</span>(md4hash, &amp;ctx);<br>	<span class="hljs-comment">// Now we have NTLM  md4Hash==NTLM of the password</span><br><br>	<span class="hljs-comment">// Get DCC1.  That is MD4( NTLM . unicode(lc username) )</span><br>	<span class="hljs-built_in">MD4_Init</span>(&amp;ctx);<br>	<span class="hljs-built_in">MD4_Update</span>(&amp;ctx, md4hash, <span class="hljs-number">16</span>);<br>	<span class="hljs-built_in">MD4_Update</span>(&amp;ctx, salt, salt_len);<br>	<span class="hljs-built_in">MD4_Final</span>(md4hash, &amp;ctx);<br>	<span class="hljs-comment">// now we have DCC1 (mscash) which is MD4 (MD4(unicode(pass)) . unicode(lc username))</span><br><br>	<span class="hljs-comment">// we need to change the salt a little, before calling pbkdf2 (add a big endian 32 bit 1)</span><br>	<span class="hljs-built_in">memset</span>(&amp;salt[salt_len], <span class="hljs-number">0</span>, <span class="hljs-number">4</span>);<br>	salt[salt_len + <span class="hljs-number">3</span>] = <span class="hljs-number">1</span>;<br>	salt_len += <span class="hljs-number">4</span>;<br><br>	<span class="hljs-comment">// Now compute DCC2</span><br>	<span class="hljs-built_in">pbkdf2</span>(md4hash, <span class="hljs-number">16</span>, salt, salt_len, <span class="hljs-number">10240</span>, digest);<br><br>	<span class="hljs-comment">// Ok, now output the hash:</span><br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s:&quot;</span>, username);<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%$%s#%s:0:1:%s\n&quot;</span>, username_lc, <span class="hljs-built_in">to_hex</span>(digest), password);<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/" class="category-chain-item">弱密码</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9F%9F/" class="print-no-link">#域</a>
+      
+        <a href="/tags/%E5%BC%B1%E5%AF%86%E7%A0%81/" class="print-no-link">#弱密码</a>
+      
+        <a href="/tags/%E5%9F%9F%E7%94%A8%E6%88%B7/" class="print-no-link">#域用户</a>
+      
+        <a href="/tags/Windows-%E5%9F%9F/" class="print-no-link">#Windows/域</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【弱密码】域认证</div>
+      <div>https://hodlyounger.github.io/2024/10/11/wiki/弱密码/【弱密码】域认证/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/11/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91.NET%20%E8%B0%83%E8%AF%95/" title="【调试技术】.NET 调试">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【调试技术】.NET 调试</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/11/Omnivore/2024-09-25/%E5%9F%B9%E8%AE%AD%20-%20Microsoft%20Learn/" title="培训 | Microsoft Learn
+">
+                        <span class="hidden-mobile">培训 | Microsoft Learn
+</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

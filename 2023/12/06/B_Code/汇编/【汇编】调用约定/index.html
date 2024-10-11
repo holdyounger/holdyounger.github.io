@@ -1,0 +1,717 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：各种调用约定下的汇编入参方式 参考文章：自变量传递和命名约定 | Microsoft Learn   __fastcall __fastcall | Microsoft Learn __fastcall 调用约定指定尽可能在寄存器中传递函数的自变量。 此调用约定仅适用于 x86 体系结构。 以下列表显示此调用约定的实现。 Expand table    元素 实现     参数传递顺序 在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【汇编】调用约定">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/12/06/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：各种调用约定下的汇编入参方式 参考文章：自变量传递和命名约定 | Microsoft Learn   __fastcall __fastcall | Microsoft Learn __fastcall 调用约定指定尽可能在寄存器中传递函数的自变量。 此调用约定仅适用于 x86 体系结构。 以下列表显示此调用约定的实现。 Expand table    元素 实现     参数传递顺序 在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-08-22T01:37:10.503Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="汇编">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【汇编】调用约定 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【汇编】调用约定"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-06 00:00" pubdate>
+          2023年12月6日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          816 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【汇编】调用约定</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：各种调用约定下的汇编入参方式</p>
+<p>参考文章：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/cpp/cpp/argument-passing-and-naming-conventions?view=msvc-170">自变量传递和命名约定 | Microsoft Learn</a></p>
+</blockquote>
+<h2 id="__fastcall"><a class="markdownIt-Anchor" href="#__fastcall"></a> __fastcall</h2>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/cpp/cpp/fastcall?view=msvc-170">__fastcall | Microsoft Learn</a></p>
+<p><strong><code>__fastcall</code></strong> 调用约定指定尽可能在寄存器中传递函数的自变量。 此调用约定仅适用于 x86 体系结构。 以下列表显示此调用约定的实现。</p>
+<p>Expand table</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">元素</th>
+<th style="text-align:left">实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">参数传递顺序</td>
+<td style="text-align:left">在自变量列表中按从左到右的顺序找到的前两个 <code>DWORD</code> 或更小自变量将在 ECX 和 EDX 寄存器中传递；所有其他自变量在堆栈上从右向左传递。</td>
+</tr>
+<tr>
+<td style="text-align:left">堆栈维护职责</td>
+<td style="text-align:left">已调用函数会弹出显示堆栈中的参数。</td>
+</tr>
+<tr>
+<td style="text-align:left">名称修饰约定</td>
+<td style="text-align:left">At 符号 (@) 是名称的前缀；参数列表中的字节数（在十进制中）前面的 at 符号是名称的后缀。</td>
+</tr>
+<tr>
+<td style="text-align:left">大小写转换约定</td>
+<td style="text-align:left">不执行任何大小写转换。</td>
+</tr>
+<tr>
+<td style="text-align:left">类、结构和并集</td>
+<td style="text-align:left">被视为“多字节”类型（无论大小）并在堆栈上传递。</td>
+</tr>
+<tr>
+<td style="text-align:left">枚举和枚举类</td>
+<td style="text-align:left">如果它们的基础类型是通过寄存器传递的，则通过寄存器传递。 例如，如果基础类型是大小为 8、16 或 32 位的 <code>int</code> 或 <code>unsigned int</code>。</td>
+</tr>
+</tbody>
+</table>
+<details class="custom-callout warning" open><summary class="callout-title"><div class="callout-icon"></div><div>Warning</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>区分 x64 下 [fast-call]<br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/cpp/build/x64-calling-convention?view=msvc-170">x64 调用约定 | Microsoft Learn</a></p>
+</div>
+</details><p></p>
+<h2 id="__thiscall"><a class="markdownIt-Anchor" href="#__thiscall"></a> __thiscall</h2>
+<p><strong>特定于 Microsoft</strong>**<code>__thiscall</code>** 的调用约定用于 x86 体系结构上的 C++ 类成员函数。 它是成员函数使用的默认调用约定，该约定不使用变量参数（<code>vararg</code> 函数）。</p>
+<p>在 <strong><code>__thiscall</code></strong> 下，被调用方清理堆栈，这对于 <code>vararg</code> 函数是不可能的。 自变量将<strong>从右到左</strong>推送到堆栈中。 指针 <strong><code>this</code></strong> 通过注册 ECX 传递，而不是在堆栈上传递。</p>
+<p>在 ARM、ARM64 和 x64 计算机上，<strong><code>__thiscall</code></strong> 由编译器接受和忽略。 这是因为它们默认使用基于寄存器的调用约定。</p>
+<p>使用 <strong><code>__thiscall</code></strong> 的原因之一是在类中成员函数默认使用 <strong><code>__clrcall</code></strong>。 在这种情况下，可以使用 <strong><code>__thiscall</code></strong> 确保各个成员函数可以从本机代码调用。</p>
+<p>采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/cpp/build/reference/clr-common-language-runtime-compilation?view=msvc-170"><code>/clr:pure</code></a> 进行编译时，除非另有规定，否则所有函数和函数指针都是 <strong><code>__clrcall</code></strong>。 <strong><code>/clr:pure</code></strong> 和 <strong><code>/clr:safe</code></strong> 编译器选项在 Visual Studio 2015 中已弃用，并且在 Visual Studio 2017 中不受支持。</p>
+<p><code>vararg</code> 成员函数使用 <strong><code>__cdecl</code></strong> 调用约定。 所有函数参数都推送在堆栈上，<strong><code>this</code></strong> 指针放在最后一个堆栈上。</p>
+<p>由于此调用约定仅适用于 C++，因此它没有 C 名称修饰方案。</p>
+<p>在非静态类成员函数外行定义时，仅在声明中指定调用约定修饰符。 无需在行外定义上再次指定它。 编译器使用在定义点声明期间指定的调用约定。</p>
+<p></p>
+<h2 id="__stdcall"><a class="markdownIt-Anchor" href="#__stdcall"></a> __stdcall</h2>
+<p>编译器的命令行参数是/Gz，__stdcall是Pascal程序的缺省调用方式，大多数Windows的API也是 __stdcall 调用约定。__stdcall 函数调用约定将函数参数<strong>从右向左</strong>入栈，除非使用指针或引用类型的参数，所有参数采用传值方式传递，由被调用函数负责清除栈中的参数。对于C函数，__stdcall的名称修饰方式是在函数名字前添加下划线，在函数名字后添加@和函数参数的大小，例如：_functionname@number</p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/%E6%B1%87%E7%BC%96/" class="category-chain-item">汇编</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B1%87%E7%BC%96/" class="print-no-link">#汇编</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【汇编】调用约定</div>
+      <div>https://hodlyounger.github.io/2023/12/06/B_Code/汇编/【汇编】调用约定/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/07/wiki/MySQL8/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91MySQL8-plugin/" title="【弱密码】MySQL8-Authentication-plugin">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【弱密码】MySQL8-Authentication-plugin</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/06/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91Tools/" title="【RPC】Tools">
+                        <span class="hidden-mobile">【RPC】Tools</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

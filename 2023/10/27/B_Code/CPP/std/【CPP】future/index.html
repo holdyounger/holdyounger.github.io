@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述: std::future 的用法整理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【CPP】std::future">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/B_Code/CPP/std/%E3%80%90CPP%E3%80%91future/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述: std::future 的用法整理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.105Z">
+<meta property="article:modified_time" content="2024-08-17T12:26:08.225Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="CPP&#x2F;future">
+<meta property="article:tag" content="CPP&#x2F;std">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【CPP】std::future - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【CPP】std::future"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-27 09:24" pubdate>
+          2023年10月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【CPP】std::future</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述: <code>std::future</code> 的用法整理</p>
+</blockquote>
+<span id="more"></span>
+<p>[toc]</p>
+<h1 id="介绍"><a class="markdownIt-Anchor" href="#介绍"></a> 介绍</h1>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><br>std::future &lt; T &gt; f<br></code></pre></td></tr></table></figure>
+<p><code>std::future</code>是C++11标准库（并发支持库）中的一个[模板类]，它表示一个异步操作的结果。当我们在多线程编程中使用异步任务时，<code>std::future</code>可以帮助我们在需要的时候获取任务的执行结果。<code>std::future</code>的一个重要特性是能够阻塞当前线程，直到异步操作完成，从而确保我们在获取结果时不会遇到未完成的操作。</p>
+<h1 id="成员函数"><a class="markdownIt-Anchor" href="#成员函数"></a> 成员函数</h1>
+<ul>
+<li>构造函数
+<ul>
+<li><code>future() noexcept</code>: 默认构造函数。构造无共享状态的 <code>std::future </code>。构造后， <code>valid()</code> == false</li>
+<li><code>future( future&amp;&amp; other ) noexcept</code>:移动构造函数。用移动语义，以 other 的共享状态构造 std::future 。构造后 other.<code>valid()</code> == false 。</li>
+<li><code>future( const future&amp; other ) = delete</code> : 不可复制构造 (CopyConstructible) 。</li>
+</ul>
+</li>
+<li>析构函数 <code>~future()</code>;</li>
+<li>operator=
+<ul>
+<li><code>future&amp; operator=( future&amp;&amp; other ) noexcept</code>:释放任何共享状态并移动赋值 other 的内容给 *this 。赋值后， other.valid() == false 且 this-&gt;valid() 将产生与 other.valid() 在赋值前相同的值。</li>
+<li><code>future&amp; operator=( const future&amp; other ) = delete</code>: 不可复制赋值 (CopyAssignable) 。</li>
+</ul>
+</li>
+<li><code>share() noexcept</code>: 转移 *this 的共享状态到 <code>std::shared_future</code> 对象。多个<code> std::shared_future</code> 对象可引用同一共享对象，调用后<code>valid()</code> == <strong>false</strong> 。</li>
+<li><code>T get()</code>: get 方法等待直至 future 拥有合法结果并（依赖于使用哪个模板）获取它。它等效地调用 <code>wait()</code> 等待结果。泛型模板和二个模板特化各含单个 get 版本。 get 的三个版本仅在返回类型有别。若调用此函数前 <code>valid()</code> 为 false 则行为未定义。释放任何共享状态。调用此方法后<code>valid()</code> 为 false 。</li>
+<li><code>bool valid()</code>: 检查future是否可以共享状态。</li>
+<li><code>wait()</code>: 等待结果变得可用</li>
+<li>wait_for</li>
+<li>wait_until</li>
+</ul>
+<h1 id="作用"><a class="markdownIt-Anchor" href="#作用"></a> 作用</h1>
+<ol>
+<li><strong>异步操作的结果获取</strong>：<code>std::future</code>提供了一种机制，允许我们在多线程环境中安全地获取异步操作的结果。</li>
+<li><strong>隐藏异步操作的细节</strong>：<code>std::future</code>将异步操作的结果封装起来，使程序员无需关注线程同步和通信的具体实现细节。</li>
+<li><strong>线程同步</strong>：通过阻塞等待异步操作完成，<code>std::future</code>可以确保我们在继续执行其他操作之前，已经获取了所需的结果。</li>
+<li><strong>异常处理</strong>：<code>std::future</code>可以捕获异步操作中抛出的异常，并在获取结果时重新抛出，也可以在主线程中对其进行处理，从而使得异常处理更加简单。</li>
+<li><strong>提高性能</strong>：<code>std::future</code>使得我们能够更好地利用多核处理器的性能，通过并行执行任务来提高程序的执行效率。</li>
+</ol>
+<h1 id="使用场景"><a class="markdownIt-Anchor" href="#使用场景"></a> 使用场景</h1>
+<h2 id="异步任务"><a class="markdownIt-Anchor" href="#异步任务"></a> 异步任务</h2>
+<p>当我们需要在后台执行一些耗时操作时，如[文件读写]、网络请求或计算密集型任务，<code>std::future</code>可以用来表示这些异步任务的结果。通过将任务与主线程分离，我们可以实现任务的并行处理，从而提高程序的执行效率。</p>
+<h2 id="并发控制"><a class="markdownIt-Anchor" href="#并发控制"></a> 并发控制</h2>
+<p>在[多线程编程]中，我们可能需要等待某些任务完成后才能继续执行其他操作。通过使用<code>std::future</code>，我们可以实现线程之间的同步，确保任务完成后再获取结果并继续执行后续操作。</p>
+<h2 id="结果获取"><a class="markdownIt-Anchor" href="#结果获取"></a> 结果获取</h2>
+<p><code>std::future</code>提供了一种安全的方式来获取异步任务的结果。我们可以使用<code>std::future::get()</code>函数来获取任务的结果。此函数会阻塞当前线程，直到异步操作完成。这样，在调用<code>get()</code>函数时，我们可以确保已经获取到了所需的结果。如果异步操作中发生了异常，<code>get()</code>函数会将异常重新抛出，使得我们能够处理这些异常。</p>
+<h1 id="用法示例"><a class="markdownIt-Anchor" href="#用法示例"></a> 用法示例</h1>
+<h2 id="使用stdasync关联异步任务"><a class="markdownIt-Anchor" href="#使用stdasync关联异步任务"></a> 使用std::async关联异步任务</h2>
+<p>使用<code>std::async</code>将任务与<code>std::future</code>关联。它创建并运行一个异步任务，并返回一个与该任务结果关联的<code>std::future</code>对象。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;chrono&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">long_running_task</span><span class="hljs-params">()</span> </span>&#123;<br>    std::this_thread::<span class="hljs-built_in">sleep_for</span>(std::chrono::<span class="hljs-built_in">seconds</span>(<span class="hljs-number">3</span>));<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// std::future&lt;int&gt; 声明的类型与 long_running_task 返回值类型必须一致</span><br>    std::future&lt;<span class="hljs-type">int</span>&gt; result_future = std::<span class="hljs-built_in">async</span>(std::launch::async, long_running_task);<br><br>    <span class="hljs-comment">// 在此处执行其他操作</span><br><br>    <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="使用stdpromise与stdfuture配合"><a class="markdownIt-Anchor" href="#使用stdpromise与stdfuture配合"></a> 使用std::promise与std::future配合</h2>
+<p><code>std::promise</code>是另一种与<code>std::future</code>配合使用的方式。我们可以使用<code>std::promise</code>对象来显式地设置任务的结果，而<code>std::future</code>对象则用于获取这个结果。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;thread&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">long_running_task</span><span class="hljs-params">(std::promise&lt;<span class="hljs-type">int</span>&gt; result_promise)</span> </span>&#123;<br>    <span class="hljs-comment">// 执行长时间运行的任务</span><br>    <span class="hljs-type">int</span> result = <span class="hljs-number">42</span>;<br><br>    <span class="hljs-comment">// 将结果设置到promise对象中</span><br>    result_promise.<span class="hljs-built_in">set_value</span>(result);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::promise&lt;<span class="hljs-type">int</span>&gt; result_promise;<br>    std::future&lt;<span class="hljs-type">int</span>&gt; result_future = result_promise.<span class="hljs-built_in">get_future</span>();<br><br>    <span class="hljs-comment">// 创建一个新线程，执行长时间运行的任务</span><br>    <span class="hljs-function">std::thread <span class="hljs-title">task_thread</span><span class="hljs-params">(long_running_task, std::move(result_promise))</span></span>;<br><br>    <span class="hljs-comment">// 在此处执行其他操作</span><br><br>    <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br><br>    task_thread.<span class="hljs-built_in">join</span>();<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="结果获取与异常处理"><a class="markdownIt-Anchor" href="#结果获取与异常处理"></a> 结果获取与异常处理</h2>
+<p>使用<code>std::future::get()</code> 函数可以获取异步任务的结果。此函数会阻塞当前线程，直到异步操作完成。如果异步操作中发生了异常，<code>get()</code>函数会将异常重新抛出。</p>
+<p>⚠️ 注意：std::future::get()函数只能被调用一次。在调用get()之后，std::future对象将变为无效状态。</p>
+<p>🚧 如果需要多次访问结果，可以考虑使用std::shared_future。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br>&#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>    std::cerr &lt;&lt; <span class="hljs-string">&quot;Exception caught: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; std::endl;<br>&#125; <span class="hljs-built_in">catch</span> (...) &#123;<br>    std::cerr &lt;&lt; <span class="hljs-string">&quot;Unknown exception caught&quot;</span> &lt;&lt; std::endl;<br>&#125;<br><br>std::<span class="hljs-function">chrono::milliseconds <span class="hljs-title">timeout</span><span class="hljs-params">(<span class="hljs-number">100</span>)</span></span>;<br>std::future_status status = result_future.<span class="hljs-built_in">wait_for</span>(timeout);<br><br><span class="hljs-keyword">if</span> (status == std::future_status::ready) &#123;<br>    <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    std::cerr &lt;&lt; <span class="hljs-string">&quot;Timeout: the task is still running&quot;</span> &lt;&lt; std::endl;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="注意事项"><a class="markdownIt-Anchor" href="#注意事项"></a> 注意事项</h1>
+<p>在使用<code>std::future</code>时，需要注意以下几点：</p>
+<ol>
+<li><code>std::future::get()</code>函数只能被<strong>调用一次</strong>。调用get()之后，<code>std::future</code>对象将变为无效状态。如果需要多次访问结果，可以考虑使用<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/qq_41898196/article/details/129739091#std::shared_future">std::shared_future</a>。</li>
+<li><code>std::future</code>对象不可拷贝，但可以通过移动构造函数或移动赋值操作符进行转移。这意味着我们不能将std::future对象存储在容器中，除非使用<a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/qq_41898196/article/details/129739091#std::shared_future">std::shared_future</a>或指针包装。</li>
+<li>当使用<code>std::async</code>时，默认情况下，任务可能会在当前线程上下文中执行。这取决于库实现和系统资源。若要确保任务在新线程中执行，可以使用<code>std::launch::async</code>标志：</li>
+</ol>
+<blockquote>
+<p>std::future result_future = std::async(std::launch::async, long_running_task);</p>
+</blockquote>
+<ol>
+<li>如果std::future对象在析构时仍关联着一个有效的异步操作，且该操作尚未完成，析构函数会阻塞等待操作完成。在某些情况下，这可能导致程序死锁。为了避免这个问题，可以在析构std::future对象之前显式地调用wait()、wait_for()或wait_until()函数。</li>
+<li>虽然<code>std::future</code>在获取异步任务结果和线程同步方面非常有用，但它并不能解决所有并发问题。例如，<code>std::future</code>无法用于实现复杂的并发模式，如线程池、工作窃取等。对于这些高级并发需求，可能需要使用其他库或者自定义实现。</li>
+<li>使用<code>std::promise</code>和<code>std::future</code>时，需要确保在调用<code>get()</code>之前已经设置了对应的值，否则会导致未定义的行为。这可能需要对代码进行仔细的设计和调试，以确保正确的执行顺序。</li>
+<li><code>std::future</code>对象的生命周期需要仔细管理。如果<code>std::future</code>对象被提前销毁，那么关联的异步任务可能会变得不可访问。因此，需要确保在异步任务完成之前保持<code>std::future</code>对象的有效性。</li>
+<li>在某些情况下，使用<code>std::future</code>可能会导致性能下降。例如，当多个线程频繁地等待异步操作结果时，可能会导致线程阻塞和上下文切换开销。为了避免这个问题，可以考虑使用非阻塞的方式查询异步操作状态，如<code>std::future::wait_for()</code>和<code>std::future::wait_until()</code>函数。这样，我们可以在异步操作未完成时执行其他任务，提高程序的响应性和并发性能。</li>
+<li><code>std::future</code>并不适用于所有场景。例如，它不适用于需要处理多个输入或输出结果的任务，或者需要实现动态任务依赖关系的场景。在这些情况下，可能需要寻找其他并发和同步解决方案。</li>
+<li>虽然<code>std::future</code>提供了异常处理机制，但需要注意的是，一旦<code>std::future::get()</code>函数重新抛出异常，该异常需要在调用<code>get()</code>的线程中进行捕获和处理。这意味着需要在主线程和其他线程中设置适当的异常处理策略，以确保程序的稳定性和健壮性。</li>
+</ol>
+<h1 id="其他"><a class="markdownIt-Anchor" href="#其他"></a> 其他</h1>
+<h2 id="stdshared_future"><a class="markdownIt-Anchor" href="#stdshared_future"></a> std::shared_future</h2>
+<p><code>std::shared_future</code>是<code>std::future</code>的一个变体，允许多个线程共享同一个异步操作的结果。与<code>std::future</code>不同，<code>std::shared_future</code>对象可以被拷贝，因此可以将其存储在容器中或在多个线程之间传递。此外，<code>std::shared_future::get()</code>函数可以被多次调用，而不会使<code>std::shared_future</code>对象变为无效状态。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;thread&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print_result</span><span class="hljs-params">(std::shared_future&lt;<span class="hljs-type">int</span>&gt; result_future)</span> </span>&#123;<br>    <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::promise&lt;<span class="hljs-type">int</span>&gt; result_promise;<br>    std::shared_future&lt;<span class="hljs-type">int</span>&gt; result_future = result_promise.<span class="hljs-built_in">get_future</span>().<span class="hljs-built_in">share</span>();<br><br>    <span class="hljs-function">std::thread <span class="hljs-title">t1</span><span class="hljs-params">(print_result, result_future)</span></span>;<br>    <span class="hljs-function">std::thread <span class="hljs-title">t2</span><span class="hljs-params">(print_result, result_future)</span></span>;<br><br>    result_promise.<span class="hljs-built_in">set_value</span>(<span class="hljs-number">42</span>);<br><br>    t1.<span class="hljs-built_in">join</span>();<br>    t2.<span class="hljs-built_in">join</span>();<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<hr>
+<h2 id="stdfuture_status"><a class="markdownIt-Anchor" href="#stdfuture_status"></a> std::future_status</h2>
+<p><code>std::future_status</code>是一个枚举类型，表示异步操作的状态。它有三个可能的值：</p>
+<ul>
+<li><code>std::future_status::ready</code>：异步操作已完成，结果可用。</li>
+<li><code>std::future_status::timeout</code>：异步操作尚未完成，等待已超时。</li>
+<li><code>std::future_status::deferred</code>：异步操作已被延迟，尚未启动（仅当使用<code>std::launch::deferred</code>策略创建<code>std::future</code>对象时才可能出现）。</li>
+</ul>
+<p>我们可以使用<code>std::future::wait_for()</code>和<code>std::future::wait_until()</code>函数查询异步操作的状态，而无需阻塞当前线程。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;chrono&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">long_running_task</span><span class="hljs-params">()</span> </span>&#123;<br>    std::this_thread::<span class="hljs-built_in">sleep_for</span>(std::chrono::<span class="hljs-built_in">seconds</span>(<span class="hljs-number">3</span>));<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::future&lt;<span class="hljs-type">int</span>&gt; result_future = std::<span class="hljs-built_in">async</span>(std::launch::async, long_running_task);<br><br>    std::<span class="hljs-function">chrono::milliseconds <span class="hljs-title">timeout</span><span class="hljs-params">(<span class="hljs-number">1000</span>)</span></span>;<br>    std::future_status status = result_future.<span class="hljs-built_in">wait_for</span>(timeout);<br><br>    <span class="hljs-keyword">if</span> (status == std::future_status::ready) &#123;<br>        <span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        std::cerr &lt;&lt; <span class="hljs-string">&quot;Timeout: the task is still running&quot;</span> &lt;&lt; std::endl;<br>    &#125;<br>	<span class="hljs-comment">// 等待任务完成，以便正确获取结果</span><br>	<span class="hljs-type">int</span> result = result_future.<span class="hljs-built_in">get</span>();<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;Final result: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125; <br></code></pre></td></tr></table></figure>
+<p>在上面的示例中，我们使用了<code>std::future::wait_for()</code>函数来查询异步操作的状态。如果状态为<code>std::future_status::ready</code>，我们可以立即获取结果。否则，我们可以在等待期间执行其他任务，以提高程序的响应性和并发性能。最后，在退出<code>main</code>函数之前，我们会调用<code>result_future.get()</code>以确保正确获取异步操作的结果。</p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/CPP/" class="category-chain-item">CPP</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/CPP/std/" class="category-chain-item">std</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CPP-future/" class="print-no-link">#CPP/future</a>
+      
+        <a href="/tags/CPP-std/" class="print-no-link">#CPP/std</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【CPP】std::future</div>
+      <div>https://hodlyounger.github.io/2023/10/27/B_Code/CPP/std/【CPP】future/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/CPP/%E3%80%90CPP%E3%80%91using/" title="【CPP】using 用法整理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【CPP】using 用法整理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/CPP/STL/%E3%80%90STL%E3%80%91%E9%98%9F%E5%88%97%E5%92%8C%E6%A0%88%E7%9A%84%E4%BA%92%E7%9B%B8%E5%AE%9E%E7%8E%B0/" title="队列和栈的互相实现">
+                        <span class="hidden-mobile">队列和栈的互相实现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

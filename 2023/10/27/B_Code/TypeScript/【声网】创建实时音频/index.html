@@ -1,0 +1,825 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="[Toc]  快速上手  安装  1npm add @netless&#x2F;fastboard @netless&#x2F;window-manager white-web-sdk  创建实时音频  采集音视频相关  1. 获取摄像头列表  调用 getMicrophones 获取可用的摄像头列表 getMicrophones 方法会通过 Promise 异步返回一个 MediaDeviceInfo 对象的数组。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【声网】创建实时音频">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/B_Code/TypeScript/%E3%80%90%E5%A3%B0%E7%BD%91%E3%80%91%E5%88%9B%E5%BB%BA%E5%AE%9E%E6%97%B6%E9%9F%B3%E9%A2%91/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="[Toc]  快速上手  安装  1npm add @netless&#x2F;fastboard @netless&#x2F;window-manager white-web-sdk  创建实时音频  采集音视频相关  1. 获取摄像头列表  调用 getMicrophones 获取可用的摄像头列表 getMicrophones 方法会通过 Promise 异步返回一个 MediaDeviceInfo 对象的数组。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.344Z">
+<meta property="article:modified_time" content="2024-08-20T01:13:39.526Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="脚本">
+<meta property="article:tag" content="code&#x2F;TypeScript">
+<meta property="article:tag" content="fastboard">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【声网】创建实时音频 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【声网】创建实时音频"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-27 09:24" pubdate>
+          2023年10月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【声网】创建实时音频</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>[Toc]</p>
+<h1 id="快速上手"><a class="markdownIt-Anchor" href="#快速上手"></a> 快速上手</h1>
+<ol>
+<li>安装</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm add @netless/fastboard @netless/window-manager white-web-sdk<br></code></pre></td></tr></table></figure>
+<h1 id="创建实时音频"><a class="markdownIt-Anchor" href="#创建实时音频"></a> 创建实时音频</h1>
+<h2 id="采集音视频相关"><a class="markdownIt-Anchor" href="#采集音视频相关"></a> 采集音视频相关</h2>
+<h3 id="1-获取摄像头列表"><a class="markdownIt-Anchor" href="#1-获取摄像头列表"></a> 1. 获取摄像头列表</h3>
+<blockquote>
+<p>调用 <code>getMicrophones</code> 获取可用的摄像头列表</p>
+<p><code>getMicrophones</code> 方法会通过 Promise 异步返回一个 <code>MediaDeviceInfo</code> 对象的数组。<code>MediaDeviceInfo</code> 对象复用了 WebRTC API 中的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo">MediaDeviceInfo 对象</a>。因为是异步方法，你可以使用 then/catch (ES6) 或 async/await (ES7) 获取返回值。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 获取可用的麦克风设备列表。</span><br><span class="hljs-comment">// 调用时，如果浏览器还没有获得麦克风访问权限，会在界面上提示你是否允许浏览器访问麦克风。</span><br><span class="hljs-title class_">AgoraRTC</span>.<span class="hljs-title function_">getMicrophones</span>()<br>.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">deviceInfoArray</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">/* 返回 MediaDeviceInfo 数组对象之后的操作*/</span><br>&#125;)<br>.<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Failed to get microphones!&quot;</span>, e);<br>&#125;);<br></code></pre></td></tr></table></figure>
+<h3 id="2-获取摄像头设备信息"><a class="markdownIt-Anchor" href="#2-获取摄像头设备信息"></a> 2. 获取摄像头设备信息</h3>
+<p>在此教程中，我们在 HTML 中创建一个下拉菜单来供用户选择使用的摄像头设备。在用户界面上使用 <code>label</code> 属性显示设备信息。<code>deviceId</code> 属性用于保存设备 ID，用于后续的摄像头访问。</p>
+<blockquote>
+<p><code>label</code>，即设备标签，返回一个 DOMString，代表描述对应设备的标签。如果浏览器没有获取设备权限，则返回 <code>&quot;&quot;</code>。</p>
+</blockquote>
+<blockquote>
+<p><code>deviceId</code>，即设备 ID，返回一个 DOMString，代表对应设备。设备 ID 对于应用是唯一的，只要浏览器的 cookie 没有被清除，即使你开启了新的浏览器会话（session），设备 ID 也会保持不变。如果你清除了浏览器 cookie，则设备 ID 会重置。同理，如果你开启了浏览器隐私模式，对于同一个设备，每个浏览器会话的设备 ID 都是不同的。因此，建议每次对设备进行操作时重新获取设备 ID。</p>
+</blockquote>
+<p><strong>HTML</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>通过麦克风采集并在本地渲染音频<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">b</span>&gt;</span> 选择你要使用的麦克风 <span class="hljs-tag">&lt;/<span class="hljs-name">b</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">id</span> = <span class="hljs-string">&quot;microphoneList&quot;</span> <span class="hljs-attr">onchange</span> = <span class="hljs-string">&quot;getDeviceId()&quot;</span> &gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">option</span>&gt;</span> ---选择麦克风--- <span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>你选择设备的 deviceId 是：<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;deviceId&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><strong>JavaScript</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 定义设备 ID 与标签的映射</span><br><span class="hljs-keyword">let</span> dict = &#123;&#125;;<br><br><span class="hljs-comment">// 获取摄像头列表</span><br><span class="hljs-title class_">AgoraRTC</span>.<span class="hljs-title function_">getMicrophones</span>()<br>.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">deviceInfoArray</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> deviceInfo <span class="hljs-keyword">of</span> deviceInfoArray) &#123;<br>    <span class="hljs-keyword">let</span> option = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;option&quot;</span>);<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;microphoneList&quot;</span>).<span class="hljs-title function_">appendChild</span>(option);<br>    option.<span class="hljs-property">innerHTML</span> = deviceInfo.<span class="hljs-property">label</span>;<br>    dict[deviceInfo.<span class="hljs-property">label</span>] = deviceInfo.<span class="hljs-property">deviceId</span>;<br>    &#125;<br>&#125;)<br>.<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Failed to get microphones!&quot;</span>, e);<br>&#125;);<br><br><span class="hljs-comment">// 根据下拉菜单选择的设备标签，显示相应的设备 ID</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">getDeviceId</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">let</span> microphoneList = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;microphoneList&quot;</span>);<br>    <span class="hljs-keyword">let</span> deviceLabel = microphoneList.<span class="hljs-property">options</span>[microphoneList.<span class="hljs-property">selectedIndex</span>].<span class="hljs-property">text</span>;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;deviceId&quot;</span>).<span class="hljs-property">innerHTML</span> = dict[deviceLabel];<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="3-创建麦克风音频轨道并渲染"><a class="markdownIt-Anchor" href="#3-创建麦克风音频轨道并渲染"></a> 3. 创建麦克风音频轨道并渲染</h3>
+<p>调用 <code>createMicrophoneAudioTrack</code> 创建麦克风音频轨道并调用成员方法 <code>play</code> 通过系统默认扬声器对视频进行渲染。这里轨道的概念和 WebRTC 中的 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MediaStreamTrack">track</a> 相似。一个轨道代表一路特定的视频源或音频源。声网 SDK 将不同来源的音视频轨道进行抽象，定义了摄像头视频轨道、屏幕采集视频轨道及自定义源视频轨道等。</p>
+<blockquote>
+<p>这个步骤只是为了演示麦克风音频轨道的渲染。实际开发通话应用时，本地不需要播放本地麦克风采集的音频。</p>
+</blockquote>
+<ol>
+<li>
+<p><strong>HTML</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>通过麦克风采集并在本地渲染音频<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">b</span>&gt;</span> 选择你要使用的麦克风 <span class="hljs-tag">&lt;/<span class="hljs-name">b</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;microphoneList&quot;</span> <span class="hljs-attr">onchange</span>=<span class="hljs-string">&quot;getDeviceId()&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">option</span>&gt;</span> ---选择麦克风--- <span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>你选择设备的 deviceId 是：<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;deviceId&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><strong>CSS</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">body</span> &#123;<span class="hljs-attribute">font-family</span>: system-ui;<span class="hljs-attribute">background</span>: <span class="hljs-number">#f06d06</span>;<span class="hljs-attribute">color</span>: white;<span class="hljs-attribute">text-align</span>: center;&#125;<br><span class="hljs-selector-tag">div</span> &#123;<span class="hljs-attribute">height</span>: <span class="hljs-number">200px</span>;<span class="hljs-attribute">width</span>: <span class="hljs-number">50%</span>;&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>JavaScript</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 全局变量</span><br><span class="hljs-keyword">let</span> dict = &#123;&#125;; <span class="hljs-comment">// 使用 dict 映射设备标签和设备 ID</span><br><span class="hljs-keyword">let</span> selectedDeviceId = <span class="hljs-string">&quot;&quot;</span>; <span class="hljs-comment">// 下选框选择的设备对应的 ID</span><br><span class="hljs-keyword">let</span> microphoneAudioTrack = <span class="hljs-literal">null</span>; <span class="hljs-comment">// 麦克风音频轨道对象</span><br><br><span class="hljs-comment">// 获取本地麦克风列表</span><br><span class="hljs-title class_">AgoraRTC</span>.<span class="hljs-title function_">getMicrophones</span>()<br>.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">deviceInfoArray</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> deviceInfo <span class="hljs-keyword">of</span> deviceInfoArray) &#123;<br>    <span class="hljs-keyword">let</span> option = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;option&quot;</span>);<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;microphoneList&quot;</span>).<span class="hljs-title function_">appendChild</span>(option);<br>    option.<span class="hljs-property">innerHTML</span> = deviceInfo.<span class="hljs-property">label</span>;<br>    dict[deviceInfo.<span class="hljs-property">label</span>] = deviceInfo.<span class="hljs-property">deviceId</span>;<br>    &#125;<br>&#125;)<br>.<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Failed to get microphones!&quot;</span>, e);<br>&#125;);<br><br><span class="hljs-comment">// 创建麦克风音频轨道</span><br><span class="hljs-title class_">AgoraRTC</span>.<span class="hljs-title function_">createMicrophoneAudioTrack</span>()<br>.<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">microphoneAudioTrack</span>) =&gt;</span> &#123;<br>    <span class="hljs-comment">// 渲染音频。SDK 使用系统默认的扬声器播放声音。</span><br>    microphoneAudioTrack.<span class="hljs-title function_">play</span>();<br>&#125;)<br>.<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> &#123;<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Failed to play audio!&quot;</span>, e);<br>&#125;);<br><br><span class="hljs-comment">// 根据选择的设备标签，返回对应的设备 ID 并传给麦克风音频轨道</span><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">getDeviceId</span>(<span class="hljs-params"></span>) &#123;<br><span class="hljs-keyword">let</span> microphoneList = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;microphoneList&quot;</span>);<br><span class="hljs-keyword">let</span> deviceLabel = microphoneList.<span class="hljs-property">options</span>[microphoneList.<span class="hljs-property">selectedIndex</span>].<span class="hljs-property">text</span>;<br>selectedDeviceId = dict[deviceLabel];<br><span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;deviceId&quot;</span>).<span class="hljs-property">innerHTML</span> = selectedDeviceId;<br><br><span class="hljs-keyword">if</span> (microphoneAudioTrack != <span class="hljs-literal">null</span>) &#123;<br>    microphoneAudioTrack.<span class="hljs-title function_">setDevice</span>(selectedDeviceId);<br>&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="音频回调"><a class="markdownIt-Anchor" href="#音频回调"></a> #音频回调</h3>
+<blockquote>
+<p>setAudioFrameCallback</p>
+<ul>
+<li>
+<p>setAudioFrameCallback(audioFrameCallback: <em>null</em> | <em>function</em>, frameSize?: <em>undefined</em> | <em>number</em>): <em>void</em></p>
+</li>
+<li></li>
+</ul>
+<p>设置原始音频数据（PCM）回调。</p>
+<p>设置成功后，SDK 会不断地将远端音频轨道的音频帧以 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer">AudioBuffer</a> 的形式通过回调返回。</p>
+<blockquote>
+<p>你可以通过 <code>frameSize</code> 来设置每次回调中音频帧的大小。该设置也会影响回调的间隔，<code>frameSize</code> 越大，每次回调的音频数据越多，回调间隔越长。</p>
+</blockquote>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript">track.<span class="hljs-title function_">setAudioFrameCallback</span>(<span class="hljs-function">(<span class="hljs-params">buffer</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> channel = <span class="hljs-number">0</span>; channel &lt; buffer.<span class="hljs-property">numberOfChannels</span>; channel += <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">// Float32Array with PCM data</span><br>    <span class="hljs-keyword">const</span> currentChannelData = buffer.<span class="hljs-title function_">getChannelData</span>(channel);<br>    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;PCM data in channel&quot;</span>, channel, currentChannelData);<br>  &#125;<br>&#125;, <span class="hljs-number">2048</span>);<br><br><span class="hljs-comment">// ....</span><br><span class="hljs-comment">// Stop getting the raw audio data</span><br>track.<span class="hljs-title function_">setAudioFrameCallback</span>(<span class="hljs-literal">null</span>);<br></code></pre></td></tr></table></figure>
+<h4 id="音频回调解码"><a class="markdownIt-Anchor" href="#音频回调解码"></a> 音频回调解码</h4>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer">AudioBuffer - Web API 接口参考 | MDN</a></p>
+<p>AudioBuffer 接口表示存在内存里的一段短小的音频资源，利用<a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/BaseAudioContext/decodeAudioData"><code>AudioContext.decodeAudioData()</code></a>方法从一个音频文件构建，或者利用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/BaseAudioContext/createBuffer"><code>AudioContext.createBuffer()</code></a>从原始数据构建。把音频放入 AudioBuffer 后，可以传入到一个 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBufferSourceNode"><code>AudioBufferSourceNode</code></a>进行播放。</p>
+<p>这些类型对象被设计来控制小音频片段，往往短于 45 秒。对于更长的声音，通过 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MediaElementAudioSourceNode"><code>MediaElementAudioSourceNode</code></a>来实现更为合适。缓存区（buffer）包含以下数据：不间断的 IEEE754 32 位线性 PCM，从-1 到 1 的范围额定，就是说，32 位的浮点缓存区的每个样本在-1.0 到 1.0 之间。如果<a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer"><code>AudioBuffer</code></a>有不同的频道，他们通常被保存在独立的缓存区。</p>
+<h5 id="1-属性"><a class="markdownIt-Anchor" href="#1-属性"></a> 1) <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer#%E5%B1%9E%E6%80%A7">属性</a></h5>
+<ul>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/sampleRate"><code>AudioBuffer.sampleRate</code></a> 只读</p>
+<p>存储在缓存区的 PCM 数据的采样率：浮点数，单位为 sample/s。</p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/length"><code>AudioBuffer.length</code></a> 只读</p>
+<p>返回存储在缓存区的 PCM 数据的采样帧数：整形。</p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/duration"><code>AudioBuffer.duration</code></a> 只读</p>
+<p>返回存储在缓存区的 PCM 数据的时长：双精度型（单位为秒）。</p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/numberOfChannels"><code>AudioBuffer.numberOfChannels</code></a> 只读</p>
+<p>返回存储在缓存区的 PCM 数据的通道数：整形。</p>
+</li>
+</ul>
+<h5 id="2-方法"><a class="markdownIt-Anchor" href="#2-方法"></a> 2) <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer#%E6%96%B9%E6%B3%95">方法</a></h5>
+<ul>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/getChannelData"><code>AudioBuffer.getChannelData()</code></a></p>
+<p>返回一个 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Float32Array"><code>Float32Array</code></a>，包含了带有频道的 PCM 数据，由频道参数定义（有 0 代表第一个频道）</p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer/copyFromChannel"><code>AudioBuffer.copyFromChannel()</code></a></p>
+<p>从 AudioBuffer 的指定频道复制到数组终端。</p>
+</li>
+<li>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer/copyToChannel"><code>AudioBuffer.copyToChannel()</code> (en-US)</a></p>
+<p>复制样品到原数组的 AudioBuffer 的指定频道</p>
+</li>
+</ul>
+<h5 id="3-例子"><a class="markdownIt-Anchor" href="#3-例子"></a> 3) <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer#%E4%BE%8B%E5%AD%90">例子</a></h5>
+<p>以下的例子展示了如何构建一个 AudioBuffer 以及随机用白噪音填充。你可以在 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/mdn/webaudio-examples/tree/master/audio-buffer">audio-buffer demo</a>库发现完整的源代码；一个<a target="_blank" rel="external nofollow noopener noreferrer" href="https://mdn.github.io/webaudio-examples/audio-buffer/">running live</a> 的版本也可获得。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// Stereo</span><br><span class="hljs-keyword">var</span> channels = <span class="hljs-number">2</span>;<br><br><span class="hljs-comment">// Create an empty two second stereo buffer at the</span><br><span class="hljs-comment">// sample rate of the AudioContext</span><br><span class="hljs-keyword">var</span> frameCount = audioCtx.<span class="hljs-property">sampleRate</span> * <span class="hljs-number">2.0</span>;<br><span class="hljs-keyword">var</span> myArrayBuffer = audioCtx.<span class="hljs-title function_">createBuffer</span>(channels, frameCount, audioCtx.<span class="hljs-property">sampleRate</span>);<br><br>button.<span class="hljs-property">onclick</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-comment">// Fill the buffer with white noise;</span><br>  <span class="hljs-comment">// just random values between -1.0 and 1.0</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> channel = <span class="hljs-number">0</span>; channel &lt; channels; channel++) &#123;<br>    <span class="hljs-comment">// This gives us the actual array that contains the data</span><br>    <span class="hljs-keyword">var</span> nowBuffering = myArrayBuffer.<span class="hljs-title function_">getChannelData</span>(channel);<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; frameCount; i++) &#123;<br>      <span class="hljs-comment">// Math.random() is in [0; 1.0]</span><br>      <span class="hljs-comment">// audio needs to be in [-1.0; 1.0]</span><br>      nowBuffering[i] = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">2</span> - <span class="hljs-number">1</span>;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// Get an AudioBufferSourceNode.</span><br>  <span class="hljs-comment">// This is the AudioNode to use when we want to play an AudioBuffer</span><br>  <span class="hljs-keyword">var</span> source = audioCtx.<span class="hljs-title function_">createBufferSource</span>();<br><br>  <span class="hljs-comment">// set the buffer in the AudioBufferSourceNode</span><br>  source.<span class="hljs-property">buffer</span> = myArrayBuffer;<br><br>  <span class="hljs-comment">// connect the AudioBufferSourceNode to the</span><br>  <span class="hljs-comment">// destination so we can hear the sound</span><br>  source.<span class="hljs-title function_">connect</span>(audioCtx.<span class="hljs-property">destination</span>);<br><br>  <span class="hljs-comment">// start the source playing</span><br>  source.<span class="hljs-title function_">start</span>();<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<h5 id="4-规格参数"><a class="markdownIt-Anchor" href="#4-规格参数"></a> 4) <a target="_blank" rel="external nofollow noopener noreferrer" href="https://developer.mozilla.org/zh-CN/docs/Web/API/AudioBuffer#%E8%A7%84%E6%A0%BC%E5%8F%82%E6%95%B0">规格参数</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a target="_blank" rel="external nofollow noopener noreferrer" href="https://webaudio.github.io/web-audio-api/#AudioBuffer">Web Audio API # AudioBuffer</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="录音对象属性"><a class="markdownIt-Anchor" href="#录音对象属性"></a> 录音对象属性</h2>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API%20Reference/web_ng/interfaces/microphoneaudiotrackinitconfig.html">Agora Web API Reference - 语音通话 - 文档中心 - 声网Agora</a></p>
+<h2 id="音频编码"><a class="markdownIt-Anchor" href="#音频编码"></a> 音频编码</h2>
+<h3 id="audioencoderconfigurationpreset"><a class="markdownIt-Anchor" href="#audioencoderconfigurationpreset"></a> AudioEncoderConfigurationPreset</h3>
+<p>AudioEncoderConfigurationPreset: <em>keyof typeof AUDIO_ENCODER_CONFIG_SETTINGS</em></p>
+<p>SDK 预设的 [AudioEncoderConfiguration](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API">https://docs.agora.io/cn/Voice/API</a> Reference/web_ng/interfaces/audioencoderconfiguration.html) 配置。</p>
+<p>你可以在以下方法中传入预设值来控制本地音频的编码配置：</p>
+<ul>
+<li>[AgoraRTC.createCustomAudioTrack](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API">https://docs.agora.io/cn/Voice/API</a> Reference/web_ng/interfaces/iagorartc.html#createcustomaudiotrack)</li>
+<li>[AgoraRTC.createMicrophoneAudioTrack](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API">https://docs.agora.io/cn/Voice/API</a> Reference/web_ng/interfaces/iagorartc.html#createmicrophoneaudiotrack)</li>
+<li>[AgoraRTC.createBufferSourceAudioTrack](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API">https://docs.agora.io/cn/Voice/API</a> Reference/web_ng/interfaces/iagorartc.html#createbuffersourceaudiotrack)</li>
+</ul>
+<p>下表列出了 SDK 所有内置的音频属性配置，SDK 默认使用 <code>&quot;music_standard&quot;</code>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">音频属性</th>
+<th style="text-align:left">配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>&quot;speech_low_quality&quot;</code></td>
+<td style="text-align:left">16 kHz 采样率，单声道，编码码率约 24 Kbps</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&quot;speech_standard&quot;</code></td>
+<td style="text-align:left">32 kHz 采样率，单声道，编码码率约 24 Kbps</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&quot;music_standard&quot;</code></td>
+<td style="text-align:left">48 kHz 采样率，单声道，编码码率约 40 Kbps</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&quot;standard_stereo&quot;</code></td>
+<td style="text-align:left">48 kHz 采样率，双声道，编码码率约 64 Kbps</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&quot;high_quality&quot;</code></td>
+<td style="text-align:left">48 kHz 采样率，单声道， 编码码率约 128 Kbps</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>&quot;high_quality_stereo&quot;</code></td>
+<td style="text-align:left">48 kHz 采样率，双声道，编码码率约 192 Kbps</td>
+</tr>
+</tbody>
+</table>
+<h1 id="本地音频轨道"><a class="markdownIt-Anchor" href="#本地音频轨道"></a> 本地音频轨道</h1>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.agora.io/cn/Voice/API%20Reference/web_ng/interfaces/ilocalaudiotrack.html">Agora Web API Reference - 语音通话 - 文档中心 - 声网Agora</a></p>
+<h1 id="对接"><a class="markdownIt-Anchor" href="#对接"></a> 对接</h1>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.agora.io/cn/community/blog-119-category-24195">基于声网 Web SDK 实现视频通话场景 - 专栏 - 声网 Agora RTC 开发者社区</a></p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/TypeScript/" class="category-chain-item">TypeScript</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%84%9A%E6%9C%AC/" class="print-no-link">#脚本</a>
+      
+        <a href="/tags/code-TypeScript/" class="print-no-link">#code/TypeScript</a>
+      
+        <a href="/tags/fastboard/" class="print-no-link">#fastboard</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【声网】创建实时音频</div>
+      <div>https://hodlyounger.github.io/2023/10/27/B_Code/TypeScript/【声网】创建实时音频/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/TypeScript/%E3%80%90%E5%A3%B0%E7%BD%91%E3%80%91%E9%9F%B3%E9%A2%91%E4%BC%A0%E8%BE%93/" title="【声网】音频房间创建及连接说明">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【声网】音频房间创建及连接说明</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/Qt/%E9%BC%A0%E6%A0%87%E9%94%AE%E7%9B%98/%E3%80%90Qt%E3%80%91%E9%94%AE%E7%9B%98%E9%95%BF%E6%8C%89/" title="【Qt】键盘长按">
+                        <span class="hidden-mobile">【Qt】键盘长按</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

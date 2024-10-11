@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：一个完整的 WFP 驱动程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【驱动】一个完整的wfp驱动">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84wfp%E9%A9%B1%E5%8A%A8/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：一个完整的 WFP 驱动程序">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.088Z">
+<meta property="article:modified_time" content="2024-08-20T01:33:27.251Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="驱动">
+<meta property="article:tag" content="windows&#x2F;驱动">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【驱动】一个完整的wfp驱动 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【驱动】一个完整的wfp驱动"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-27 09:24" pubdate>
+          2023年10月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【驱动】一个完整的wfp驱动</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：一个完整的 WFP 驱动程序</p>
+</blockquote>
+<span id="more"></span>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ntddk.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(push)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(disable:4201)       <span class="hljs-comment">// unnamed struct/union</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(disable:4995)</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fwpsk.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> <span class="hljs-keyword">warning</span>(pop)</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ndis.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fwpmk.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;limits.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ws2ipdef.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;in6addr.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ip2string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;strsafe.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> INITGUID</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;guiddef.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> bool BOOLEAN</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> true TRUE </span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> false FALSE</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> DEVICE_NAME <span class="hljs-string">L&quot;\\Device\\WFP_TEST&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> DEVICE_DOSNAME <span class="hljs-string">L&quot;\\DosDevices\\WFP_TEST&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> kmalloc(_s) ExAllocatePoolWithTag(NonPagedPool, _s, <span class="hljs-string">&#x27;SYSQ&#x27;</span>)</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> kfree(_p) ExFreePool(_p)</span><br><br>DEFINE_GUID <span class="hljs-comment">// &#123;6812FC83-7D3E-499a-A012-55E0D85F348B&#125;</span><br>(<br>GUID_ALE_AUTH_CONNECT_CALLOUT_V4,<br><span class="hljs-number">0x6812fc83</span>,<br><span class="hljs-number">0x7d3e</span>,<br><span class="hljs-number">0x499a</span>,<br><span class="hljs-number">0xa0</span>, <span class="hljs-number">0x12</span>, <span class="hljs-number">0x55</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xd8</span>, <span class="hljs-number">0x5f</span>, <span class="hljs-number">0x34</span>, <span class="hljs-number">0x8b</span><br>);<br><br>PDEVICE_OBJECT  gDevObj;<br><br>HANDLE	gEngineHandle = <span class="hljs-number">0</span>;<br>HANDLE	gInjectHandle = <span class="hljs-number">0</span>;<br><span class="hljs-comment">//CalloutId</span><br>UINT32	gAleConnectCalloutId = <span class="hljs-number">0</span>;<br><span class="hljs-comment">//FilterId</span><br>UINT64	gAleConnectFilterId = <span class="hljs-number">0</span>;<br><br><span class="hljs-comment">/*</span><br><span class="hljs-comment">以下两个回调函数没啥用</span><br><span class="hljs-comment">*/</span><br><span class="hljs-function">NTSTATUS NTAPI <span class="hljs-title">WallNotifyFn</span></span><br><span class="hljs-function"><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">IN FWPS_CALLOUT_NOTIFY_TYPE  notifyType,</span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> GUID  *filterKey,</span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> FWPS_FILTER  *filter</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">KdPrint</span>((<span class="hljs-string">&quot;NotifyFn\n&quot;</span>));<br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br><br><span class="hljs-function">VOID NTAPI <span class="hljs-title">WallFlowDeleteFn</span></span><br><span class="hljs-function"><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">IN UINT16  layerId,</span></span><br><span class="hljs-params"><span class="hljs-function">IN UINT32  calloutId,</span></span><br><span class="hljs-params"><span class="hljs-function">IN UINT64  flowContext</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">KdPrint</span>((<span class="hljs-string">&quot;FlowDeleteFn\n&quot;</span>));<br>	<span class="hljs-keyword">return</span>;<br>&#125;<br><br><span class="hljs-comment">//协议代码转为名称</span><br><span class="hljs-function"><span class="hljs-type">char</span>* <span class="hljs-title">ProtocolIdToName</span><span class="hljs-params">(UINT16 id)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">char</span> *ProtocolName = <span class="hljs-built_in">kmalloc</span>(<span class="hljs-number">16</span>);<br>	<span class="hljs-built_in">RtlZeroMemory</span>(ProtocolName,<span class="hljs-number">16</span>);<br>	<span class="hljs-keyword">switch</span> (id)<br>	&#123;<br>	<span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">4</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;ICMP&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">4</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;IGMP&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">3</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;TCP&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">case</span> <span class="hljs-number">17</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">3</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;UDP&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">case</span> <span class="hljs-number">27</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">3</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;RDP&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	<span class="hljs-keyword">default</span>:<br>		<span class="hljs-built_in">strcpy_s</span>(ProtocolName, <span class="hljs-number">7</span> + <span class="hljs-number">1</span>, <span class="hljs-string">&quot;UNKNOWN&quot;</span>);<br>		<span class="hljs-keyword">break</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> ProtocolName;<br>&#125;<br><br><span class="hljs-comment">//最重要的过滤函数</span><br><span class="hljs-function"><span class="hljs-type">void</span> NTAPI <span class="hljs-title">WallALEConnectClassify</span></span><br><span class="hljs-function"><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> FWPS_INCOMING_VALUES0* inFixedValues,<span class="hljs-comment">//此结构包含筛选层上每个数据字段的值  </span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//incomingValue[index] =&gt; index的值是枚举类型FWPS_FIELDS_ALE_AUTH_CONNECT_V4,</span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//枚举名字说明了该值的类型例如:FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_LOCAL_ADDRESS 就是本地IP	</span></span></span><br><span class="hljs-params"><span class="hljs-function"></span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> FWPS_INCOMING_METADATA_VALUES0* inMetaValues,<span class="hljs-comment">//此结构包含筛选层上每个元数据字段的值。</span></span></span><br><span class="hljs-params"><span class="hljs-function">IN OUT <span class="hljs-type">void</span>* layerData,<span class="hljs-comment">//指向结构的指针，该结构描述正在过滤的层上的原始数据。此参数可能为NULL，</span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//这取决于所筛选的层和调用classfyFn0标注函数的条件。</span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//对于流层，此参数指向FWPS_stream_Callout_IO_PACKET 0结构。</span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//对于所有其他层，如果NetBufferList结构不是NULL，则该参数指向该结构。</span></span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> <span class="hljs-type">void</span>* classifyContext,<span class="hljs-comment">//由过滤器引擎指向与标注驱动程序关联的上下文数据的指针 没有找出该指针类型</span></span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> FWPS_FILTER* filter,<span class="hljs-comment">//指向FWPS_FILTER1结构的指针。此结构描述指定筛选器操作的标注的筛选器。</span></span></span><br><span class="hljs-params"><span class="hljs-function">IN UINT64 flowContext,<span class="hljs-comment">//包含与数据流关联的上下文的UINT 64类型变量。如果没有与数据流相关联的上下文，则此参数为零。</span></span></span><br><span class="hljs-params"><span class="hljs-function"><span class="hljs-comment">//如果在不支持数据流的过滤层将标注添加到筛选引擎中，则clamfyFn1回调函数应忽略此参数</span></span></span><br><span class="hljs-params"><span class="hljs-function">OUT FWPS_CLASSIFY_OUT* classifyOut <span class="hljs-comment">//指向FWPS_GARGY_OUT 0结构的指针，该结构接收clamfyFn1回调函数返回给调用方的任何数据</span></span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span><br><span class="hljs-function"></span>&#123;<br><br>	<span class="hljs-type">char</span> *ProtocolName = <span class="hljs-literal">NULL</span>;<br>	DWORD LocalIp, RemoteIP;<br>	PWCHAR Path = <span class="hljs-literal">NULL</span>;<br>	<br><br>	<span class="hljs-keyword">do</span><br>	&#123;<br>		Path = <span class="hljs-built_in">ExAllocatePoolWithTag</span>(NonPagedPool, inMetaValues-&gt;processPath-&gt;size+<span class="hljs-number">2</span>, <span class="hljs-string">&#x27;NET&#x27;</span>);<br>		<span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span>==Path)<br>		&#123;<br>			<span class="hljs-keyword">break</span>;<br>		&#125;<br>		<br>		<span class="hljs-built_in">RtlZeroMemory</span>(Path, inMetaValues-&gt;processPath-&gt;size + <span class="hljs-number">2</span>);<br>		<span class="hljs-built_in">wcscpy_s</span>(Path, inMetaValues-&gt;processPath-&gt;size / <span class="hljs-number">2</span>, (WCHAR*)inMetaValues-&gt;processPath-&gt;data);<br><br>		LocalIp = inFixedValues-&gt;incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_LOCAL_ADDRESS].value.uint32;<br>		RemoteIP = inFixedValues-&gt;incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_REMOTE_ADDRESS].value.uint32;<br>		ProtocolName = <span class="hljs-built_in">ProtocolIdToName</span>(inFixedValues-&gt;incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_PROTOCOL].value.uint16);<br><br>	<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;进程ID : %d&quot;</span>, (DWORD)(inMetaValues-&gt;processId));<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;Path=%S&quot;</span>, Path);<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;本地地址=%u.%u.%u.%u &quot;</span>, (LocalIp &gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0xFF</span>, (LocalIp &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>, (LocalIp &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>, LocalIp &amp; <span class="hljs-number">0xFF</span>);<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;端口%d\n&quot;</span>, inFixedValues-&gt;incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_LOCAL_PORT].value.uint16);<br><br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;远程地址=%u.%u.%u.%u &quot;</span>, (RemoteIP &gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0xFF</span>, (RemoteIP &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>, (RemoteIP &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>, RemoteIP &amp; <span class="hljs-number">0xFF</span>);<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;端口%d\n&quot;</span>, inFixedValues-&gt;incomingValue[FWPS_FIELD_ALE_AUTH_CONNECT_V4_IP_REMOTE_PORT].value.uint16);<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;协议名: %s\n&quot;</span>, ProtocolName);<br>	<br><br>		<span class="hljs-built_in">kfree</span>(ProtocolName);<br>	&#125; <span class="hljs-keyword">while</span> (<span class="hljs-number">0</span>);<br><br>	<br>	<span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> != Path)<br>	&#123;<br>		<span class="hljs-built_in">ExFreePoolWithTag</span>(Path, <span class="hljs-string">&#x27;NET&#x27;</span>);<br>	&#125;<br>	classifyOut-&gt;actionType = FWP_ACTION_PERMIT;<span class="hljs-comment">//允许连接</span><br><br>	<span class="hljs-keyword">return</span>;<br>&#125;<br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">RegisterCalloutForLayer</span></span><br><span class="hljs-function"><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> GUID* layerKey,</span></span><br><span class="hljs-params"><span class="hljs-function">IN <span class="hljs-type">const</span> GUID* calloutKey,</span></span><br><span class="hljs-params"><span class="hljs-function">IN FWPS_CALLOUT_CLASSIFY_FN classifyFn,</span></span><br><span class="hljs-params"><span class="hljs-function">IN FWPS_CALLOUT_NOTIFY_FN notifyFn,</span></span><br><span class="hljs-params"><span class="hljs-function">IN FWPS_CALLOUT_FLOW_DELETE_NOTIFY_FN flowDeleteNotifyFn,</span></span><br><span class="hljs-params"><span class="hljs-function">OUT UINT32* calloutId,   <span class="hljs-comment">//注册callout时返回此ID</span></span></span><br><span class="hljs-params"><span class="hljs-function">OUT UINT64* filterId</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span><br><span class="hljs-function"></span>&#123;<br>	NTSTATUS        status = STATUS_SUCCESS;<br>	FWPS_CALLOUT    sCallout = &#123; <span class="hljs-number">0</span> &#125;;<br>	FWPM_FILTER     mFilter = &#123; <span class="hljs-number">0</span> &#125;;<br>	FWPM_FILTER_CONDITION mFilter_condition[<span class="hljs-number">1</span>] = &#123; <span class="hljs-number">0</span> &#125;;<br>	FWPM_CALLOUT    mCallout = &#123; <span class="hljs-number">0</span> &#125;;<br>	FWPM_DISPLAY_DATA mDispData = &#123; <span class="hljs-number">0</span> &#125;;<br>	BOOLEAN         bCalloutRegistered = FALSE;<br><br>	<span class="hljs-comment">//这里未指定sCallout.flags</span><br>	sCallout.calloutKey = *calloutKey;   <span class="hljs-comment">//一个唯一的GUID值,用来标记此callout</span><br>	sCallout.classifyFn = classifyFn;    <span class="hljs-comment">//每当回调处理网络数据时，过滤器引擎将调用此函数,处理网络数据在这个回调函数里面处理.</span><br>	sCallout.flowDeleteFn = flowDeleteNotifyFn;  <span class="hljs-comment">//每当终止由回调处理的数据流时，筛选器引擎将调用此函数</span><br>	sCallout.notifyFn = notifyFn;				 <span class="hljs-comment">//卸载callout时,会调用这个回调</span><br><br>	<span class="hljs-comment">//要使用哪个设备对象注册</span><br>	status = <span class="hljs-built_in">FwpsCalloutRegister</span>(gDevObj,	 <span class="hljs-comment">//自己创建的设备对象</span><br>		&amp;sCallout, <span class="hljs-comment">//该结构体有用的是指定了classifyFn回调,处理连接时的数据就会用到这个回调函数.</span><br>		calloutId  <span class="hljs-comment">//返回的calloutID ,取消注册callout会用到这个值</span><br>		);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br><br>	bCalloutRegistered = TRUE;<br><br><br>	mDispData.name = <span class="hljs-string">L&quot;WFP TEST&quot;</span>;        <span class="hljs-comment">//可选的名字</span><br>	mDispData.description = <span class="hljs-string">L&quot;yxp&#x27;s WFP TEST&quot;</span>;   <span class="hljs-comment">//可选的描述</span><br>	<span class="hljs-comment">//你感兴趣的内容</span><br>	mCallout.applicableLayer = *layerKey;  <span class="hljs-comment">//过滤层标识符   此过滤层允许授权对传出tcp连接的连接请求，</span><br>	<span class="hljs-comment">//以及基于发送的第一个数据包授权传出非tcp通信量</span><br><br>	<span class="hljs-comment">//你感兴趣的内容的GUID</span><br>	mCallout.calloutKey = *calloutKey;   <span class="hljs-comment">//该GUID值必须与FwpsCalloutRegister注册时的GUID值相同.</span><br>	mCallout.displayData = mDispData;<br><br>	<span class="hljs-comment">//向过滤引擎添加callout</span><br>	status = <span class="hljs-built_in">FwpmCalloutAdd</span>(gEngineHandle,<br>		&amp;mCallout,  <span class="hljs-comment">//flags没有设置</span><br>		<span class="hljs-literal">NULL</span>,  <span class="hljs-comment">//安全描述符  可以为NULL</span><br>		<span class="hljs-literal">NULL</span>); <span class="hljs-comment">//返回一个ID  与FwpsCalloutRegister函数返回的ID是相同的.</span><br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br><br><br>	<span class="hljs-comment">//FWPM_action0结构指定在所有筛选条件都为真时所采取的操作</span><br>	mFilter.action.calloutKey = *calloutKey;<br>	<span class="hljs-comment">//交给callout处理  由callout来决定返回阻止(block)或者允许(permit)</span><br>	mFilter.action.type = FWP_ACTION_CALLOUT_TERMINATING;<br><br>	<span class="hljs-comment">//描述</span><br>	mFilter.displayData.name = <span class="hljs-string">L&quot;WFP TEST&quot;</span>;<br>	mFilter.displayData.description = <span class="hljs-string">L&quot;yxp&#x27;s WFP TEST&quot;</span>;<br><br><br>	mFilter.layerKey = *layerKey;	<span class="hljs-comment">//这个值和FwpmCalloutAdd里面使用的值一样 过滤层标识符   此过滤层允许授权对传出tcp连接的连接请求，</span><br>	<span class="hljs-comment">//以及基于发送的第一个数据包授权传出非tcp通信量  </span><br><br>	<span class="hljs-comment">//过滤条件数</span><br>	mFilter.numFilterConditions = <span class="hljs-number">0</span>;<br>	<span class="hljs-comment">//过滤条件</span><br>	mFilter.filterCondition = mFilter_condition;<br><br>	mFilter.subLayerKey = FWPM_SUBLAYER_UNIVERSAL;  <span class="hljs-comment">//此子层承载所有未分配给任何其他子层的筛选器</span><br><br>	<span class="hljs-comment">//BFE将根据过滤条件自动分配权重</span><br>	mFilter.weight.type = FWP_EMPTY;<br><br>	<span class="hljs-comment">//添加一个新的过滤器对象到系统中</span><br>	status = <span class="hljs-built_in">FwpmFilterAdd</span>(gEngineHandle, &amp;mFilter, <span class="hljs-literal">NULL</span>, filterId);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br>exit:<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-keyword">if</span> (bCalloutRegistered)<br>		&#123;<br>			<span class="hljs-built_in">FwpsCalloutUnregisterById</span>(*calloutId);<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> status;<br>&#125;<br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">WallRegisterCallouts</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	NTSTATUS    status = STATUS_SUCCESS;<br>	BOOLEAN     bInTransaction = FALSE;<br>	BOOLEAN     bEngineOpened = FALSE;<br>	FWPM_SESSION session = &#123; <span class="hljs-number">0</span> &#125;;<br><br>	<span class="hljs-comment">//置此标志时，会话结束时将自动删除在会话期间添加的任何对象</span><br>	session.flags = FWPM_SESSION_FLAG_DYNAMIC;<br><br>	<span class="hljs-comment">//开启WFP引擎</span><br>	status = <span class="hljs-built_in">FwpmEngineOpen</span>(<span class="hljs-literal">NULL</span>,<br>		RPC_C_AUTHN_WINNT,<br>		<span class="hljs-literal">NULL</span>,<br>		&amp;session,<br>		&amp;gEngineHandle);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br>	bEngineOpened = TRUE;<br>	<span class="hljs-comment">// 在当前会话中开始显式事务</span><br>	status = <span class="hljs-built_in">FwpmTransactionBegin</span>(gEngineHandle, <span class="hljs-number">0</span>);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br>	bInTransaction = TRUE;<br>	<span class="hljs-comment">//注册回调函数</span><br>	status = <span class="hljs-built_in">RegisterCalloutForLayer</span>(<br>		&amp;FWPM_LAYER_ALE_AUTH_CONNECT_V4,  <span class="hljs-comment">//此过滤层允许授权对传出tcp连接的连接请求，</span><br>		<span class="hljs-comment">//以及基于发送的第一个数据包授权传出非tcp通信量</span><br>		&amp;GUID_ALE_AUTH_CONNECT_CALLOUT_V4,<br>		WallALEConnectClassify,<br>		WallNotifyFn,<br>		WallFlowDeleteFn,<br>		&amp;gAleConnectCalloutId,<br>		&amp;gAleConnectFilterId);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;RegisterCalloutForLayer失败!\n&quot;</span>);<br>		<span class="hljs-keyword">goto</span> exit;<br>	&#125;<br>	<span class="hljs-comment">//确认所有内容并提交，让回调函数正式发挥作用</span><br>	status = <span class="hljs-built_in">FwpmTransactionCommit</span>(gEngineHandle);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>		<span class="hljs-keyword">goto</span> exit;<br>	bInTransaction = FALSE;<br>exit:<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-keyword">if</span> (bInTransaction)<br>		&#123;<br>			<span class="hljs-built_in">FwpmTransactionAbort</span>(gEngineHandle);<br>		&#125;<br>		<span class="hljs-keyword">if</span> (bEngineOpened)<br>		&#123;<br>			<span class="hljs-built_in">FwpmEngineClose</span>(gEngineHandle);<br>			gEngineHandle = <span class="hljs-number">0</span>;<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> status;<br>&#125;<br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">WallUnRegisterCallouts</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">if</span> (gEngineHandle != <span class="hljs-number">0</span>)<br>	&#123;<br>		<span class="hljs-comment">//删除FilterId</span><br>		<span class="hljs-built_in">FwpmFilterDeleteById</span>(gEngineHandle, gAleConnectFilterId);<br>		<span class="hljs-comment">//删除CalloutId</span><br>		<span class="hljs-built_in">FwpmCalloutDeleteById</span>(gEngineHandle, gAleConnectCalloutId);<br>		<span class="hljs-comment">//清空FilterId</span><br>		gAleConnectFilterId = <span class="hljs-number">0</span>;<br>		<span class="hljs-comment">//反注册CalloutId</span><br>		<span class="hljs-built_in">FwpsCalloutUnregisterById</span>(gAleConnectCalloutId);<br>		<span class="hljs-comment">//清空CalloutId</span><br>		gAleConnectCalloutId = <span class="hljs-number">0</span>;<br>		<span class="hljs-comment">//关闭引擎</span><br>		<span class="hljs-built_in">FwpmEngineClose</span>(gEngineHandle);<br>		gEngineHandle = <span class="hljs-number">0</span>;<br>	&#125;<br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br><br><span class="hljs-function">VOID <span class="hljs-title">DriverUnload</span><span class="hljs-params">(PDRIVER_OBJECT driverObject)</span></span><br><span class="hljs-function"></span>&#123;<br>	NTSTATUS status;<br>	UNICODE_STRING  deviceDosName = &#123; <span class="hljs-number">0</span> &#125;;<br>	status = <span class="hljs-built_in">WallUnRegisterCallouts</span>();<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;WallUnRegisterCallouts失败\n&quot;</span>);<br>		<span class="hljs-keyword">return</span>;<br>	&#125;<br>	<span class="hljs-built_in">RtlInitUnicodeString</span>(&amp;deviceDosName, DEVICE_DOSNAME);<br>	<span class="hljs-built_in">IoDeleteSymbolicLink</span>(&amp;deviceDosName);<br>	<span class="hljs-keyword">if</span> (gDevObj)<br>	&#123;<br>		<span class="hljs-built_in">IoDeleteDevice</span>(gDevObj);<br>		gDevObj = <span class="hljs-literal">NULL</span>;<br>	&#125;<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;驱动卸载成功\n&quot;</span>);<br>&#125;<br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">DriverEntry</span><span class="hljs-params">(PDRIVER_OBJECT driverObject, PUNICODE_STRING registryPath)</span></span><br><span class="hljs-function"></span>&#123;<br>	UNICODE_STRING  deviceName = &#123; <span class="hljs-number">0</span> &#125;;<br>	UNICODE_STRING  deviceDosName = &#123; <span class="hljs-number">0</span> &#125;;<br>	NTSTATUS status = STATUS_SUCCESS;<br>	driverObject-&gt;DriverUnload = DriverUnload;<br>	<span class="hljs-built_in">RtlInitUnicodeString</span>(&amp;deviceName, DEVICE_NAME);<br>	status = <span class="hljs-built_in">IoCreateDevice</span>(driverObject,<br>		<span class="hljs-number">0</span>,<br>		&amp;deviceName,<br>		FILE_DEVICE_NETWORK,<br>		<span class="hljs-number">0</span>,<br>		FALSE,<br>		&amp;gDevObj);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;创建设备对象失败\n&quot;</span>);<br>		<span class="hljs-keyword">return</span> STATUS_UNSUCCESSFUL;<br>	&#125;<br>	<span class="hljs-built_in">RtlInitUnicodeString</span>(&amp;deviceDosName, DEVICE_DOSNAME);<br>	status = <span class="hljs-built_in">IoCreateSymbolicLink</span>(&amp;deviceDosName, &amp;deviceName);<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;创建符号链接失败\n&quot;</span>);<br>		<span class="hljs-keyword">return</span> STATUS_UNSUCCESSFUL;<br>	&#125;<br>	status = <span class="hljs-built_in">WallRegisterCallouts</span>();<br>	<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span>(status))<br>	&#123;<br>		<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;WallRegisterCallouts 失败!\n&quot;</span>);<br>		<span class="hljs-keyword">return</span> STATUS_UNSUCCESSFUL;<br>	&#125;<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;过滤驱动加载成功\n&quot;</span>);<br>	<span class="hljs-keyword">return</span> status;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/%E9%A9%B1%E5%8A%A8/" class="category-chain-item">驱动</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%A9%B1%E5%8A%A8/" class="print-no-link">#驱动</a>
+      
+        <a href="/tags/windows-%E9%A9%B1%E5%8A%A8/" class="print-no-link">#windows/驱动</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【驱动】一个完整的wfp驱动</div>
+      <div>https://hodlyounger.github.io/2023/10/27/A_OS/Windows/驱动/【驱动】一个完整的wfp驱动/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%B8%B8%E8%A7%81%E5%AE%89%E8%A3%85%E9%94%99%E8%AF%AF/" title="【驱动】常见安装错误">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【驱动】常见安装错误</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E4%BF%9D%E6%8A%A4%E8%BF%9B%E7%A8%8B/" title="【驱动】保护进程">
+                        <span class="hidden-mobile">【驱动】保护进程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

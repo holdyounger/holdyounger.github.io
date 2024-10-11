@@ -1,0 +1,747 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="开源库介绍 devbean&#x2F;QtCipherSqlitePlugin: A Qt plugin for cipher SQLite. (github.com) 该加密库是基于 SQLite 和 wxSQLite3 源代码开发的的一个加密 SQLite 的Qt插件。总结就是，可以使用该插件对 SQLite 的数据库进行加密。  开始  在开始之前，可以去仓库的 wiki 界面找到相应的开始教程，以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt插件——使用 QtCipherSqlitePlugin 对数据库进行加密">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/B_Code/%E6%95%B0%E6%8D%AE%E5%BA%93/%E3%80%90SQLite%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="开源库介绍 devbean&#x2F;QtCipherSqlitePlugin: A Qt plugin for cipher SQLite. (github.com) 该加密库是基于 SQLite 和 wxSQLite3 源代码开发的的一个加密 SQLite 的Qt插件。总结就是，可以使用该插件对 SQLite 的数据库进行加密。  开始  在开始之前，可以去仓库的 wiki 界面找到相应的开始教程，以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/10/27/B_Code/%E6%95%B0%E6%8D%AE%E5%BA%93/%E3%80%90SQLite%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86/IMG-20240814183050015.png">
+<meta property="article:published_time" content="2023-10-27T01:24:02.358Z">
+<meta property="article:modified_time" content="2024-08-15T09:19:56.991Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="加密">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2023/10/27/B_Code/%E6%95%B0%E6%8D%AE%E5%BA%93/%E3%80%90SQLite%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86/IMG-20240814183050015.png">
+  
+  
+  
+  <title>Qt插件——使用 QtCipherSqlitePlugin 对数据库进行加密 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt插件——使用 QtCipherSqlitePlugin 对数据库进行加密"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-27 09:24" pubdate>
+          2023年10月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Qt插件——使用 QtCipherSqlitePlugin 对数据库进行加密</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="开源库介绍"><a class="markdownIt-Anchor" href="#开源库介绍"></a> 开源库介绍</h1>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/devbean/QtCipherSqlitePlugin">devbean/QtCipherSqlitePlugin: A Qt plugin for cipher SQLite. (github.com)</a></p>
+<p>该加密库是基于 SQLite 和 wxSQLite3 源代码开发的的一个加密 SQLite 的Qt插件。总结就是，可以使用该插件对 SQLite 的数据库进行加密。</p>
+<h1 id="开始"><a class="markdownIt-Anchor" href="#开始"></a> 开始</h1>
+<ol>
+<li>在开始之前，可以去仓库的 wiki 界面找到相应的开始教程，以下操作参考 wiki 。</li>
+</ol>
+<blockquote>
+<ol>
+<li>
+<p>拉取该库到本地后，打开 <code>QtCipherSqlitePlugin.pro</code>，就能看到如下图所示的工程结构。</p>
+<img src="/2023/10/27/B_Code/%E6%95%B0%E6%8D%AE%E5%BA%93/%E3%80%90SQLite%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86/IMG-20240814183050015.png" srcset="/img/loading.gif" lazyload class title="image-20220508222820701">
+<ol>
+<li><code>demo</code> 目录是一个如何使用该加密插件的工程，涉及数据库的加密、打开、创建等</li>
+<li><code>sqlitecipher</code>是我们编译 <code>dll</code> 的工程文件</li>
+<li>为 <code>Qt</code> 的插件测试工程，里边有关于该加密库的详细使用方式介绍。</li>
+</ol>
+</li>
+<li>
+<p>不论是使用上述测试工程中的哪个，我们第一步都需要编译插件的动态库出来使用。</p>
+<ol>
+<li>单独<code>sqlitecipher.pro</code></li>
+<li>为 <code>sqlitecipher.pro</code> 调整 <code>Qt kits</code> ，笔者的环境为 <code>MSVC 2015 32 bit</code>, <code>Release</code>模式</li>
+<li>右击项目文件，点击部署即可</li>
+<li>到工程所在的文件夹，就能看到 <code>build-sqlitecipher-Desktop_Qt_5_9_9_MSVC2015_32bit-Release</code> 的文件夹，在 <code>.\plugins\sqldrivers</code>下就能看到生成的动态库文件，动态库 <code>sqlitecipher.dll</code></li>
+<li>拷贝该文件到你的 <code>Qt</code> 目录下 <code>kits</code> 对应的文件夹当中。如笔者的为 <code>$Qt安装目录$\5.9.9\msvc2015\plugins\sqldrivers</code></li>
+</ol>
+</li>
+</ol>
+</blockquote>
+<h2 id="使用"><a class="markdownIt-Anchor" href="#使用"></a> 使用</h2>
+<p>到这一步，我们就需要查看一下动态库是否可用了。使用 <code>Qt</code> 的 <code>#include &lt;QSqlDatabase&gt;</code>中的方法即可：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">qDebug</span>() &lt;&lt; QSqlDatabase::<span class="hljs-built_in">drivers</span>();<br></code></pre></td></tr></table></figure>
+<p>执行上述代码，如果加载成功的话，我们会在 <code>qDebug()</code> 的输出中看到相应的数据库名。</p>
+<p><code>(&quot;QSQLITE&quot;, &quot;QMYSQL&quot;, &quot;QMYSQL3&quot;, &quot;QODBC&quot;, &quot;QODBC3&quot;, &quot;QPSQL&quot;, &quot;QPSQL7&quot;, </code><strong><code>&quot;SQLITECIPHER&quot;)</code></strong></p>
+<p>以上代码，在 <code>demo</code> 所在工程中都能找到对应的代码，不用读者编写。</p>
+<blockquote>
+<p>另外，使用 <code>SQLITECIPHER</code> 数据库也可以打开普通未加密的 <code>QSQLITE</code> 创建的数据库。</p>
+</blockquote>
+<h2 id="加密"><a class="markdownIt-Anchor" href="#加密"></a> 加密</h2>
+<p>加密数据库的使用也简单，区别于普通数据库的方式是需要设置连接属性。以该开源库为例，其主要通过三个连接属性去决定是否设置密码。主要涉及到的关键字为以下三个：</p>
+<ul>
+<li>Added by QtCipherSqlitePlugin
+<ul>
+<li>QSQLITE_CREATE_KEY</li>
+<li>QSQLITE_UPDATE_KEY</li>
+<li>QSQLITE_REMOVE_KEY</li>
+</ul>
+</li>
+</ul>
+<p>还有其他几个继承自 <code>SqlitePlugin</code> 的关键字，用法与 <code>SqlitePlugin</code> 打开数据库设置一致。</p>
+<ul>
+<li>Provided by Qt SqlitePlugin
+<ul>
+<li>QSQLITE_BUSY_TIMEOUT</li>
+<li>QSQLITE_OPEN_READONLY</li>
+<li>QSQLITE_OPEN_URI</li>
+<li>QSQLITE_ENABLE_SHARED_CACHE</li>
+</ul>
+</li>
+</ul>
+<p>以下代码演示三种关键字的用法。</p>
+<h3 id="创建数据库密码-qsqlite_create_key"><a class="markdownIt-Anchor" href="#创建数据库密码-qsqlite_create_key"></a> 创建数据库密码 <code>QSQLITE_CREATE_KEY</code></h3>
+<p>如果输出中有 <code>SQLITECIPHER</code> 的名字，那么恭喜你，插件没有问题！<br>
+为没有加密的数据库增加密码<br>
+Qt 默认提供的 SQLite 插件是没有加密功能的。新版本的 <code>QtCipherSqlitePlugin</code> 支持为原本没有加密的数据库增加密码，使用方法如下：<br>
+C++</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">QSqlDatabase dbconn = QSqlDatabase::<span class="hljs-built_in">addDatabase</span>(<span class="hljs-string">&quot;SQLITECIPHER&quot;</span>);<br>dbconn.<span class="hljs-built_in">setDatabaseName</span>(<span class="hljs-string">&quot;test.db&quot;</span>);<br>dbconn.<span class="hljs-built_in">setPassword</span>(<span class="hljs-string">&quot;test&quot;</span>);<br>dbconn.<span class="hljs-built_in">setConnectOptions</span>(<span class="hljs-string">&quot;QSQLITE_CREATE_KEY&quot;</span>); <br><span class="hljs-keyword">if</span> (!dbconn.<span class="hljs-built_in">open</span>()) &#123;    <br>    <span class="hljs-built_in">qDebug</span>() &lt;&lt; <span class="hljs-string">&quot;Can not open connection: &quot;</span> &lt;&lt; dbconn.<span class="hljs-built_in">lastError</span>().<span class="hljs-built_in">driverText</span>();    <br>    <span class="hljs-built_in">exit</span>(CONNECTION_FAILED);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面的代码，我们使用 <code>test.db</code> 数据库，将密码设置为 test，同时指定连接选项为 <code>QSQLITE_CREATE_KEY</code> 。此时，调用 open() 函数之后，<code>QtCipherSqlitePlugin</code> 将使用改密码为这个数据库进行加密。</p>
+<h3 id="删除数据库密码-qsqlite_remove_key"><a class="markdownIt-Anchor" href="#删除数据库密码-qsqlite_remove_key"></a> 删除数据库密码 <code>QSQLITE_REMOVE_KEY</code></h3>
+<p><code>QtCipherSqlitePlugin</code> 可以删除数据库密码，此时需要提供原密码，并使用连接选项 <code>QSQLITE_REMOVE_KEY</code> ，如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">QSqlDatabase dbconn = QSqlDatabase::<span class="hljs-built_in">addDatabase</span>(<span class="hljs-string">&quot;SQLITECIPHER&quot;</span>);<br>dbconn.<span class="hljs-built_in">setDatabaseName</span>(<span class="hljs-string">&quot;test.db&quot;</span>);<br>dbconn.<span class="hljs-built_in">setPassword</span>(<span class="hljs-string">&quot;test&quot;</span>);<br>dbconn.<span class="hljs-built_in">setConnectOptions</span>(<span class="hljs-string">&quot;QSQLITE_REMOVE_KEY&quot;</span>);<br><span class="hljs-keyword">if</span> (!dbconn.<span class="hljs-built_in">open</span>()) &#123;   <br>    <span class="hljs-built_in">qDebug</span>() &lt;&lt; <span class="hljs-string">&quot;Can not open connection: &quot;</span> &lt;&lt; dbconn.<span class="hljs-built_in">lastError</span>().<span class="hljs-built_in">driverText</span>();   <br>    <span class="hljs-built_in">exit</span>(CONNECTION_FAILED);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="更新数据库密码-qsqlite_update_key"><a class="markdownIt-Anchor" href="#更新数据库密码-qsqlite_update_key"></a> 更新数据库密码 <code>QSQLITE_UPDATE_KEY</code></h3>
+<p><code>QtCipherSqlitePlugin</code> 可以更新数据库原有密码，需要设置原密码，并且使用连接选项 <code>QSQLITE_UPDATE_KEY</code> 设置新密码，具体代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">QSqlDatabase dbconn = QSqlDatabase::<span class="hljs-built_in">addDatabase</span>(<span class="hljs-string">&quot;SQLITECIPHER&quot;</span>);<br>dbconn.<span class="hljs-built_in">setDatabaseName</span>(<span class="hljs-string">&quot;test.db&quot;</span>);<br>dbconn.<span class="hljs-built_in">setPassword</span>(<span class="hljs-string">&quot;test&quot;</span>);<br>dbconn.<span class="hljs-built_in">setConnectOptions</span>(<span class="hljs-string">&quot;QSQLITE_UPDATE_KEY=newtest&quot;</span>); <br><span class="hljs-keyword">if</span> (!dbconn.<span class="hljs-built_in">open</span>()) &#123;    <br>    <span class="hljs-built_in">qDebug</span>() &lt;&lt; <span class="hljs-string">&quot;Can not open connection: &quot;</span> &lt;&lt; dbconn.<span class="hljs-built_in">lastError</span>().<span class="hljs-built_in">driverText</span>();   <br>    <span class="hljs-built_in">exit</span>(CONNECTION_FAILED);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如果原密码不正确，<code>QtCipherSqlitePlugin</code> 会直接返回错误。</p>
+<p>如果新密码设置为空，例如 <code>QSQLITE_UPDATE_KEY=</code> ，则作用等同于删除密码。同样的，设置 <code>setConnectOptions(&quot;&quot;)</code> 也相当于清除设置的属性。</p>
+<h1 id="补充"><a class="markdownIt-Anchor" href="#补充"></a> 补充</h1>
+<p>以下代码是我个人想写一个通用的设置属性的接口，后来思考一番不太现实以示众多读者，不要重蹈覆辙。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">setDBConfig</span><span class="hljs-params">(QSqlDatabase* dbconn, QMap&lt;ENUM_SQLKEY, QString&gt; qMapCfg)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> it : qMapCfg.<span class="hljs-built_in">toStdMap</span>())<br>	&#123;<br>		<span class="hljs-keyword">if</span> (it.first &lt;= QSQLITE_REMOVE_KEY)<br>		&#123;<br>			dbconn-&gt;<span class="hljs-built_in">setPassword</span>(it.second);<br>			dbconn-&gt;<span class="hljs-built_in">setConnectOptions</span>(<span class="hljs-built_in">GETOBJNAME</span>(it.first));<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (it.first == QSQLITE_UPDATE_KEY)<br>		&#123;<br>			dbconn-&gt;<span class="hljs-built_in">setPassword</span>(it.second);<br>			dbconn-&gt;<span class="hljs-built_in">setConnectOptions</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;%1=%2&quot;</span>).<span class="hljs-built_in">arg</span>().<span class="hljs-built_in">arg</span>());<br>		&#125;<br>		<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/" class="print-no-link">#Qt</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="print-no-link">#数据库</a>
+      
+        <a href="/tags/%E5%8A%A0%E5%AF%86/" class="print-no-link">#加密</a>
+      
+        <a href="/tags/Database/" class="print-no-link">#Database</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt插件——使用 QtCipherSqlitePlugin 对数据库进行加密</div>
+      <div>https://hodlyounger.github.io/2023/10/27/B_Code/数据库/【SQLite】数据库加密/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/%E3%80%90%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%91%E5%8C%B9%E9%85%8D%E4%B8%8D%E7%AD%89%E4%BA%8E/" title="【正则表达式】匹配不等于">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【正则表达式】匹配不等于</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/%E6%95%B0%E6%8D%AE%E5%BA%93/MYSQL/%E3%80%90MYSQL%E3%80%91%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="【MYSQL】数据类型">
+                        <span class="hidden-mobile">【MYSQL】数据类型</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

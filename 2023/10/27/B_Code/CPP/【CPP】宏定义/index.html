@@ -1,0 +1,741 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值 1、把Ascii字符转16进制 1234567891011121314151617181920212223&#x2F;***************************函数名:Ascii2Hex功能描述:把Ascii字符转16进制参数：Ascii字符返回：16进制***************************&#x2F;unsigne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【CPP】各种宏定义用法整理">
+<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/B_Code/CPP/%E3%80%90CPP%E3%80%91%E5%AE%8F%E5%AE%9A%E4%B9%89/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值 1、把Ascii字符转16进制 1234567891011121314151617181920212223&#x2F;***************************函数名:Ascii2Hex功能描述:把Ascii字符转16进制参数：Ascii字符返回：16进制***************************&#x2F;unsigne">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-27T01:24:02.109Z">
+<meta property="article:modified_time" content="2024-08-17T12:24:00.519Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Code&#x2F;宏定义">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【CPP】各种宏定义用法整理 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【CPP】各种宏定义用法整理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-27 09:24" pubdate>
+          2023年10月27日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【CPP】各种宏定义用法整理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="c语言ascii字符-16进制和bcd码值互转各种好用的宏定义取值"><a class="markdownIt-Anchor" href="#c语言ascii字符-16进制和bcd码值互转各种好用的宏定义取值"></a> C语言ASCII字符、16进制和BCD码值互转，各种好用的宏定义取值</h1>
+<p><strong>1、把Ascii字符转16进制</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/***************************</span><br><span class="hljs-comment">函数名:Ascii2Hex</span><br><span class="hljs-comment">功能描述:把Ascii字符转16进制</span><br><span class="hljs-comment">参数：Ascii字符</span><br><span class="hljs-comment">返回：16进制</span><br><span class="hljs-comment">***************************/</span><br><span class="hljs-function"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> <span class="hljs-title">Ascii2Hex</span><span class="hljs-params">( <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> bAscii )</span>		</span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> bHex = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>( ( bAscii &gt;= <span class="hljs-number">0</span> ) &amp;&amp; ( bChar &lt;= <span class="hljs-number">9</span> ) )<br>    &#123;<br>        bHex = bAscii + <span class="hljs-number">0x30</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( ( bAscii &gt;= <span class="hljs-number">10</span> ) &amp;&amp; ( bAscii &lt;= <span class="hljs-number">15</span> ) )<br>    &#123;<br>        bHex = bAscii + <span class="hljs-number">0x37</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>        bHex = <span class="hljs-number">0xff</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> bHex;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>2、把16进制转Ascii字符</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/***************************</span><br><span class="hljs-comment">函数名:Hex2Ascii</span><br><span class="hljs-comment">功能描述:把16进制转Ascii字符</span><br><span class="hljs-comment">参数：16进制</span><br><span class="hljs-comment">返回：Ascii字符</span><br><span class="hljs-comment">***************************/</span><br><span class="hljs-function"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> <span class="hljs-title">Hex2Ascii</span><span class="hljs-params">( <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> bHex )</span>		</span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> bAscii = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span>( ( bHex &gt;= <span class="hljs-string">&#x27;0&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="hljs-string">&#x27;9&#x27;</span> ) )<br>    &#123;<br>        bAscii =  bHex - <span class="hljs-string">&#x27;0&#x27;</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( ( bHex &gt;= <span class="hljs-string">&#x27;A&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="hljs-string">&#x27;F&#x27;</span> ) )<br>    &#123;<br>        bAscii = bHex - <span class="hljs-string">&#x27;7&#x27;</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( ( bHex &gt;= <span class="hljs-string">&#x27;a&#x27;</span> ) &amp;&amp; ( bHex &lt;= <span class="hljs-string">&#x27;f&#x27;</span> ) )<br>    &#123;<br>        bAscii = bHex - <span class="hljs-number">0x57</span>;<br>    &#125;<br>	<span class="hljs-keyword">else</span><br>	&#123;<br>		bAscii = <span class="hljs-number">0xff</span>;<br>	&#125;<br>    <span class="hljs-keyword">return</span> bAscii;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>3、把16进制转BCD值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/***************************</span><br><span class="hljs-comment">函数名:Hex2Bcd</span><br><span class="hljs-comment">功能描述:把16进制转BCD值</span><br><span class="hljs-comment">参数：16进制值</span><br><span class="hljs-comment">返回：BCD值</span><br><span class="hljs-comment">***************************/</span><br><span class="hljs-function">u_8 <span class="hljs-title">Hex2Bcd</span><span class="hljs-params">( u_8 HexCode )</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span>( ( HexCode % <span class="hljs-number">10</span> ) + ( HexCode / <span class="hljs-number">10</span> * <span class="hljs-number">16</span> ) );<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>4、把BCD值转2进制</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/***************************</span><br><span class="hljs-comment">函数名:Bcd2Bin</span><br><span class="hljs-comment">功能描述:把BCD值转2进制</span><br><span class="hljs-comment">参数：BCD值</span><br><span class="hljs-comment">返回：2进制值</span><br><span class="hljs-comment">***************************/</span><br><span class="hljs-function">u_8 <span class="hljs-title">Bcd2Bin</span><span class="hljs-params">( u_8 BcdCode )</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span>( ( ( ( BcdCode &gt;&gt; <span class="hljs-number">4</span> ) &amp; <span class="hljs-number">0x0F</span> ) * <span class="hljs-number">10</span> ) + ( BcdCode &amp; <span class="hljs-number">0x0F</span> ));  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>5、把2进制转BCD值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/***************************</span><br><span class="hljs-comment">函数名:Bin2BCD</span><br><span class="hljs-comment">功能描述:把2进制转BCD值</span><br><span class="hljs-comment">参数：2进制值</span><br><span class="hljs-comment">返回：BCD值</span><br><span class="hljs-comment">***************************/</span><br><span class="hljs-function">u_8 <span class="hljs-title">Bin2BCD</span><span class="hljs-params">( u_8 BinCode )</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span>( ( ( (BinCode)/<span class="hljs-number">10</span> ) &lt;&lt; <span class="hljs-number">4</span> ) + ( (BinCode) %<span class="hljs-number">10</span> ));  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>6、把x值的第i位置为1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/********把x值的第i位置为1*************/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> X_SETBIT( x , i )       ( (x) |= ( 0x1 &lt;&lt; (i) )) </span><br></code></pre></td></tr></table></figure>
+<p><strong>7、把x值的第i位清为0</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/**********把x值的第i位清为0**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> X_CLRBIT( x , i )       ( (x) &amp;= ( ~( 0x01 &lt;&lt; (i) )))</span><br></code></pre></td></tr></table></figure>
+<p><strong>8、判断x值的第i位是否为1</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********判断x值的第i位是否为1**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> X_CHKBIT( x , i )       ( ((x) &gt;&gt; (i) ) &amp; 0x01 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>9、x,y值中的最小值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********x,y值中的最小值**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> X_MIN( x ,y )           (((x)&gt;(y))?(y):(x))</span><br></code></pre></td></tr></table></figure>
+<p><strong>10、x,y值中的最大值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********x,y值中的最大值**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> X_MAX( x ,y )           (((x)&gt;(y))?(x):(y))</span><br></code></pre></td></tr></table></figure>
+<p><strong>11、取i值的低8位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********取i值的低8位**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> GET_4_BYTE(i)    (u_8)( ( (i) &amp; 0xFF ) &gt;&gt; 0 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>12、取i值的8-16位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********取i值的8-16位**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> GET_3_BYTE(i)    (u_8)( ( (i) &amp; 0xFF00 ) &gt;&gt; 8 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>13、取i值的16-24位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********取i值的16-24位**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> GET_2_BYTE(i)    (u_8)( ( (i) &amp; 0xFF0000 ) &gt;&gt; 16 ) </span><br></code></pre></td></tr></table></figure>
+<p><strong>14、取i值的24-32位</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********取i值的24-32位**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> GET_1_BYTE(i)    (u_8)( ( (i) &amp; 0xFF000000 ) &gt;&gt; 24 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>15、4个字节为int型变量</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********4个字节为int型变量**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BYTE_TO_INT( byte,byte1,byte2,byte3 )    ( (byte&lt;&lt;24) | (byte1 &lt;&lt; 16) | (byte2 &lt;&lt; 8) | byte3 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>16、2个字节为short型变量</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********2个字节为short型变量**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> BYTE_TO_SHORT( byte ,byte1)       ( (byte&lt;&lt;8)  | byte1 )</span><br></code></pre></td></tr></table></figure>
+<p><strong>17、int型变量为4个字节</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********int型变量为4个字节**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> INT_TO_BYTE( Val,byte )      do&#123; (byte)[0] = ((Val)&gt;&gt;24)&amp;0xff;\</span><br><span class="hljs-meta">                                            (byte)[1] = ((Val)&gt;&gt;16)&amp;0xff;\</span><br><span class="hljs-meta">                                            (byte)[2] = ((Val)&gt;&gt;8)&amp;0xff;\</span><br><span class="hljs-meta">                                            (byte)[3] = ((Val))&amp;0xff;\</span><br><span class="hljs-meta">                                        &#125;while(0)</span><br></code></pre></td></tr></table></figure>
+<p><strong>18、short型变量为2个字节</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********short型变量为2个字节**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SHORT_TO_BYTE( Val ,byte)     do&#123; (byte)[0] = ((Val)&gt;&gt;8)&amp;0xff;\</span><br><span class="hljs-meta">                                             (byte)[1] = (Val)&amp;0xff;\</span><br><span class="hljs-meta">                                        &#125;while(0)</span><br></code></pre></td></tr></table></figure>
+<p><strong>19、标准时间time转换字符串输出</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********标准时间time转换字符串输出**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> TIME_2_STR(t, str) do&#123; tm_t tmtime;\</span><br><span class="hljs-meta">         gmtime_r( (time_t *)&amp;t,&amp;tmtime );\</span><br><span class="hljs-meta">         sprintf(str,<span class="hljs-string">&quot;%04d-%02d-%02d %02d:%02d:%02d&quot;</span>,1900 + tmtime.tm_year, tmtime.tm_mon + 1, \</span><br><span class="hljs-meta">                          tmtime.tm_mday,tmtime.tm_hour, tmtime.tm_min, tmtime.tm_sec);\</span><br><span class="hljs-meta">                             &#125;while(0)  </span><br></code></pre></td></tr></table></figure>
+<p><strong>20、IP值转换IP字符串输出</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">/*********IP值转换IP字符串输出**********/</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> IPADDR_2_STR(lIp, str) do&#123; u_8 ipaddr[4];\</span><br><span class="hljs-meta">     memcpy (&amp;(ipaddr[0]), &amp;(lIp), 4);\                                                 </span><br>     <span class="hljs-built_in">sprintf</span>(str,<span class="hljs-string">&quot;%03d.%03d.%03d.%03d&quot;</span>,ipaddr[<span class="hljs-number">0</span>],ipaddr[<span class="hljs-number">1</span>],ipaddr[<span class="hljs-number">2</span>],ipaddr[<span class="hljs-number">3</span>]);\<br>                                  &#125;<span class="hljs-keyword">while</span>(<span class="hljs-number">0</span>)   <br></code></pre></td></tr></table></figure>
+<p>一、字符串化操作符#</p>
+<ol>
+<li>
+<p><code>#</code> 的功能：将#后面的宏参数转化成字符串。</p>
+</li>
+<li>
+<p>使用条件：只能用于有传入参数的宏定义中，且#必须置于宏定义体中的参数名前。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-comment">// s是宏参数</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> Str(s) #s    <span class="hljs-comment">//功能：使用Str(s)将s转化为字符串</span></span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-built_in">Str</span>(HelloWorld));<br>    <span class="hljs-keyword">return</span>;<br>&#125;<br><span class="hljs-comment">//输出：HelloWorld</span><br></code></pre></td></tr></table></figure>
+<p>3.对空格的处理</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> example1(instr) #instr</span><br><br>stringstr=<span class="hljs-built_in">example1</span>(abc)； 将会展成：string str=<span class="hljs-string">&quot;abc&quot;</span>；<br></code></pre></td></tr></table></figure>
+<pre><code class="hljs">    🥝 a、忽略传入参数名前面和后面的空格。
+</code></pre>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">如：<span class="hljs-attribute">str</span>=example1( abc )； 将会被扩展成 <span class="hljs-attribute">str</span>=<span class="hljs-string">&quot;abc&quot;</span>；<br></code></pre></td></tr></table></figure>
+<pre><code class="hljs">    🥝 b、当传入参数名间存在空格时，编译器将自动连接各个子字符串，用每个子字符串中只一个空格连接，忽略多余一个空格。
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">如：str=<span class="hljs-built_in">exapme1</span>( abc    def ); 将会被扩展成 str=<span class="hljs-string">&quot;abc def&quot;</span>；<br></code></pre></td></tr></table></figure>
+<ol start="4">
+<li>宏定义作为宏参数，不展开，仍然作为字符串字面信息输出。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;limits.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> STR(s)     #s </span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-comment">// INT_MAX是某个文件中定义的宏，</span><br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;int max: %s\n&quot;</span>,  <span class="hljs-built_in">STR</span>(INT_MAX)); <span class="hljs-comment">// 输出int max: INT_MAX</span><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>二、符号连接操作符 ##</p>
+<ol>
+<li>
+<p><code>##</code> 的功能: 将前后两个标识符连接形成一个标识符。</p>
+</li>
+<li>
+<p>使用条件：只能用于有传入参数的宏定义中，且##必须置于宏定义体中的参数名前。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> Var(x) var##x</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">Var</span><span class="hljs-params">(<span class="hljs-number">1</span>)</span></span>=<span class="hljs-number">1</span>,<span class="hljs-built_in">Var</span>(<span class="hljs-number">2</span>)=<span class="hljs-number">2</span>,<span class="hljs-built_in">Var</span>(<span class="hljs-number">3</span>)=<span class="hljs-number">3</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;var1=%d\n&quot;</span>,var1);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;var2=%d\n&quot;</span>,var2);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;var3=%d\n&quot;</span>,var3);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>3.注意</p>
+<p>a、当用##连接形参时，##前后的空格可有可无。</p>
+<p>如：#define exampleNum(n) num ## n 相当于 #define exampleNum(n) num##n<br>
+b、连接后的实际参数名，必须为实际存在的参数名或是编译器已知的宏定义。连接之后只是组成了一个参数名，并没有定义，因此要求这个参数名需要是已经存在或者说已经被定义了的参数或宏定义。</p>
+<p>c、当宏参数是另一个宏时，凡宏定义中存在#或##的地方，宏参数不会再展开。</p>
+<p>（ 只有当前宏生效, 参数里的宏！不会生效 ！）</p>
+<pre><code class="hljs">    ① 宏定义不存在’#‘和’##'的情况
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> TOW      (2) </span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MUL(a,b) (a*b) </span><br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d*%d=%d/n&quot;</span>, TOW, TOW, <span class="hljs-built_in">MUL</span>(TOW,TOW)); <br>这行的宏会被展开为： <br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d*%d=%d/n&quot;</span>, (<span class="hljs-number">2</span>), (<span class="hljs-number">2</span>), ((<span class="hljs-number">2</span>)*(<span class="hljs-number">2</span>))); <br>MUL里的参数TOW会被展开为(<span class="hljs-number">2</span>). <br></code></pre></td></tr></table></figure>
+<pre><code class="hljs">    ② 宏定义存在’#‘或’##'的时候（#在上方有讲解）
+</code></pre>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;limits.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br>	<br><span class="hljs-meta">#<span class="hljs-keyword">define</span> A          2 </span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="hljs-comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-comment">// 由于A是宏，且作为宏CONS的参数，并且宏CONS##符号，所以A不能被解引用，因此上方程序编译报错。 </span><br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>, <span class="hljs-built_in">CONS</span>(A, A));  <span class="hljs-comment">// compile error   无法展开</span><br>	<span class="hljs-comment">//printf(&quot;%d\n&quot;, (int)(AeA)); </span><br><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-comment">// 报错信息如下：</span><br>main.c: In function ‘main’:<br>main.c:<span class="hljs-number">8</span>:<span class="hljs-number">22</span>: error: ‘AeA’ <span class="hljs-built_in">undeclared</span> (first use in <span class="hljs-keyword">this</span> function)<br>    <span class="hljs-number">8</span> |  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>, <span class="hljs-built_in">CONS</span>(A, A));  <span class="hljs-comment">// compile error   无法展开</span><br>      |                      ^<br>main.c:<span class="hljs-number">5</span>:<span class="hljs-number">26</span>: note: in definition of macro ‘CONS’<br>    <span class="hljs-number">5</span> | <span class="hljs-meta">#<span class="hljs-keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="hljs-comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span><br>      |                          ^<br>main.c:<span class="hljs-number">8</span>:<span class="hljs-number">22</span>: note: each undeclared identifier is reported only once <span class="hljs-keyword">for</span> each function it appears in<br>    <span class="hljs-number">8</span> |  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>, <span class="hljs-built_in">CONS</span>(A, A));  <span class="hljs-comment">// compile error   无法展开</span><br>      |                      ^<br>main.c:<span class="hljs-number">5</span>:<span class="hljs-number">26</span>: note: in definition of macro ‘CONS’<br>    <span class="hljs-number">5</span> | <span class="hljs-meta">#<span class="hljs-keyword">define</span> CONS(a,b)  (int)(a##e##b) <span class="hljs-comment">//ps：##放到宏参数后面相当于一个连接 无其他作用</span></span><br>      |                          ^<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/CPP/" class="category-chain-item">CPP</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Code-%E5%AE%8F%E5%AE%9A%E4%B9%89/" class="print-no-link">#Code/宏定义</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【CPP】各种宏定义用法整理</div>
+      <div>https://hodlyounger.github.io/2023/10/27/B_Code/CPP/【CPP】宏定义/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/CPP/%E3%80%90CPP%E3%80%91%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80%E6%A0%A1%E9%AA%8C/" title="【CPP】文件后缀校验">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【CPP】文件后缀校验</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/10/27/B_Code/CPP/%E3%80%90CPP%E3%80%91%E5%8A%A8%E6%80%81%E5%A3%B0%E6%98%8E%E5%AD%90%E7%B1%BB/" title="【CPP】动态声明子类">
+                        <span class="hidden-mobile">【CPP】动态声明子类</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

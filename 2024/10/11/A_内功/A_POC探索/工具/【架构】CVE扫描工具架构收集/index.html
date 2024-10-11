@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：CVE 扫描工具架构综述。主要目的是查看识别 CVE、CNVE 等的识别逻辑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【架构】CVE扫描工具架构收集">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：CVE 扫描工具架构综述。主要目的是查看识别 CVE、CNVE 等的识别逻辑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/IMG-20240918155917722.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/IMG-20240918155918425.png">
+<meta property="article:published_time" content="2024-10-11T01:39:49.218Z">
+<meta property="article:modified_time" content="2024-10-11T01:39:49.218Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="POC">
+<meta property="article:tag" content="excalidraw">
+<meta property="article:tag" content="架构分析">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/IMG-20240918155917722.png">
+  
+  
+  
+  <title>【架构】CVE扫描工具架构收集 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【架构】CVE扫描工具架构收集"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-11 09:39" pubdate>
+          2024年10月11日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【架构】CVE扫描工具架构收集</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：CVE 扫描工具架构综述。主要目的是查看识别 CVE、CNVE 等的识别逻辑。</p>
+</blockquote>
+<span id="more"></span>
+<p><mark>⚠  Switch to EXCALIDRAW VIEW in the MORE OPTIONS menu of this document. ⚠</mark> You can decompress Drawing data with the command palette: ‘Decompress current Excalidraw file’. For more info check in plugin settings under ‘Saving’</p>
+<p>匹配程序：框架是否具有可识别漏洞 ID 的逻辑。</p>
+<h1 id="架构cve扫描工具架构收集"><a class="markdownIt-Anchor" href="#架构cve扫描工具架构收集"></a> 【架构】CVE扫描工具架构收集</h1>
+<h2 id="cve-bin-tool"><a class="markdownIt-Anchor" href="#cve-bin-tool"></a> cve-bin-tool</h2>
+<p>匹配程序：⭐⭐</p>
+<p><strong>官方网站：</strong><a target="_blank" rel="external nofollow noopener noreferrer" href="https://cve-bin-tool.readthedocs.io/en/latest/">Welcome to CVE Binary Tool’s documentation! — CVE Binary Tool 3.4 documentation</a></p>
+<p><strong>简介：</strong> 主要用于扫描系统中是否包含已知的漏洞。可以扫描二进制文件中超过 200 个常见的、易受攻击的组件，例如（openssl、libpng、libxml2、expat 等等），也可以扫描所使用的已知组件，可以获得与 SBOM 相关的已知漏洞列表或组件版本和版本列表。</p>
+<p><strong>项目地址：</strong> <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/intel/cve-bin-tool?tab=readme-ov-file">intel/cve-bin-tool: The CVE Binary Tool helps you determine if your system includes known vulnerabilities. You can scan binaries for over 200 common, vulnerable components (openssl, libpng, libxml2, expat and others), or if you know the components used, you can get a list of known vulnerabilities associated with an SBOM or a list of components and versions.</a></p>
+<p>项目介绍中对架构有完整的描述，简单转述下，仅供个人学习。</p>
+<h3 id="架构"><a class="markdownIt-Anchor" href="#架构"></a> 架构</h3>
+<p>项目架构图如下所示：</p>
+<img src="/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/IMG-20240918155917722.png" srcset="/img/loading.gif" lazyload class>
+<h4 id="工作流程"><a class="markdownIt-Anchor" href="#工作流程"></a> 工作流程</h4>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.flyalready.cn/2024/04/16/Hexo%20Stellar%20%E4%B8%BB%E9%A2%98%E8%A3%85%E4%BF%AE%E7%AC%94%E8%AE%B0/">Hexo Stellar 主题装修笔记 - 宇宙尽头的餐馆</a>相关为<br>
+这一部分详细内容可以看官方描述：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://cve-bin-tool.readthedocs.io/en/latest/MANUAL.html#how-it-works">CVE Binary Tool User Manual — CVE Binary Tool 3.4 documentation</a></li>
+</ul>
+<ol>
+<li>Download CVE Data (from NVD, Redhat, OSV, Gitlab, and Curl).
+<ul>
+<li>This happens once per day by default, not every time a scan is run.</li>
+<li>On first run, downloading all data can take some time.</li>
+</ul>
+</li>
+<li>Create/read a component list. There are two modes of operation:
+<ol>
+<li>Creates a component list (including versions) using a combination of binary checkers and language component lists (such as python’s requirements.txt).</li>
+<li>Read SBOM (use an existing component list in a standardized Software Bill of Materials format.)</li>
+</ol>
+</li>
+<li>Create CVE List
+<ul>
+<li>This looks up all components found or read from an existing bill of materials and reports back any known issues associated with them</li>
+</ul>
+</li>
+<li>Include triage/additional data
+<ul>
+<li>There are several options for adding triage/notes, information from previous reports to track vulnerability change over time, or known fix data</li>
+</ul>
+</li>
+<li>Generate report in one or more formats (console, json, csv, html, pdf)</li>
+</ol>
+<h2 id="myscan"><a class="markdownIt-Anchor" href="#myscan"></a> myscan</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p><strong>匹配程度：</strong> ⭐⭐⭐⭐</p>
+<p><strong>项目地址</strong></p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/amcai/myscan">amcai/myscan: myscan 被动扫描</a></p>
+<p><strong>简介</strong></p>
+<p>myscan是参考awvs的poc目录架构，pocsuite3、sqlmap等代码框架，以及搜集互联网上大量的poc，由python3开发而成的被动扫描工具。此项目源自个人开发项目，结合个人对web渗透，常见漏洞原理和检测的代码实现，通用poc的搜集，被动扫描器设计，以及信息搜集等思考实践。</p>
+<p><font color="#e36c09">myscan依赖burpsuite和redis，需启动redis和burpsuite插入myscan的插件。</font>而且不支持 Windows.</p>
+<p>这里仅参考设计思路。</p>
+<h3 id="架构-2"><a class="markdownIt-Anchor" href="#架构-2"></a> 架构</h3>
+<img src="/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90%E6%9E%B6%E6%9E%84%E3%80%91CVE%E6%89%AB%E6%8F%8F%E5%B7%A5%E5%85%B7%E6%9E%B6%E6%9E%84%E6%94%B6%E9%9B%86/IMG-20240918155918425.png" srcset="/img/loading.gif" lazyload class title="流程图">
+<h4 id="myscan-工作流程"><a class="markdownIt-Anchor" href="#myscan-工作流程"></a> myscan 工作流程</h4>
+<p>依靠burp强大的抓包和解析数据包的功能，插件调取api把burp的请求体和响应体的处理数据整合成json数据传输到redis。</p>
+<p>myscan调取redis数据，对每一个request/response数据包进行perfile(访问url)、perfolder(每一个目录)、perscheme(每一个数据包)分类去重，通过redis分发到各个子进程，然后运行相应的poc。</p>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>总结</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>根据 burp 的响应被动的形式，需要事先设置好 POC 与 response 的对应关系。</p>
+</div>
+</details><p></p>
+<p>可参考的逻辑：</p>
+<p>实现上还是通过流量去匹配，查询到特定的流量后，根据 CVE 和关键字的匹配关系，重新运行相关 CVE 查看是否得到对应的响应，进而判断该漏洞是否存在。</p>
+<p></p>
+<h2 id="cve-vulnerability-data"><a class="markdownIt-Anchor" href="#cve-vulnerability-data"></a> CVE vulnerability data</h2>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://docs.redhat.com/en/documentation/red_hat_security_data_api/1.0/html/red_hat_security_data_api/index">Red Hat Security Data API | Red Hat Product Documentation</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://nvd.nist.gov/developers/vulnerabilities">Vulnerability APIs</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://osv.dev/">OSV - Open Source Vulnerabilities</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://nvd.nist.gov/">NVD - Home</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://advisories.gitlab.com/">GitLab Advisory Database</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cve.org/CVERecord/UserGuide">User Guide | CVE</a></li>
+</ul>
+<h3 id="redhat-parameters"><a class="markdownIt-Anchor" href="#redhat-parameters"></a> RedHat Parameters</h3>
+<p>Redhat CVE Json 字段说明</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>before</td>
+<td>Index of CSAF documents before the query date. [ISO 8601 is the expected format]</td>
+<td>2016-03-01</td>
+</tr>
+<tr>
+<td>after</td>
+<td>Index of CSAF documents after the query date. [ISO 8601 is the expected format]</td>
+<td>2016-02-01</td>
+</tr>
+<tr>
+<td>rhsa_ids</td>
+<td>Index of CSAF documents for RHSA_IDs separated by comma</td>
+<td>RHSA-2018:2748,RHSA-2018:2791</td>
+</tr>
+<tr>
+<td>bug</td>
+<td>Index of CSAF documents for Bugzilla Ids</td>
+<td>1326598,1084875</td>
+</tr>
+<tr>
+<td>cve</td>
+<td>Index of CSAF documents for CVEs</td>
+<td>CVE-2014-0160,CVE-2016-3990</td>
+</tr>
+<tr>
+<td>severity</td>
+<td>Index of CSAF documents for severity</td>
+<td>low,moderate,important,critical</td>
+</tr>
+<tr>
+<td>package</td>
+<td>Index of CSAF documents which affect package</td>
+<td>samba,thunderbird</td>
+</tr>
+<tr>
+<td>page</td>
+<td>Index of CSAF documents for page number</td>
+<td>Default: 1</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>Number of index of CSAF documents to return per page</td>
+<td>Default: 1000</td>
+</tr>
+<tr>
+<td>created_days_ago</td>
+<td>Index of CSAF documents created days ago</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cve-字段说明"><a class="markdownIt-Anchor" href="#cve-字段说明"></a> CVE 字段说明</h3>
+<p><strong>相关链接</strong></p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cve.org/CVERecord/UserGuide">User Guide | CVE</a></li>
+</ul>
+<p></p>
+<h1 id="excalidraw-data"><a class="markdownIt-Anchor" href="#excalidraw-data"></a> Excalidraw Data</h1>
+<h2 id="text-elements"><a class="markdownIt-Anchor" href="#text-elements"></a> Text Elements</h2>
+<p>项目地址和简介 ^Z2PITmxf</p>
+<p>CVE-bin-tool ^9Vquv07o</p>
+<p>workflow ^CEoNeJpD</p>
+<p>工具整理 ^PwJjLMMt</p>
+<p>文章一览 ^XYHghw6O</p>
+<p>myscan ^UlMoGvor</p>
+<p>文章一览 ^KyJQjF5m</p>
+<p>项目地址和简介 ^UGJ3aciX</p>
+<p>架构 ^lG52jUJv</p>
+<p>workflow ^u7uvBpli</p>
+<h2 id="element-links"><a class="markdownIt-Anchor" href="#element-links"></a> Element Links</h2>
+<p>jwVoyh0J: [[【架构】CVE扫描工具架构收集#cve-bin-tool]]<br>
+w0B9FGes: [[【架构】CVE扫描工具架构收集#【架构】CVE扫描工具架构收集]]<br>
+CxS5Pa8i: [[【架构】CVE扫描工具架构收集#工作流程]]<br>
+heCK5htv: [[【架构】CVE扫描工具架构收集#myscan]]<br>
+AqF2xZli: [[【架构】CVE扫描工具架构收集##简介]]<br>
+9gXlWdr5: [[【架构】CVE扫描工具架构收集#myscan 工作流程]]</p>
+<h2 id="embedded-files"><a class="markdownIt-Anchor" href="#embedded-files"></a> Embedded Files</h2>
+<p>aa666f22951fe1668cad96634a251aa87c7aabbb: [[【架构】CVE扫描工具架构收集/IMG-20240918155917722.png]]<br>
+18ae997fbc30639e8c1af682bd607724d494fa2e: [[【架构】CVE扫描工具架构收集/IMG-20240918155918425.png]]</p>
+<p>%%</p>
+<h2 id="drawing"><a class="markdownIt-Anchor" href="#drawing"></a> Drawing</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><code class="hljs compressed-json">N4KAkARALgngDgUwgLgAQQQDwMYEMA2AlgCYBOuA7hADTgQBuCpAzoQPYB2KqATLZMzYBXUtiRoIACyhQ4zZAHoFAc0JRJQgEYA6bGwC2CgF7N6hbEcK4OCtptbErHALRY8RMpWdx8Q1TdIEfARcZgRmBShcZQUebQBmbQAGGjoghH0EDihmbgBtcDBQMBLoeHF0DM0EYmJcTWDUkshGFnYuNAAWePj+UtbWTgA5TjFuAE5xpMmANgBWAEZOvshC<br><br>DmIsbghcFJWIQmYAEXSoGu4AMwIwvZItgCsKADU2GEkkgCkm0vPCfHwAZVgjQkklw2A0gS+AigpDYAGsEAB1EjqbgLPbMGHwhCAmDA9CCDxQiCwvySDjhXJodGFSBsOBgtQwNFJJJ7azKfFs2kQTDcTozbSdAAcMySPBFnU6AHYeElOnwecy0M4FgsZuNtKKePEZtLdXMFQqMViEQBhNj4NikLYw6zMBmBbLEzRguHKUnrC1Wm0SO0cB24J1QYkU<br><br>FGSfnjRLy+Iy4U8MWi8YzPaSBCEZTSbg8SbaaUzMWdOaG0WGpIpnlhM7U/OdcZ7D3COAASWIVNQeQAuntzuRMq3uBwhH89p7iBTmO2hyOeZphOsAKLBTLZdsFZpFWmlW4SABK+gAqjwjAAxChwgASABUAJo3mYH4UAWXGkgA4hfDlDSrBEFsg7CVBbgAvrS3Y8kIcB1KcxBorKczjHW4wJnM0rcs0EBEBwcJbHkeSAAgMgBt5oAIeaAIgMZqPAug<br><br>DWRoA88aAKe6gDuiiRgBspoAY2kAMTYIwziaGszhQGwlqdp2xJWtgCKwWglz4NcPLYEImIGIcuBRNwxQYfoxAAAqwnIalbpACkIAA8vYJBOMclzDjkFxXAgKylK64mNkI6xPip4JmtY9ChLZMn2QZEBOe6Y7uVA4JLhkWQhmgMJCAFG6QMFLlepa1pbOx5xZd+SVuilxDGQy2BMtwYoOUl1obKQYURcu0XcHFCUbkFlVMN66USJl2XlS1pBVYVjK<br><br>wNw6HNT8wQcLgmSPAchANBU0lhCBtLARi7gVOuzQ0huCxgYUK2FOpkC/hU0BYCGewDO0aJzMKF1MIMHAjBwYxoPE0rCgsixqnMNzrJsEi4AsxIHMcwQwX5skYTu6DjI8ACOQj0Ek0psMSY0AkCJ2ErcJqwgiyLEKiaCKhhmJ4zimNbNjsGjsImYTu2W2lPSg3KqgCysuyHCchUI2QHyKqxgsQpC+KcwFtKcy6tKexs84H2JOMcxJPEOo5vqyEy5W<br><br>poIO1vroOxCwIEbRsunlY567a5ABo69V7GGhMRtSMzClqCzCkkwoyuq0rJsKt08mmGZZq9nRarK8RSwsOrI7K9aVgg1bs3qMqq8K0rLDyLktm2+TgRhvaTQgA5oNO+C06546UoOw7l7O87EJFK42WgG0lId26Seg+5Hqe57XneD7Pq+H5fj1x3/qQgEQCBDkd6sXckgAigq5zMPE2ALMouAAPq7kI7twOcS9sBeOVlH+ANT2wQEbvtG7z/si9EJo<br><br>mgAIKEPontXkY+jNg8b4AAymBnBCCvOfCeV9p6zy3I/aGZQkgAGlNC7kAZ0I4AAhLShw7jYGbNKZw4w7jGQgeUSe0C75gT2JBaCScFiygLHKCUH1Pp7CwjhUutc2FsHEknBaTVIDnE4FAf4hAjAVB4NKLU4x3rxjrF7GY7teg8iEdkE8k1fhsx+jyU4mAYroAoguHifEBKWmJOQCgV4zpbEMcYlwpj8DEl0VAN+RBlAdHQMEc450eStCgOYAgriM<br><br>weOgPSYkehsi4DWEwEuqAy57GtBmNYBArF6JsZROx/FBKOPZEIASu5whiIqI1Nh0SLzpkzPo4WPA5h7T6IdC+J0AI32JJdTg/IRR3TaMMUYFRo5LBmJ0dU2ioZ/QFugXAPBgZHBOHwuyNxF492PGeS8t57yPhfO+T8aNfgYzxFjS0ONtbkwJkTXguNsS4nxBAam5i6bkmrtSBJRUSrUk5jyDkXI9jjNVHqbQ4thTxHoQKYUUsSalDlr7KRPBvpRl<br><br>9oCz6WtSY60tp1E2xskB7GShbNK+toDW0DMGUM4ZszTGSIaWMOoFiqzmBKcFkAg6VLROMV2PB4wzB6AKIFPR5QYkTl3GRUopjSg5g2UkOc1z52+H2YuXd4k8jHAzGuM4MJzkrk3aKa5YGBUgegZx594EAC0eBaWbFefQmBzgz0oc0KVhkoIqToQwmYTCRTRz5phNYHC4lcJ5GJCSEMBE3KiKQKAGC1iOG5vpZq6Rm6xIgLDBGSMUbfggEI+S7Ykj<br><br>aEQjCj28Kpg3XiIChyEBt5wG4K7GRbKVbinGPQ6U+YkUF0IJgGoWk2BrH0W3Eowt5TUqSO7MUBZYzdHjolLNIotydmWnsLIxBw3rDWMoaNGFY3RXjQ8Z4rwPipvTQpYaeYB2LBdkCwZbL3rKOamW7gqsS0/FbdpDtzpW4GWcFmgd5Us03XVHm8Wkd4hK0UVOmdfrQhQAtPofQagYLts7cquuyKgwuOvhQNMuA5W+tXesN+KG0OL2aVQPYcAn0tw7<br><br>FubtYA+YlCSFOhyFHEL/MkfQ76jCXX0uo7R8jBkGO0pFSKz6rGeDsbAKqFl2g2UJk5Ry6l8R5ScY3BRuUmokgUoVNympdLyqidZeyqT3LZOdGA7a2d+A5wUCTo1OpB0dFkL9NYrpD1uBNpaPddoT0Xrs1ZEJz6Rb6X7DGf+eI0zQYIHBlJeZPIjUmrNRaq1PZdlXIOUSC5+MSXExSxTfZVNDk0wVfcpVTyeQs2KkNN5HrPm82+dwVU3R/lDIGUCh<br><br>YBb3qy2q1MV2oKcwc1pSy+MTNoTk1RQbdFpssXmwbkN/F9pbbOntml9mQzUwVJDrwEZpQqxd2jrSilSsA4YWzq2SVPYZWxPlRhRVjyfUqscg3DVq487UIdWF9m8FEKAejrqUp2F4PcN4V3fhPZhGiPEaSwHaiNH4C0XsfVEhACeGYAO7dAAM6oAAXVAAxKoAAO9ADTcuYygqT9EQARyjjH2PodnSCe4rYYhshMFaUwfx7hychKg7URoewIlRGiaQ<br><br>eNSy+6rMHhske2yEmkCSRNfAeOtiE7R1j4kuA8lsAKawEHsVSDxS+wgcpwcqnidqSUe+m4MK6owPoaotR6is98a59paANSZwwm0x6vTrqqymAqOUv0NjjO2J0YLsz/sRahovCgSQMHjBPG+cIOy/iJa2KCcEIhMXHOxKcp27MMsx4kLciu9NLt+eK68zz5XuZfJ5D8722h6Ee3jIhWR0xnMQDlvQ3U2bYxS2mEWlTeoMuTfYqyPvuxZzjcrpN/0h<br><br>K7Y8gdmcotcw8wiuFL15CHtphLa19wZWHqNukq9qyRC7sxVNkOw9lRJ2MPXcgBdycP367qrqvdl9D9ArwNgEglBaDMHYNwfgwhxDSGXwmSh61ZoUCYzCCJ7J1GpJWNCeMZGPzdhXCAiEiciSiWiRiFiDiIiMiQxFApiYiNiYSUSHhANcLfyNnBSASfQZSVSNADuCATSHSekdsR+IyUyBwCyBAKyfAUjAHQKbFBuGqSQLyDgHydsbgxKIKIfNyDyS<br><br>QO7fREpHgiQ4gHvLKOLeQ5yMcAaErNmMqHg1qaqKQmQhqVXARG7PqNqXFDKZQ8+OcUw0gDQgvKjQRX4LIIuaaVgOaQNJaIA1aAgdaLcfrMAHaW1KzduGzP/fYfQaIRPe3K3DxfUBzNzJ3akA0RRfjD1CNf6CZaUX3MGOZEgyLReR4cYA8A+CgIQILeLaPSmEEMECEKI9bHWFPNEdPKogkHLO5MkArNPIrF5UrQvLmHmYaKrUON2VWQZYsSRDUF1O<br><br>3CFarDORIQ0FlIsD2G6WUfrYNQbcwv0AlGbHxVVBQkfbYoMcfDCSfVPdfFfJlYmcscONbAQflNEToeUMdUoA7XOVuO1NNE/K/c7BuTos7G7G/KKO/MjB/MQ+BUgFeHgNeDeLeXefeQ+Y+U+X/JpAAmBUE5qeBXcN8O4d4OGOEOEJeZgQBGYXcQ4OGZgC8RBIQGAQBT4ceWzf/ChIAqhUA2hTbV7ZWN6KvNYuAzhM/TCQg3IyGeolSfdCQRARdKNC<br><br>o2Vf8XAAsGYc4ITJWBYc4Y2AsYUPAYgZMDlToSZRYXAXAdObAaUA01+TQYkZgNafIPwhyQIkoadPXepUIlE6eeI63dmHUN0x3Z6PpT2EVSYOsS9bcALAGcYbI0LIUoNcEyE6EzebePeA+YUI+E+M+CovZa5LPJPVLR2bMZorLTPNo7PB5S/QrDCfPXojmIvAYtAD1H5H2f5E9YFF2MFVrFUX2OIRYSOUUR4wVZMbvTY4bDFUbQfNQibAcqbG2I42<br><br>bCfebJrKRItT6aAmFWTdUIMhlZbKpEUbNQ0HUKMKUefEVNcm5e4rocUSOHUY0LOcVQ/d447IuU7TDUoC/KcR8iqQE5uI7Vkx1dkhMF1cUN1ZCL7b1f4yAf1SMk0JDBdSNZdagrcDAW/KAeNRNRGZGVGO9HhMU1ALNJUqUcUatGFRRT6aYl43ActNAW4xwh9WDZ9EE7aZIHMMUKMalPUNvYsT9bQRRGUOUNUR4jmD2AsIzR0nkOdKCpdFdUoNdbIe<br><br>NQo4ohYUo8ouCvdTNZIHoVWfc2MNCZWLlEta9ciu9FtNtEja0xKN9ZIfwyjIUQFHoBtG6BMGUGUaUQSsAfXUCsDCDKDGQQyuDPkhDEU0NHDQCPDb4iS7DXDEIfDAAojEjLVBTAyBwmjDcO1MACjf2Di4VOtAdcsZWYtOK+TZoFK12DUZGDKjmeYT2NcntLcpWNTPckUGRalPKkoCjOchID6Wy8UftVc8qJYStHcgDEdA8hqxKlk1dUzG+CzIw4Ig<br><br>3H8Bk43U3Oodwr0/kIFL09zCoBfWMDvD3DI7YN+cM57UQzuGxTAf4OYLSQ0wgKPdMk6OPWoi0ho2cvMjMwsvLDoy7NY8stmSs/okvDCcZDlKRd2BUQZcUGywZVs1AQhcUf5XfUsd6BhPzMmbEHvfvVkM2Uc4fcc0fHY4lHMrocWCvcqk9WlL2SYC4lbcWQURFF1QFP9IsI8zfNAFlYVffSCG8jsD4wufsU/Xy8/X4y7EClqd8zVYy5oOBRZbE3E/<br><br>Ewk4k0k8kyk6k2k5E8hFpTw+0x7NkuCX8hYpWSRevXk9APCDApA6ieiHAtidiOiQAHXlABBW0AGgvfA37Ig1AQ6yADNcgyg3AcSyAOg3SRgwKZgsyRwawSyOXTgkQgPZqXgyufgwQ4QwNHqaOyQ8KaQhCwwtXVQkKMcn0Cw7qTO/KOw3o7QsQ6wqqfggwlXDOku3QpQvO6umwwutmBwtNJwiaKaGadw4gxaG1IS0mK0+/TaW03aXu6ao6WagjWnb<br><br>pDxIZCsaIqetam9Aiz2eq7ar3XADBfa8C/IrYLEnEvEgkokkkskikqkmkuklRBLFom5F65FE5ebRGnWDPVo5LV6nPEsrossnor695DCCrQY0vNfADEYuy8Y/MPspUarEG8TD7JYlTdOGFfsnOtFIcuo3KDG1KJBvVQ4olObPG1AZCBINCSYGveRF2Z49c1fLoV2WlEUKWVWAdL2BBhOJOTkj2GUG6VmiVI/AuL4nyiudYP418oWxcBCmKsWnVWa/<br><br>VHqeBM0BcNgIYBAd4OAL8NWsAD4mhb8rWvUNUOtJWRCIC4K0CwU/3PIxDUNUSqNWCmNBC6Sookoso3dDC9sUyvvbUxtN6dUAdBUX2HS0itffSqioygezaMy9ipCY9RRaTIZSYeIJylyjAdYCxmC1AGgySxCxeM0E6s6i6xxjNA9CUemprPcpRdrCi0tPx0s5tQJ7y2i5oFxrbdit6BtWMVkF3T2eUGYOJthNygwDymDIJq7Xm4NJDAKm+IKvh4S0<br><br>KwK8KlWwjHkYjTtMRpquKz9Rq5KgyZvd2HW/UDOKMADVZxKujDZqm0FJCHZwM/Z19Lcmh0FHobixhu09WrjRKAht6aYAM3Z0UefLTa55hOh+5hUR5tRkaiSsa8zLuSzEehpI3KRy3KetEPbfoGIhem3ItZmw0Ve/8M0Tekx4UheGxORhRpRseC+yo/M5+o5W+5Pe+p6pLSlp8/Ld655VmFkKs360ocZMFaRdOf2NCboGpW4hvSB/MbNDOBtCUeYZ<br><br>MS8ql80ccw2FB9GrOzGzBicsfack4+bUUCvYhr6OfSWcm/RGpPlOhRCVWITN3Th9mrsO87mwxkkfm9+wWtVERoE0ja1r857ehCA1h/2KWAxiZjCMC3FoNVRERIpUHFRYRdRKDSHfxnRaxCQCga0OEc4K0OZ87XHBN9AJN0gFNtNpxMnNxEJKnU4G0LpenQJItrYZnYgC3DCdnKJCkLnCWve6Ww+uWk+xW8+sskXfwFJLNiAHNvNlpXJfJQpZXVAO<br><br>QwNspDctEHXKa6FyR+zOFxzK41axI3gZGcsKUWhzFgGBcHFhO7eiQLSCgd4O4QBJ8J8XY74S+8l6+l+mVpEGlrMzLZ6x9hlt69+j6r+1ln6yrABlUD6SteYAUJrIdGUWemYwWBtFS4ZHoDUHoUFRBjqQc9FRV/KA46bKcm9yAU4itNYxlFbI15hzbFTHMFWF1KDyAV4z8nh+8nm/hquR1oR51xuUR0WkIsE5+Wad+T+b+X+f+CgIBEBMBZWqBVWu<br><br>+OeR/RefQf4JeGYDgREG8XcBcSQYyQgLSLSM0N+cYOGYUQ4AADXE8ZMk+ZJAIwg0c9edSYUlkQmIs9W+wDdKCDaPYLiB3DbXcjfBxjah3jbSQkEYkABdTQAMBccdLEB3guwvSc9FGctgvFcOGA6cAl8A4u/Qwk2dhFG2YlGOite3klxdIuGJQvZd5dFdPPJ2jD1dNdLj2Z52oXnTZnJ7V38GjyHcUX2YpZBlAM/XIsQyJkTxD2u6oyePX4P4v5hQ<br><br>f4/4AFgFQFwE0yn6H36WBtqW8GH7yZFvMyfiv32w89f2yt/3/6/rZixRxMM5DQ6rW9o4IbnBfM4P5gEO9nkPX2e8RtUHxD0HFCsbsHjjSh8OuhqUtRHipQ1YCwZFBWiP9EZ6EgANfyL0lgHPGbUBZN5QEIBlLW3iOabWZTnO+bK5BH+S2OZC6PSgrPwDGF/yPomHp2nPBmnat6zGw0I0xKrHRrXX41T3z3L3r3cnMKXGhMG0+K7n9RdR05iKaOKn<br><br>UBBQqV+kANZR4wlMAmvKaKKMs1ZQix2yY5Fg81yGShTKeAunJn51mfLGUm4K0mkL4YUKU10K8mazs1utiwXVNqvZKbfGyLUAZ8GHZNuL5g9QoClfH0amKMXGhkVzRRywdTR1zKJ0BRJZFgpQ+KRVkZOnhqvDQNMR3LoNlf9FBbMQRmwr0M7W51RnUMZmJP03SgFngTu1VeDmLP8qVmrn1QYfkIJYEUpQ1mKMw+gf5Q1NfzwefmW+eg2+9QO/DM0+<br><br>nnRqzMJr4oF3GuK/muro0B9QHP2uN2lg9Hpgakjz0i163whuXbI78W/QYAX9UF0FDgsEcE8ECEiESEFur6tv6i761vaXssP28e37dvmXNC/2Pli8AHY7iqDlCCgq8BYMsHs09IQMgO7sbcirDVgyJYe9eJGrKxVbyt0OY2T7lh0nI4MZya3MOG9BdQIQZQUYKVhKANb8ho42aRhin0eLDolYxrLuJIiQ5qU/MtHbhtKgY52tnydrInhx2Caj0ZqY<br><br>RWFtxy2CGcbwF4TMBQBmAkJVG6jMAj+Qp7MJo4sBL1Ha1c7DcIK5jE3sk1SY2NF4yFZNGhUUpOMD0JAgUNo3nzpxbcuvcph7y95KJxQA6P3g2k9iB9qKXaOKnmCrSqUSBUYL2BnC0zYVDeWGY3pKT0Hm8DBWwYPKHnDyR5befPbCiDypQwoYU6vBCBVXsFxtRoBlIPir28FsY1QAmcsJ7DYy68AiZlUIS5x6aQZs++Q3PkI3z7+VC+uXMIaX3Gam<br><br>dK+kAavm62eYbh4qXfJviZXA5ChkIHMXzCrCBQsohhJlCUIQ2IE14yBZ6cXiJlGF1gYUKsaAj0CazChZhG4ZwPMKIEQFSBAGFYUPziCLE5QtYSPgBl1xBEG+kAIIDPwhaTUGuhuJdmkiWqvRyGSXeehvyabwRxQe7CZKmUiwzIciwbBZOIMkHSDZBV1TbjfRf6rczk63S5E/yRFf9iyP/boiywO4ADqyWFIYpDQgJjC9QypOsDWkFaN5Qa2aI0Ex<br><br>nrQSgUBKKOVm9ww44oVW2NHDrjTOQfRKBxMQVkj39gqwBQNSD1BwNvLH5uBuPe1vjwFqsdbsAgrHh63AIIRUI5YNUO4L9TqCZRmgo/qY2+AecJ27ubzlAGjaaIchP4AdoAHDTQAAdegAADlAAE5HhcJcEgO0U6ILaxcq2EgEtjTnLYpc0u6AGtnW1KANtOc8aZ/Mggv7v4b+X+e/sSESR9tCuAXdAO6OdGjsFc47YpFV21EUgauK2apPcP1yLsRB<br><br>y7Oei11/LrsfSTmBMFMK6wgjtgiCQ/q7SfhbADw+AJ8GwDfD0B0oj/e9s/xW7ZlUR7/Asp/1lHf9cyuIv/viN/qACjuHLarJHCzSlVmmuoJYJHF+FswpQiQfUAOn6RTA6UiPFkegLZFYClWGDVDqqxxq4MzkUYIHlCnVIa8VYhHWdq9EFEnl2Y1g2tN5gx4k9BEvDOnq9QEbyjCeio11ksyEEn8gx8nRTsp1U7qdNO2nXTvpyM4mdtgqJKTtqjEE<br><br>SBOgkgcYAuAoBzATwB4NgEvGbA7w2AwoO4HcDPCdAEAB/ekmEQnryCNamjGsL+TlC6gU4vwg2oLT1EtjQ2wOCRIi0ERRsIcfnQ3AO30AwBLS1gF0VJJkl4AuAMXFxN6M8TsFEufiAMWpNCTlpMukScMW0OZj5cxcrooMYpLkkZjyuE7Kdi5xnaUM6uNSefh8KYmRUV2y/ZHrenck9JqxTNNlPWgcoNjcAgCZscf1bESA5OCnJTipzU4actOOnPTg<br><br>Z2M59j32y3dYiiNTxoiEQiIscaSAnHpYpxBeb6gSPZb8xZiqsbNKB0UTJht2+YG7rqDDjdB4OuoJ7oKOPGXiMBGKdkdnUvFci8BGrPBk0y1A3QXYoKSYDCnoQQ9XxqAaAhXjnL6h1QOpOqaRzRASgYwdaOIleQPyY93W9HW1jKN4Eyj+B4Ezgfak1rsSKeG4hcv60AmBtjGbnPykzwiHe14K7PReJzwvZXtcOoku3pDQnQNSPYOoL5rJnnzi9shl<br><br>TW9tUwKGJQY+/yeUKjQRnTBqhTwxJroJekW9F47Yzsd2N7GmDfpplTsjo2mCU1SBwIuCrpQ/pVMc+nHPXu+jBQNoHueoIdBSkaYz1UIuoAdHsy7KOVJ+zlbppn16b1DPBdrZochmmZF8ZRJfVoU1yiqLMaZdfXKoc36GbR3o2aHMCOhzA1SVi9fKfo3xhmqzkItVTWWKG1kGRZpOjZpotI0qp9Hh6zRKENNBRfMxp4wyaeVHNnzTT0S0m2faRBZP<br><br>CwWs/BAM5OEEnQqgNQBaiGJczwsaw9edfr5JeyHlBkYrIKU+FCkGioJUgXWIgjmDSB6ACIq+rdQTz3VX+ZyNYqgLfZ0tcs23fKZTLpD7c+iJUoAQuMFisgHe8+ehHA0BlSgbutKRWE1OVhNZQBBYFDnil7yo1upyrXqT93VZ/d5sjxD1JDzXw/11sH4hWBiy2ls0dpnNACYLUOm3SASLrD8jTPFpbBcJ+EwicRNInkTKJ1E2ifRLQnMSe6ajVidZ<br><br>wTD8Y3oCHESY529QQAjaiBLAmbTQLsRpJskjgI7T9T3StBckMgkpBUhe1WepQX2gwW9qGQwgLBcyCHXYJh0uCx/RyAoVjreRfIkCkungv0Jp1K6xhNBueK+7oDLCidBQo3VKjN1S6TAcumQsq5V0o6NdOVrQp0IN065zdMaM4XbpuF8Q/CVRvE1kn4hu0/hR5g6T5nWYXJLpEdt5NiJrFY5HmO5meglCCs9+/4IYKnLxbhT0Ap8giURJIlkSKJVE<br><br>miRQDokMTSW11D/mlLLmNECpT7HKWlLynYjJxn9PEfXNnGEjay1WGpIWPThuMXYfvCGmBwrwrl9x/5HUNR3SloCOpp4kclQpwFqtEu/3TrthQAyhLFE/FU9PyNQAih30+oBMEDJjigymBFaFIuLCLC/CJRyovaTjz3l49gJLHUCcLRr5YTmoMLMsRiUXiIIYA7wJeDRLmD6BACeuX2RADJ5KC35UwWMDxJ1GtKBSf2B6dCEgpoz4Ffst6W2I7Fdi<br><br>exZbPGUkOSAqYRUCoUFOcvPQDoshFMspvempmCDKhKmVWAzK675gsqFFCynWCuWXKlgbKcWPcJ9np8whSTdGdEJBCZzs5UAXOYkOUp94kIxDJFcQxFRlM7lHggZqrzGGD9X076IFnIvkWBtahfTR5SstFkdDy+KyqWeLIiqul5m0VeWcMIGH7DNoyscTLkt9j5LywhSxWbbOapsrdyeS92NyvVA/MPYyQMpc73jAgzEITlD4s8PGqvC5+7w4ObaH<br><br>6WRyKxgrdRX0nYa7MWKQUh/uCJCwHUwp8CIZSMrGUTKUpFcouRlO8XIjspGI3KYy3fp7dfFxU/xaVN5DVZEUZlNuZpWFESgjyW42rByj3EwoDxamBJWXNe4KszxmHb7th36kzy8GaoPzAvLfHVKkidYbcSpjWKNLdpXA/aSst3lOswJh8yUZZ0UFaM35ooSvDdL4kQL9RhiwSRVzZRg4zR4ky0UdBtEOj0xCqTNimIgBpjPRqk4JJTmih+i4WFbV<br><br>LjpODHvcwxTbeNCYvPnmKr5Vi2+XYp7ai5+2Q6kdVZKzHp0g0WEDXNNMLFByx6YRT+JESX7uki0bXZFhu2XJNYNejAvrp7n/BaQDFI3LYIgnGDEAFg+gRBG+GFB5z72BcyEBlhcU1zEl5cxxZXM/bVyf27qpeZAD/o1liRqoYWJHClCSxnxEw/chDQ5Saho4PLbru9BkTDyrYSa37pQoTWcip5mS+bOcUDjTSfeCQOvOyjKGQEs1vAXig0uvKbzs<br><br>eD5fkqWoVFdK+h6JQPFsEKhwBsAygCgCeHGAwrJAygOAHABmBiALw+AeIN0NVWL80S4jbCcYoJJmhhQHAEicoGbB+B4gkgHTYcCGALA3wOERiUotvjmddZZ0tiS9l/KyYiqNaBtUI34lhT8+UATChAAlLQUo8LSiAO7FwAIBJg0oc4JoGwB+aAMCADUgsFwDnAXYPATQMQDFDitOgxAHNZcB4DvdJFvhbaEPQeGErR6jSGWSov5DlgqxHmXrNthk<br><br>xBTdw366ERIFk3ybFNym+gKpvU2aaNcOm7oS3TJapSENg459m/1fbuLZt44rxa4uZh1yPVpQdDUSMA6Q0/k/yoVJMGLDIQKBMA4padxFBAzZQeFM5VRuQaYDUl9GyeTRunl4d761AwFHWHVBgc2ULsIpU3g4pcpxpgGOtCR1JgfiJpqEc1l3nXlcNK1RalpTvIdYvlOlB8kWoIMfh9KvhMneLm+FpR3ADw7wXOSxJVFKCw1CEGFDKEC38lgtac4Z<br><br>joOemSzUZjOs3tY12USA/1AGoDSBt57KUUIyMTIQ2neh/lqOEvD3v4RbpQyvB46BIEsHbz+xNZG4sUBVREx4qHuUYGpIw0mIcpkZmEYlULIGZ58Q0YssZpSsFrUrTdEsrocSF6EQSFZ46FlSUDSFahFl32xRL9pEkcYlZsVRKM7s+11pBk7ur5t1X1CA7iNhs8WKDqBXAtHh8FF4UeovUNa7M2O8sR5NFQqKOu7c+mr7A/TvqdquAXcI8B63HtPE<br><br>eOngATqJ1gaZttqocZlJHEUtltnizom6unF+Kttc4jDbtrVBSINQErQPZHo16RKFQNAq7UwjlCoQ7taHLqfGo5HPbcBtGwdsxoSUZrke74pODYLFDvNfxp0z4tKJLXI6+B5a9HU0tJ7VqLp5O0UNymp1DNadLao0cJI7XmjY2elfzvjhIjySh17+lSYGIgC+ijlc9GdT/vnXhIsuhkmTepoG1KaVNamjTVpom0JiTJu6t/cRFK5jslc2YjhaBXsm<br><br>1dz1Kqy9SHJNxhzzc73B3GiBdStb1qRAyOLsyCn/Bi90miQG/DhgngeAmAQ1EQCr03UaihcqDY9UW1OqPFLqxmL/yKmobtgHenbcAOKWLBAdUsOtB7FI3tqzthwm6BxU9hDJpgAmZCAzXakjyEZ48i8Xij6kL6slc8opSxvB1JwAVZNWHVay3l76kdcojpUM2OkVramkEoxRADhiHBDgQgQ1HMAoABg7gnQA8HCEQTEBlAUAK8DvHoA5IJGrkpkl<br><br>Mtj2zKtG5O87v7Buk/yECmBZAgAtwIcR2IWOMBXdLWVELQx0CigrApemIK9I2ylBSZCDpsEOC2CtObgs+74KhChC5tRQo+5ULWFrrI9XQuwHcK66UdehXXOLqcKbC/R5uIMd4VVRa6Kheuv1H4U9RBFbdBAK4VmiiK7I4i7wlIptJ+Fh6dWksW5tvUeJ3YMcx9XHNKoyJFEGlIKfNyNV+51lnh7w74f8OBHmAwR0I+EciPRHYjnB+DTXvm3Dj+D/<br><br>YzEStub0iGKyYh7bYEqA5hw011KQXpLF8zUiOkgNL7WpTFbFgiwk+iAJ1OHJ7FhjDGl7UxrwZt48wqEHrNrz6xFKQe1JikY8QzjzAUBH46WOKABrb74d/4hw0IzE2o72OJ0jHfEZOiiCBlbYt8O8HiCMhjOJOqtedJ83Dozl9SnksssbWlHuj2gp6VFqZ3hC9TrOtnnGkXhMGWDbBjg3Cuqx0yimkOpiovi1FXpJe9yvIcLKeX1MwdAwxjAhC1mc<br><br>qEIgyXXfgH12eUGhIs43RSqt3m6pmlu2lcoowi27GV46HWU/OVlO6pY4cGwew13wvLkzSVRTOmZ5a1g7OGh3riZUZN2cE+LJgUKhEd1gAqTksSWDmDpPU8Dh5ZtUQj2RjVmeZtWlM9P0VUJ68DSevVOqr+EtdPsGejdm9EBUHlfhuigGFeC3XbgIREZKESXogAHhpTsp4qMlPsVLaQT0GrKXBtHGCGdu9q2uShrZaNyypK/apPKUkR9p4GwarfOJ<br><br>kQ6Nnk+QmaNboYygpKSTaSxNfPte2L7U1lG1jQ5Mji8bRQxZkXjyZP18ni1jh9pSjpcNH6a+CgpU16xVNQ6vYn83iUFqbUCT792YT+aGyf0SSrRQ6qXMTg/345KLMub/TpL/2T1ADc6kgLWwXWgGl1i8d434YCNBGQjYRiI1EZiNxHt1SYsyQTiRzS4ScHyMroevIXVcz19XE4wv0qCEGzci1JrSvwfX/CbjiHRDqyHrxzmJkB4eg0dQkDjBlAhn<br><br>fAIiDIBzAgT1RePJBtfbQbS5j9AQ43qENNFCpsJy8/OOvMzSegQoAGnPIo0fQElWiYsC3nCUu461gFF7nK30Mz6epRhxjTyNTxmHQLtXCw8vKTgcolSMFwtXBcR0CmD9R0lC5JqM2SmcJpm8zZZus3KBbN9mxzc5vvkYSPNvZ0/ehedR+bQdK1XMd/N/k5HTaqBfI0AoskcBUA1te2sUZc74Wwp7tGBVQSNMILtIftZBTMtQWNGMFzRiOq0bo2hQ<br><br>pCcdLo67TaN9HSFAx+S/nVn0jyeFxCz7gwptxMLdCMx+qJdeWNmEaFox1VLoQeuSHch40Fwh3R2P+Q9jlYfuu4ZkXHHixKl9CXStT3ulxYFB66DE2rzfM89a9IvTcGXMmq6d8CToDVYs1sArNNmuzfEAc1OaXNu59y/uZfZuLqbRZaE95e/q+XO9UhwMrIZoZ+x588wDEyvymAV5AU/vQGQU0/kxrWRcax7ddeo0AWKTU+WMG7D6xfRWQz3DCCvs<br><br>+gcUo4pzZMG9G6AcpeNWzMDmAwE3bS/xu++CyVacNIWsU5ViCZjs+HfT05QgaUIjAwQ+BLqCpzq95owthre9kma/fT1XOM8wV2y16Sad/X/rANwG0DVaZVDvpWQBYRFLJmsrtNPoaK50xiuD4GRe0sMpCGD2XIiggUYHXXSJS2XLWdlYd8y5Zesu2XedB6PvABmRXIqOUkTd3t2soqkqQ+eKz080AnSJbG7jd7s8CpHquUBZdQkM26bJXhnpZ+pi<br><br>M7Gcm0JnBB9u5ld7r1nbRUIQoTQwLuLDyhu7XuvlVnfXs9kOY8fLSrvYCIz4HuBt7W3MR10r3lm9s+W8BxhRK3PYXy9W5fa1vBXdQsTXmfKv9lKrA5g5rHZpJiIsgkbzsRZYaHhpBTEQplx287foCu3LTVNiE2OOcW02HVR5hve0Wrkt7RDLNv6/5YQhq8BkxDjOGrAhrvQv0HMe89vf5YEmiT73JOtQrn0ZK0rq0rNOSMQhkNd89AopeBZWl83I<br><br>4XXI8gWvsPm3RNpVlZa4eP2FWZlZ+5Uz7eVIw6aewFPC1qYIvZAhJRFx/V2pf2SSh1Q7VNnGafKDr8cRj/NvRfHU+jJ1/+pFqGm0nWOgxrFiOb/o4s5cT5BNuqyTaasU2EDO65MeY+TbGPJtcuNAxV1slYG8xilpyUA97UeiO12j4mMRbEm+du1p0L0U48wgaSmLjjinOlz0lrmTwQgIsEvERCnAnE9t4kHWSEx5g61/saOGhHUwQ1fVMiAtCyjN<br><br>YNoowN41PGmv4eCt4TDDn86dae0pXyT9l9ABBoq0PVU19epbh5dPMQyIAn1f/tt0QsiyPxRYCYt8OR7gPN23jfMHOWfnk95lnE3ftjYDkFWPiMj1C/7fAUaP5r7j5tna0TEFdxL+6gdRFz3V9rRI2BgsTrgPXoG5joyD9QDHlNJH842wdTYCEdQrpoAaYTIFsDqC5svgDAQgAgAoAYJ9iIx5QksbdoiBgwzYU4HJy/P3bp9hQX/QS/XTEusXpJ1h<br><br>9eIpfyQp41LjICeDvbV6+glL5l1JWJeAhi5dexl1S55cZA+X6I1B/Sy5eEviXu4Ty2tslcsv9Av1zbfK+Ff6ATwqTi0fo/xfcvEKxL9V1o7bWIsVXurjIHjh/0JdUXTLqVyK6ns0rgqxrolxkAXDRmy+Vu2GyY5uTYBYQfwYziv1qf0JJgnZ9Q/7GeKevvX+AG8E5kjh5hug8+IgcdpsOlAjAgkCZfAoYAEB4oB6XZtMC5M/KlxMKKag6+ldSPZR<br><br>6wVFx6BIBJO95paEXCw/1gNIMEloReOxDNDjBW3rb4kAUmUDDggwGUBcIcH7f9vAC+uY16K4RCFR/EnAK2xS7gCBAzAwgZgG+FrdVv/iZthAAUj+gi5TeDSZwnNAAds4iAHvSJxAA2PAvmYeSE9QObq3LPNAdwBANgByD/AJocATsRsGdfEHg24Ae+FNsjzUFQIwEIAA<br></code></pre></td></tr></table></figure>
+<p>%%</p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-%E5%86%85%E5%8A%9F/" class="category-chain-item">A_内功</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-%E5%86%85%E5%8A%9F/A-POC%E6%8E%A2%E7%B4%A2/" class="category-chain-item">A_POC探索</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-%E5%86%85%E5%8A%9F/A-POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/POC/" class="print-no-link">#POC</a>
+      
+        <a href="/tags/excalidraw/" class="print-no-link">#excalidraw</a>
+      
+        <a href="/tags/%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/" class="print-no-link">#架构分析</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【架构】CVE扫描工具架构收集</div>
+      <div>https://hodlyounger.github.io/2024/10/11/A_内功/A_POC探索/工具/【架构】CVE扫描工具架构收集/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/11/B_Code/CSharp/%E3%80%90.Net%E3%80%91JIT%20And%20Run/" title="【.Net】JIT And Run[翻译]">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【.Net】JIT And Run[翻译]</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/11/A_%E5%86%85%E5%8A%9F/A_POC%E6%8E%A2%E7%B4%A2/%E5%B7%A5%E5%85%B7/%E3%80%90POC%E3%80%91%E8%8E%B7%E5%8F%96Redhat_CVE%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF/" title="【POC】从 Redhat 获取 CVE 相关信息">
+                        <span class="hidden-mobile">【POC】从 Redhat 获取 CVE 相关信息</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

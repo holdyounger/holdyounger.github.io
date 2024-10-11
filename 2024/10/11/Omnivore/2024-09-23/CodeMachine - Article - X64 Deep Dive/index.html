@@ -1,0 +1,1371 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="CodeMachine Inc.
+">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="CodeMachine - Article - X64 Deep Dive #Omnivore Read on Omnivore Read Original  This tutorial discusses some of the key aspects of code execution on the X64 CPU like compiler optimizations, exception">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CodeMachine - Article - X64 Deep Dive
+">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/10/11/Omnivore/2024-09-23/CodeMachine%20-%20Article%20-%20X64%20Deep%20Dive/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="CodeMachine - Article - X64 Deep Dive #Omnivore Read on Omnivore Read Original  This tutorial discusses some of the key aspects of code execution on the X64 CPU like compiler optimizations, exception">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,svCoHwjL8O4SUT16VTAKiWuxlK6w9CqkhlhZpn7LY-BY/https://codemachine.com/articles/figures/figure_x64dd_1.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,s34DI1XimLMSbX_W634txHbMhTVwXe98zq9mG2w5OD2o/https://codemachine.com/articles/figures/figure_x64dd_2.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sWgONw_fhavv-YgVhKlwGRgdLIFwZiQWjWBd9pyiLESU/https://codemachine.com/articles/figures/figure_x64dd_3.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sfIXh7PR6OoJXs3N6ISjFrdl5SQLSUlsM8HXEh1tvUSk/https://codemachine.com/articles/figures/figure_x64dd_4.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,s7_3ZYnUwcvWMnjhaBQc6ZyIC9JQzlTCGVPChtS8OgLk/https://codemachine.com/articles/figures/figure_x64dd_5.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sb9u1RcjJNIQ--zTRll1qLFJWWbG2eeX3UlpzdoEf74s/https://codemachine.com/articles/figures/figure_x64dd_6.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sYnD9PMeEHaZuA30sCxX2GG-sCMzU2oHlINGvmNhPBec/https://codemachine.com/articles/figures/figure_x64dd_7.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sj5wpTKnXlbqf5umiichhH4MTO-OgzEiMdCRzHHb_37A/https://codemachine.com/articles/figures/figure_x64dd_8.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sI-S5PruImVBtY0YpmgRC85EEXbd8ETMUhCc8coPj1B4/https://codemachine.com/articles/figures/figure_x64dd_9.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sRWiz9Q2HGrJDKVagsm0vpRGiXF4ZDJS4nUxgi0dXpj4/https://codemachine.com/articles/figures/figure_x64dd_10.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sEZA1CDHj_wA3dEJ0O8sIhRkdHmaVYHiTnpae8332dMg/https://codemachine.com/articles/figures/figure_x64dd_11.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,snYpKejKfQloOlNbpXooXNguL1x4jmh5YhHwdKgnfKqE/https://codemachine.com/articles/figures/figure_x64dd_12.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sPZKdftsit3qrRhDDcyvg6UCbQVfppVl1Ou7C7v-q9cI/https://codemachine.com/articles/figures/figure_x64dd_13.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sVwxtRcyh5DQw0p-HpSqmaZkcyYGeu_-9jWlzId524fM/https://codemachine.com/articles/figures/figure_x64dd_14.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,sNVkFHbrs3p0z3HN0g8zcU4i6tWFNUOi7Xef4cIGBUd8/https://codemachine.com/articles/figures/figure_x64dd_15.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,szIXTzly09TXPwMbnOwy0dMq6O9KGY6ogLhIsSgg_QZ0/https://codemachine.com/articles/figures/figure_x64dd_16.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,spahqPkG2SH-czD6RjMa3ESiYuCIznbmindDhweevd9A/https://codemachine.com/articles/figures/figure_x64dd_17.png">
+<meta property="og:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,slha4LXs3Bw5Gl0rOaPFJpBcKP5MhT5XULPYeszxGSLs/https://codemachine.com/articles/figures/figure_x64dd_18.png">
+<meta property="article:published_time" content="2024-10-11T01:39:49.348Z">
+<meta property="article:modified_time" content="2024-10-11T01:39:49.349Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Omnivore">
+<meta property="article:tag" content="X64">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://proxy-prod.omnivore-image-cache.app/0x0,svCoHwjL8O4SUT16VTAKiWuxlK6w9CqkhlhZpn7LY-BY/https://codemachine.com/articles/figures/figure_x64dd_1.png">
+  
+  
+  
+  <title>CodeMachine - Article - X64 Deep Dive
+ - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CodeMachine - Article - X64 Deep Dive
+"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-11 09:39" pubdate>
+          2024年10月11日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CodeMachine - Article - X64 Deep Dive
+</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="codemachine-article-x64-deep-dive"><a class="markdownIt-Anchor" href="#codemachine-article-x64-deep-dive"></a> CodeMachine - Article - X64 Deep Dive</h1>
+<p>#Omnivore</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://omnivore.app/me/code-machine-article-x-64-deep-dive-1921dcc71a9">Read on Omnivore</a><br>
+<a target="_blank" rel="external nofollow noopener noreferrer" href="https://codemachine.com/articles/x64_deep_dive.html?__im-DonDoNQo=16122330946307510154">Read Original</a></p>
+<hr>
+<p>This tutorial discusses some of the key aspects of code execution on the X64 CPU like <a href="#compiler%5Foptimizations">compiler optimizations</a>, <a href="#exception%5Fhandling">exception handling</a>, <a href="#parameter%5Fpassing">parameter passing</a> and <a href="#parameter%5Fretrieval">parameter retrieval</a> and shows how these topics are closely related to each other. It covers the important debugger commands related to the above topics and provides the necessary background required to interpret and understand the output of these commands. It also highlights how the X64 CPU does things differently from the X86 CPU and how it affects debugging on X64. And finally it ties everything together and illustrates how this knowledge can be applied to retrieve register based parameters from X64 call stacks, something that always poses a challenge when debugging X64 code. This tutorial takes a step by steps approach to present the content and makes use of diagrams, disassembly listings and debugger output extensive to drive home the key points. Readers are expected to have a good understand of how things work on the X86 CPU in terms of register usage, stack usage and function layout to make most of this tutorial.</p>
+<h3 id="compiler-optimizations"><a class="markdownIt-Anchor" href="#compiler-optimizations"></a> Compiler Optimizations</h3>
+<p>This section discusses some of the compiler optimization that affects the way X64 code is generated. It starts with a description of the X64 registers and then focusses on optimizations like function in-lining, tail call elimination, frame pointer optimization and stack pointer based local variable access.</p>
+<h4 id="register-changes"><a class="markdownIt-Anchor" href="#register-changes"></a> Register Changes</h4>
+<p>All registers on the X64 CPU, with the exception of the segment registers and the EFlags register, are 64-bits which implies that all fetches from memory are 64-bit wide. Also X64 instructions are capable of processing 64-bits at a time which makes x64 a native 64 bit processor. Eight new registers have been added i.e. r8 - r15 which are labeled with numbers as opposed to the other registers that are labeled with alphabets. The following debugger output shows the registers on X64.</p>
+<p>1: kd&gt; r<br>
+rax=fffffa60005f1b70 rbx=fffffa60017161b0 rcx=000000000000007f<br>
+rdx=0000000000000008 rsi=fffffa60017161d0 rdi=0000000000000000<br>
+rip=fffff80001ab7350 rsp=fffffa60005f1a68 rbp=fffffa60005f1c30<br>
+r8=0000000080050033  r9=00000000000006f8 r10=fffff80001b1876c<br>
+r11=0000000000000000 r12=000000000000007b r13=0000000000000002<br>
+r14=0000000000000006 r15=0000000000000004<br>
+iopl=0         nv up ei ng nz na pe nc<br>
+cs=0010  ss=0018  ds=002b  es=002b  fs=0053  gs=002b             efl=00000282<br>
+nt!KeBugCheckEx:<br>
+fffff800<code>01ab7350 48894c2408      mov     qword ptr [rsp+8],rcx ss:0018:fffffa60</code>005f1a70=000000000000007f</p>
+<p>The usage of some of these register have changed, from X86, as well. The changes can be grouped as follows:</p>
+<ul>
+<li>Non-volatile Registers are registers that are saved across function calls. X64 has an expanded non-volatile register set in which all the old X86 non-volatile registers are also included. New ones in this set are R12 through R15. These are important from the perspective of retrieving register based function parameters.</li>
+<li>Fastcall registers are used to pass parameters to functions. Fastcall is the default calling convention on X64 where in the first 4 parameters are passed via the registers RCX, RDX, R8, R9.</li>
+<li>RBP is no longer used as frame pointer. It is now a general purpose register like any of the other registers like RBX, RCX etc. The debugger can no longer use the RBP register to walk the call stack.</li>
+<li>On the X86 CPU, the FS segment register points to Thread Environment Block (TEB) and the Processor Control Region (KPCR) but on the X64, it is the GS register that points to the TEB while in user mode and the KPCR while in kernel mode. However when running WOW64 applications (i.e. 32 bit applications on X64 systems), the FS register continues to point to the 32-bit version of TEB.</li>
+</ul>
+<p>The trap frame data structure (nt!_KTRAP_FRAME) on the X64 does not contain valid contents of non-volatile registers. The prolog of X64 functions save the values of non-volatile registers if they intend to overwrite them. The debugger can always pull the saved values of these non-volatile registers from stack instead of having to retrieve them from the trap frame. During kernel mode debugging on X64, the output of the “.trap” command prints a note highlighting the fact that the values of all the registers retrieved from the trap may not be accurate, as shown below. There are exceptions to this rule e.g., trap frames generated for user to kernel mode transitions do contain the correct values of all the registers.</p>
+<p>1: kd&gt; kv<br>
+Child-SP          RetAddr           : Args to Child<br>
+.<br>
+.<br>
+.<br>
+nt!KiDoubleFaultAbort+0xb8 (TrapFrame @ fffffa60`005f1bb0)<br>
+.<br>
+.<br>
+.</p>
+<p>1: kd&gt; .trap  fffffa60`005f1bb0<br>
+NOTE: The trap frame does not contain all registers.<br>
+Some register values may be zeroed or incorrect</p>
+<h4 id="function-in-lining"><a class="markdownIt-Anchor" href="#function-in-lining"></a> Function in-lining</h4>
+<p>The X64 compiler performs inline expansion of functions by which if certain criteria is met, it replaces the call to a function with the body of the callee. Although in-lining is not unique to X64, the X64 compiler is over zealous about in-lining functions. The advantages of inlining are that it avoids the overhead of setting up the stack, branching to the callee and then returning back to the caller. The downside of in-lining is that due to the code duplication, the size of the executable file bloats up and the functions expand resulting in cache miss and increased number of page faults. Function in-lining also impedes debugging in that when one tries to set a breakpoint on a function that the compiler has chosen to inline, the debugger is unable to find the symbol of the in-lined function. In-lining at a source file level is controlled by compiler’s /Ob flag and in-lining can be disabled on a per function basis by __declspec(noinline). Figure 1 shows function2 and Function3 being inlined inside Function1.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,svCoHwjL8O4SUT16VTAKiWuxlK6w9CqkhlhZpn7LY-BY/https://codemachine.com/articles/figures/figure_x64dd_1.png" srcset="/img/loading.gif" lazyload alt="FIG#1"></p>
+<p>Figure 1 : Function Inlining</p>
+<h4 id="tail-call-elimination"><a class="markdownIt-Anchor" href="#tail-call-elimination"></a> Tail Call Elimination</h4>
+<p>X64 compiler can optimize the last call made from a function by replacing it with a jump to the callee. This avoids the overhead of setting up the stack frame for the callee. The caller and the callee share the same stack frame and the callee returns directly to the caller’s caller. This is especially beneficial when the caller and the callee have the same parameters, since, if the relevant parameters are already in the required registers and those registers haven’t changed, they don’t have to be reloaded. Figure 2 shows tail call elimination in Function1 when calling Function4. Function1 jumps to Function4 and when Function4 finishes execution, it returns directly to the caller of Function1.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,s34DI1XimLMSbX_W634txHbMhTVwXe98zq9mG2w5OD2o/https://codemachine.com/articles/figures/figure_x64dd_2.png" srcset="/img/loading.gif" lazyload alt="FIG#2"></p>
+<p>Figure 2 : Tail Call Elimination</p>
+<h4 id="frame-pointer-omission"><a class="markdownIt-Anchor" href="#frame-pointer-omission"></a> Frame Pointer Omission</h4>
+<p>Unlike the X86 CPU where the EBP register is used to access parameters and local variables on the stack, X64 functions do not make use of the RBP register for this purpose i.e. do not use the EBP register as a frame pointer. Instead, it uses the RSP register both as a stack pointer and a frame pointer, more on how this works in the next topic. So, on X64 the RBP register is now freed up from its stack duties and can be used as a general purpose register. An exception to this rule are functions that use alloca() to dynamically allocate space on the stack. Such functions will use the RBP register as a frame pointer, as they did with EBP on the X86.</p>
+<p>The following assembler code snippet shows the X86 function KERNELBASE!Sleep. References to the EBP register show that it is being used as the frame pointer. While calling the function SleepEx(), the parameters are being pushed on to the stack and SleepEx() is called through a call instruction.</p>
+<p>0:009&gt; uf KERNELBASE!Sleep<br>
+KERNELBASE!Sleep:<br>
+75ed3511 8bff            mov     edi,edi<br>
+75ed3513 55              push    ebp<br>
+75ed3514 8bec            mov     ebp,esp<br>
+75ed3516 6a00            push    0<br>
+75ed3518 ff7508          push    dword ptr [ebp+8]<br>
+75ed351b e8cbf6ffff      call    KERNELBASE!SleepEx (75ed2beb)<br>
+75ed3520 5d              pop     ebp<br>
+75ed3521 c20400          ret     4.</p>
+<p>The next code snippet shows the same function i.e. kernelbase!Sleep() on X64. There are some striking differences - the X64 version is much more compact due to the fact that there is no saving/restoring/setup of the RBP register i.e. the usage of the frame pointer is omitted and neither is there any setup for the stack frame for the callee i.e. SleepEx(). In fact Sleep() and SleepEx() end up using the same stack frame, an example of tail call optimization in action.</p>
+<p>0:000&gt; uf KERNELBASE!Sleep<br>
+KERNELBASE!Sleep:<br>
+000007fe<code>fdd21140 xor     edx,edx 000007fe</code>fdd21142 jmp     KERNELBASE!SleepEx (000007fe`fdd21150)</p>
+<h4 id="stack-pointer-based-local-variable-access"><a class="markdownIt-Anchor" href="#stack-pointer-based-local-variable-access"></a> Stack Pointer based local variable access</h4>
+<p>On the X86 CPU, the most important function of the frame pointer (EBP) register is to provide access to stack based parameters and local variables. As discussed earlier, on the X64 CPU, the RBP register does not point to the stack frame of the current function. So on X64, it is the RSP register that has to serve both as a stack pointer as well as a frame pointer. So all stack references on X64 are performed based on RSP. Due to this, functions on X64 depend on the RSP register being static throughout the function body, serving as a frame of reference for accessing locals and parameters. Since push and pop instructions alter the stack pointer, X64 functions restrict push and pop instructions to the function prolog and epilog respectively. The fact that the stack pointer does not change at all between the prolog and the epilog is a characteristic feature of X64 functions, as shown in Figure 3.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sWgONw_fhavv-YgVhKlwGRgdLIFwZiQWjWBd9pyiLESU/https://codemachine.com/articles/figures/figure_x64dd_3.png" srcset="/img/loading.gif" lazyload alt="FIG#3"></p>
+<p>Figure 3 : Static Stack Pointer</p>
+<p>The following code snippet shows the complete listing of the function user32!DrawTestExW. This function’s prolog ends with the instruction “sub rsp, 48h” and it’s epilog starts with the instruction “add rsp, 48h”. Since instructions between prolog and epilog access stack contents using the RSP as a reference, there are no intervening push or pop instructions in the function body.</p>
+<p>0:000&gt; uf user32!DrawTextExW<br>
+user32!DrawTextExW:<br>
+00000000<code>779c9c64 sub     rsp,48h 00000000</code>779c9c68 mov     rax,qword ptr [rsp+78h]<br>
+00000000<code>779c9c6d or      dword ptr [rsp+30h],0FFFFFFFFh 00000000</code>779c9c72 mov     qword ptr [rsp+28h],rax<br>
+00000000<code>779c9c77 mov     eax,dword ptr [rsp+70h] 00000000</code>779c9c7b mov     dword ptr [rsp+20h],eax<br>
+00000000<code>779c9c7f call    user32!DrawTextExWorker (00000000</code>779ca944)<br>
+00000000<code>779c9c84 add     rsp,48h 00000000</code>779c9c88 ret</p>
+<h3 id="exception-handling"><a class="markdownIt-Anchor" href="#exception-handling"></a> Exception Handling</h3>
+<p>This section discusses the underlying mechanism and data structures that X64 functions use for exception handling and also how the debugger leverages these structures to walk the call stack. It also points to some of the unique aspects of X64 call stacks.</p>
+<h4 id="runtime_function"><a class="markdownIt-Anchor" href="#runtime_function"></a> RUNTIME_FUNCTION</h4>
+<p>X64 executable files use a file format that is a variant of the PE file format, used for X86, called PE32+. Such files have an extra section called “.pdata” or Exception Directory that contains information used for handling exceptions. This “Exception Directory” contains a RUNTIME_FUNCTION structure for every non-leaf function in the executable. Non-leaf functions are those that call other functions. Each RUNTIME_FUNCTION structure contains the offset of the first and the last instruction in the function (i.e. the function extents) and a pointer to the unwind information structure that describes how the function’s call stack is to be unwound in the event of an exception. Figure 4 shows RUNTIME_FUNCTION structure for a module containing offsets to the beginning and the end of the functions in that module.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sfIXh7PR6OoJXs3N6ISjFrdl5SQLSUlsM8HXEh1tvUSk/https://codemachine.com/articles/figures/figure_x64dd_4.png" srcset="/img/loading.gif" lazyload alt="FIG#4"></p>
+<p>Figure 4 : RUNTIME_FUNCTION</p>
+<p>The following assembler code snippets show some of the differences in code generation related to exception handling on the X86 and X64. On x86, when the high level language (C/C++) code contains structured exception handling constructs like __try/__except, the compiler generates special code in the prolog and epilog of the function that builds the exception frame on the stack at runtime. This can be observed in the code snippet below in the calls to ntdll!_SEH_prolog4 and ntdll!_SEH_epilog4.</p>
+<p>0:009&gt; uf ntdll!__RtlUserThreadStart<br>
+ntdll!__RtlUserThreadStart:<br>
+77009d4b push    14h<br>
+77009d4d push    offset ntdll! ?? ::FNODOBFM::`string’+0xb5e (76ffc3d0)<br>
+77009d52 call    ntdll!_SEH_prolog4 (76ffdd64)<br>
+77009d57 and     dword ptr [ebp-4],0<br>
+77009d5b mov     eax,dword ptr [ntdll!Kernel32ThreadInitThunkFunction (770d4224)]<br>
+77009d60 push    dword ptr [ebp+0Ch]<br>
+77009d63 test    eax,eax<br>
+77009d65 je      ntdll!__RtlUserThreadStart+0x25 (77057075)</p>
+<p>ntdll!__RtlUserThreadStart+0x1c:<br>
+77009d6b mov     edx,dword ptr [ebp+8]<br>
+77009d6e xor     ecx,ecx<br>
+77009d70 call    eax<br>
+77009d72 mov     dword ptr [ebp-4],0FFFFFFFEh<br>
+77009d79 call    ntdll!_SEH_epilog4 (76ffdda9)<br>
+77009d7e ret     8</p>
+<p>In the x64 version of the function, however, there is no indication that the function uses structured exception handling, since no stack based exception frames are built at runtime. The RUNTIME_FUNCTION structures along with the current value of the instruction pointer register (RIP) are used to locate the exception handling information from the executable file itself.</p>
+<p>0:000&gt; uf ntdll!RtlUserThreadStart<br>
+Flow analysis was incomplete, some code may be missing<br>
+ntdll!RtlUserThreadStart:<br>
+00000000<code>77c03260 sub     rsp,48h 00000000</code>77c03264 mov     r9,rcx<br>
+00000000<code>77c03267 mov     rax,qword ptr [ntdll!Kernel32ThreadInitThunkFunction (00000000</code>77d08e20)]<br>
+00000000<code>77c0326e test    rax,rax 00000000</code>77c03271 je      ntdll!RtlUserThreadStart+0x1f (00000000`77c339c5)</p>
+<p>ntdll!RtlUserThreadStart+0x13:<br>
+00000000<code>77c03277 mov     r8,rdx 00000000</code>77c0327a mov     rdx,rcx<br>
+00000000<code>77c0327d xor     ecx,ecx 00000000</code>77c0327f call    rax<br>
+00000000<code>77c03281 jmp     ntdll!RtlUserThreadStart+0x39 (00000000</code>77c03283)</p>
+<p>ntdll!RtlUserThreadStart+0x39:<br>
+00000000<code>77c03283 add     rsp,48h 00000000</code>77c03287 ret</p>
+<p>ntdll!RtlUserThreadStart+0x1f:<br>
+00000000<code>77c339c5 mov     rcx,rdx 00000000</code>77c339c8 call    r9<br>
+00000000<code>77c339cb mov     ecx,eax 00000000</code>77c339cd call    ntdll!RtlExitUserThread (00000000<code>77bf7130) 00000000</code>77c339d2 nop<br>
+00000000<code>77c339d3 jmp     ntdll!RtlUserThreadStart+0x2c (00000000</code>77c53923)</p>
+<h4 id="unwind_info-and-unwind_code"><a class="markdownIt-Anchor" href="#unwind_info-and-unwind_code"></a> UNWIND_INFO and UNWIND_CODE</h4>
+<p>The BeginAddress and EndAddress fields of the RUNTIME_FUNCTION structure contain the offset of the start and end of the function’s code in the virtual memory respectively, from the start of the module. When the function generates an exception, the OS scans the memory mapped copy of the PE file looking for a RUNTIME_FUNCTION structure whose extents include the current instruction address. The UnwindData field of the RUNTIME_FUNCTION structure contains the offset of another structure that tells the OS runtime as to how it should go about unwinding the stack, this is the UNWIND_INFO structure. The UNWIND_INFO structure contains a variable number of UNWIND_CODE structures, each one of which reverses the effect of a single stack related operation performed by the function’s prolog.</p>
+<p>For dynamically generated code, the OS support functions RtlAddFunctionTable() and RtlInstallFunctionTableCallback() are used to create the RUNTIME_FUNCTION information at runtime.</p>
+<p>Figure 5 shows the relationship between the RUNTIME_FUNCTION and the UNWIND_INFO structures and the location of the function in memory.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,s7_3ZYnUwcvWMnjhaBQc6ZyIC9JQzlTCGVPChtS8OgLk/https://codemachine.com/articles/figures/figure_x64dd_5.png" srcset="/img/loading.gif" lazyload alt="FIG#5"></p>
+<p>Figure 5 : Unwind Information</p>
+<p>The debugger’s “.fnent” command displays information about the RUNTIME_FUNCTION structure for a given function. The following example shows the output of the “.fnent” command for the function ntdll!RtlUserThreadStart.</p>
+<p>0:000&gt; .fnent ntdll!RtlUserThreadStart<br>
+Debugger function entry 00000000<code>03be6580 for: (00000000</code>77c03260)   ntdll!RtlUserThreadStart   |  (00000000`77c03290)   ntdll!RtlRunOnceExecuteOnce<br>
+Exact matches:<br>
+ntdll!RtlUserThreadStart = <no type information></no></p>
+<p>BeginAddress      = 00000000<code>00033260 EndAddress        = 00000000</code>00033290<br>
+UnwindInfoAddress = 00000000`00128654</p>
+<p>Unwind info at 00000000<code>77cf8654, 10 bytes   version 1, flags 1, prolog 4, codes 1   frame reg 0, frame offs 0   handler routine: ntdll!_C_specific_handler (00000000</code>77be50ac), data 3<br>
+00: offs 4, unwind op 2, op info 8	UWOP_ALLOC_SMALL</p>
+<p>If BeginAddress shown above is added to the base of the module i.e. ntdll.dll which contains the function RtlUserThreadStart, the resultant address 0x0000000077c03260 is the start of the function RtlUserThreadStart as shown below.</p>
+<p>0:000&gt; ?ntdll+00000000<code>00033260 Evaluate expression: 2009084512 = 00000000</code>77c03260</p>
+<p>0:000&gt; u ntdll+00000000<code>00033260 ntdll!RtlUserThreadStart: 00000000</code>77c03260 sub     rsp,48h<br>
+00000000<code>77c03264 mov     r9,rcx 00000000</code>77c03267 mov     rax,qword ptr [ntdll!Kernel32ThreadInitThunkFunction (00000000`77d08e20)]<br>
+00000000`77c0326e test    rax,rax<br>
+00000000`77c03271 je      ntdll!RtlUserThreadStart+0x1f (00000000`77c339c5)<br>
+00000000`77c03277 mov     r8,rdx<br>
+00000000`77c0327a mov     rdx,rcx<br>
+00000000`77c0327d xor     ecx,ecx</p>
+<p>If EndAddress is used the same way, the resultant address points just past the end of the function as shown in the example below.</p>
+<p>0:000&gt; ?ntdll+00000000<code>00033290 Evaluate expression: 2009084560 = 00000000</code>77c03290</p>
+<p>0:000&gt; ub 00000000<code>77c03290 L10 ntdll!RtlUserThreadStart+0x11: 00000000</code>77c03271 je      ntdll!RtlUserThreadStart+0x1f (00000000<code>77c339c5) 00000000</code>77c03277 mov     r8,rdx<br>
+00000000<code>77c0327a mov     rdx,rcx 00000000</code>77c0327d xor     ecx,ecx<br>
+00000000<code>77c0327f call    rax 00000000</code>77c03281 jmp     ntdll!RtlUserThreadStart+0x39 (00000000<code>77c03283) 00000000</code>77c03283 add     rsp,48h<br>
+00000000<code>77c03287 ret 00000000</code>77c03288 nop<br>
+00000000<code>77c03289 nop 00000000</code>77c0328a nop<br>
+00000000<code>77c0328b nop 00000000</code>77c0328c nop<br>
+00000000<code>77c0328d nop 00000000</code>77c0328e nop<br>
+00000000`77c0328f nop</p>
+<p>So the BeginAddress and EndAddress fields of the RUNTIME_FUNCTION structure describe where the corresponding function resides in memory. There is, however, an optimization, that may be applied to the module after it has been linked, that can potentially alter the above observations; more on this later.</p>
+<p>Although the main purpose of the UNWIND_INFO and UNWIND_CODE structures is to describe how the stack is unwound during an exception, the debugger uses this information to walk the call stack without having access to the symbols for the module. Each UNWIND_CODE structure can describe one of the following operations performed by a function’s prolog:</p>
+<ul>
+<li>SAVE_NONVOL - Save a non-volatile register on the stack.</li>
+<li>PUSH_NONVOL - Push a non-volatile register on the stack.</li>
+<li>ALLOC_SMALL - Allocate space (up to 128 bytes) on the stack.</li>
+<li>ALLOC_LARGE - Allocate space (up to 4GB) on the stack.</li>
+</ul>
+<p>So, in essence, the UNWIND_CODEs are a meta-data representation of the functions prolog.</p>
+<p>Figure 6 shows the relationship between stack related operations performed by the function prolog and the description of these operations in the UNWIND_CODE structures. The UNWIND_CODE structures appear in the reverse order of the instructions they represent, such that during an exception, the stack can be unwound in the opposite direction in which it was created.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sb9u1RcjJNIQ--zTRll1qLFJWWbG2eeX3UlpzdoEf74s/https://codemachine.com/articles/figures/figure_x64dd_6.png" srcset="/img/loading.gif" lazyload alt="FIG#6"></p>
+<p>Figure 6 : Unwind Code</p>
+<p>The following example displays the “.pdata” section header from the PE file for the native version of notepad.exe on an X64 system. The “virtual address” field indicates that the .pdata section is located at an offset of 0x13000 from the beginning of the executable file.</p>
+<p>T:\link -dump -headers c:\windows\system32\notepad.exe<br>
+.<br>
+.<br>
+.<br>
+SECTION HEADER #4<br>
+.pdata name<br>
+6B4 virtual size<br>
+13000 virtual address (0000000100013000 to 00000001000136B3)<br>
+800 size of raw data<br>
+F800 file pointer to raw data (0000F800 to 0000FFFF)<br>
+0 file pointer to relocation table<br>
+0 file pointer to line numbers<br>
+0 number of relocations<br>
+0 number of line numbers<br>
+40000040 flags<br>
+Initialized Data<br>
+Read Only<br>
+.<br>
+.<br>
+.</p>
+<p>The next example shows the UNWIND_INFO and the UNWIND_CODE structures from the same executable file i.e. notepad.exe. Each UNWIND_CODE structure describes an operation like PUSH_NONVOL or ALLOC_SMALL that the function’s prolog performs and must be undone when the stack is unwound, as shown below. The debugger’s “.fnent” command also shows the contents of these two structures. However, the output of “link -dump -unwindinfo” decodes the entire contents of the UNWIND_CODE structures which “.fnent” does not.</p>
+<p>T:\link -dump -unwindinfo c:\windows\system32\notepad.exe<br>
+.<br>
+.<br>
+.<br>
+00000018 00001234 0000129F 0000EF68<br>
+Unwind version: 1<br>
+Unwind flags: None<br>
+Size of prologue: 0x12<br>
+Count of codes: 5<br>
+Unwind codes:<br>
+12: ALLOC_SMALL, size=0x28<br>
+0E: PUSH_NONVOL, register=rdi<br>
+0D: PUSH_NONVOL, register=rsi<br>
+0C: PUSH_NONVOL, register=rbp<br>
+0B: PUSH_NONVOL, register=rbx.<br>
+.<br>
+.<br>
+.</p>
+<p>The ALLOC_SMALL in the above output represents the “sub” instruction in the function’s prolog that allocates 0x28 bytes of stack space. Each PUSH_NONVOL corresponds to a “push” instruction in the function’s prolog which saves a non-volatile register on the stack and is restored by the “pop” instruction in the function’s epilog. These instructions can be seen in the disassembly of the function at offset 0x1234 shown below:</p>
+<p>0:000&gt; ln notepad+1234<br>
+(00000000<code>ff971234)   notepad!StringCchPrintfW   |  (00000000</code>ff971364)   notepad!CheckSave<br>
+Exact matches:<br>
+notepad!StringCchPrintfW = <no type information><br>
+notepad!StringCchPrintfW = <no type information></no></no></p>
+<p>0:000&gt; uf notepad!StringCchPrintfW<br>
+notepad!StringCchPrintfW:<br>
+00000001<code>00001234 mov     qword ptr [rsp+18h],r8 00000001</code>00001239 mov     qword ptr [rsp+20h],r9<br>
+00000001<code>0000123e push    rbx 00000001</code>0000123f push    rbp<br>
+00000001<code>00001240 push    rsi 00000001</code>00001241 push    rdi<br>
+00000001<code>00001242 sub     rsp,28h 00000001</code>00001246 xor     ebp,ebp<br>
+00000001<code>00001248 mov     rsi,rcx 00000001</code>0000124b mov     ebx,ebp<br>
+00000001<code>0000124d cmp     rdx,rbp 00000001</code>00001250 je      notepad!StringCchPrintfW+0x27 (00000001<code>000077b5) ... notepad!StringCchPrintfW+0x5c: 00000001</code>00001294 mov     eax,ebx<br>
+00000001<code>00001296 add     rsp,28h 00000001</code>0000129a pop     rdi<br>
+00000001<code>0000129b pop     rsi 00000001</code>0000129c pop     rbp<br>
+00000001<code>0000129d pop     rbx 00000001</code>0000129e ret</p>
+<h4 id="performance-optimization"><a class="markdownIt-Anchor" href="#performance-optimization"></a> Performance Optimization</h4>
+<p>Windows operating system binaries are subject to a profile guided optimization called Basic Block Tools (BBT), which increases the spatial locality of code. Parts of a function that are executed frequently are kept together, potentially in the same page, and infrequently used parts are moved to other locations. This reduces the number of pages that are required to be kept in memory for the most commonly executed code paths, ultimately resulting in overall working set reduction. In order to apply this optimization, the binary is linked, executed, profiled and then the profile data is used to rearrange parts of a function based on execution frequency.</p>
+<p>In the resultant function, some of the function’s code blocks are moved outside the function’s main body which was originally defined by the extents of the RUNTIME_FUNCTION structure. Due to the code block movement the function body gets broken up into multiple discontiguous parts and hence the RUNTIME_FUNCTION structure, that was originally generated by the linker, is no longer able to accurately identify the extents of such functions. In order to address this problem, the BBT process adds multiple new RUNTIME_FUNCTION structures each defining one contiguous code block with the optimized function. These RUNTIME_FUNCTION structures are chained together with the chain terminating at the original RUNTIME_FUNCTION structure whose BeginAddress always points to the start of the function.</p>
+<p>Figure 7 shows a function made from three basic blocks. After applying the BBT process block #2 gets moved outside the function body causing the information in the original RUNTIME_FUNCTION to become invalid. So the BBT process creates a second RUNTIME_FUNCTION structure and chains it to the first one, thus describing the entire function.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sYnD9PMeEHaZuA30sCxX2GG-sCMzU2oHlINGvmNhPBec/https://codemachine.com/articles/figures/figure_x64dd_7.png" srcset="/img/loading.gif" lazyload alt="FIG#7"></p>
+<p>Figure 7 : Performance Optimization : Basic Block Tools</p>
+<p>The current public version of the debugger does not walk the complete chain of RUNTIME_FUNCTION structures. So the debugger is unable to show correct names of optimized functions in which the return address maps to a code block that has been moved outside the main function body.</p>
+<p>The following example shows functions in the call stack whose names are not displayed correctly. Instead the names are displayed in the form of &quot;ntdll! ?? ::FNODOBFM::`string’. The debugger incorrectly translates the return address 0x0000000077c17623 in frame 0x0c to the name “ntdll! ?? ::FNODOBFM::`string’+0x2bea0”.</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 00000000<code>0029e4b8 000007fe</code>fdd21726 ntdll! ?? ::FNODOBFM::<code>string'+0x6474 01 00000000</code>0029e4c0 000007fe<code>fdd2dab6 KERNELBASE!BaseSetLastNTError+0x16 02 00000000</code>0029e4f0 00000000<code>77ad108f KERNELBASE!AccessCheck+0x64 03 00000000</code>0029e550 00000000<code>77ad0d46 kernel32!BasepIsServiceSidBlocked+0x24f 04 00000000</code>0029e670 00000000<code>779cd161 kernel32!LoadAppInitDlls+0x36 05 00000000</code>0029e6e0 00000000<code>779cd42d user32!ClientThreadSetup+0x22e 06 00000000</code>0029e950 00000000<code>77c1fdf5 user32!_ClientThreadSetup+0x9 07 00000000</code>0029e980 000007fe<code>ffe7527a ntdll!KiUserCallbackDispatcherContinue 08 00000000</code>0029e9d8 000007fe<code>ffe75139 gdi32!ZwGdiInit+0xa 09 00000000</code>0029e9e0 00000000<code>779ccd1f gdi32!GdiDllInitialize+0x11b 0a 00000000</code>0029eb40 00000000<code>77c0c3b8 user32!UserClientDllInitialize+0x465 0b 00000000</code>0029f270 00000000<code>77c18368 ntdll!LdrpRunInitializeRoutines+0x1fe 0c 00000000</code>0029f440 00000000<code>77c17623 ntdll!LdrpInitializeProcess+0x1c9b 0d 00000000</code>0029f940 00000000<code>77c0308e ntdll! ?? ::FNODOBFM::</code>string’+0x2bea0<br>
+0e 00000000<code>0029f9b0 00000000</code>00000000 ntdll!LdrInitializeThunk+0xe</p>
+<p>The next example uses the return address 0x0000000077c17623, from above, to display the RUNTIME_FUNCTION, UNWIND_INFO and UNWIND_CODEs for the function with the incorrect name. The displayed information contains a section titled “Chained Info:”, which indicates that some of this function’s code blocks are outside the function’s main body.</p>
+<p>0:000&gt; .fnent 00000000<code>77c17623 Debugger function entry 00000000</code>03b35da0 for:<br>
+(00000000<code>77c55420)   ntdll! ?? ::FNODOBFM::</code>string’+0x2bea0   |  (00000000<code>77c55440)   ntdll! ?? ::FNODOBFM::</code>string’</p>
+<p>BeginAddress      = 00000000<code>000475d3 EndAddress        = 00000000</code>00047650<br>
+UnwindInfoAddress = 00000000`0012eac0</p>
+<p>Unwind info at 00000000`77cfeac0, 10 bytes<br>
+version 1, flags 4, prolog 0, codes 0<br>
+frame reg 0, frame offs 0</p>
+<p>Chained info:<br>
+BeginAddress      = 00000000<code>000330f0 EndAddress        = 00000000</code>000331c0<br>
+UnwindInfoAddress = 00000000`0011d08c</p>
+<p>Unwind info at 00000000<code>77ced08c, 20 bytes   version 1, flags 1, prolog 17, codes a   frame reg 0, frame offs 0   handler routine: 00000000</code>79a2e560, data 0<br>
+00: offs f0, unwind op 0, op info 3	UWOP_PUSH_NONVOL<br>
+01: offs 3, unwind op 0, op info 0	UWOP_PUSH_NONVOL<br>
+02: offs c0, unwind op 1, op info 3	UWOP_ALLOC_LARGE FrameOffset: d08c0003<br>
+04: offs 8c, unwind op 0, op info d	UWOP_PUSH_NONVOL<br>
+05: offs 11, unwind op 0, op info 0	UWOP_PUSH_NONVOL<br>
+06: offs 28, unwind op 0, op info 0	UWOP_PUSH_NONVOL<br>
+07: offs 0, unwind op 0, op info 0	UWOP_PUSH_NONVOL<br>
+08: offs 0, unwind op 0, op info 0	UWOP_PUSH_NONVOL<br>
+09: offs 0, unwind op 0, op info 0	UWOP_PUSH_NONVOL</p>
+<p>The BeginAddress displayed after the “Chained Info” above points to the beginning of the original function. The output of the “ln” command below shows that the scrambled function name is actually ntdll!LdrpInitialize.</p>
+<p>0:000&gt; ln ntdll+000330f0<br>
+(00000000<code>77c030f0)   ntdll!LdrpInitialize   |  (00000000</code>77c031c0)   ntdll!LdrpAllocateTls<br>
+Exact matches:<br>
+ntdll!LdrpInitialize = <no type information></no></p>
+<p>The debugger’s “uf” command displays the assembler code of the entire function, given any address within the function. It does so by visiting all the different code blocks in the function by following the jmp/jCC instructions in each code block. The following output shows the complete assembler listing for the function ntdll!LdrpInitialize. The main body of the function starts at address 00000000`77c030f0 and ends at address 00000000`77c031b3. There is, however, a code block that belongs to the function at address 00000000`77bfd1a4. This code movement is a result of the BBT process. The debugger attempts to map this address to the nearest symbol and comes up with the incorrect symbol “ntdll! ?? ::FNODOBFM::`string’+0x2c01c”, seen in the stack trace earlier.</p>
+<p>0:000&gt; uf 00000000<code>77c030f0 ntdll! ?? ::FNODOBFM::</code>string’+0x2c01c:<br>
+00000000<code>77bfd1a4 48c7842488000000206cfbff mov qword ptr [rsp+88h],0FFFFFFFFFFFB6C20h 00000000</code>77bfd1b0 443935655e1000  cmp     dword ptr [ntdll!LdrpProcessInitialized (00000000<code>77d0301c)],r14d 00000000</code>77bfd1b7 0f856c5f0000    jne     ntdll!LdrpInitialize+0x39 (00000000<code>77c03129) . . . ntdll!LdrpInitialize: 00000000</code>77c030f0 48895c2408      mov     qword ptr [rsp+8],rbx<br>
+00000000<code>77c030f5 4889742410      mov     qword ptr [rsp+10h],rsi 00000000</code>77c030fa 57              push    rdi<br>
+00000000<code>77c030fb 4154            push    r12 00000000</code>77c030fd 4155            push    r13<br>
+00000000<code>77c030ff 4156            push    r14 00000000</code>77c03101 4157            push    r15<br>
+00000000<code>77c03103 4883ec40        sub     rsp,40h 00000000</code>77c03107 4c8bea          mov     r13,rdx<br>
+00000000<code>77c0310a 4c8be1          mov     r12,rcx . . . ntdll!LdrpInitialize+0xac: 00000000</code>77c0319c 488b5c2470      mov     rbx,qword ptr [rsp+70h]<br>
+00000000<code>77c031a1 488b742478      mov     rsi,qword ptr [rsp+78h] 00000000</code>77c031a6 4883c440        add     rsp,40h<br>
+00000000<code>77c031aa 415f            pop     r15 00000000</code>77c031ac 415e            pop     r14<br>
+00000000<code>77c031ae 415d            pop     r13 00000000</code>77c031b0 415c            pop     r12<br>
+00000000<code>77c031b2 5f              pop     rdi 00000000</code>77c031b3 c3              ret</p>
+<p>Modules which have been subjected to BBT optimization can be identified by the word “perf” in the “Characteristics” field in the output of the debuggers “!lmi” command, as shown below.</p>
+<p>0:000&gt; !lmi notepad<br>
+Loaded Module Info: [notepad]<br>
+Module: notepad<br>
+Base Address: 00000000ff4f0000<br>
+Image Name: notepad.exe<br>
+Machine Type: 34404 (X64)<br>
+Time Stamp: 4a5bc9b3 Mon Jul 13 16:56:35 2009<br>
+Size: 35000<br>
+CheckSum: 3e749<br>
+Characteristics: 22  perf<br>
+Debug Data Dirs: Type  Size     VA  Pointer<br>
+CODEVIEW    24,  b74c,    ad4c RSDS - GUID: {36CFD5F9-888C-4483-B522-B9DB242D8478}<br>
+Age: 2, Pdb: notepad.pdb<br>
+CLSID     4,  b748,    ad48 [Data not mapped]<br>
+Image Type: MEMORY   - Image read successfully from loaded memory.<br>
+Symbol Type: PDB      - Symbols loaded successfully from symbol server.<br>
+c:\symsrv\notepad.pdb\36CFD5F9888C4483B522B9DB242D84782\notepad.pdb<br>
+Load Report: public symbols , not source indexed<br>
+c:\symsrv\notepad.pdb\36CFD5F9888C4483B522B9DB242D84782\notepad.pdb</p>
+<h3 id="parameter-passing"><a class="markdownIt-Anchor" href="#parameter-passing"></a> Parameter Passing</h3>
+<p>This section discusses how parameters are passed to X64 functions, how the function stack frames are constructed and how the debugger uses this information to walk the call stack.</p>
+<h4 id="register-based-parameter-passing"><a class="markdownIt-Anchor" href="#register-based-parameter-passing"></a> Register based parameter passing</h4>
+<p>On X64, the first 4 parameters are always passed in registers and the rest of the parameters are passed via the stack. This is one of main causes of grief during debugging since register values tend to change as functions execute and it becomes difficult to determine the original parameter values that were passed to a function, half-way into its execution. Other than this one issue with retrieving parameters, x64 debugging is not that different from x86 debugging.</p>
+<p>Figure 8 shows X64 assembler code depicting how parameters are passed by the caller to the callee.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sj5wpTKnXlbqf5umiichhH4MTO-OgzEiMdCRzHHb_37A/https://codemachine.com/articles/figures/figure_x64dd_8.png" srcset="/img/loading.gif" lazyload alt="FIG#8"></p>
+<p>Figure 8 : Parameter Passing on X64</p>
+<p>The following call stack shows the function kernel32!CreateFileWImplementation calling KERNELBASE!CreateFileW.</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-2"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-2"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+.<br>
+.<br>
+.</p>
+<p>From the MSDN documentation, the function CreateFileW() takes seven parameters and it’s prototype is as follows:</p>
+<p>HANDLE WINAPI<br>
+CreateFile(<br>
+__in      LPCTSTR lpFileName,<br>
+__in      DWORD dwDesiredAccess,<br>
+__in      DWORD dwShareMode,<br>
+__in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes,<br>
+__in      DWORD dwCreationDisposition,<br>
+__in      DWORD dwFlagsAndAttributes,<br>
+__in_opt  HANDLE hTemplateFile );</p>
+<p>From the call stack, shown earlier, the return address for the frame containing the function KERNELBASE!CreateFileW is 00000000`77ac2aad. Disassembling backwards from this return address shows the instructions in kernel32!CreateFileWImplementation just before the call to kernel32!CreateFileW. The instructions “mov rcx,rdi”, “mov edx,ebx”, “mov r8d,ebp”, “mov r9,rsi” show the first 4 parameters being moved to registers in preparation for the call to kernel32!CreateFileW. Similarly the instructions “mov dword ptr [rsp+20h],eax”, “mov dword ptr [rsp+28h],eax” and “mov qword ptr [rsp+30h],rax” show the rest of parameters, i.e. 5 through 7, being moved to the stack.</p>
+<p>0:000&gt; ub  00000000<code>77ac2aad L10 kernel32!CreateFileWImplementation+0x35: 00000000</code>77ac2a65 lea     rcx,[rsp+40h]<br>
+00000000<code>77ac2a6a mov     edx,ebx 00000000</code>77ac2a6c call    kernel32!BaseIsThisAConsoleName (00000000<code>77ad2ca0) 00000000</code>77ac2a71 test    rax,rax<br>
+00000000<code>77ac2a74 jne     kernel32!zzz_AsmCodeRange_End+0x54fc (00000000</code>77ae7bd0)<br>
+00000000<code>77ac2a7a mov     rax,qword ptr [rsp+90h] 00000000</code>77ac2a82 mov     r9,rsi<br>
+00000000<code>77ac2a85 mov     r8d,ebp 00000000</code>77ac2a88 mov     qword ptr [rsp+30h],rax<br>
+00000000<code>77ac2a8d mov     eax,dword ptr [rsp+88h] 00000000</code>77ac2a94 mov     edx,ebx<br>
+00000000<code>77ac2a96 mov     dword ptr [rsp+28h],eax 00000000</code>77ac2a9a mov     eax,dword ptr [rsp+80h]<br>
+00000000<code>77ac2aa1 mov     rcx,rdi 00000000</code>77ac2aa4 mov     dword ptr [rsp+20h],eax<br>
+00000000<code>77ac2aa8 call    kernel32!CreateFileW (00000000</code>77ad2c88)</p>
+<h4 id="homing-space"><a class="markdownIt-Anchor" href="#homing-space"></a> Homing Space</h4>
+<p>Although the first four parameters are passed via registers, there is still space allocated on the stack for these four parameters. This is called the parameter homing space and is used to store parameter values if either the function accesses the parameters by address instead of by value or if the function is compiled with the /homeparams flag. The minimum size of this homing space is 0x20 bytes or four 64-bit slots, even if the function takes less than 4 parameters. When the homing space is not used to store parameter values, the compiler uses it to save non-volatile registers.</p>
+<p>Figure 9 shows homing space on the stack for register based parameters and how the function prolog stores non-volatile registers in this parameter homing space.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sI-S5PruImVBtY0YpmgRC85EEXbd8ETMUhCc8coPj1B4/https://codemachine.com/articles/figures/figure_x64dd_9.png" srcset="/img/loading.gif" lazyload alt="FIG#9"></p>
+<p>Figure 9 : Parameter Homing Space</p>
+<p>In the example below, the “sub rsp, 20h” instruction shows the prolog of a function allocating 0x20 bytes on the stack, which is enough homing space for four 64-bit values. The next part of the example shows that the function msvcrt!malloc() is a non-leaf function in that it calls a bunch of other functions.</p>
+<p>0:000&gt; uf msvcrt!malloc<br>
+msvcrt!malloc:<br>
+000007fe<code>fe6612dc mov     qword ptr [rsp+8],rbx 000007fe</code>fe6612e1 mov     qword ptr [rsp+10h],rsi<br>
+000007fe<code>fe6612e6 push    rdi 000007fe</code>fe6612e7 sub     rsp,20h<br>
+000007fe<code>fe6612eb cmp     qword ptr [msvcrt!crtheap (000007fe</code>fe6f1100)],0<br>
+000007fe<code>fe6612f3 mov     rbx,rcx 000007fe</code>fe6612f6 je      msvcrt!malloc+0x1c (000007fe`fe677f74)<br>
+.<br>
+.<br>
+.</p>
+<p>0:000&gt; uf /c msvcrt!malloc<br>
+msvcrt!malloc (000007fe<code>fe6612dc)   msvcrt!malloc+0x6a (000007fe</code>fe66132c):<br>
+call to ntdll!RtlAllocateHeap (00000000<code>77c21b70)   msvcrt!malloc+0x1c (000007fe</code>fe677f74):<br>
+call to msvcrt!core_crt_dll_init (000007fe<code>fe66a0ec)   msvcrt!malloc+0x45 (000007fe</code>fe677f83):<br>
+call to msvcrt!FF_MSGBANNER (000007fe<code>fe6ace0c)   msvcrt!malloc+0x4f (000007fe</code>fe677f8d):<br>
+call to msvcrt!NMSG_WRITE (000007fe<code>fe6acc10)   msvcrt!malloc+0x59 (000007fe</code>fe677f97):<br>
+call to msvcrt!_crtExitProcess (000007fe<code>fe6ac030)   msvcrt!malloc+0x83 (000007fe</code>fe677fad):<br>
+call to msvcrt!callnewh (000007fe<code>fe696ad0)   msvcrt!malloc+0x8e (000007fe</code>fe677fbb):<br>
+call to msvcrt!errno (000007fe`fe661918)<br>
+.<br>
+.<br>
+.</p>
+<p>The following assembler code snippet of WinMain’s prolog shows four non-volatile registers being saved in locations on the stack designated as parameter homing area.</p>
+<p>0:000&gt; u notepad!WinMain<br>
+notepad!WinMain:<br>
+00000000<code>ff4f34b8 mov     rax,rsp 00000000</code>ff4f34bb mov     qword ptr [rax+8],rbx<br>
+00000000<code>ff4f34bf mov     qword ptr [rax+10h],rbp 00000000</code>ff4f34c3 mov     qword ptr [rax+18h],rsi<br>
+00000000<code>ff4f34c7 mov     qword ptr [rax+20h],rdi 00000000</code>ff4f34cb push    r12<br>
+00000000<code>ff4f34cd sub     rsp,70h 00000000</code>ff4f34d1 xor     r12d,r12d</p>
+<h4 id="parameter-homing"><a class="markdownIt-Anchor" href="#parameter-homing"></a> Parameter Homing</h4>
+<p>As described in the previous section, all X64 non-leaf functions have parameter homing area allocated in their stack frames. As per X64 calling convention, a caller will always use registers to pass the first 4 parameters to the callee. When parameter homing is enabled using the compiler’s /homeparams flag, only the callee’s code gets affected. This flags is always enabled in checked/debug builds of binaries built using the Windows Driver Kit (WDK) build environment. The callee’s prolog reads the parameter values from the registers and stores those values on the stack in to the parameter homing area.</p>
+<p>Figure 10 shows the assembler code for the caller where in it moves parameter values into the respective registers. It also shows the prolog of the callee that has been compiled with the /homeparams flag, which causes it to home the parameter values onto the stack. The callee’s prolog reads the parameter values from the registers and stores those values on the stack in the parameter homing area.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sRWiz9Q2HGrJDKVagsm0vpRGiXF4ZDJS4nUxgi0dXpj4/https://codemachine.com/articles/figures/figure_x64dd_10.png" srcset="/img/loading.gif" lazyload alt="FIG#10"></p>
+<p>Figure 10 : Parameter Homing</p>
+<p>The following code snippet shows register values being moved to homing area on the stack allocated by printf’s caller.</p>
+<p>0:000&gt; uf msvcrt!printf<br>
+msvcrt!printf:<br>
+000007fe<code>fe667e28 mov     rax,rsp 000007fe</code>fe667e2b mov     qword ptr [rax+8],rcx<br>
+000007fe<code>fe667e2f mov     qword ptr [rax+10h],rdx 000007fe</code>fe667e33 mov     qword ptr [rax+18h],r8<br>
+000007fe<code>fe667e37 mov     qword ptr [rax+20h],r9 000007fe</code>fe667e3b push    rbx<br>
+000007fe<code>fe667e3c push    rsi 000007fe</code>fe667e3d sub     rsp,38h<br>
+000007fe<code>fe667e41 xor     eax,eax 000007fe</code>fe667e43 test    rcx,rcx<br>
+000007fe<code>fe667e46 setne   al 000007fe</code>fe667e49 test    eax,eax<br>
+000007fe<code>fe667e4b je      msvcrt!printf+0x25 (000007fe</code>fe67d74b)<br>
+.<br>
+.<br>
+.</p>
+<h4 id="stack-usage"><a class="markdownIt-Anchor" href="#stack-usage"></a> Stack Usage</h4>
+<p>The stack frame of an X64 function contains the following items:</p>
+<ul>
+<li>Caller Return Address.</li>
+<li>Non-Volatile registers pushed onto the stack by the function prolog.</li>
+<li>Local variables used by the function.</li>
+<li>Stack based parameters passed to callees.</li>
+<li>Homing space for register based parameters passed to callees.</li>
+</ul>
+<p>Other than the return address, all the items on the stack are put there by the function’s prolog. The stack space occupied by the locals, stack based parameters to the callees and the homing space for the parameters are all allocated in a single “sub rsp, xxx” instruction. The space reserved for the stack based parameters caters to the callee with the most number of parameters. The register based parameter homing space exists only for non-leaf functions. It contains space for four parameters even if there isn’t a single callee that takes that many parameters.</p>
+<p>Figure 11 shows the layout of the function stack frame on the X64 CPU. The RSP registers points to location shown in the picture right after the function prolog completes execution.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sEZA1CDHj_wA3dEJ0O8sIhRkdHmaVYHiTnpae8332dMg/https://codemachine.com/articles/figures/figure_x64dd_11.png" srcset="/img/loading.gif" lazyload alt="FIG#11"></p>
+<p>Figure 11 : Stack Usage</p>
+<p>The debugger’s “knf” command displays the call stack along with the amount of stack space utilized by every frame in the stack. This stack space utilization is listed under the “Memory” column.</p>
+<p>0:000&gt; knf</p>
+<h1 id="memory-child-sp-retaddr-call-site"><a class="markdownIt-Anchor" href="#memory-child-sp-retaddr-call-site"></a> Memory  Child-SP          RetAddr           Call Site</h1>
+<p>00           00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01         8 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02       160 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+03        60 00000000<code>0029bdc0 000007fe</code>fe55dc08 usp10!UniStorInit+0xdd<br>
+04        a0 00000000<code>0029be60 000007fe</code>fe5534af usp10!InitUnistor+0x1d8</p>
+<p>The following assembler code snippet shows the prolog of the function CreateFileW, which saves the non-volatile registers r8d and edx to the parameter homing area, pushes rbx, rbp, esi, edi on the stack and allocates 0x138 bytes worth of stack space for local variables and parameters to be passed to the callees.</p>
+<p>0:000&gt; uf KERNELBASE!CreateFileW<br>
+KERNELBASE!CreateFileW:<br>
+000007fe<code>fdd24ac0 mov     dword ptr [rsp+18h],r8d 000007fe</code>fdd24ac5 mov     dword ptr [rsp+10h],edx<br>
+000007fe<code>fdd24ac9 push    rbx 000007fe</code>fdd24aca push    rbp<br>
+000007fe<code>fdd24acb push    rsi 000007fe</code>fdd24acc push    rdi<br>
+000007fe<code>fdd24acd sub     rsp,138h 000007fe</code>fdd24ad4 mov     edi,dword ptr [rsp+180h]<br>
+000007fe<code>fdd24adb mov     rsi,r9 000007fe</code>fdd24ade mov     rbx,rcx<br>
+000007fe<code>fdd24ae1 mov     ebp,2 000007fe</code>fdd24ae6 cmp     edi,3<br>
+000007fe<code>fdd24ae9 jne     KERNELBASE!CreateFileW+0x449 (000007fe</code>fdd255ff)</p>
+<h4 id="child-sp"><a class="markdownIt-Anchor" href="#child-sp"></a> Child-SP</h4>
+<p>The value of the Child-SP register displayed by the debugger’s “k” command represents the address at which the stack pointer (RSP) points to, as the point where the function displayed in that frame, has finished executing its prolog. The next item that would be pushed on the stack would be the return address of the function as it invokes its callees. Since X64 functions do not modify the value of RSP after the function prolog, any stack accesses performed by the rest of the function are done relative to this position of the stack pointer. This includes access to stack based parameters and local variables.</p>
+<p>Figure 12 shows the stack frame of function f2 and its relationship with the RSP register displayed in the output of the stack “k” command. The return address RA1 points to the instruction in function f2 right after the “call f1” instruction. This return address appears on the call stack right next to the location that the RSP2 points to.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,snYpKejKfQloOlNbpXooXNguL1x4jmh5YhHwdKgnfKqE/https://codemachine.com/articles/figures/figure_x64dd_12.png" srcset="/img/loading.gif" lazyload alt="FIG#12"></p>
+<p>Figure 12 : Relationship between Child-SP and function frames</p>
+<p>In the following call stack, the value of Child-SP for frame #01 is 00000000`0029bc00. This is the value of the RSP register at the point of execution in CreateFileW() when its prolog has just completed.</p>
+<p>0:000&gt; knf</p>
+<h1 id="memory-child-sp-retaddr-call-site-2"><a class="markdownIt-Anchor" href="#memory-child-sp-retaddr-call-site-2"></a> Memory  Child-SP          RetAddr           Call Site</h1>
+<p>00           00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01         8 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02       160 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+03        60 00000000<code>0029bdc0 000007fe</code>fe55dc08 usp10!UniStorInit+0xdd<br>
+04        a0 00000000<code>0029be60 000007fe</code>fe5534af usp10!InitUnistor+0x1d8<br>
+.<br>
+.<br>
+.</p>
+<p>As discussed above, the contents of the stack right before the address 00000000`0029bc00 is the return address 000007fe`fdd24d76 which corresponds to KERNELBASE!CreateFileW+0x2cd and is pushed there by the call to ntdll!NtCreateFile.</p>
+<p>0:000&gt; dps 00000000<code>0029bc00-8 L1 00000000</code>0029bbf8  000007fe`fdd24d76 KERNELBASE!CreateFileW+0x2cd</p>
+<h4 id="walking-the-call-stack"><a class="markdownIt-Anchor" href="#walking-the-call-stack"></a> Walking the call stack</h4>
+<p>On the X86 CPU, the debugger follows the frame pointer (EBP) chain to walk the call stack from the most recent function frame to the least recent one. The debugger can typically do this without having access to the symbols of the module whose functions appear on the stack. However this frame pointer chain can be broken under certain circumstances, like when functions have their frame pointer omitted (FPO). In these cases, the debugger needs the symbols of the module to be able to accurately walk the call stack.</p>
+<p>X64 functions, on the other hand, don’t use the RBP register as a frame pointer and hence, the debugger has no frame pointer chain to follow. Instead, the debugger uses the stack pointer and the size of the stack frame to walk the stack. The debugger locates the RUNTIME_FUNCTION, UNWIND_INFO and UNWIND_CODE structures to compute the stack space utilization for every function in the call stack and adds these values to the Child-SPs to compute the value of subsequent Child-SPs.</p>
+<p>Figure 13 shows the layout of a function’s stack frame. The total size of the stack frame (or stack space utilization) can be calculated by adding the size of the return address (8 bytes) and the amount of stack space taken up by the non-volatile registers, the local variables, the stack based parameters to callees and the homing space allocated for the four register based parameters (0x20 bytes). The UNWIND_CODE structures indicate the number of non-volatile registers that are pushed on the stack and the amount of space allocated for the locals and the parameters.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sPZKdftsit3qrRhDDcyvg6UCbQVfppVl1Ou7C7v-q9cI/https://codemachine.com/articles/figures/figure_x64dd_13.png" srcset="/img/loading.gif" lazyload alt="FIG#13"></p>
+<p>Figure 13 : Walking the x64 call stack</p>
+<p>In the following stack trace, the amount of stack space consumed by the function in frame #1 i.e. CreateFileW is 0x160 bytes. The next section shows how this number is computed and how the debugger uses this to compute the value of Child-SP for frame #2. Note that the stack space consumed by the function listed in frame #1 is shown under the “Memory” column for frame #2.</p>
+<p>0:000&gt; knf</p>
+<h1 id="memory-child-sp-retaddr-call-site-3"><a class="markdownIt-Anchor" href="#memory-child-sp-retaddr-call-site-3"></a> Memory  Child-SP          RetAddr           Call Site</h1>
+<p>00           00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01         8 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02       160 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+03        60 00000000<code>0029bdc0 000007fe</code>fe55dc08 usp10!UniStorInit+0xdd<br>
+04        a0 00000000<code>0029be60 000007fe</code>fe5534af usp10!InitUnistor+0x1d8<br>
+.<br>
+.<br>
+.</p>
+<p>The following output shows the operations described by the UNWIND_CODE structures. There are a total of 4 non-volatile registers being pushed on the stack and an allocation of 0x138 bytes for locals and parameters. Non-volatile registers that are moved (UWOP_SAVE_NONVOL), as opposed to pushed (UWOP_PUSH_NONVOL) on to the stack, don’t contribute towards consumption of stack space.</p>
+<p>0:000&gt; .fnent kernelbase!CreateFileW<br>
+Debugger function entry 00000000<code>03be6580 for: (000007fe</code>fdd24ac0)   KERNELBASE!CreateFileW   |  (000007fe`fdd24e2c)   KERNELBASE!SbSelectProcedure<br>
+Exact matches:<br>
+KERNELBASE!CreateFileW = <no type information></no></p>
+<p>BeginAddress      = 00000000<code>00004ac0 EndAddress        = 00000000</code>00004b18<br>
+UnwindInfoAddress = 00000000`00059a48</p>
+<p>Unwind info at 000007fe`fdd79a48, 10 bytes<br>
+version 1, flags 0, prolog 14, codes 6<br>
+frame reg 0, frame offs 0<br>
+00: offs 14, unwind op 1, op info 0	UWOP_ALLOC_LARGE FrameOffset: 138<br>
+02: offs d, unwind op 0, op info 7	UWOP_PUSH_NONVOL<br>
+03: offs c, unwind op 0, op info 6	UWOP_PUSH_NONVOL<br>
+04: offs b, unwind op 0, op info 5	UWOP_PUSH_NONVOL<br>
+05: offs a, unwind op 0, op info 3	UWOP_PUSH_NONVOL</p>
+<p>Adding up the sizes listed above yields a stack space consumption of 0x138 + (8*4) = 0x158 bytes.</p>
+<p>0:000&gt; ?138+(8*4)<br>
+Evaluate expression: 344 = 00000000`00000158</p>
+<p>Adding the size of the return address (8 bytes) to the above number gives a total stack frame size of 0x160 bytes. This is the same number shown by the debugger’s “knf” command, shown earlier.</p>
+<p>0:000&gt; ?158+8<br>
+Evaluate expression: 352 = 00000000`00000160</p>
+<p>Referring to the output of the “knf” command, the debugger adds the frame size (0x160) to the value of the Child-SP value in frame #01 i.e. 00000000`0029bc00 to get the Child-SP value in frame #02 i.e. 00000000`0029bd60.</p>
+<p>0:000&gt; ?00000000<code>0029bc00+160 Evaluate expression: 2735456 = 00000000</code>0029bd60</p>
+<p>So the space allocated on the stack for each frame can be computed from information in the PE file itself using the RUNTIME_FUNCTION, UNWIND_INFO and UNWIND_CODE structures. Due to this, the debugger can walk the call stack without requiring symbols (public or private) for the modules present on the stack. The following call stack shows the module “vmswitch” for which symbols are not available on Microsoft’s public symbol server but that does not stop the debugger from walking and displaying the call stack accurately, an example of the fact that the X64 call stack can be walked without symbols.</p>
+<p>1: kd&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-3"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-3"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 fffffa60<code>005f1a68 fffff800</code>01ab70ee nt!KeBugCheckEx<br>
+01 fffffa60<code>005f1a70 fffff800</code>01ab5938 nt!KiBugCheckDispatch+0x6e<br>
+.<br>
+.<br>
+.<br>
+21 fffffa60<code>01718840 fffffa60</code>0340b69e vmswitch+0x5fba<br>
+22 fffffa60<code>017188f0 fffffa60</code>0340d5cc vmswitch+0x769e<br>
+23 fffffa60<code>01718ae0 fffffa60</code>0340e615 vmswitch+0x95cc<br>
+24 fffffa60<code>01718d10 fffffa60</code>009ae31a vmswitch+0xa615<br>
+.<br>
+.<br>
+.<br>
+44 fffffa60<code>0171aed0 fffffa60</code>0340b69e vmswitch+0x1d286<br>
+45 fffffa60<code>0171af60 fffffa60</code>0340d4af vmswitch+0x769e<br>
+46 fffffa60<code>0171b150 fffffa60</code>034255a0 vmswitch+0x94af<br>
+47 fffffa60<code>0171b380 fffffa60</code>009ac33c vmswitch+0x215a0<br>
+.<br>
+.<br>
+.</p>
+<h3 id="parameter-retrieval"><a class="markdownIt-Anchor" href="#parameter-retrieval"></a> Parameter Retrieval</h3>
+<p>In the previous section, the inner workings of the X64 stack was explained along with information on how to interpret every detail from the output of the stack trace displayed by the debugger. In this section, the theory would be applied to demonstrate techniques to retrieve register based parameters passed to X64 functions. Unfortunately, there is no silver bullet to finding parameters. All the techniques here depend heavily on the X64 assembler instructions generated by the compiler. If the parameters are not in “reachable memory”, there is simply no way to get them. Having private symbols for modules and functions that appear in the call stack doesn’t help too much either. Private symbols do tell the number and types of parameters a function takes, but that’s about it. It does not tell what those parameter values are.</p>
+<h4 id="summary-of-techniques"><a class="markdownIt-Anchor" href="#summary-of-techniques"></a> Summary of Techniques</h4>
+<p>The discussions in this section assume that the X64 functions have been compiled without the /homeparams flag. When compiled with the /homeparams flag, it is trivial to retrieve register based parameters as they are guaranteed to be homed on to the stack by the callee. Also the fifth and higher numbered parameters are always passed via the stack, irrespective of whether the function is compiled with /homeparams, so retrieving these parameters should not be an issue in any case.</p>
+<p>During live debugging, setting a breakpoint on the beginning of the function is the easiest way to retrieve parameters that were passed in by the caller, since during the function’s prolog, the first 4 parameters are guaranteed to be available in the registers RCX, RDX, R8 and R9 respectively.</p>
+<p>However, as execution progresses within the function body, the contents of the parameter registers change and the initial parameter value gets overwritten. So, to determine the value of these register based parameters at any point during function execution, one needs to find out - where is the value of the parameter being read from and where is the value of the parameter being written to? Answers to these questions can be found by performing a sequence of steps in the debugger which can be grouped as follows:</p>
+<ul>
+<li>Determine if the parameters are loaded into the registers from memory. If so, the memory location can be examined to determine the parameter values.</li>
+<li>Determine if the parameters are loaded from non-volatile registers and if those registers are saved by the callee. If so, the saved non-volatile register values can be examined to determine the parameter values.</li>
+<li>Determine if the parameters are saved from the registers into memory. If so, the memory location can be examined to determine the parameter values.</li>
+<li>Determine if the parameters are saved into non-volatile registers and if those registers are saved by the callee. If so, the saved non-volatile register values can be examined to determine the parameter values.</li>
+</ul>
+<p>In the next few sections, each one of the above techniques is described in detail with examples on how to use them. Each one of the techniques requires disassembling the caller and the callee functions involved in the parameter passing. In Figure 14, if the intention is to find parameters passed to function f2(), frame 2 must be disassembled to find parameter from sources and frame 0 must be disassembled to find them from their destinations.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sVwxtRcyh5DQw0p-HpSqmaZkcyYGeu_-9jWlzId524fM/https://codemachine.com/articles/figures/figure_x64dd_14.png" srcset="/img/loading.gif" lazyload alt="FIG#14"></p>
+<p>Figure 14 : Finding Register Based Parameters</p>
+<h4 id="identifying-parameter-sources"><a class="markdownIt-Anchor" href="#identifying-parameter-sources"></a> Identifying Parameter Sources</h4>
+<p>This technique involves determining the source of the values being loaded into parameter registers. It works for sources like constant values, global data structures, stack addresses, values stored on the stack etc.</p>
+<p>As illustrated in Figure 15, disassembling the caller (X64caller) shows that the values being loaded into RCX, RDX, R8 and R9 to be passed as parameters to the function X64callee are being loaded from sources that can be examined in the debugger as long as the values haven’t changed.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sNVkFHbrs3p0z3HN0g8zcU4i6tWFNUOi7Xef4cIGBUd8/https://codemachine.com/articles/figures/figure_x64dd_15.png" srcset="/img/loading.gif" lazyload alt="FIG#15"></p>
+<p>Figure 15 : Identifying parameter sources</p>
+<p>The following example applies this technique to find the value of the third parameter to the function NtCreateFile() as show in the call stack below.</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-4"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-4"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+.<br>
+.<br>
+.</p>
+<p>As shown below, from the prototype of the function NtCreateFile(), the parameter type for the third parameter is POBJECT_ATTRIBUTES.</p>
+<p>NTSTATUS NtCreateFile(<br>
+__out     PHANDLE FileHandle,<br>
+__in      ACCESS_MASK DesiredAccess,<br>
+__in      POBJECT_ATTRIBUTES ObjectAttributes,<br>
+__out     PIO_STATUS_BLOCK IoStatusBlock,<br>
+.<br>
+.<br>
+. );</p>
+<p>Disassembling the caller using the return address in frame #0 shows the following instructions. The value being loaded into the R8 i.e. the register assigned for parameter 3 is rsp+0xc8. The output of the “kn” command above shows that the value of the RSP register at the time the caller i.e. KERNELBASE!CreateFileW was executing, was 00000000`0029bc00.</p>
+<p>0:000&gt; ub 000007fe<code>fdd24d76 KERNELBASE!CreateFileW+0x29d: 000007fe</code>fdd24d46 and     ebx,7FA7h<br>
+000007fe<code>fdd24d4c lea     r9,[rsp+88h] 000007fe</code>fdd24d54 lea     r8,[rsp+0C8h]<br>
+000007fe<code>fdd24d5c lea     rcx,[rsp+78h] 000007fe</code>fdd24d61 mov     edx,ebp<br>
+000007fe<code>fdd24d63 mov     dword ptr [rsp+28h],ebx 000007fe</code>fdd24d67 mov     qword ptr [rsp+20h],0<br>
+000007fe`fdd24d70 call    qword ptr [KERNELBASE!_imp_NtCreateFile]</p>
+<p>Manually reconstructing the value that was loaded into the R8 register from the information above yields a value that can be type-casted to the OBJECT_ATTRIBUTE structure.</p>
+<p>0:000&gt; dt ntdll!_OBJECT_ATTRIBUTES 00000000<code>0029bc00+c8    +0x000 Length           : 0x30    +0x008 RootDirectory    : (null)     +0x010 ObjectName       : 0x00000000</code>0029bcb0 _UNICODE_STRING “??\C:\Windows\Fonts\staticcache.dat”<br>
++0x018 Attributes       : 0x40<br>
++0x020 SecurityDescriptor : (null)<br>
++0x028 SecurityQualityOfService : 0x00000000`0029bc68</p>
+<h4 id="non-volatile-registers-as-parameter-sources"><a class="markdownIt-Anchor" href="#non-volatile-registers-as-parameter-sources"></a> Non-Volatile Registers as parameter sources</h4>
+<p>This technique involves finding if the values being loaded into parameter registers are being read out of the non-volatile registers and if the non-volatile registers are being saved on the stack.</p>
+<p>Figure 16 shows the disassembly of the caller (X64caller) and the callee (X64Callee). The instructions just before the caller calls the callee (on the left hand side) shows that the values being loaded into the parameter registers (RCX, RDX, R8 and R9) are being read from the non-volatile registers (RDI, R12, RBX, R9). The instructions in the callee’s prolog (on the right hand side) show that these non-volatile registers are being saved to the stack. These saved values can be retrieved, which indirectly yield the values that were loaded into the parameter registers earlier.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,szIXTzly09TXPwMbnOwy0dMq6O9KGY6ogLhIsSgg_QZ0/https://codemachine.com/articles/figures/figure_x64dd_16.png" srcset="/img/loading.gif" lazyload alt="FIG#16"></p>
+<p>Figure 16 : Non-Volatile Registers as parameter sources</p>
+<p>The following example applies this technique to find the value of the first parameter to the function CreateFileW() as shown in the call stack below.</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-5"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-5"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+.<br>
+.<br>
+.</p>
+<p>As shown below, from the prototype of the function CreateFile(), the type for the first parameter is LPCTSTR.</p>
+<p>HANDLE WINAPI<br>
+CreateFile(<br>
+__in      LPCTSTR lpFileName,<br>
+__in      DWORD dwDesiredAccess,<br>
+__in      DWORD dwShareMode,<br>
+__in_opt  LPSECURITY_ATTRIBUTES lpSecurityAttributes,<br>
+.<br>
+.<br>
+. );</p>
+<p>Disassembling the caller using the return address in frame 1 shows the instructions below. The value being loaded into the RCX i.e. the register assigned for parameter 1 is being read from RDI, a non-volatile register. The next step is to find if the callee CreateFileW() saves EDI.</p>
+<p>0:000&gt; ub 00000000<code>77ac2aad L B kernel32!CreateFileWImplementation+0x4a: 00000000</code>77ac2a7a mov     rax,qword ptr [rsp+90h]<br>
+00000000<code>77ac2a82 mov     r9,rsi 00000000</code>77ac2a85 mov     r8d,ebp<br>
+00000000<code>77ac2a88 mov     qword ptr [rsp+30h],rax 00000000</code>77ac2a8d mov     eax,dword ptr [rsp+88h]<br>
+00000000<code>77ac2a94 mov     edx,ebx 00000000</code>77ac2a96 mov     dword ptr [rsp+28h],eax<br>
+00000000<code>77ac2a9a mov     eax,dword ptr [rsp+80h] 00000000</code>77ac2aa1 mov     rcx,rdi<br>
+00000000<code>77ac2aa4 mov     dword ptr [rsp+20h],eax 00000000</code>77ac2aa8 call    kernel32!CreateFileW (00000000`77ad2c88)</p>
+<p>Disassembling the callee shows the following instructions in the function’s prolog. The RDI register is being saved on the stack by the instruction “push rdi”. The value being saved would be the same value that was loaded into the RCX. The next step is to find the saved contents of EDI.</p>
+<p>0:000&gt; u KERNELBASE!CreateFileW<br>
+KERNELBASE!CreateFileW:<br>
+000007fe<code>fdd24ac0 mov     dword ptr [rsp+18h],r8d 000007fe</code>fdd24ac5 mov     dword ptr [rsp+10h],edx<br>
+000007fe<code>fdd24ac9 push    rbx 000007fe</code>fdd24aca push    rbp<br>
+000007fe<code>fdd24acb push    rsi 000007fe</code>fdd24acc push    rdi<br>
+000007fe<code>fdd24acd sub     rsp,138h 000007fe</code>fdd24ad4 mov     edi,dword ptr [rsp+180h]</p>
+<p>The debugger’s “.frame /r” command displays the values of non-volatile registers when a particular function was executing. It does so by retrieving the non-volatile register values saved by the callee’s prolog as discussed earlier. The following command shows the value of EDI as 000000000029beb0 when CreateFileWImplementation() called the CreateFileW(). This value can be used to display the file name parameter that was passed to CreateFile().</p>
+<p>0:000&gt; .frame /r 2<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+rax=0000000000000005 rbx=0000000080000000 rcx=000000000029bc78<br>
+rdx=0000000080100080 rsi=0000000000000000 rdi=000000000029beb0<br>
+rip=0000000077ac2aad rsp=000000000029bd60 rbp=0000000000000005<br>
+r8=000000000029bcc8  r9=000000000029bc88 r10=0057005c003a0043<br>
+r11=00000000003ab0d8 r12=0000000000000000 r13=ffffffffb6011c12<br>
+r14=0000000000000000 r15=0000000000000000</p>
+<p>0:000&gt; du /c 100 000000000029beb0<br>
+00000000`0029beb0  “C:\Windows\Fonts\staticcache.dat”</p>
+<h4 id="identifying-parameter-destinations"><a class="markdownIt-Anchor" href="#identifying-parameter-destinations"></a> Identifying parameter destinations</h4>
+<p>This technique involves finding if the values in parameter registers are written to memory within a function. When a function is compiled with /homeparams, the function’s prolog will always save the contents of the parameter registers to the parameter homing area on the stack. However, for functions that are not compiled with /homeparams, the parameter register contents may be written to memory anywhere within the function body.</p>
+<p>Figure 17 shows the disassembly of a function body wherein the parameter values in registers RCX, RDX, R8 and R9 are being written to the stack. The parameters can be determined by displaying the contents of the memory location using the value of the stack pointer for the current frame.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,spahqPkG2SH-czD6RjMa3ESiYuCIznbmindDhweevd9A/https://codemachine.com/articles/figures/figure_x64dd_17.png" srcset="/img/loading.gif" lazyload alt="FIG#17"></p>
+<p>Figure 17 : Identifying parameter destinations</p>
+<p>The following example applies this technique to find the value of the third and fourth parameter to the function DispatchClientMessage() as shown in the call stack below.</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-6"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-6"></a> Child-SP          RetAddr           Call Site</h1>
+<p>.<br>
+.<br>
+.<br>
+26 00000000<code>0029dc70 00000000</code>779ca01b user32!UserCallWinProcCheckWow+0x1ad<br>
+27 00000000<code>0029dd30 00000000</code>779c2b0c user32!DispatchClientMessage+0xc3<br>
+28 00000000<code>0029dd90 00000000</code>77c1fdf5 user32!_fnINOUTNCCALCSIZE+0x3c<br>
+29 00000000<code>0029ddf0 00000000</code>779c255a ntdll!KiUserCallbackDispatcherContinue<br>
+.<br>
+.<br>
+.</p>
+<p>The third and fourth parameters to a function are in the R8 and R9 register respectively. Disassembling the function DispatchClientMessage() and looking for any writes from R8 or R9 to memory, leads to the instructions “mov qword ptr [rsp+28h], r9” and “mov qword ptr [rsp+20h], r8” indicating that the third and fourth parameters are being written to the stack. These instructions are not a part of the function prolog but rather a part of the larger function body. It is important to note this, since the values of the R8 and R9 registers may have been modified before they were written to the stack. Although that does not happen in the case of DispatchClientMessage(), it is important to always verify parameter register overwrites when using this technique.</p>
+<p>0:000&gt; uf user32!DispatchClientMessage<br>
+user32!DispatchClientMessage:<br>
+00000000<code>779c9fbc sub     rsp,58h 00000000</code>779c9fc0 mov     rax,qword ptr gs:[30h]<br>
+00000000<code>779c9fc9 mov     r10,qword ptr [rax+840h] 00000000</code>779c9fd0 mov     r11,qword ptr [rax+850h]<br>
+00000000<code>779c9fd7 xor     eax,eax 00000000</code>779c9fd9 mov     qword ptr [rsp+40h],rax<br>
+00000000<code>779c9fde cmp     edx,113h 00000000</code>779c9fe4 je      user32!DispatchClientMessage+0x2a (00000000`779d7fe3)</p>
+<p>user32!DispatchClientMessage+0x92:<br>
+00000000<code>779c9fea lea     rax,[rcx+28h] 00000000</code>779c9fee mov     dword ptr [rsp+38h],1<br>
+00000000<code>779c9ff6 mov     qword ptr [rsp+30h],rax 00000000</code>779c9ffb mov     qword ptr [rsp+28h],r9<br>
+00000000<code>779ca000 mov     qword ptr [rsp+20h],r8 00000000</code>779ca005 mov     r9d,edx<br>
+00000000<code>779ca008 mov     r8,r10 00000000</code>779ca00b mov     rdx,qword ptr [rsp+80h]<br>
+00000000<code>779ca013 mov     rcx,r11 00000000</code>779ca016 call    user32!UserCallWinProcCheckWow (00000000`779cc2a4)<br>
+.<br>
+.<br>
+.</p>
+<p>Using the value of the stack pointer (RSP) for the frame #27 i.e. 00000000`0029dd30, from the output of the “kn” command above, and adding the offset at which R8 register is stored show 00000000`00000000 which is the value of the third parameter passed to DispatchClientMessage().</p>
+<p>0:000&gt; dp 00000000<code>0029dd30+20 L1 00000000</code>0029dd50  00000000`00000000</p>
+<p>Similarly adding the offset at which the R9 register is stored shows 00000000`0029de70 which is the value of the fourth parameter passed to DispatchClientMessage().</p>
+<p>0:000&gt; dp 00000000<code>0029dd30+28 L1 00000000</code>0029dd58  00000000`0029de70</p>
+<h4 id="non-volatile-registers-as-parameter-destinations"><a class="markdownIt-Anchor" href="#non-volatile-registers-as-parameter-destinations"></a> Non-Volatile Registers as Parameter Destinations</h4>
+<p>This technique involves finding if the contents of the parameter registers are saved into non-volatile registers by the function in question and then if these non-volatile registers are saved on the stack by the callee.</p>
+<p>Figure 18 shows the disassembly of the caller (X64Caller) and the callee (X64Callee). The intention is to find the values of the register based parameters that were passed to the function X64Caller. The body of the function X64Caller (shown on the left hand side) contains instructions that save the parameter registers (RCX, RDX, R8 and R9) into non-volatile registers (RDI, RSI, RBX, RBP). The prolog of the function X64Callee contains instructions (shown on the right hand side) that save these non-volatile registers on to the stack making it feasible to retrieve their values which would indirectly yield the values of the parameter registers.</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,slha4LXs3Bw5Gl0rOaPFJpBcKP5MhT5XULPYeszxGSLs/https://codemachine.com/articles/figures/figure_x64dd_18.png" srcset="/img/loading.gif" lazyload alt="FIG#18"></p>
+<p>Figure 18 : Non-Volatile Registers as Parameter Destinations</p>
+<p>The following example applies this technique to find the value of all the four register based parameters to the function CreateFileWImplementation().</p>
+<p>0:000&gt; kn</p>
+<h1 id="child-sp-retaddr-call-site-7"><a class="markdownIt-Anchor" href="#child-sp-retaddr-call-site-7"></a> Child-SP          RetAddr           Call Site</h1>
+<p>00 00000000<code>0029bbf8 000007fe</code>fdd24d76 ntdll!NtCreateFile<br>
+01 00000000<code>0029bc00 00000000</code>77ac2aad KERNELBASE!CreateFileW+0x2cd<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+03 00000000<code>0029bdc0 000007fe</code>fe55dc08 usp10!UniStorInit+0xdd</p>
+<p>The complete disassembly of the function CreateFileWImplementation() reveals that, right after the function prolog, the parameter registers are being saved to non-volatile registers by the instructions “mov ebx,edx”, “mov rdi,rcx”, mov rsi,r9&quot; and “mov ebp,r8d”. It is important to examine the instructions up to the call to the next function i.e. CreateFileW() to ascertain that these non-volatile registers are not being overwritten. Although not explicitly shown here, this verification has been performed by examining all the code paths in CreateFileWImplementation() that lead to the call to CreateFileW(). The next step is to disassemble the prolog of the function CreateFileW() to find out if it saves these non-volatile registers containing the register based parameters on the stack.</p>
+<p>0:000&gt; uf kernel32!CreateFileWImplementation<br>
+kernel32!CreateFileWImplementation:<br>
+00000000<code>77ac2a30 mov     qword ptr [rsp+8],rbx 00000000</code>77ac2a35 mov     qword ptr [rsp+10h],rbp<br>
+00000000<code>77ac2a3a mov     qword ptr [rsp+18h],rsi 00000000</code>77ac2a3f push    rdi<br>
+00000000<code>77ac2a40 sub     rsp,50h 00000000</code>77ac2a44 mov     ebx,edx<br>
+00000000<code>77ac2a46 mov     rdi,rcx 00000000</code>77ac2a49 mov     rdx,rcx<br>
+00000000<code>77ac2a4c lea     rcx,[rsp+40h] 00000000</code>77ac2a51 mov     rsi,r9<br>
+00000000<code>77ac2a54 mov     ebp,r8d 00000000</code>77ac2a57 call    qword ptr [kernel32!_imp_RtlInitUnicodeStringEx (00000000<code>77b4cb90)] 00000000</code>77ac2a5d test    eax,eax<br>
+00000000<code>77ac2a5f js      kernel32!zzz_AsmCodeRange_End+0x54ec (00000000</code>77ae7bc0)<br>
+.<br>
+.<br>
+.</p>
+<p>The following output shows that the function CreateFileW() saves the no-volatile registers (rbx, rbp, rsi and edi) onto the stack, which enables the debugger’s “.frame /r” command to display their values.</p>
+<p>0:000&gt; u KERNELBASE!CreateFileW<br>
+KERNELBASE!CreateFileW:<br>
+000007fe<code>fdd24ac0 mov     dword ptr [rsp+18h],r8d 000007fe</code>fdd24ac5 mov     dword ptr [rsp+10h],edx<br>
+000007fe<code>fdd24ac9 push    rbx 000007fe</code>fdd24aca push    rbp<br>
+000007fe<code>fdd24acb push    rsi 000007fe</code>fdd24acc push    rdi<br>
+000007fe<code>fdd24acd sub     rsp,138h 000007fe</code>fdd24ad4 mov     edi,dword ptr [rsp+180h]</p>
+<p>Running the command “.frame /r” on frame 2 containing the function CreateFileWImplementation() displays the values of these non-volatile registers at the time that the frame was active.</p>
+<p>0:000&gt; .frame /r 02<br>
+02 00000000<code>0029bd60 000007fe</code>fe5b9ebd kernel32!CreateFileWImplementation+0x7d<br>
+rax=0000000000000005 rbx=0000000080000000 rcx=000000000029bc78<br>
+rdx=0000000080100080 rsi=0000000000000000 rdi=000000000029beb0<br>
+rip=0000000077ac2aad rsp=000000000029bd60 rbp=0000000000000005<br>
+r8=000000000029bcc8  r9=000000000029bc88 r10=0057005c003a0043<br>
+r11=00000000003ab0d8 r12=0000000000000000 r13=ffffffffb6011c12<br>
+r14=0000000000000000 r15=0000000000000000<br>
+iopl=0         nv up ei pl zr na po nc<br>
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000244<br>
+kernel32!CreateFileWImplementation+0x7d:<br>
+00000000<code>77ac2aad mov     rbx,qword ptr [rsp+60h] ss:00000000</code>0029bdc0={usp10!UspFreeForUniStore (000007fe`fe55d8a0)}</p>
+<p>Mapping the non-volatile registers with the parameters registers based on the “mov” instructions shown earlier yields the following results.</p>
+<ul>
+<li>P1 = RCX = RDI = 000000000029beb0</li>
+<li>P2 = EDX = EBX = 0000000080000000</li>
+<li>P3 = R8D = EBP = 0000000000000005</li>
+<li>P4 = R9 = RSI = 0000000000000000</li>
+</ul>
+<p>It may be time consuming and cumbersome to apply the four steps discussed in this section when attempting to retrieve parameters from X64 call stack. CodeMachine provides a debugger extension command <strong><a target="_blank" rel="external nofollow noopener noreferrer" href="https://codemachine.com/articles/tool%5Fcmkd.html#stack">!cmkd.stack -p</a></strong> that automates this whole process. This command attempts to retrieve and display parameters to all the functions that appear on the X64 call stack of a thread. In order to use the command to retrieve parameters for any thread during user mode debugging, use the “~s” command to switch to that particular thread. Similarly during kernel mode debugging use the “.thread” command.</p>
+<p>This article covered some of the optimizations that the compiler performs on X64 that make the code generated very different from that on X86. It discussed exception handling mechanism on X64 and showed how the executable file format and data structures were modified to support this feature. It then discussed how the X64 stack frame are built at run time and how this knowledge can be applied to retrieve registers based function parameters passed to X64 functions, and thus overcome this painful hurdle on X64.</p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Omnivore/" class="category-chain-item">Omnivore</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Omnivore/2024-09-23/" class="category-chain-item">2024-09-23</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Omnivore/" class="print-no-link">#Omnivore</a>
+      
+        <a href="/tags/X64/" class="print-no-link">#X64</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CodeMachine - Article - X64 Deep Dive
+</div>
+      <div>https://hodlyounger.github.io/2024/10/11/Omnivore/2024-09-23/CodeMachine - Article - X64 Deep Dive/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>CodeMachine Inc.
+</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/11/Omnivore/2024-09-24/Homework-of-C-Language-CheckUserBadPwdPolicy.cpp%20at%20master%20%C2%B7%203gstudent-Homework-of-C-Language/" title="Homework-of-C-Language/CheckUserBadPwdPolicy.cpp at master · 3gstudent/Homework-of-C-Language
+">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Homework-of-C-Language/CheckUserBadPwdPolicy.cpp at master · 3gstudent/Homework-of-C-Language
+</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/11/Omnivore/2024-09-19/Download%20SharePoint%20Server%202019%20from%20Official%20Microsoft%20Download%20Center/" title="Download SharePoint Server 2019 from Official Microsoft Download Center
+">
+                        <span class="hidden-mobile">Download SharePoint Server 2019 from Official Microsoft Download Center
+</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,720 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【汇编】【实验楼】汇编教程笔记">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243453.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243575.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243689.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243788.png">
+<meta property="article:published_time" content="2024-08-24T13:33:55.196Z">
+<meta property="article:modified_time" content="2024-08-24T13:33:57.287Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="汇编">
+<meta property="article:tag" content="实验楼">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243453.png">
+  
+  
+  
+  <title>【汇编】【实验楼】汇编教程笔记 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【汇编】【实验楼】汇编教程笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-24 21:33" pubdate>
+          2024年8月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【汇编】【实验楼】汇编教程笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="dos-及-debug-介绍"><a class="markdownIt-Anchor" href="#dos-及-debug-介绍"></a> DOS 及 DEBUG 介绍</h2>
+<h3 id="8086-寄存器组"><a class="markdownIt-Anchor" href="#8086-寄存器组"></a> 8086 寄存器组</h3>
+<p>8086 寄存器都是 16 位的寄存器，根据用途可分为 4 种类型。分别是数据寄存器、地址寄存器、段寄存器和控制寄存器。</p>
+<p>如图所示:</p>
+<img src="/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243453.png" srcset="/img/loading.gif" lazyload class title="img">
+<h4 id="1数据寄存器"><a class="markdownIt-Anchor" href="#1数据寄存器"></a> （1）数据寄存器</h4>
+<p>数据寄存器中每个寄存器又可以分为 2 个 8 位的寄存器。分别为 AH、AL，BH、BL，CH、CL，DH、DL。H 表示高字节（高 8 位）寄存器、L 表示低字节（低 8 位）寄存器。</p>
+<p>例如：用 AX 寄存器存放一个字 1234H，表示为 (AX)=1234H，即高字节 12 放在 AH，低字节 34 放在 AL 中。</p>
+<h4 id="2地址寄存器"><a class="markdownIt-Anchor" href="#2地址寄存器"></a> （2）地址寄存器</h4>
+<p>地址寄存器包括指针和变址寄存器 SP、BP、SI、DI 四个 16 位寄存器。</p>
+<p>顾名思义，它们可用来存放存储器操作数的偏移地址。另外，它们也可以作为通用寄存器用。</p>
+<h4 id="3段寄存器"><a class="markdownIt-Anchor" href="#3段寄存器"></a> （3）段寄存器</h4>
+<p>8086CPU 有 4 个 16 位的段寄存器，分别是 CS 代码段寄存器、DS 数据段寄存器、ES 附加段寄存器、SS 堆栈段寄存器。</p>
+<h4 id="4控制寄存器"><a class="markdownIt-Anchor" href="#4控制寄存器"></a> （4）控制寄存器</h4>
+<p>控制寄存器包括 IP 和 FLAGS（又称为 PSW 程序状态字）两个 16 位寄存器，用于控制程序的执行。</p>
+<p>IP 指令指针寄存器，用来存放代码段中的偏移地址，指出当前正在执行指令的下一条指令所在单元的偏移地址。</p>
+<p>FLAGS 标志寄存器中的某位代表 CPU 的 1 个标志，表示出 CPU 的某种执行状态。最低位为 D0，最高位为 D15。8086CPU 的标志寄存器共有 9 个标志，分别为 6 个条件码标志和 3 个控制标志。如图：</p>
+<img src="/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243575.png" srcset="/img/loading.gif" lazyload class title="img">
+<p>（1）条件码标志</p>
+<ul>
+<li>CF 进位标志。当指令执行结果的最高位向前有进位时，CF=1，否则 CF=0。</li>
+<li>SF 符号标志。当指令执行结果的最高位（符号位）为负时，SF=1，否则 SF=0。</li>
+<li>ZF 零标志。当指令执行结果为 0 时，ZF=1，结果不为 0 时，ZF=0。</li>
+<li>OF 溢出标志。当指令执行结果有溢出（超出了数的表示范围）时，OF=1，否则 OF=0。</li>
+<li>AF 辅助进位标志。当指令执行结果的第 3 位（半字节）向前有进位时，AF=1，否则 AF=0。</li>
+<li>PF 奇偶标志。当指令执行结果中 1 的个数为偶数个时，PF=1，否则 PF=0。</li>
+</ul>
+<p>（2）控制标志</p>
+<ul>
+<li>DF 方向标志。执行串处理指令时，若设置 DF=0，存储单元的地址寄存器的值自动增加，若设置 DF=1，存储单元的地址寄存器的值自动减小。</li>
+<li>IF 中断标志。设置 IF=1，允许 CPU 响应可屏蔽中断，IF=0 则不响应。</li>
+<li>TF 陷阱标志。在 DEBUG 调试时，TF=1，采用单步执行方式，即进入陷阱；TF=0，正常执行程序。</li>
+</ul>
+<p>例：两个二进制数相加运算，有关标志位自动发生变化。</p>
+<img src="/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243689.png" srcset="/img/loading.gif" lazyload class title="img">
+<p>根据计算结果可知 CPU 会自动地把标志位设为：CF=0，SF=1，ZF=0，OF=0，PF=0，即无进位，结果为负数，结果不为 0，没有溢出，奇数个 1。</p>
+<p>对溢出的判断也可以从简单的角度理解，因为进行运算的二进制数是补码，可看出本题是一个负数和一个正数相加，结果为负数，不溢出。若两个正数相加，结果为负数，或者两个负数相加，结果为正数，那都是溢出了，说明 8 位补码已经表示不了该结果。</p>
+<p><strong><code>小贴士</code></strong> DEBUG 下的标志位表示</p>
+<p>在 DEBUG 调试环境下以字母缩写的形式表示各个标志位的状态。进入 DEBUG 后，用 R 命令查看寄存器状态时，可以看到除了陷阱标志以外的标志位的状态。</p>
+<p>如表 2-1 所示：</p>
+<img src="/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E3%80%90%E5%AE%9E%E9%AA%8C%E6%A5%BC%E3%80%91%E6%B1%87%E7%BC%96%E6%95%99%E7%A8%8B%E7%AC%94%E8%AE%B0/IMG-20240822100243788.png" srcset="/img/loading.gif" lazyload class title="此处输入图片的描述">
+<p><strong><code>小贴士</code></strong> 数的补码运算</p>
+<p>在计算机中，对带符号数可用真值和机器数两个概念表示。</p>
+<p>真值，就是带有“+”、“-”号的实际数值；所谓机器数，则是把“+”、“-”符号数值化（0、1）后所得到的计算机实际能表示的数。</p>
+<p>机器数有三种码表示，分别是原码、反码和补码。汇编语言中，数都是以补码的形式表示的，因此必须掌握数的补码表示和补码的运算。这三种码的定义如下：</p>
+<ul>
+<li>原码。原码将最高位作为符号位，正数为 0，负数为 1，其余 7 位作为数值位。</li>
+<li>反码。正数的反码与正数的原码一样。而求负数的反码时，符号位为 1，数值位在原码的基础上求反。</li>
+<li>补码。正数的补码与正数的原码一样。求负数的补码时，符号位为 1，数值位在原码的基础上求反加 1。</li>
+</ul>
+<p>例：十进制数 +5 和 -5 分别表示成二进制数原码、反码和补码。</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs txt">[+5]原 = [+5]反 = [+5]补 = 00000101B  <br>[-5]原 = 10000101B  <br>[-5]反 = 11111010B  <br>[-5]补 = 11111011B  <br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/%E6%B1%87%E7%BC%96/" class="category-chain-item">汇编</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B1%87%E7%BC%96/" class="print-no-link">#汇编</a>
+      
+        <a href="/tags/%E5%AE%9E%E9%AA%8C%E6%A5%BC/" class="print-no-link">#实验楼</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【汇编】【实验楼】汇编教程笔记</div>
+      <div>https://hodlyounger.github.io/2024/08/24/B_Code/汇编/【汇编】【实验楼】汇编教程笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/08/25/A_A%E7%A0%94/%E6%94%BF%E6%B2%BB/%E8%BF%91%E7%8E%B0%E4%BB%A3%E5%8F%B2%E7%BA%B2%E8%A6%81/02.%E6%AF%9B%E6%B3%BD%E4%B8%9C%E6%80%9D%E6%83%B3%E5%92%8C%E4%B8%AD%E5%9B%BD%E7%89%B9%E8%89%B2%E7%A4%BE%E4%BC%9A%E4%B8%BB%E4%B9%89%E7%90%86%E8%AE%BA%E4%BD%93%E7%B3%BB/" title="【近现代史纲要】02.毛泽东思想和中国特色社会主义理论体系">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【近现代史纲要】02.毛泽东思想和中国特色社会主义理论体系</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/08/24/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E6%B1%87%E7%BC%96%E5%AF%BC%E8%AF%BB/" title="【汇编】汇编导读">
+                        <span class="hidden-mobile">【汇编】汇编导读</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
