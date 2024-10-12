@@ -29,9 +29,14 @@
 <meta property="og:description" content="概述：windwos RPC 调试记录">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012094012743.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012101657141.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012103625651.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012110304669.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012110532570.png">
 <meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/IMG-20241010174126068.png">
 <meta property="article:published_time" content="2023-11-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-10-11T02:46:00.782Z">
+<meta property="article:modified_time" content="2024-10-12T03:40:02.009Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="调试技术">
 <meta property="article:tag" content="RPC">
@@ -231,7 +236,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          221 字
+          1.3k 字
         
       </span>
     
@@ -242,7 +247,7 @@
         
         
         
-          2 分钟
+          11 分钟
         
       </span>
     
@@ -302,19 +307,123 @@
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.coretechnologies.com/blog/windows-services/rpcss/">Essential Windows Services: Remote Procedure Call (RPC) / RpcSs | The Core Technologies Blog</a> - 阅力值 ⭐⭐⭐⭐</li>
 </ul>
+<p>StackOver Flow:</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://reverseengineering.stackexchange.com/questions/8116/at-the-rpcrt4ndrclientcall2-function-how-does-it-know-which-pipe-to-use-in-or?newreg=6993e709391d41109a7589e13b408964">windbg - at the rpcrt4! NdrClientCall2 function - how does it know which pipe to use in order to transfer data to another process? - Reverse Engineering Stack Exchange</a> - 阅力值 ⭐⭐⭐⭐⭐</li>
+</ul>
 </div>
 </details><h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
-<p>windows RPC 是常用的远程调用，有关 rpc 的使用可以在博客中搜索RPC关键字查看相关使用。RPC工具也可以使用开源 <mark>RPCView</mark>。</p>
-<h2 id="rpc及相关工具"><a class="markdownIt-Anchor" href="#rpc及相关工具"></a> RPC及相关工具</h2>
-<p>可以看到 RpcView 可以看到 RPC 进程使用的协议 <strong>ncacn_np</strong> ，以及 <strong>ncacn_np</strong> 协议对应的管道名 <code>\\pipe\\hello</code>。那本次调试的目标就是对标 RpcView。在 windbg 中可以查看一个进程RPC详细详细。</p>
-<img src="./【调试技术】RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload alt="RPC进程信息" style="zoom:80%;">
-<h2 id="调试步骤"><a class="markdownIt-Anchor" href="#调试步骤"></a> 调试步骤</h2>
-<p>rpc调试主要用到的 windows kits 中带的文件 dbgrpc.exe。详见微软官方文档 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/using-the-dbgrpc-tool">使用 DbgRpc 工具 - Windows drivers | Microsoft Learn</a></p>
-<h4 id="相关命令及输出说明"><a class="markdownIt-Anchor" href="#相关命令及输出说明"></a> 相关命令及输出说明</h4>
+<p>windows RPC 是常用的远程调用，有关 rpc 的使用可以在本博客中搜索 RPC 关键字查看相关使用。或者直接查看 RPC 标签。RPC 工具也可以使用开源 <mark>RPCView</mark>。</p>
+<h2 id="rpc-及相关工具"><a class="markdownIt-Anchor" href="#rpc-及相关工具"></a> RPC 及相关工具</h2>
+<p>RpcView 是一款非常棒的 Rpc 工具，非常有助于我们在分析调试过程中查看 Rpc 的相关信息。如果你需要调试 RPC 过程，那么这个工具可以是你的得力帮手。</p>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>简单使用</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>可以看到 RpcView 可以看到 RPC 进程使用的协议 <strong>ncacn_np</strong> ，以及 <strong>ncacn_np</strong> 协议对应的管道名 <code>\\pipe\\hello</code>。那本次调试的目标就是对标 RpcView。在 windbg 中可以查看一个进程 RPC 详细详细。<img src="./【调试技术】RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload alt="RPC进程信息" style="zoom:80%;"></p>
+</div>
+</details><h2 id="调试步骤"><a class="markdownIt-Anchor" href="#调试步骤"></a> 调试步骤</h2>
+<h3 id="使用微软官方的-dbgrpcexe"><a class="markdownIt-Anchor" href="#使用微软官方的-dbgrpcexe"></a> 使用微软官方的 dbgrpc.exe</h3>
+<p>rpc 调试主要用到的 windows kits 中带的文件 dbgrpc.exe。详见微软官方文档 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/using-the-dbgrpc-tool">使用 DbgRpc 工具 - Windows drivers | Microsoft Learn</a></p>
+<h3 id="使用-windbg"><a class="markdownIt-Anchor" href="#使用-windbg"></a> 使用 Windbg</h3>
+<p>参考 StackOver Flow 上的那个回答，正式开始对 RPC 的调试。</p>
+<details class="custom-callout info" open><summary class="callout-title"><div class="callout-icon"></div><div>调试环境</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>使用 Win11，自己写一个Demo用来调试。例如 Github 的 MasqueradePEBtoCopyFile。</p>
+</div>
+</details><h4 id="windbg-调试获取-rpc-接口-guid"><a class="markdownIt-Anchor" href="#windbg-调试获取-rpc-接口-guid"></a> windbg 调试获取 RPC 接口 GUID</h4>
+<ol>
+<li>
+<p>首先说明下原理，RPC客户端进程最终都会调用到 <code>NdrClientCall2</code> 这个接口。</p>
+<blockquote>
+<p>这里补充下这个函数的一个调用，从 NdrClientCall4 调用</p>
+</blockquote>
+<p>可以看到第一个参数为 PMIDL_STUB_DESC</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">CLIENT_CALL_RETURN <span class="hljs-title">NdrClientCall4</span><span class="hljs-params">(PMIDL_STUB_DESC pStubDescriptor, PFORMAT_STRING pFormat, ...)</span></span><br><span class="hljs-function"></span>&#123;<br>  va_list va; <span class="hljs-comment">// [esp+10h] [ebp+10h] BYREF</span><br><br>  <span class="hljs-built_in">va_start</span>(va, pFormat);<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">NdrClientCall2</span>(pStubDescriptor, pFormat, va);<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>在 windbg 中添加断点并触发</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">bp RPCRT4!NdrClientCall2<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>断点触发后，查看入参</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; .echo <span class="hljs-string">&quot;Arguments:&quot;</span>; dds esp L5<br>Arguments:<br><span class="hljs-number">00f</span>cd930  <span class="hljs-number">752</span>a7174 RPCRT4!NdrClientCall4+<span class="hljs-number">0x14</span><br><span class="hljs-number">00f</span>cd934  <span class="hljs-number">74</span>d81b98 combase!ILocalObjectExporter_StubDesc<br><span class="hljs-number">00f</span>cd938  <span class="hljs-number">74</span>db86fa combase!lclor__MIDL_ProcFormatString+<span class="hljs-number">0x2</span><br><span class="hljs-number">00f</span>cd93c  <span class="hljs-number">00f</span>cd950<br><span class="hljs-number">00f</span>cd940  <span class="hljs-number">00f</span>cdf58<br></code></pre></td></tr></table></figure>
+<p>其中第一个参数为 <code>74d81b98</code></p>
+</li>
+<li>
+<p>查看第一个参数，输出如下所示，RPC 相关的信息都保存在了 RpcInterfaceInformation 成员，其对应的结构体为 <code>RPC_CLIENT_INTERFACE</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; dt combase!ILocalObjectExporter_StubDesc <span class="hljs-number">74</span>d81b98<br>   +<span class="hljs-number">0x000</span> RpcInterfaceInformation : <span class="hljs-number">0x74db86b0</span> Void<br>   +<span class="hljs-number">0x004</span> pfnAllocate      : <span class="hljs-number">0x74e851b0</span>     <span class="hljs-type">void</span>*  combase!MIDL_user_allocate+<span class="hljs-number">0</span><br>   +<span class="hljs-number">0x008</span> pfnFree          : <span class="hljs-number">0x74eaa150</span>     <span class="hljs-type">void</span>  combase!MIDL_user_free+<span class="hljs-number">0</span><br>   +<span class="hljs-number">0x00c</span> IMPLICIT_HANDLE_INFO : &lt;unnamed-tag&gt;<br>   +<span class="hljs-number">0x010</span> apfnNdrRundownRoutines : (null) <br>   +<span class="hljs-number">0x014</span> aGenericBindingRoutinePairs : (null) <br>   +<span class="hljs-number">0x018</span> apfnExprEval     : (null) <br>   +<span class="hljs-number">0x01c</span> aXmitQuintuple   : (null) <br>   +<span class="hljs-number">0x020</span> pFormatTypes     : <span class="hljs-number">0x74dc56ba</span>  <span class="hljs-string">&quot;&quot;</span><br>   +<span class="hljs-number">0x024</span> fCheckBounds     : <span class="hljs-number">0</span>n1<br>   +<span class="hljs-number">0x028</span> Version          : <span class="hljs-number">0xa000c</span><br>   +<span class="hljs-number">0x02c</span> pMallocFreeStruct : (null) <br>   +<span class="hljs-number">0x030</span> MIDLVersion      : <span class="hljs-number">0</span>n134283892<br>   +<span class="hljs-number">0x034</span> CommFaultOffsets : <span class="hljs-number">0x74dc5684</span> _COMM_FAULT_OFFSETS<br>   +<span class="hljs-number">0x038</span> aUserMarshalQuadruple : <span class="hljs-number">0x74d86894</span> _USER_MARSHAL_ROUTINE_QUADRUPLE<br>   +<span class="hljs-number">0x03c</span> NotifyRoutineTable : (null) <br>   +<span class="hljs-number">0x040</span> mFlags           : <span class="hljs-number">1</span><br>   +<span class="hljs-number">0x044</span> CsRoutineTables  : (null) <br>   +<span class="hljs-number">0x048</span> ProxyServerInfo  : (null) <br>   +<span class="hljs-number">0x04c</span> pExprInfo        : <span class="hljs-number">0x74d86b58</span> _NDR_EXPR_DESC<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>查看 <code>RpcInterfaceInformation</code>，到这里就看到了保存接口信息的成员变量，其对应的结构体为 <code>_RPC_SYNTAX_IDENTIFIER</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; dt RPC_CLIENT_INTERFACE <span class="hljs-number">0x74db86b0</span><br>combase!RPC_CLIENT_INTERFACE<br>   +<span class="hljs-number">0x000</span> Length           : <span class="hljs-number">0x44</span><br>   +<span class="hljs-number">0x004</span> InterfaceId      : _RPC_SYNTAX_IDENTIFIER<br>   +<span class="hljs-number">0x018</span> TransferSyntax   : _RPC_SYNTAX_IDENTIFIER<br>   +<span class="hljs-number">0x02c</span> DispatchTable    : (null) <br>   +<span class="hljs-number">0x030</span> RpcProtseqEndpointCount : <span class="hljs-number">0</span><br>   +<span class="hljs-number">0x034</span> RpcProtseqEndpoint : (null) <br>   +<span class="hljs-number">0x038</span> Reserved         : <span class="hljs-number">0</span><br>   +<span class="hljs-number">0x03c</span> InterpreterInfo  : (null) <br>   +<span class="hljs-number">0x040</span> Flags            : <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>查看接口 GUID，可以看到接口 GUID 为 <code>&#123;E60C73E6-88F9-11CF-9AF1-0020AF6E72F4&#125;</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; dx -r1 (*((combase!_RPC_SYNTAX_IDENTIFIER *)<span class="hljs-number">0x74db86b4</span>))<br>(*((combase!_RPC_SYNTAX_IDENTIFIER *)<span class="hljs-number">0x74db86b4</span>))                 [Type: _RPC_SYNTAX_IDENTIFIER]<br>    [+<span class="hljs-number">0x000</span>] SyntaxGUID       : &#123;E60C73E6<span class="hljs-number">-88F</span>9<span class="hljs-number">-11</span>CF<span class="hljs-number">-9</span>AF1<span class="hljs-number">-0020</span>AF6E72F4&#125; [Type: _GUID]<br>    [+<span class="hljs-number">0x010</span>] SyntaxVersion    [Type: _RPC_VERSION]<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="使用-rpcview-查看接口"><a class="markdownIt-Anchor" href="#使用-rpcview-查看接口"></a> 使用 RpcView 查看接口</h4>
+<p>如果是 32 位的RPC，则需要用RpcView32，如果是64位的RPC，就用RpcView64。</p>
+<p>使用 RpcView 查找接口的流程如下图所示，可以看到当前 RPC Client 请求的服务端为 RPCSS。</p>
+<img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012094012743.png" srcset="/img/loading.gif" lazyload class title="image-20241012094012743">
+<h4 id="查看调用的函数"><a class="markdownIt-Anchor" href="#查看调用的函数"></a> 查看调用的函数</h4>
+<p>这里补充下上图中 Interface Properties 的部分</p>
+<img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012101657141.png" srcset="/img/loading.gif" lazyload class title="image-20241012101657141">
+<p>到这里可以看到主要调用的 dll 为 rpcss.dll。如果我们还要继续查明调用的是哪个接口，那可以继续看 NdrClientCall2 的第二个参数。</p>
+<ol>
+<li>
+<p>第二个参数的结构体如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">NDR_PROC_HEADER_RPC</span></span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> handle_type;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> Oi_flags;<br><br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">     * RPCF_Idempotent = 0x0001 - [idempotent] MIDL attribute</span><br><span class="hljs-comment">     * RPCF_Broadcast = 0x0002 - [broadcast] MIDL attribute</span><br><span class="hljs-comment">     * RPCF_Maybe = 0x0004 - [maybe] MIDL attribute</span><br><span class="hljs-comment">     * Reserved = 0x0008 - 0x0080</span><br><span class="hljs-comment">     * RPCF_Message = 0x0100 - [message] MIDL attribute</span><br><span class="hljs-comment">     * Reserved = 0x0200 - 0x1000</span><br><span class="hljs-comment">     * RPCF_InputSynchronous = 0x2000 - unknown</span><br><span class="hljs-comment">     * RPCF_Asynchronous = 0x4000 - [async] MIDL attribute</span><br><span class="hljs-comment">     * Reserved = 0x8000</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> rpc_flags;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> proc_num;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> stack_size;<br><br>&#125; NDR_PROC_HEADER_RPC;<br></code></pre></td></tr></table></figure>
 <p></p>
-<h2 id="使用-windbg-调试"><a class="markdownIt-Anchor" href="#使用-windbg-调试"></a> 使用 Windbg 调试</h2>
-<h3 id="查看-rpc-调用的接口"><a class="markdownIt-Anchor" href="#查看-rpc-调用的接口"></a> 查看 RPC 调用的接口</h3>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">bu RPCRT4!I_RpcSend<br><br>#查看 I_RpcSend 入参<br>dt _RPC_MESSAGE 参数地址<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>查看第二个参数 <code>pFormat</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; dt combase!lclor__MIDL_ProcFormatString <span class="hljs-number">74</span>db86fa<br>   +<span class="hljs-number">0x000</span> Pad              : <span class="hljs-number">0</span>n26624<br>   +<span class="hljs-number">0x002</span> Format           : [<span class="hljs-number">961</span>]  <span class="hljs-string">&quot;&quot;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; db <span class="hljs-number">74</span>db86fa<br><span class="hljs-number">74</span>db86fa  <span class="hljs-number">00</span> <span class="hljs-number">68</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span><span class="hljs-number">-84</span> <span class="hljs-number">00</span> <span class="hljs-number">32</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">16</span> <span class="hljs-number">00</span>  .h.......<span class="hljs-number">.2</span>.....<br><span class="hljs-number">74</span>db870a  <span class="hljs-number">5</span>c <span class="hljs-number">02</span> <span class="hljs-number">47</span> <span class="hljs-number">20</span> <span class="hljs-number">08</span> <span class="hljs-number">43</span> <span class="hljs-number">01</span> <span class="hljs-number">00</span><span class="hljs-number">-00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">0b</span> <span class="hljs-number">00</span> <span class="hljs-number">04</span> <span class="hljs-number">00</span>  \.G .C..........<br></code></pre></td></tr></table></figure>
+<p>在 Win11 上该结构体应该是有改动的，不过大致参考一下 StackOver Flow 上的分析</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">00</span> <span class="hljs-number">48</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">06</span> <span class="hljs-number">00</span><span class="hljs-number">-4</span>c <span class="hljs-number">00</span> <span class="hljs-number">30</span> <span class="hljs-number">40</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> ...<br># StackOver Flow 上的结构体对照<br>handle_type = <span class="hljs-number">0x00</span><br>Oi_flags    = <span class="hljs-number">0x48</span><br>rpc_flags   = <span class="hljs-number">0x00000000</span><br>proc_num    = <span class="hljs-number">0x0006</span><br>stack_size  = <span class="hljs-number">0x004C</span><br></code></pre></td></tr></table></figure>
+<p>本次数据：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">00</span> <span class="hljs-number">68</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span><span class="hljs-number">-84</span> <span class="hljs-number">00</span> <span class="hljs-number">32</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">16</span> <span class="hljs-number">00</span><br>handle_type = <span class="hljs-number">0x00</span><br>Oi_flags    = <span class="hljs-number">0x0068</span><br>rpc_flags   = <span class="hljs-number">0x00000000</span><br>proc_num    = <span class="hljs-number">0x0000</span><br>stack_size  = <span class="hljs-number">0x0084</span><br></code></pre></td></tr></table></figure>
+<p>可以看到调用的 Proc_num 为 0</p>
+</li>
+<li>
+<p>查看调用参数</p>
+<img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012103625651.png" srcset="/img/loading.gif" lazyload class title="image-20241012103625651">
+<p>这里可以看到调用的函数地址为 <code>0x00007ff83303ab50</code>，注意这个地址是该函数在当前进程中的地址，实际在 DLL 中的便宜地址还需要减去加载地址。</p>
+</li>
+<li>
+<p>查看实际偏移<br>
+查看  484 进程加载 rpcss.dll 的地址：</p>
+<img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012110304669.png" srcset="/img/loading.gif" lazyload class title="image-20241012110304669">
+<p>可以看到 load Address 的值为：<code>0x00007FF833030000</code>，实际偏移为：<code>0xab50</code></p>
+</li>
+<li>
+<p>使用 IDA 查看 rpcss.dll 相关偏移处的内容：</p>
+<img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012110532570.png" srcset="/img/loading.gif" lazyload class title="image-20241012110532570">
+</li>
+<li>
+<p><code>ab50</code> 处的内容</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">.text:<span class="hljs-number">000000018000</span>AB50 ; __int64 __fastcall <span class="hljs-title function_">Connect</span><span class="hljs-params">(<span class="hljs-type">void</span> *, <span class="hljs-type">unsigned</span> __int16 *, <span class="hljs-type">unsigned</span> __int16 *, <span class="hljs-keyword">struct</span> __MIDL_ILocalObjectExporter_0001 *, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>, <span class="hljs-type">unsigned</span> __int16, <span class="hljs-keyword">volatile</span> <span class="hljs-type">signed</span> __int32 **, _DWORD *, LPVOID *, _QWORD *, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span>, <span class="hljs-type">unsigned</span> __int64 *, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *, _DWORD *, _DWORD *, _DWORD *, <span class="hljs-type">unsigned</span> __int16 **, _DWORD *, _DWORD *, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *, <span class="hljs-type">unsigned</span> __int16 **, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *, <span class="hljs-keyword">struct</span> __MIDL_ILocalObjectExporter_0002 **, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *, <span class="hljs-keyword">struct</span> _GUID **, _DWORD *, DWORD *, __int64 *, _OWORD *, <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *, _DWORD *, _QWORD *)</span><br></code></pre></td></tr></table></figure>
+<p>可以看到调用的 Connect 函数。</p>
+</li>
+</ol>
+<p>到此，一次完整的调用就被展现出来了。</p>
+<p></p>
+<p>StackOver Flow 真是非常有含金量。尽管在之前的学习了解 RPC 过程中已经有观察到 <code>RpcInterfaceInformation</code> 这个关键变量。如 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/klezVirus/RpcProxyInvoke/blob/3f07a06891bc234ec1a1ea93f62a8b3e8e57b263/%5BSlides%5D%20Unraveling%20an%20RPC%20Thread%20-%20How%20Attackers%20Abuse%20Server%20Calls%20for%20Code%20Execution.pdf">RPCCraft</a> 中甚至已经对该结构体详细说明，但是由于对 NdrClientCall 的调试不够到位，遂一直没有头绪。这次调试也算是了解到了 RPC 的一些关键调用。</p>
+<p></p>
+<h2 id="command-断点"><a class="markdownIt-Anchor" href="#command-断点"></a> Command 断点</h2>
+<p>在 NdrClientCall2 添加命令断点查看 RPC 调用信息</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">.echo <span class="hljs-string">&quot;PMIDL_STUB_DESC:&quot;</span>; dt combase!ILocalObjectExporter_StubDesc ebp+<span class="hljs-number">8</span><br><br>.echo <span class="hljs-string">&quot;RPC_CLIENT_INTERFACE:&quot;</span>; dt RPC_CLIENT_INTERFACE ebp+<span class="hljs-number">8</span><br><br># 可以直接查看调用的 RPC GUID<br>.echo <span class="hljs-string">&quot;_RPC_SYNTAX_IDENTIFIER:&quot;</span>;r $t0=ebp+<span class="hljs-number">8</span>; dx -r1 (*((wintypes!_RPC_SYNTAX_IDENTIFIER *)(@$t0+<span class="hljs-number">4</span>)))<br></code></pre></td></tr></table></figure>
+<p>使用示例，断点触发时，会直接打印相关信息：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-number">0</span>:<span class="hljs-number">000</span>&gt; g<br>_RPC_SYNTAX_IDENTIFIER:<br>(*((wintypes!_RPC_SYNTAX_IDENTIFIER *)(@$t0+<span class="hljs-number">4</span>)))                 [Type: _RPC_SYNTAX_IDENTIFIER]<br>    [+<span class="hljs-number">0x000</span>] SyntaxGUID       : &#123;<span class="hljs-number">758</span>C49AA<span class="hljs-number">-0000</span><span class="hljs-number">-0000</span><span class="hljs-number">-48</span>DE-FC0000080000&#125; [Type: _GUID]<br>    [+<span class="hljs-number">0x010</span>] SyntaxVersion    [Type: _RPC_VERSION]<br>eax=<span class="hljs-number">00f</span>cdda0 ebx=<span class="hljs-number">00f</span>cdf74 ecx=<span class="hljs-number">00f</span>cddc4 edx=<span class="hljs-number">00000000</span> esi=<span class="hljs-number">00f</span>cde24 edi=<span class="hljs-number">00f</span>cdfb8<br>eip=<span class="hljs-number">752</span>a5ee0 esp=<span class="hljs-number">00f</span>cdd80 ebp=<span class="hljs-number">00f</span>cdd90 iopl=<span class="hljs-number">0</span>         nv up ei pl nz ac po cy<br>cs=<span class="hljs-number">0023</span>  ss=<span class="hljs-number">002b</span>  ds=<span class="hljs-number">002b</span>  es=<span class="hljs-number">002b</span>  fs=<span class="hljs-number">0053</span>  gs=<span class="hljs-number">002b</span>             efl=<span class="hljs-number">00000213</span><br>RPCRT4!NdrClientCall2:<br><span class="hljs-number">752</span>a5ee0 <span class="hljs-number">8b</span>ff            mov     edi,edi<br></code></pre></td></tr></table></figure>
+<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>GUID对应的RPC不存在？</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>32位和64位的都看看</p>
+</div>
+</details><p></p>
+<h2 id="附录"><a class="markdownIt-Anchor" href="#附录"></a> 附录：</h2>
+<h3 id="相关结构体"><a class="markdownIt-Anchor" href="#相关结构体"></a> 相关结构体</h3>
+<h4 id="rpc_message"><a class="markdownIt-Anchor" href="#rpc_message"></a> RPC_MESSAGE</h4>
+<p>该结构体在 RpcCraft 项目中被用来填充自定义 Rpc 消息。</p>
 <img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/IMG-20241010174126068.png" srcset="/img/loading.gif" lazyload class title="RPC_MESSAGE 结构体">
                 
               </div>
