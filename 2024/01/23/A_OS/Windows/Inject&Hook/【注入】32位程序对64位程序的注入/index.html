@@ -23,21 +23,22 @@
   
     <meta name="description" content="概述：【学习记录】实现 32 位程序对 64位程序的注入，借鉴 3gstudent 和 odzhan 的实现。  环境说明：  windows x64 被注入程序 x86 dll   0x01、前言 通常要实现远程注入都需要调用 CreateRemoteThread 函数在目标进程中创建一个远程线程，进而注入dll或是执行shellcode。如下所示为注入一个简单的dll到notepad中。 注">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Hook】32位程序对64位程序远程注入的实现">
-<meta property="og:url" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90IH%E3%80%9132%E4%BD%8D%E7%A8%8B%E5%BA%8F%E5%AF%B964%E4%BD%8D%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:title" content="【注入】32位程序对64位程序远程注入的实现">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90%E6%B3%A8%E5%85%A5%E3%80%9132%E4%BD%8D%E7%A8%8B%E5%BA%8F%E5%AF%B964%E4%BD%8D%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%B3%A8%E5%85%A5/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：【学习记录】实现 32 位程序对 64位程序的注入，借鉴 3gstudent 和 odzhan 的实现。  环境说明：  windows x64 被注入程序 x86 dll   0x01、前言 通常要实现远程注入都需要调用 CreateRemoteThread 函数在目标进程中创建一个远程线程，进而注入dll或是执行shellcode。如下所示为注入一个简单的dll到notepad中。 注">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-23T06:08:33.905Z">
-<meta property="article:modified_time" content="2024-08-26T09:09:40.676Z">
+<meta property="article:modified_time" content="2024-10-15T02:44:15.661Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
+<meta property="article:tag" content="注入">
 <meta property="article:tag" content="Inject">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>【Hook】32位程序对64位程序远程注入的实现 - oone</title>
+  <title>【注入】32位程序对64位程序远程注入的实现 - oone</title>
 
   <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -205,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="【Hook】32位程序对64位程序远程注入的实现"></span>
+            <span id="subtitle" data-typed-text="【注入】32位程序对64位程序远程注入的实现"></span>
           
         </div>
 
@@ -276,7 +277,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">【Hook】32位程序对64位程序远程注入的实现</h1>
+            <h1 id="seo-header">【注入】32位程序对64位程序远程注入的实现</h1>
             
             
               <div class="markdown-body">
@@ -300,7 +301,7 @@
 <li>在目标进程申请内存并写入内存</li>
 <li>通过公共函数调用创建远程线程</li>
 </ol>
-<p>参考代码见文章 <a href="%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5.md">【IH】dll注入</a></p>
+<p>参考代码见文章 <a href="%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5.md">【Hook】dll注入</a></p>
 <p>但是，在64位操作系统上，由于32位和64位的结构不同，所以会导致注入失败。</p>
 <h2 id="0x02-实现思路"><a class="markdownIt-Anchor" href="#0x02-实现思路"></a> 0x02、实现思路</h2>
 <p>主要思路为：将 <code>CreateRemoteThread</code> 切换为64位的 <code>CreateRemoteThread</code> 后再创建线程，完成后再切换回32位，即可实现32位程序对64位进程的远程注入。切换的操作主要是汇编代码实现的。记录一下。</p>
@@ -374,6 +375,8 @@
       
         <a href="/tags/Windows/" class="print-no-link">#Windows</a>
       
+        <a href="/tags/%E6%B3%A8%E5%85%A5/" class="print-no-link">#注入</a>
+      
         <a href="/tags/Inject/" class="print-no-link">#Inject</a>
       
     </div>
@@ -386,8 +389,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>【Hook】32位程序对64位程序远程注入的实现</div>
-      <div>https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&amp;Hook/【IH】32位程序对64位程序的注入/</div>
+      <div>【注入】32位程序对64位程序远程注入的实现</div>
+      <div>https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&amp;Hook/【注入】32位程序对64位程序的注入/</div>
     </div>
     <div class="license-meta">
       
@@ -431,7 +434,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5/" title="【Hook】Dll 注入">
+                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/" title="【Hook】Dll 注入">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">【Hook】Dll 注入</span>
                         <span class="visible-mobile">上一篇</span>

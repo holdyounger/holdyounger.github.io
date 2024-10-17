@@ -24,18 +24,20 @@
     <meta name="description" content="概述：windows 操作系统下注入dll到进程中 环境相关：win10操作系统注入本地编译的简单dll到notepad.exe 其他问题补充： CreateRemoteThread函数多参数传入使用方法_createremotethread 传递参数-CSDN博客 多参数问题：lem0nSec&#x2F;CreateRemoteThreadPlus: CreateRemoteThread: how to">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Hook】Dll 注入">
-<meta property="og:url" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/index.html">
 <meta property="og:site_name" content="oone">
 <meta property="og:description" content="概述：windows 操作系统下注入dll到进程中 环境相关：win10操作系统注入本地编译的简单dll到notepad.exe 其他问题补充： CreateRemoteThread函数多参数传入使用方法_createremotethread 传递参数-CSDN博客 多参数问题：lem0nSec&#x2F;CreateRemoteThreadPlus: CreateRemoteThread: how to">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5/dll%E6%B3%A8%E5%85%A5/image-20231009155432143.png">
-<meta property="og:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5/dll%E6%B3%A8%E5%85%A5/image-20231009155011865.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows%2Fimages%2Fdll%E6%B3%A8%E5%85%A5%2Fimage-20231009154803357.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/IMG-20241015104416365.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/IMG-20241015104416611.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows%2Fimages%2Fdll%E6%B3%A8%E5%85%A5%2Fimage-.png">
 <meta property="article:published_time" content="2024-01-23T06:08:33.909Z">
-<meta property="article:modified_time" content="2024-08-15T09:19:55.169Z">
+<meta property="article:modified_time" content="2024-10-15T02:44:25.920Z">
 <meta property="article:author" content="mingming">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="注入">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90IH%E3%80%91dll%E6%B3%A8%E5%85%A5/dll%E6%B3%A8%E5%85%A5/image-20231009155432143.png">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/IMG-20241015104416365.png">
   
   
   
@@ -333,10 +335,10 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// dllmain.cpp : 定义 DLL 应用程序的入口点。</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;pch.h&quot;</span></span><br><br><span class="hljs-function">DWORD WINAPI <span class="hljs-title">ThreadProc</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-built_in">MessageBox</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;我已成功打入敌人内部 By Startu&quot;</span>, <span class="hljs-string">L&quot;报告首长&quot;</span>, <span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-function">BOOL APIENTRY <span class="hljs-title">DllMain</span><span class="hljs-params">( HMODULE hModule,</span></span><br><span class="hljs-params"><span class="hljs-function">                       DWORD  ul_reason_for_call,</span></span><br><span class="hljs-params"><span class="hljs-function">                       LPVOID lpReserved</span></span><br><span class="hljs-params"><span class="hljs-function">                     )</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">switch</span> (ul_reason_for_call)<br>    &#123;<br>    <span class="hljs-keyword">case</span> DLL_PROCESS_ATTACH:<br>        <span class="hljs-built_in">CreateThread</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, (LPTHREAD_START_ROUTINE)ThreadProc, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">case</span> DLL_THREAD_ATTACH:<br>    <span class="hljs-keyword">case</span> DLL_THREAD_DETACH:<br>    <span class="hljs-keyword">case</span> DLL_PROCESS_DETACH:<br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
 <h3 id="补充说明"><a class="markdownIt-Anchor" href="#补充说明"></a> 补充说明</h3>
 <p>需要注意 注入的dll要和notepad.exe 编译版本保持一致。notepad.exe 是一个 64bit 进程</p>
-<img src="dll注入/image-20231009155432143.png" srcset="/img/loading.gif" lazyload alt="Notepad" style="zoom:50%;">
+<img src="/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/IMG-20241015104416365.png" srcset="/img/loading.gif" lazyload class title="image-20231009155432143">
 <h2 id="0x04-演示"><a class="markdownIt-Anchor" href="#0x04-演示"></a> 0x04、演示</h2>
-<img src="dll注入/image-20231009155011865.png" srcset="/img/loading.gif" lazyload alt="进程加载的DLL" style="zoom:50%;">
-<img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows%2Fimages%2Fdll%E6%B3%A8%E5%85%A5%2Fimage-20231009154803357.png" srcset="/img/loading.gif" lazyload alt="注释截图" style="zoom:50%;">
+<img src="/2024/01/23/A_OS/Windows/Inject&Hook/%E3%80%90Hook%E3%80%91dll%E6%B3%A8%E5%85%A5/IMG-20241015104416611.png" srcset="/img/loading.gif" lazyload class title="image-20231009155011865">
+<img src="https://raw.githubusercontent.com/holdyounger/ScopeBlog/rc_images/Images/windows%2Fimages%2Fdll%E6%B3%A8%E5%85%A5%2Fimage-.png" srcset="/img/loading.gif" lazyload alt="注释截图" style="zoom:50%;">
 <hr>
 <p>工程文件：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/holdyounger/Windows-API-Usage/tree/master/kernel32/DLLInject/DllInject">Windows-API-Usage/kernel32/DLLInject/DllInject at master · holdyounger/Windows-API-Usage</a></p>
 
@@ -383,6 +385,15 @@
     </div>
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Windows/" class="print-no-link">#Windows</a>
+      
+        <a href="/tags/%E6%B3%A8%E5%85%A5/" class="print-no-link">#注入</a>
+      
+    </div>
+  
 </div>
 
 
@@ -392,7 +403,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>【Hook】Dll 注入</div>
-      <div>https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&amp;Hook/【IH】dll注入/</div>
+      <div>https://hodlyounger.github.io/2024/01/23/A_OS/Windows/Inject&amp;Hook/【Hook】dll注入/</div>
     </div>
     <div class="license-meta">
       
@@ -436,7 +447,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90IH%E3%80%91Hook%E6%A8%A1%E7%89%88/" title="【Hook】Windows Hook 模版">
+                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90Hook%E3%80%91Hook%E6%A8%A1%E7%89%88/" title="【Hook】Windows Hook 模版">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">【Hook】Windows Hook 模版</span>
                         <span class="visible-mobile">上一篇</span>
@@ -446,8 +457,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90IH%E3%80%9132%E4%BD%8D%E7%A8%8B%E5%BA%8F%E5%AF%B964%E4%BD%8D%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%B3%A8%E5%85%A5/" title="【Hook】32位程序对64位程序远程注入的实现">
-                        <span class="hidden-mobile">【Hook】32位程序对64位程序远程注入的实现</span>
+                      <a href="/2024/01/23/A_OS/Windows/Inject&amp;Hook/%E3%80%90%E6%B3%A8%E5%85%A5%E3%80%9132%E4%BD%8D%E7%A8%8B%E5%BA%8F%E5%AF%B964%E4%BD%8D%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%B3%A8%E5%85%A5/" title="【注入】32位程序对64位程序远程注入的实现">
+                        <span class="hidden-mobile">【注入】32位程序对64位程序远程注入的实现</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
