@@ -21,21 +21,38 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="个人博客">
+    <meta name="description" content="概述：获取网络连接状态调用接口分析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="oone">
+<meta property="og:title" content="【网络编程】获取网络连接状态">
 <meta property="og:url" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="个人博客">
+<meta property="og:description" content="概述：获取网络连接状态调用接口分析">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830121659227.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830122136171.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830124128645.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830124056288.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830133041671.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830122500455.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830133636674.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830115521718.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830142326139.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830142730019.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830143223245.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830143850050.png">
 <meta property="article:published_time" content="2024-10-11T02:03:56.169Z">
-<meta property="article:modified_time" content="2024-10-11T03:10:44.299Z">
+<meta property="article:modified_time" content="2024-10-30T06:28:30.577Z">
 <meta property="article:author" content="mingming">
+<meta property="article:tag" content="网络编程">
+<meta property="article:tag" content="RPC">
+<meta property="article:tag" content="com">
+<meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830121659227.png">
   
   
   
-  <title>oone</title>
+  <title>【网络编程】获取网络连接状态 - oone</title>
 
   <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -203,7 +220,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text></span>
+            <span id="subtitle" data-typed-text="【网络编程】获取网络连接状态"></span>
           
         </div>
 
@@ -226,7 +243,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          0 字
+          1.1k 字
         
       </span>
     
@@ -237,7 +254,7 @@
         
         
         
-          1 分钟
+          9 分钟
         
       </span>
     
@@ -274,12 +291,80 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">【网络编程】获取网络连接状态</h1>
             
             
               <div class="markdown-body">
                 
-                
+                <blockquote>
+<p>概述：获取网络连接状态调用接口分析</p>
+</blockquote>
+<span id="more"></span>
+<blockquote>
+<p>环境状况描述：windows 10 x 64</p>
+</blockquote>
+<h2 id="使用-com-对象查看网络连接状态"><a class="markdownIt-Anchor" href="#使用-com-对象查看网络连接状态"></a> 使用 COM 对象查看网络连接状态</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// INetworkListManager.cpp : This file contains the &#x27;main&#x27; function. Program execution begins and ends there.</span><br><span class="hljs-comment">//</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;windows.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;netlistmgr.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> comment(lib, <span class="hljs-string">&quot;ole32.lib&quot;</span>)</span><br><br><br><span class="hljs-function"><span class="hljs-type">static</span> INetworkListManager* <span class="hljs-title">getNetworkList</span><span class="hljs-params">(IUnknown** ppUnknown)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">const</span> GUID CLSID_NetworkListManagerXp = &#123; <span class="hljs-number">0xdcb00c01</span>, <span class="hljs-number">0x570f</span>, <span class="hljs-number">0x4a9b</span>, &#123; <span class="hljs-number">0x8d</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x19</span>, <span class="hljs-number">0x9f</span>, <span class="hljs-number">0xdb</span>, <span class="hljs-number">0xa5</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x3b</span> &#125; &#125;;<br>	<span class="hljs-type">const</span> IID IID_INetworkListManagerXp = &#123; <span class="hljs-number">0xdcb00000</span>, <span class="hljs-number">0x570f</span>, <span class="hljs-number">0x4a9b</span>, &#123; <span class="hljs-number">0x8d</span>, <span class="hljs-number">0x69</span>, <span class="hljs-number">0x19</span>, <span class="hljs-number">0x9f</span>, <span class="hljs-number">0xdb</span>, <span class="hljs-number">0xa5</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x3b</span> &#125; &#125;;<br><br>	BOOL bOnline = TRUE;<br>	HRESULT hresult = <span class="hljs-built_in">CoCreateInstance</span>(CLSID_NetworkListManagerXp, <span class="hljs-literal">NULL</span>, CLSCTX_ALL, IID_IUnknown, (<span class="hljs-type">void</span>**)ppUnknown);<br>	<span class="hljs-keyword">if</span> (!(<span class="hljs-built_in">SUCCEEDED</span>(hresult)))<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br><br>	INetworkListManager* pNetworkListManager = <span class="hljs-literal">NULL</span>;<br>	<span class="hljs-keyword">if</span> (*ppUnknown)<br>		hresult = (*ppUnknown)-&gt;<span class="hljs-built_in">QueryInterface</span>(IID_INetworkListManagerXp, (<span class="hljs-type">void</span>**)&amp;pNetworkListManager);<br><br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">SUCCEEDED</span>(hresult))<br>		<span class="hljs-keyword">return</span> pNetworkListManager;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">static</span> BOOL <span class="hljs-title">checkIsNetwork</span><span class="hljs-params">(INetworkListManager* pNetworkListManager)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-type">static</span> DWORD s_lastCheck = <span class="hljs-number">0</span>;<br>	DWORD lastCheck = ::<span class="hljs-built_in">GetTickCount</span>();<br>	<span class="hljs-keyword">if</span> (lastCheck - s_lastCheck &lt; <span class="hljs-number">15000</span>)<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>	s_lastCheck = lastCheck;<br><br>	<span class="hljs-keyword">if</span> (!pNetworkListManager)<br>		<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br><br>	HRESULT hresult = E_FAIL;<br>	BOOL isOnline = FALSE;<br>	VARIANT_BOOL isConnect = VARIANT_FALSE;<br>	<span class="hljs-keyword">if</span> (pNetworkListManager)<br>		hresult = pNetworkListManager-&gt;<span class="hljs-built_in">get_IsConnectedToInternet</span>(&amp;isConnect);<br>	<span class="hljs-keyword">if</span> (<span class="hljs-built_in">SUCCEEDED</span>(hresult))<br>		isOnline = (isConnect == VARIANT_TRUE) ? TRUE : FALSE;<br><br>	<span class="hljs-keyword">return</span> isOnline;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">CoInitialize</span>(<span class="hljs-literal">NULL</span>);<br><br>	<span class="hljs-comment">// system(&quot;pause&quot;);</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> 1</span><br>	VARIANT_BOOL bIsConnected;<br>	INetworkListManager *pNetworkListManager = <span class="hljs-literal">NULL</span>;<br>	HRESULT hr = <span class="hljs-built_in">CoCreateInstance</span>(CLSID_NetworkListManager, <span class="hljs-literal">NULL</span>,<br>		CLSCTX_ALL, IID_INetworkListManager,<br>		(LPVOID *)&amp;pNetworkListManager);<br>	hr = pNetworkListManager-&gt;<span class="hljs-built_in">get_IsConnectedToInternet</span>(&amp;bIsConnected);<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;IsConnected:&quot;</span> &lt;&lt; bIsConnected &lt;&lt; std::endl;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> 0</span><br>	IUnknown* pUnknown = <span class="hljs-literal">nullptr</span>;<br>	<span class="hljs-type">static</span> INetworkListManager* pNetworkListManager1 = <span class="hljs-literal">nullptr</span>;<br>	<span class="hljs-keyword">if</span> (!pNetworkListManager1)<br>		pNetworkListManager1 = <span class="hljs-built_in">getNetworkList</span>(&amp;pUnknown);<br>	BOOL checkNetwork = <span class="hljs-built_in">checkIsNetwork</span>(pNetworkListManager1);<br><br>	std::cout &lt;&lt; <span class="hljs-string">&quot;IsConnected:&quot;</span> &lt;&lt; checkNetwork &lt;&lt; std::endl;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	<span class="hljs-built_in">system</span>(<span class="hljs-string">&quot;pause&quot;</span>);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h2 id="调用分析"><a class="markdownIt-Anchor" href="#调用分析"></a> 调用分析</h2>
+<details class="custom-callout info" open><summary class="callout-title"><div class="callout-icon"></div><div>结论：调用的接口为 <code>get_IsConnectedToInternet</code>，此接口为 RPC 客户端接口，调用时通过 RPC 远程调用服务端的接口。</div>
+</summary></details><p>分析过程：调用时可以看到会进入 netprofm 中的 <code>CPubINetworkListManager::get_IsConnectedToInternet</code> 接口，又在该接口当中创建了 COM 对象通过 RPC 远程调用到服务端的 RPC 接口。</p>
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830121659227.png" srcset="/img/loading.gif" lazyload class title="get_IsConnectedToInternet">
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830122136171.png" srcset="/img/loading.gif" lazyload class title="GetPrivateNetworkListManager">
+<p>这里可以在 <code>GetPrivateNetworkListManager</code> 中看到创建的 COM 对象的 CLSID 和 IID。在注册表查询相关 COM 组件。查询结果如下所示：</p>
+<ol>
+<li>通过 CLSID 查询 com 组件的文件<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830124128645.png" srcset="/img/loading.gif" lazyload class title="注册表查询结果">
+</li>
+<li>接着使用 OLEView 查看具体的接口对象，可以看到为 <code>INetworkListManager </code>。<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830124056288.png" srcset="/img/loading.gif" lazyload class title="oleview">
+</li>
+<li>在 APPID 中查看 netprofm 注册的应用<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830133041671.png" srcset="/img/loading.gif" lazyload class title="查询APPID">
+</li>
+</ol>
+<p>可以看到 <code>netprofm</code> 是作为本地服务的，服务名就是 <code>netprofm</code>。</p>
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830122500455.png" srcset="/img/loading.gif" lazyload class title="netprofm 服务">
+<h2 id="分析-netprofm-服务"><a class="markdownIt-Anchor" href="#分析-netprofm-服务"></a> 分析 netprofm 服务</h2>
+<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>这里要做的就是使用 windbg 调试，然后查看可能相关的 dll 或者接口</div>
+</summary></details><h3 id="相关-dll"><a class="markdownIt-Anchor" href="#相关-dll"></a> 相关 DLL</h3>
+<h4 id="分析思路"><a class="markdownIt-Anchor" href="#分析思路"></a> 分析思路</h4>
+<p>这里由于我第一次调试也没有什么经验，后来又大佬帮助，所以整个思路我都补充一下，尽量详细一点，这里补充下服务端调用分析思路。</p>
+<ol>
+<li>使用 windbg 调试可以看到有一个 netprofmsvc 的 dll<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830133636674.png" srcset="/img/loading.gif" lazyload class>
+</li>
+<li>查看其接口都有哪些，然后在可能会被调用的接口上打断点<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">x <span class="hljs-string">/D</span> <span class="hljs-string">/f</span> netprofmsvc!*Get*<br></code></pre></td></tr></table></figure>
+</li>
+<li>使用客户端查询，看断点是否会触发</li>
+</ol>
+<p>稍微看下，差不多也能猜到基本上都在 <code>CImplINetworkListManager</code> 类提供的接口中，打断点调试 <code>CImplINetworkListManager::IsConnectedToInternet</code>。剩下的就是具体的调试过程了。具体含义如下所示，</p>
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830115521718.png" srcset="/img/loading.gif" lazyload class>
+<p><code>CImplINetworkListManager::GetConnectivity</code> 往后的执行逻辑感兴趣的可以调试看看。</p>
+<h2 id="拓展阅读"><a class="markdownIt-Anchor" href="#拓展阅读"></a> 拓展阅读</h2>
+<p>这里补充一个查询网卡 GUID 的堆栈，主要记录拓展以下这里查询的逻辑。<br>
+调用堆栈如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp">[<span class="hljs-number">0x0</span>]   NSI!NsiGetParameter   <span class="hljs-number">0xa4ee6fdee8</span>   <span class="hljs-number">0x7ffc5b1b789f</span>   <br>[<span class="hljs-number">0x1</span>]   IPHLPAPI!InternalGetBestInterface+<span class="hljs-number">0xcf</span>   <span class="hljs-number">0xa4ee6fdef0</span>   <span class="hljs-number">0x7ffc5b1b3c24</span>   <br>[<span class="hljs-number">0x2</span>]   IPHLPAPI!GetBestInterface+<span class="hljs-number">0x44</span>   <span class="hljs-number">0xa4ee6fdf90</span>   <span class="hljs-number">0x7ffc0e4999d4</span>   <br>[<span class="hljs-number">0x3</span>]   netprofmsvc!GetBestInterfaceGuid+<span class="hljs-number">0xa4</span>   <span class="hljs-number">0xa4ee6fdff0</span>   <span class="hljs-number">0x7ffc0e499636</span>   <br>[<span class="hljs-number">0x4</span>]   netprofmsvc!NetworkPropertyMaps::InternalGetConnectivity+<span class="hljs-number">0x86</span>   <span class="hljs-number">0xa4ee6fe0d0</span>   <span class="hljs-number">0x7ffc0e49cd92</span>   <br>[<span class="hljs-number">0x5</span>]   netprofmsvc!CImplINetworkListManager::GetConnectivity+<span class="hljs-number">0x132</span>   <span class="hljs-number">0xa4ee6fe210</span>   <span class="hljs-number">0x7ffc0e49626c</span>   <br>[<span class="hljs-number">0x6</span>]   netprofmsvc!CImplINetworkListManager::IsConnectedToInternet+<span class="hljs-number">0x6c</span>   <span class="hljs-number">0xa4ee6fe270</span>   <span class="hljs-number">0x7ffc5c7fa2d3</span>   <br></code></pre></td></tr></table></figure>
+<p>相关知识</p>
+<ul>
+<li><a href="../%E9%A9%B1%E5%8A%A8/%E7%BD%91%E5%8D%A1%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E7%BD%91%E5%8D%A1%E9%A9%B1%E5%8A%A8%E5%AF%BC%E8%AF%BB.md">【驱动】网卡驱动导读</a></li>
+</ul>
+<p>先调试记录一下分析过程：</p>
+<ol>
+<li>添加断点，在 <code>netprofmsvc!GetBestInterfaceGuid</code> 之后打断点，这里主要是为了查看函数执行结果<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">__int64 __fastcall <span class="hljs-title">GetBestInterfaceGuid</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> _GUID *_guid)</span></span><br></code></pre></td></tr></table></figure>
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830142326139.png" srcset="/img/loading.gif" lazyload class title="GetBestInterfaceGuid调用处汇编代码">
+这里可以看到传入的参数为 rcx，指向的位置为 <code>rbp-61h</code>。在断点处查看这个变量即可，如下所示：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs windbg">dt ntdll!_GUID rbp-61h<br></code></pre></td></tr></table></figure>
+<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830142730019.png" srcset="/img/loading.gif" lazyload class title="查看 GUID 查询结果">
+这里我们就获取到了一个网卡的 GUID 为 <code>&#123;a0dce93d-2e39-496c-a9df-0f894c247ef9&#125;</code>，下一步就是在注册表中进行查询具体的网络接口。</li>
+<li>查询网卡项（这一步可以忽略）<br>
+注册表位置：<code>计算机\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\&#123;4d36e972-e325-11ce-bfc1-08002be10318&#125;</code> 这个位置是固定的，需要在这个注册表项下根据第一步的 GUID 查询具体的键值项。查询结果如下所示：<img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830143223245.png" srcset="/img/loading.gif" lazyload class title="注册表查询网络接口">
+</li>
+<li>根据 GUID 查询网络适配器<br>
+注册表位置：<code>SYSTEM\\CurrentControlSet\\Control\\Network\\&#123;4D36E972-E325-11CE-BFC1-08002BE10318&#125;\\&#123;GUID&#125;</code><img src="/2024/10/11/A_OS/Windows/%E7%BD%91%E7%BB%9Chelper/%E3%80%90%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E3%80%91%E8%8E%B7%E5%8F%96%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81/IMG-20240830143850050.png" srcset="/img/loading.gif" lazyload class title="Network注册表项">
+</li>
+</ol>
+<h2 id="补充"><a class="markdownIt-Anchor" href="#补充"></a> 补充</h2>
+<p>相关断点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs windbg">bp netprofmsvc!CImplINetworkListManager::IsConnectedToInternet<br><br>bp netprofmsvc!NetworkPropertyMaps::InternalGetConnectivity<br><br>bp nsi!NsiGetParameter<br><br>bp RPCRT4!Invoke+0x73<br><br>bu RPCRT4!Invoke+0x73 &quot;u r10&quot;<br><br>bu RPCRT4!Invoke+0x73-5 &quot;r ;gc&quot;<br></code></pre></td></tr></table></figure>
+<p>对于 RPC 远程调用接口的查看可以参考文章：<br>
+[[…/…/…/wiki/调试技术/【调试技术】各种场景下调试汇总#查看 call 寄存器时调用的函数|【调试技术】各种场景下调试汇总]]<br>
+No newline at end of file</p>
+
                 
               </div>
             
@@ -323,6 +408,19 @@
     </div>
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="print-no-link">#网络编程</a>
+      
+        <a href="/tags/RPC/" class="print-no-link">#RPC</a>
+      
+        <a href="/tags/com/" class="print-no-link">#com</a>
+      
+        <a href="/tags/%E9%80%86%E5%90%91/" class="print-no-link">#逆向</a>
+      
+    </div>
+  
 </div>
 
 
@@ -331,7 +429,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
+      <div>【网络编程】获取网络连接状态</div>
       <div>https://hodlyounger.github.io/2024/10/11/A_OS/Windows/网络helper/【网络编程】获取网络连接状态/</div>
     </div>
     <div class="license-meta">

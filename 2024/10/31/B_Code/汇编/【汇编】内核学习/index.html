@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV11ktWezE9c?vd_source &#x3D; 2d8da596010444663e6f18397a9e3505&amp;spm_id_from &#x3D; 333.788.videopod.episodes)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【汇编】内核学习">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV11ktWezE9c?vd_source &#x3D; 2d8da596010444663e6f18397a9e3505&amp;spm_id_from &#x3D; 333.788.videopod.episodes)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017211651383.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017205934657.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017210055791.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241029194918229.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241030194244595.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017212209606.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241021232030912.png">
+<meta property="article:published_time" content="2024-10-31T01:22:33.155Z">
+<meta property="article:modified_time" content="2024-11-01T04:10:55.085Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="汇编">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="寄存器">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017211651383.png">
+  
+  
+  
+  <title>【汇编】内核学习 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【汇编】内核学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-31 09:22" pubdate>
+          2024年10月31日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【汇编】内核学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：B 站公开教程的学习笔记<br>
+[内核学习_哔哩哔哩_bilibili](<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.bilibili.com/video/BV11ktWezE9c?vd_source">https://www.bilibili.com/video/BV11ktWezE9c?vd_source</a> = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes)</p>
+</blockquote>
+<span id="more"></span>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>书籍：</p>
+<ul>
+<li>INTEL 开发手册（卷 3）</li>
+</ul>
+<p>文章：</p>
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/wingsummer/p/15312627.html">保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="段权限检查"><a class="markdownIt-Anchor" href="#段权限检查"></a> 段权限检查</h2>
+<h3 id="cpu-分级"><a class="markdownIt-Anchor" href="#cpu-分级"></a> CPU 分级</h3>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017211651383.png" srcset="/img/loading.gif" lazyload class title="image-20241017211651383">
+<h3 id="gdt-与-ldt"><a class="markdownIt-Anchor" href="#gdt-与-ldt"></a> GDT 与 LDT</h3>
+<h3 id="判断当前程序处于哪一环"><a class="markdownIt-Anchor" href="#判断当前程序处于哪一环"></a> 判断当前程序处于哪一环</h3>
+<p>查看当前程序处于哪一环，可查看 <code>CS</code> 和 <code>SS</code> 中存储的段选择子的后 2 位。如下所示：</p>
+<p>查看 <code>CS</code> 寄存器二进制的后两位</p>
+<ul>
+<li>
+<p>0 环<br>
+可以看到 <code>cs</code> 寄存器后两位为 0</p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017205934657.png" srcset="/img/loading.gif" lazyload class title="image-20241017205934657">
+</li>
+<li>
+<p>3 环</p>
+<p>可以看到 <code>cs</code> 寄存器后两位为 11，也就是 3</p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017210055791.png" srcset="/img/loading.gif" lazyload class title="image-20241017210055791">
+</li>
+</ul>
+<h2 id="段描述符结构"><a class="markdownIt-Anchor" href="#段描述符结构"></a> 段描述符结构</h2>
+<p>这个结构体的内容在后边学习过程中非常重要。这一部分可以详细看 《Intel 开发手册》中的相关描述。</p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241029194918229.png" srcset="/img/loading.gif" lazyload class title="image-20241029194918229">
+<h3 id="基地址域"><a class="markdownIt-Anchor" href="#基地址域"></a> 基地址域</h3>
+<p>确定该段的第 0 字节在 4GB 线性空间中的位置。处理器将这 3 个及地址域组合在一起构成了一个 32 位地址值。段基址应当是 16 自己额边界对其的。16 字节边界对齐不是必须的，但这种段边界的对齐能够使程序的性能最大化。</p>
+<h3 id="类型域"><a class="markdownIt-Anchor" href="#类型域"></a> 类型域</h3>
+<p>指明段或者门的类型，确定段的范围权限和增长方向。如何解释这个域，取决于该描述符是应用描述符（代码或数据）还是系统描述符，这由描述符类型标志（S 标记）所确定。代码段，数据段和系统段对类型域有不同的意义。</p>
+<h3 id="s描述符类型标志"><a class="markdownIt-Anchor" href="#s描述符类型标志"></a> S（描述符类型）标志</h3>
+<p>确定段描述符是系统描述符（S 标记为 0）或者代码，数据段描述符（S 标记为 1）。</p>
+<h3 id="dpl描述符特权级域"><a class="markdownIt-Anchor" href="#dpl描述符特权级域"></a> DPL（描述符特权级）域</h3>
+<p>指明该段的特权级。特权级从 0~3，0 为最高特权级。DPL 用来控制对该段的访问。关于代码段的 DPL 与 CPL 关系以及选择符的 RPL 可以参考后文描述 <a href="#%E7%89%B9%E6%9D%83%E7%BA%A7">特权级</a> 相关内容。</p>
+<h3 id="p段存在标志"><a class="markdownIt-Anchor" href="#p段存在标志"></a> P（段存在）标志</h3>
+<p>标志出该段当前是否在内存中（1 表示在内存中，0 表示不在）。当指向该段描述符的段选择符装载入段寄存器时，如果这个标志为 0，处理器会产生一个段不存在的异常（NP）。内存管理软件可以通过这个标志，来控制在某个特定时间有哪些段时真正的被载入物理内存，这样对于管理虚拟内存而言，除了分页机制还提供了另外一种控制方法。</p>
+<h3 id="db默认操作数大小默认栈指针大小和或上限标志"><a class="markdownIt-Anchor" href="#db默认操作数大小默认栈指针大小和或上限标志"></a> D/B（默认操作数大小/默认栈指针大小和/或上限）标志</h3>
+<p>根据这个段描述符所指的是一个可执行代码段，一个向下扩展的数据段还是一个堆栈段，这个标志完成不同的功能。（对 32 位的代码和数据段，这个标志总是被置为 1，而 16 位的代码和数据段，这个标志总是被置为 0）</p>
+<ul>
+<li>
+<p>可执行代码段</p>
+<p>这个标志被称为 D 标志，它指明该段中的指令所涉及的有效地址值的缺省位位数和操作符的缺省位位数。如果该标志为 1，缺省为 32 位的地址，32 位或者 8 位的操作符；若为 0，缺省为 16 位的地址，16 位或者 8 位的操作符。指令前缀 66H 可以指定操作符的长度而不使用缺省长度。用前缀 67H 来指定地址值长度。</p>
+</li>
+<li>
+<p>堆栈段</p>
+<p>这个标志被称为 B（big）标志，它为隐含</p>
+<p>的栈操作（如 push，pop 和 call）确定栈指针值的位位数。如果该标志为 1，则使用的是 32 位的栈指针，该指针放在 32 位的 ESP 寄存器中；若该标志为 0，则使用的是放</p>
+<p>在 16 位 SP 寄存器中的 16 位的栈指针。如果该堆栈段为一个向下扩展的数据段（见下一段的说明），B 标志还确定了该堆栈段的地址上界。</p>
+</li>
+<li>
+<p>向下扩展的数据段</p>
+<p>这个标志称为 B 标志，它确定了该段的地址上界。如果该标志为 1，段地址上界为 FFFFFFFFH（4GB）；若该标志为 0，段地址上界为 FFFFH（64KB）。</p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241030194244595.png" srcset="/img/loading.gif" lazyload class title="image-20241030194244595">
+</li>
+</ul>
+<h3 id="g粒度标志"><a class="markdownIt-Anchor" href="#g粒度标志"></a> G（粒度）标志</h3>
+<p>确定段限长扩展的增量。当 G 标志为 0，段限长以自己额为单位；G 标志为 1，段限长以 4KB 为单位。（这个标志不影响段基址的粒度，段基址的粒度永远是字节）如果 G 标志位 1，那么当检测偏移量是否超越段限长时，不用测试偏移量的低 12 位。例如，如果 G 标志位 1，0 段限长意味着有效偏移量为从 0 到 4095。</p>
+<h3 id="可用及保留的位-s"><a class="markdownIt-Anchor" href="#可用及保留的位-s"></a> 可用及保留的位 s</h3>
+<p>段描述符的第二个双字的 20 位可以被系统软件使用，21 位被保留，并且应该设置为 0。</p>
+<h2 id="特权级"><a class="markdownIt-Anchor" href="#特权级"></a> 特权级</h2>
+<h3 id="cplcurrent-privilege-level"><a class="markdownIt-Anchor" href="#cplcurrent-privilege-level"></a> CPL(Current Privilege Level)</h3>
+<p>当前特权级</p>
+<h3 id="dpldescriptor-privilege-level"><a class="markdownIt-Anchor" href="#dpldescriptor-privilege-level"></a> DPL(Descriptor Privilege Level)</h3>
+<p>描述符特权级别</p>
+<p>DPL 存储在段描述符中，规定了访问该段所需要的特权级别是什么。</p>
+<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>举例说明</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>mov DS, AX</p>
+<p>如果 AX 指向的段 DPL = 0，但当前程序的 CPL = 3，这行指令是不会成功的！</p>
+</div>
+</details><p></p>
+<h3 id="rplrequest-privilege-level"><a class="markdownIt-Anchor" href="#rplrequest-privilege-level"></a> RPL(Request Privilege Level)</h3>
+<p>请求特权级别</p>
+<p>RPL 是针对段选择子而言的，每个段的选择子都有自己的 RPL。</p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241017212209606.png" srcset="/img/loading.gif" lazyload class title="image-20241017212209606">
+<p>举例说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs assembly">Mov ax,0008 与 Mov ax,000B # 段选择子<br># 0008 的 RPL 是 0<br># 000B 的 RPL 是 3<br>    <br>Mov ds,ax 与 Mov ds,ax # 段描述符<br></code></pre></td></tr></table></figure>
+<h3 id="数据段的权限检查"><a class="markdownIt-Anchor" href="#数据段的权限检查"></a> 数据段的权限检查</h3>
+<p>参考如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs assembly"># 加入当前程序在 0 环，也就是说 CPL = 0<br><br>Mov ax,000B # 1011 RPL = 3<br>MOv ds,ax # ax 指向的段描述符的 DPL=0<br></code></pre></td></tr></table></figure>
+<p>数据段的权限检查：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>P</mi><mi>L</mi><mo>&lt;</mo><mo>=</mo><mi>D</mi><mi>P</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">CPL &lt;= DPL</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span></span></span></span> 并且 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>P</mi><mi>L</mi><mo>&lt;</mo><mo>=</mo><mi>D</mi><mi>P</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">RPL &lt;= DPL</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span></span></span></span> （数值上的比较）</p>
+<details class="custom-callout warning" open><summary class="callout-title"><div class="callout-icon"></div><div>注意</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>代码段和系统段描述符中的检查方式并不一样。</p>
+</div>
+</details><h2 id="代码跨段跳转"><a class="markdownIt-Anchor" href="#代码跨段跳转"></a> 代码跨段跳转</h2>
+<p><strong>段寄存器</strong></p>
+<p><code>ES</code>、<code>CS</code>、<code>SS</code>、<code>DS</code>、<code>FS</code>、<code>GS</code>、<code>LDTR</code>、<code>TR</code></p>
+<p><strong>段寄存器读写</strong></p>
+<p>除 <code>CS </code> 外，其他的段寄存器都可以通过 <code>MOV</code>、<code>LES</code>、<code>LSS</code>、<code>LDS</code>、<code>LFS</code>、<code>LGS</code> 指令进行修改</p>
+<p><strong><code>CS</code> 为什么不可以直接修改呢？</strong></p>
+<p><code>CS</code> 的改变意味着 <code>EIP</code> 的改变，改变 <code>CS</code> 的同时必须修改 <code>EIP</code>，所以我们无法使用上面的指令来进行修改。</p>
+<h3 id="代码间的跳转段间跳转-非调用门之类的"><a class="markdownIt-Anchor" href="#代码间的跳转段间跳转-非调用门之类的"></a> 代码间的跳转（段间跳转、非调用门之类的）</h3>
+<p><strong>段间跳转有两种情况</strong></p>
+<p>要跳转的段是：</p>
+<ul>
+<li>一致代码段<br>
+比如：操作系统提供了一些通用代码以便于应用层使用，则可以使用一致代码段</li>
+<li>非一致代码段</li>
+</ul>
+<p><strong>查看 gdt 表</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dbgcmd">r gdtr<br></code></pre></td></tr></table></figure>
+<p><strong>同时修改 CS 与 EIP 的指令</strong></p>
+<p>JMP FAR / CALL FAR / RETF / INT / IRETED</p>
+<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>注意</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>只改变 EIP 的指令</p>
+<p>JMP / CALL / JCC / RET</p>
+</div>
+</details><h3 id="代码间的跳转段间跳转-非调用门之类的执行流程"><a class="markdownIt-Anchor" href="#代码间的跳转段间跳转-非调用门之类的执行流程"></a> 代码间的跳转（段间跳转、非调用门之类的）执行流程</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs assembly">JMP 0x20:0x004183D7<br></code></pre></td></tr></table></figure>
+<p>CPU 如何执行这行代码？</p>
+<p>执行上述代码时，分为以下 5 个步骤：</p>
+<ol>
+<li>
+<p>段选择子拆分<br>
+<code>0x20</code> 对应的二进制形式 <code>0000 0000 0010 0000</code></p>
+<ul>
+<li>RPL = 00</li>
+<li>TI = 0</li>
+<li>Index = 4</li>
+</ul>
+</li>
+<li>
+<p>查表得到段描述符</p>
+<ul>
+<li>TI = 0 所以查 GDT 表</li>
+<li>Index = 4 找到对应的段描述符</li>
+</ul>
+<p>四种情况可以跳转：代码段、调用门、TSS 任务段、任务门</p>
+</li>
+<li>
+<p>权限检查</p>
+<ul>
+<li>非一致代码段：要求 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>V</mi><mi>L</mi><mo>=</mo><mo>=</mo><mi>D</mi><mi>P</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">CVL == DPL</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span></span></span></span> &amp;&amp; <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mi>P</mi><mi>C</mi><mo>&lt;</mo><mo>=</mo><mi>D</mi><mi>P</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">RPC &lt;= DPL</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span></span></span></span></li>
+<li>一致代码段： 要求： <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>P</mi><mi>L</mi><mo>&gt;</mo><mo>=</mo><mi>D</mi><mi>P</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">CPL &gt;= DPL</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">L</span></span></span></span></li>
+</ul>
+</li>
+<li>
+<p>加载段描述符<br>
+通过上面的权限检查后，CPU 会将段描述符加载到 CS 段寄存器中</p>
+</li>
+<li>
+<p>代码执行<br>
+CPU 将 <code>CS.Base + Offset</code> 的值写入 <code>EIP</code>，然后执行 <code>CS:EIP</code> 处的代码，段间跳转结束。</p>
+</li>
+</ol>
+<details class="custom-callout important" open><summary class="callout-title"><div class="callout-icon"></div><div>本节总结</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>对于一致代码段：也就是共享的段</p>
+<ul>
+<li>特权级高的程序不允许访问特权级低的数据：核心态不允许访问用户态的数据</li>
+<li>特权级低的程序可以访问到特权级高的数据，但特权级不会改变：用户态还是用户态</li>
+</ul>
+<p>对于普通代码段：也就是非一致代码段</p>
+<ul>
+<li>只允许同级访问</li>
+<li>绝对禁止不同级别的访问：核心态不是用户态，用户态也不是核心态</li>
+</ul>
+</div>
+</details><h2 id="代码段跳转实操"><a class="markdownIt-Anchor" href="#代码段跳转实操"></a> 代码段跳转实操</h2>
+<h3 id="构造段描述符"><a class="markdownIt-Anchor" href="#构造段描述符"></a> 构造段描述符</h3>
+<p>找一个非一致代码段描述符，复制一份，写入到 GDT 表中</p>
+<blockquote>
+<p>第 5 位为 9 或者 f 的时候一定是非一致代码段</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs dbgcmd">0: kd&gt; r gdtr<br>gdtr=fffff8064749dfb0<br>0: kd&gt; dq fffff8064749dfb0<br>fffff806`4749dfb0  00000000`00000000 00000000`00000000<br>fffff806`4749dfc0  00209b00`00000000 00409300`00000000<br>fffff806`4749dfd0  00cffb00`0000ffff 00cff300`0000ffff<br>fffff806`4749dfe0  0020fb00`00000000 00000000`00000000<br>fffff806`4749dff0  47008b49`c0000067 00000000`fffff806<br>fffff806`4749e000  0040f300`00003c00 00000000`00000000<br>fffff806`4749e010  00000000`00000000 00000000`00000000<br>fffff806`4749e020  00000000`00000000 00000000`00000000<br></code></pre></td></tr></table></figure>
+<p>修改 <code>fffff806749e008</code> 位置的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs dbgcmd">0: kd&gt; eq fffff806`4749e008 00cffb00`0000ffff<br>0: kd&gt; dq fffff8064749dfb0<br>fffff806`4749dfb0  00000000`00000000 00000000`00000000<br>fffff806`4749dfc0  00209b00`00000000 00409300`00000000<br>fffff806`4749dfd0  00cffb00`0000ffff 00cff300`0000ffff<br>fffff806`4749dfe0  0020fb00`00000000 00000000`00000000<br>fffff806`4749dff0  47008b49`c0000067 00000000`fffff806<br>fffff806`4749e000  0040f300`00003c00 00cffb00`0000ffff<br>fffff806`4749e010  00000000`00000000 00000000`00000000<br>fffff806`4749e020  00000000`00000000 00000000`00000000<br></code></pre></td></tr></table></figure>
+<p>写完后可以查看下写入是否成功。</p>
+<h3 id="在-od-中进行测试"><a class="markdownIt-Anchor" href="#在-od-中进行测试"></a> 在 OD 中进行测试</h3>
+<p>添加成功后，我们要尝试跳转到刚刚添加的段描述符的位置，这里我还是画图示意一下哎，我修改的是低 12 位，下标为 11。对应的二进制为 <code>1011</code>，后三位为 RPC，对应的二进制为 <code>11</code>，所以总的描述符号二进制为：</p>
+<p><code>0000 0000 0101 1011</code>，也就是 <code>0x005B</code></p>
+<img src="/2024/10/31/B_Code/%E6%B1%87%E7%BC%96/%E3%80%90%E6%B1%87%E7%BC%96%E3%80%91%E5%86%85%E6%A0%B8%E5%AD%A6%E4%B9%A0/image-20241021232030912.png" srcset="/img/loading.gif" lazyload class title="image-20241021232030912">
+<p>在 OD 中，执行跨段跳转 <code>JMP FAR 005B:008F94A0</code></p>
+<p></p>
+<p></p>
+<p>9-4B-0000 0000 0100 1011</p>
+<p>11- - 0000 0000 0101 1011</p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/B-Code/" class="category-chain-item">B_Code</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/B-Code/%E6%B1%87%E7%BC%96/" class="category-chain-item">汇编</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B1%87%E7%BC%96/" class="print-no-link">#汇编</a>
+      
+        <a href="/tags/kernel/" class="print-no-link">#kernel</a>
+      
+        <a href="/tags/%E5%AF%84%E5%AD%98%E5%99%A8/" class="print-no-link">#寄存器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【汇编】内核学习</div>
+      <div>https://hodlyounger.github.io/2024/10/31/B_Code/汇编/【汇编】内核学习/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/31/wiki/%E5%BC%B1%E5%AF%86%E7%A0%81/%E3%80%90%E5%BC%B1%E5%AF%86%E7%A0%81%E3%80%91hashcat%E4%BD%BF%E7%94%A8/" title="【弱密码】hashcat使用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【弱密码】hashcat使用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/31/A_A%E7%A0%94/%E6%94%BF%E6%B2%BB/%E9%A9%AC%E5%8E%9F/%E3%80%90%E8%80%83%E7%A0%94%E6%94%BF%E6%B2%BB%E3%80%91%E9%A9%AC%E5%8E%9F%E7%AC%94%E8%AE%B0/" title="【考研政治】马原笔记">
+                        <span class="hidden-mobile">【考研政治】马原笔记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
