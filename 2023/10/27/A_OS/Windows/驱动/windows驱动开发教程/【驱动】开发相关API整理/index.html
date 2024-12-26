@@ -21,15 +21,15 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：驱动开发过程中，相关API的学习整理  [toc]  WdfDriverCreate WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一">
+    <meta name="description" content="概述：驱动开发过程中，相关API的学习整理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【驱动】开发相关API整理">
 <meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3API%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：驱动开发过程中，相关API的学习整理  [toc]  WdfDriverCreate WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。 WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一">
+<meta property="og:description" content="概述：驱动开发过程中，相关API的学习整理">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.086Z">
-<meta property="article:modified_time" content="2024-10-11T03:35:18.150Z">
+<meta property="article:modified_time" content="2024-11-29T08:12:37.554Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="Windows&#x2F;驱动">
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          580 字
+          1.3k 字
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
         
-          5 分钟
+          11 分钟
         
       </span>
     
@@ -284,7 +284,22 @@
                 <blockquote>
 <p>概述：驱动开发过程中，相关API的学习整理</p>
 </blockquote>
+<span id="more"></span>
 <p>[toc]</p>
+<h2 id="链表"><a class="markdownIt-Anchor" href="#链表"></a> 链表</h2>
+<p><strong>定义链表结构体</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span></span><br><span class="hljs-class">&#123;</span><br>	DWORD Pid;<br>	UCHAR ProcessName[<span class="hljs-number">2048</span>];<br>	DWORD Handle;<br>	LIST_ENTRY ListEntry;<br>&#125; ProcessList;<br></code></pre></td></tr></table></figure>
+<p><strong>初始化</strong> <code>InitializeListHead</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">LIST_ENTRY linkListHead;<br><br><span class="hljs-comment">// 初始化链表头部</span><br>InitializeListHead(&amp;linkListHead);<br></code></pre></td></tr></table></figure>
+<p><strong>插入链表</strong> <code>InsertTailList</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c">pData = (ProcessList*)ExAllocatePool(PagedPool, <span class="hljs-keyword">sizeof</span>(ProcessList));<br><br>InsertTailList(&amp;linkListHead, &amp;pData-&gt;ListEntry);<br></code></pre></td></tr></table></figure>
+<p><strong>判断是否为空</strong> <code>IsListEmpty</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span>(!IsListEmpty(&amp;linkListHead))<br>&#123;<br>    DbgPrint(<span class="hljs-string">&quot;Empty&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>移除链表</strong> <code>RemoveHeadList</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">LIST_ENTRY* pEntry = RemoveHeadList(&amp;linkListHead);<br></code></pre></td></tr></table></figure>
+<p><strong>获取链表当中的结构</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">pData = CONTAINING_RECORD(pEntry, ProcessList, ListEntry);<br>DbgPrint(<span class="hljs-string">&quot;Pid[%d], ProcessName[%s], Handle[0x%x] \n&quot;</span>, pData-&gt;Pid, pData-&gt;ProcessName, pData-&gt;Handle);<br></code></pre></td></tr></table></figure>
+<h2 id="安装卸载相关"><a class="markdownIt-Anchor" href="#安装卸载相关"></a> 安装卸载相关</h2>
 <h4 id="wdfdrivercreate"><a class="markdownIt-Anchor" href="#wdfdrivercreate"></a> WdfDriverCreate</h4>
 <p>WdfDriverCreate 是 Windows Driver Frameworks (WDF) 中用于创建驱动程序的函数。它用于初始化驱动程序，并将其与 Windows 操作系统进行集成。</p>
 <p>WdfDriverCreate 函数需要填写一个 WDFDRIVER 结构体来定义驱动程序的属性和行为。以下是一些常见的参数：</p>
@@ -307,6 +322,35 @@
 </ul>
 <p>在调用 WdfDeviceCreate 之后，WDF 将使用提供的参数来创建并初始化一个设备对象。然后，设备可以使用 WDF 提供的其他函数来管理设备的状态、处理请求以及与其他设备或驱动程序进行交互。</p>
 <p>需要注意的是，WdfDeviceCreate 是一个高级别的函数，通常用于创建完整的设备对象。对于较简单的设备或需要更精细控制的情况，可能需要使用其他 WDF 函数来手动创建和配置设备对象。同时，在使用 WdfDeviceCreate 和其他 WDF 函数时，应注意遵循正确的使用方法和规范，以避免产生潜在的问题和风险。</p>
+<h2 id="实用函数"><a class="markdownIt-Anchor" href="#实用函数"></a> 实用函数</h2>
+<h3 id="绕过签名检查"><a class="markdownIt-Anchor" href="#绕过签名检查"></a> 绕过签名检查</h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 绕过签名检查</span><br>BOOLEAN <span class="hljs-title function_">BypassCheckSign</span><span class="hljs-params">(PDRIVER_OBJECT pDriverObject)</span><br>&#123;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _WIN64</span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG64 __Undefined1;<br>		ULONG64 __Undefined2;<br>		ULONG64 __Undefined3;<br>		ULONG64 NonPagedDebugInfo;<br>		ULONG64 DllBase;<br>		ULONG64 EntryPoint;<br>		ULONG SizeOfImage;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>		USHORT  LoadCount;<br>		USHORT  __Undefined5;<br>		ULONG64 __Undefined6;<br>		ULONG   CheckSum;<br>		ULONG   __padding1;<br>		ULONG   TimeDateStamp;<br>		ULONG   __padding2;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG unknown1;<br>		ULONG unknown2;<br>		ULONG unknown3;<br>		ULONG unknown4;<br>		ULONG unknown5;<br>		ULONG unknown6;<br>		ULONG unknown7;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	PKLDR_DATA_TABLE_ENTRY pLdrData = (PKLDR_DATA_TABLE_ENTRY)pDriverObject-&gt;DriverSection;<br>	pLdrData-&gt;Flags = pLdrData-&gt;Flags | <span class="hljs-number">0x20</span>;<br><br>	<span class="hljs-keyword">return</span> TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>如何使用</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 驱动入口地址</span><br>NTSTATUS <span class="hljs-title function_">DriverEntry</span><span class="hljs-params">(IN PDRIVER_OBJECT Driver, PUNICODE_STRING RegistryPath)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (BypassCheckSign(Driver))<br>		DbgPrint(<span class="hljs-string">&quot;Bypass Sign Success.&quot;</span>);<br><br>	DbgPrint(<span class="hljs-string">&quot;Driver loaded. \n&quot;</span>);<br><br>	Driver-&gt;DriverUnload = UnDriver;<br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="内存相关"><a class="markdownIt-Anchor" href="#内存相关"></a> 内存相关</h2>
+<h3 id="申请内存-exallocatepool"><a class="markdownIt-Anchor" href="#申请内存-exallocatepool"></a> 申请内存 <code>ExAllocatePool</code></h3>
+<p>申请内存使用 <code>ExAllocatePool</code> 、<code>ExAllocatePoolWithTag</code>、<code>ExAllocatePool2</code> 接口</p>
+<p><strong>原型</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">PVOID <span class="hljs-title function_">ExAllocatePool</span><span class="hljs-params">(</span><br><span class="hljs-params">  IN POOL_TYPE PoolType,</span><br><span class="hljs-params">  IN SIZE_T NumberOfBytes</span><br><span class="hljs-params">)</span>;<br></code></pre></td></tr></table></figure>
+<ul>
+<li><strong>PoolType</strong>：指定内存池的类型，可以是 <code>NonPagedPool</code>（非分页内存池）或 <code>PagedPool</code>（分页内存池）等。</li>
+<li><strong>NumberOfBytes</strong>：指定要分配的内存大小，最好是4的倍数。</li>
+<li><strong>返回值</strong>：返回分配的内存地址，一定是内核模式地址。如果返回NULL，则代表分配失败。</li>
+</ul>
+<p><strong>ExAllocatePool 与 ExAllocatePool2/ExAllocatePool3</strong></p>
+<p>从 Windows 10 版本 2004 开始，推荐使用 <code>ExAllocatePool2</code> 和 <code>ExAllocatePool3</code> 来替代 <code>ExAllocatePool</code>。新的 API 默认会将分配的内存初始化为零，有助于避免内存泄漏相关的bug。</p>
+<p><strong>示例代码</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">PVOID Allocation = ExAllocatePool(PagedPool, <span class="hljs-number">100</span>);<br><span class="hljs-keyword">if</span> (Allocation == <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-comment">// 处理内存分配失败的情况</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 使用分配的内存</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在新的驱动中，应该使用 <code>ExAllocatePool2</code> 接口</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">PVOID Allocation = ExAllocatePool2(POOL_FLAG_PAGED, <span class="hljs-number">100</span>, <span class="hljs-string">&#x27;abcd&#x27;</span>);<br><span class="hljs-keyword">if</span> (Allocation == <span class="hljs-literal">NULL</span>) &#123;<br>    <span class="hljs-comment">// 处理内存分配失败的情况</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 使用分配的内存</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="填充内存-rtlzeromemory"><a class="markdownIt-Anchor" href="#填充内存-rtlzeromemory"></a> 填充内存 <code>RtlZeroMemory</code></h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 分配内核堆空间</span><br>pData = (ProcessList*)ExAllocatePool(PagedPool, <span class="hljs-keyword">sizeof</span>(ProcessList));<br>RtlZeroMemory(pData, <span class="hljs-keyword">sizeof</span>(ProcessList));<br></code></pre></td></tr></table></figure>
+<h3 id="拷贝内存-rtlcopymemory"><a class="markdownIt-Anchor" href="#拷贝内存-rtlcopymemory"></a> 拷贝内存 <code>RtlCopyMemory</code></h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 设置变量</span><br>pData-&gt;Pid = (DWORD)PsGetProcessId(eproc);<br>RtlCopyMemory(pData-&gt;ProcessName, PsGetProcessImageFileName(eproc), <span class="hljs-built_in">strlen</span>(PsGetProcessImageFileName(eproc)));<br>pData-&gt;Handle = (DWORD)PsGetProcessInheritedFromUniqueProcessId(eproc);<br></code></pre></td></tr></table></figure>
+<h3 id="释放内存-exfreepool"><a class="markdownIt-Anchor" href="#释放内存-exfreepool"></a> 释放内存 <code>ExFreePool</code></h3>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">ExFreePool(pData);<br></code></pre></td></tr></table></figure>
+<h2 id="进程相关"><a class="markdownIt-Anchor" href="#进程相关"></a> 进程相关</h2>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;windef.h&gt;</span></span><br><br><span class="hljs-comment">// 函数返回给定进程的进程环境块（Process Environment Block，PEB）的指针</span><br><span class="hljs-keyword">extern</span> PVOID <span class="hljs-title function_">PsGetProcessPeb</span><span class="hljs-params">(_In_ PEPROCESS Process)</span>; <br><br><span class="hljs-comment">// 此函数通过给定的进程 ID 查找对应的进程，并将进程的 EPROCESS 结构指针存储在提供的指针变量中。</span><br>NTKERNELAPI NTSTATUS <span class="hljs-title function_">PsLookupProcessByProcessId</span><span class="hljs-params">(HANDLE ProcessId, PEPROCESS* Process)</span>; <br><br><span class="hljs-comment">// 此函数返回给定进程的 Wow64 进程环境的指针。Wow64 进程环境是用于在 64 位 Windows 上运行 32 位应用程序的兼容性层。</span><br><span class="hljs-keyword">extern</span> NTKERNELAPI PVOID <span class="hljs-title function_">PsGetProcessWow64Process</span><span class="hljs-params">(_In_ PEPROCESS Process)</span>; <br><br><span class="hljs-comment">// 此函数返回给定进程的映像文件名，即执行该进程的可执行文件的名称。</span><br><span class="hljs-keyword">extern</span> NTKERNELAPI UCHAR* <span class="hljs-title function_">PsGetProcessImageFileName</span><span class="hljs-params">(IN PEPROCESS Process)</span>; <br><br><span class="hljs-comment">//  此函数返回给定进程所继承的唯一进程 ID,即父进程ID。</span><br><span class="hljs-keyword">extern</span> NTKERNELAPI HANDLE <span class="hljs-title function_">PsGetProcessInheritedFromUniqueProcessId</span><span class="hljs-params">(IN PEPROCESS Process)</span>;<br></code></pre></td></tr></table></figure>
 
                 
               </div>

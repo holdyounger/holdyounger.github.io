@@ -1,0 +1,805 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：详细记录如何将 ASP. Net 项目发布到 IIS（新建项目、安装 Web Deploy、部署项目）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【环境搭建】ASP.Net 部署到 IIS">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：详细记录如何将 ASP. Net 项目发布到 IIS（新建项目、安装 Web Deploy、部署项目）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226140930497.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141058805.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141241942.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141641045.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141750305.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141907989.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141943921.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142015782.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142327605.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142656971.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142749268.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142934902.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142951156.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143026702.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226144051602.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143224624.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143248525.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143608566.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143712586.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143845761.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143927118.png">
+<meta property="article:published_time" content="2024-12-26T06:04:53.569Z">
+<meta property="article:modified_time" content="2024-12-26T06:48:21.574Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="IIS">
+<meta property="article:tag" content="环境搭建">
+<meta property="article:tag" content="ASP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226140930497.png">
+  
+  
+  
+  <title>【环境搭建】ASP.Net 部署到 IIS - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【环境搭建】ASP.Net 部署到 IIS"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-26 14:04" pubdate>
+          2024年12月26日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          560 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          5 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【环境搭建】ASP.Net 部署到 IIS</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：详细记录如何将 ASP. Net 项目发布到 IIS（新建项目、安装 Web Deploy、部署项目）</p>
+</blockquote>
+<span id="more"></span>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>参考文章</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/potential/p/3751426.html">图文详解远程部署ASP.NET MVC 5项目 - Mr|Right - 博客园</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-9.0&amp;WT.mc_id=dotnet-35129-website&amp;tabs=visual-studio">ASP.NET Core MVC 入门 | Microsoft Learn</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="安装-web-deploy"><a class="markdownIt-Anchor" href="#安装-web-deploy"></a> 安装 Web Deploy</h2>
+<p>这个是必须安装的，安装后才能发布 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> 应用到当前机器。</p>
+<h3 id="下载"><a class="markdownIt-Anchor" href="#下载"></a> 下载</h3>
+<p>下载链接：<a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.iis.net/downloads/microsoft/web-deploy">Web Deploy : The Official Microsoft IIS Site</a></p>
+<h3 id="安装"><a class="markdownIt-Anchor" href="#安装"></a> 安装</h3>
+<p>安装时选择 <kbd>自定义安装</kbd>，<kbd>整个功能都安装在本地硬盘上</kbd>。</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226140930497.png" srcset="/img/loading.gif" lazyload class title="image-20241226140930497">
+<h3 id="确认服务启动"><a class="markdownIt-Anchor" href="#确认服务启动"></a> 确认服务启动</h3>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141058805.png" srcset="/img/loading.gif" lazyload class title="image-20241226141058805">
+<p></p>
+<h2 id="配置-iis-用户及权限"><a class="markdownIt-Anchor" href="#配置-iis-用户及权限"></a> 配置 IIS 用户及权限</h2>
+<h3 id="管理服务"><a class="markdownIt-Anchor" href="#管理服务"></a> 管理服务</h3>
+<p>启动远程连接，设置 IIS 用户认证。</p>
+<ol>
+<li>
+<p>进入管理服务</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141241942.png" srcset="/img/loading.gif" lazyload class title="image-20241226141241942">
+</li>
+<li>
+<p>停止 WMSVC 服务</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141641045.png" srcset="/img/loading.gif" lazyload class title="image-20241226141641045">
+</li>
+<li>
+<p>启用远程连接、设置标识凭据</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141750305.png" srcset="/img/loading.gif" lazyload class title="image-20241226141750305">
+</li>
+<li>
+<p>设置完成后启动 WMSVC 服务</p>
+</li>
+</ol>
+<h3 id="iis-管理器用户"><a class="markdownIt-Anchor" href="#iis-管理器用户"></a> IIS 管理器用户</h3>
+<p>添加 IIS 管理用户，设置用户名和密码，后续发布时需要用到</p>
+<ol>
+<li>
+<p>进入管理器用户</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141907989.png" srcset="/img/loading.gif" lazyload class title="image-20241226141907989">
+</li>
+<li>
+<p>添加用户</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226141943921.png" srcset="/img/loading.gif" lazyload class title="image-20241226141943921">
+</li>
+<li>
+<p>设置用户名和密码，添加用户</p>
+<p>这里演示用户名为 IISAdmin。因为我这边已经创建了 MonX 了。后文使用的就以 MonX 为主。这里仅做演示。</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142015782.png" srcset="/img/loading.gif" lazyload class title="image-20241226142015782">
+</li>
+</ol>
+<h3 id="添加站点并设置用户权限"><a class="markdownIt-Anchor" href="#添加站点并设置用户权限"></a> 添加站点并设置用户权限</h3>
+<ol>
+<li>
+<p>按照如下所示内容添加一个空白的站点</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142327605.png" srcset="/img/loading.gif" lazyload class title="image-20241226142327605">
+</li>
+<li>
+<p>文件目录添加 Local Service 控制权限</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142656971.png" srcset="/img/loading.gif" lazyload class title="image-20241226142656971"><img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142749268.png" srcset="/img/loading.gif" lazyload class title="image-20241226142749268">
+</li>
+</ol>
+<h3 id="iis-网站站点添加权限"><a class="markdownIt-Anchor" href="#iis-网站站点添加权限"></a> IIS 网站站点添加权限</h3>
+<ol>
+<li>打开对应站点的管理器权限<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142934902.png" srcset="/img/loading.gif" lazyload class title="image-20241226142934902">
+</li>
+<li>添加用户<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226142951156.png" srcset="/img/loading.gif" lazyload class title="image-20241226142951156">
+</li>
+<li>选择用户<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143026702.png" srcset="/img/loading.gif" lazyload class title="image-20241226143026702">
+</li>
+</ol>
+<p>到此目标服务器的相关配置就完成了。</p>
+<p></p>
+<h2 id="vs-新建项目"><a class="markdownIt-Anchor" href="#vs-新建项目"></a> VS 新建项目</h2>
+<p>选择如下所示的项目，然后根据自己需要填写项目名就可以，默认模版就可以。如果没有该模板的话，则需要安装相关开发插件。参考微软官方教程：</p>
+<p><a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-9.0&amp;WT.mc_id=dotnet-35129-website&amp;tabs=visual-studio">ASP.NET Core MVC 入门 | Microsoft Learn</a></p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226144051602.png" srcset="/img/loading.gif" lazyload class title="image-20241226144051602">
+<p></p>
+<h2 id="vs-添加发布"><a class="markdownIt-Anchor" href="#vs-添加发布"></a> VS 添加发布</h2>
+<p>这里以 VS 2022 为例，其他版本VS基本上差不多。</p>
+<ol>
+<li>右击 VS 项目点击发布，选择 Web 服务器<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143224624.png" srcset="/img/loading.gif" lazyload class title="image-20241226143224624">
+</li>
+<li>可以选择 Web 部署<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143248525.png" srcset="/img/loading.gif" lazyload class title="image-20241226143248525">
+</li>
+<li>根据 IIS 站点配置填写相关配置<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143608566.png" srcset="/img/loading.gif" lazyload class title="image-20241226143608566">
+</li>
+<li>验证连接<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143712586.png" srcset="/img/loading.gif" lazyload class title="image-20241226143712586">
+</li>
+</ol>
+<h2 id="发布"><a class="markdownIt-Anchor" href="#发布"></a> 发布</h2>
+<p>发布项目到 IIS</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143845761.png" srcset="/img/loading.gif" lazyload class title="image-20241226143845761">
+<p>部署后的目录如下所示：</p>
+<img src="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/image-20241226143927118.png" srcset="/img/loading.gif" lazyload class title="image-20241226143927118">
+<h2 id="相关问题整理"><a class="markdownIt-Anchor" href="#相关问题整理"></a> 相关问题整理</h2>
+<h3 id="外网无法访问"><a class="markdownIt-Anchor" href="#外网无法访问"></a> 外网无法访问</h3>
+<p>检查下防火墙，添加相关端口的允许规则</p>
+<h3 id="部署失败"><a class="markdownIt-Anchor" href="#部署失败"></a> 部署失败</h3>
+<p>可能的原因不外乎以下几种：</p>
+<ol>
+<li>Web Deploy 安装失败</li>
+<li>站点根目录对应的文件夹没有 LocalService 控制权限</li>
+<li>IP 不通</li>
+</ol>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="category-chain-item">环境搭建</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/IIS/" class="print-no-link">#IIS</a>
+      
+        <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="print-no-link">#环境搭建</a>
+      
+        <a href="/tags/ASP/" class="print-no-link">#ASP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【环境搭建】ASP.Net 部署到 IIS</div>
+      <div>https://hodlyounger.github.io/2024/12/26/A_OS/Windows/环境搭建/【环境搭建】ASP.Net 部署到 IIS/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/26/A_%E5%86%85%E5%8A%9F/WinSafe/%E3%80%90ASP.Net%E3%80%91/%E3%80%90ASP.Net%E3%80%91ASP.Net%20MVC%20Filter%20%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/" title="【ASP.Net】ASP.Net MVC Filter 型内存马">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【ASP.Net】ASP.Net MVC Filter 型内存马</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/12/25/wiki/%E5%AE%89%E5%85%A8/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91%E5%85%A7%E5%AD%98%E9%A9%AC/" title="【网安】內存马">
+                        <span class="hidden-mobile">【网安】內存马</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

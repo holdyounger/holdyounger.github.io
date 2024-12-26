@@ -29,7 +29,7 @@
 <meta property="og:description" content="概述： windows操作系统如果实现内存清理 相关实现： henrypp&#x2F;memreduct: Lightweight real-time memory management application to monitor and clean system memory on your computer. 工具：Mem Reduct 参考文章：使用 NT API 整理内存碎片 - 大贤者初春令月">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-27T01:24:02.021Z">
-<meta property="article:modified_time" content="2024-10-11T03:31:11.633Z">
+<meta property="article:modified_time" content="2024-11-21T03:11:24.441Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="内存">
@@ -228,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          790 字
+          789 字
         
       </span>
     
@@ -296,7 +296,11 @@
 <p>于是用 IDA Pro 分析了下 RAMMap 工具的相关功能，并对自己的发现进行总结，编写示例和本文。</p>
 <h2 id="操作方法"><a class="markdownIt-Anchor" href="#操作方法"></a> 操作方法</h2>
 <p>需要以管理员身份运行你的二进制。</p>
-<p>首先启用当前进程的 <code>SeProfileSingleProcessPrivilege</code> 特权，然后调用 <code>NtSetSystemInformation</code>，分别向 <code>SystemMemoryListInformation</code> 传入 <code>MemoryEmptyWorkingSets</code>, <code>MemoryFlushModifiedList</code> 和 <code>MemoryPurgeStandbyList</code> 即可完成内存碎片整理。</p>
+<p><strong>原理说明</strong></p>
+<ol>
+<li>启用当前进程的 <code>SeProfileSingleProcessPrivilege</code> 特权</li>
+<li>调用 <code>NtSetSystemInformation</code>，分别向 <code>SystemMemoryListInformation</code> 传入 <code>MemoryEmptyWorkingSets</code>, <code>MemoryFlushModifiedList</code> 和 <code>MemoryPurgeStandbyList</code> 即可完成内存碎片整理。</li>
+</ol>
 <p>参考 Mem Reduct 的代码如下所示：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">if</span> (mask &amp; REDUCT_WORKING_SET)<br>	&#123;<br>		command = MemoryEmptyWorkingSets;<br><br>		status = <span class="hljs-built_in">NtSetSystemInformation</span> (SystemMemoryListInformation, &amp;command, <span class="hljs-built_in">sizeof</span> (command));<br><br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span> (status))<br>			_r_log (LOG_LEVEL_ERROR, <span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;NtSetSystemInformation&quot;</span>, status, <span class="hljs-string">L&quot;MemoryEmptyWorkingSets&quot;</span>);<br>	&#125;<br><br>	<span class="hljs-comment">// Standby priority-0 list (vista+)</span><br>	<span class="hljs-keyword">if</span> (mask &amp; REDUCT_STANDBY_PRIORITY0_LIST)<br>	&#123;<br>		command = MemoryPurgeLowPriorityStandbyList;<br><br>		status = <span class="hljs-built_in">NtSetSystemInformation</span> (SystemMemoryListInformation, &amp;command, <span class="hljs-built_in">sizeof</span> (command));<br><br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span> (status))<br>			_r_log (LOG_LEVEL_ERROR, <span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;NtSetSystemInformation&quot;</span>, status, <span class="hljs-string">L&quot;MemoryPurgeLowPriorityStandbyList&quot;</span>);<br>	&#125;<br><br>	<span class="hljs-comment">// Standby list (vista+)</span><br>	<span class="hljs-keyword">if</span> (mask &amp; REDUCT_STANDBY_LIST)<br>	&#123;<br>		command = MemoryPurgeStandbyList;<br><br>		status = <span class="hljs-built_in">NtSetSystemInformation</span> (SystemMemoryListInformation, &amp;command, <span class="hljs-built_in">sizeof</span> (command));<br><br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span> (status))<br>			_r_log (LOG_LEVEL_ERROR, <span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;NtSetSystemInformation&quot;</span>, status, <span class="hljs-string">L&quot;MemoryPurgeStandbyList&quot;</span>);<br>	&#125;<br><br>	<span class="hljs-comment">// Modified page list (vista+)</span><br>	<span class="hljs-keyword">if</span> (mask &amp; REDUCT_MODIFIED_LIST)<br>	&#123;<br>		command = MemoryFlushModifiedList;<br><br>		status = <span class="hljs-built_in">NtSetSystemInformation</span> (SystemMemoryListInformation, &amp;command, <span class="hljs-built_in">sizeof</span> (command));<br><br>		<span class="hljs-keyword">if</span> (!<span class="hljs-built_in">NT_SUCCESS</span> (status))<br>			_r_log (LOG_LEVEL_ERROR, <span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;NtSetSystemInformation&quot;</span>, status, <span class="hljs-string">L&quot;MemoryFlushModifiedList&quot;</span>);<br>	&#125;<br></code></pre></td></tr></table></figure>
 <h2 id="完整代码示例"><a class="markdownIt-Anchor" href="#完整代码示例"></a> 完整代码示例</h2>

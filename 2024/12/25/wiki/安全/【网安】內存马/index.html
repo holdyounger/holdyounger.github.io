@@ -1,0 +1,713 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：什么是内存马？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【网安】內存马">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/12/25/wiki/%E5%AE%89%E5%85%A8/%E3%80%90%E7%BD%91%E5%AE%89%E3%80%91%E5%85%A7%E5%AD%98%E9%A9%AC/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：什么是内存马？">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-12-25T06:26:17.159Z">
+<meta property="article:modified_time" content="2024-12-25T07:20:45.839Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="内存马">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【网安】內存马 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【网安】內存马"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-12-25 14:26" pubdate>
+          2024年12月25日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【网安】內存马</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：什么是内存马？</p>
+</blockquote>
+<span id="more"></span>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.csdn.net/MachineGunJoe/article/details/118088350">学习了解内存马，看这篇就够了！（精华版）_java内存马类型-CSDN博客</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="简述"><a class="markdownIt-Anchor" href="#简述"></a> 简述</h2>
+<h3 id="webshell-技术历程"><a class="markdownIt-Anchor" href="#webshell-技术历程"></a> webshell 技术历程</h3>
+<p>在 Web 安全领域，WebShell 一直是一个非常重要且热门的话题。在目前传统安全领域， WebShell 根据功能的不同分为三种类型，分别是：一句话木马、小马，大马。二根据现在防火墙技术的更新迭代，随后出现了加密的木马技术，比如：加密一句话。最新的技术是使用无文件的 WebShell 类型：内存马。</p>
+<p><strong>一句话木马</strong>：通常指的是一段简短的代码，可以嵌入到网页或脚本中，用户一旦访问或执行，就会触发恶意行为，如远程控制、数据窃取等。</p>
+<ul>
+<li>代码短，只有一行代码</li>
+<li>使用场景大，可单独生成文件可插入文件</li>
+<li>安全性高，隐匿性强，可变形免杀</li>
+<li>框架不便，数据执行（数据传递）</li>
+</ul>
+<p><strong>小马</strong>：指的是较小的恶意程序，通常用于初步入侵系统，执行简单的命令，如创建后门、收集信息等，为后续的大马植入做准备。</p>
+<ul>
+<li>体积小，功能少</li>
+<li>只有一个上传功能</li>
+</ul>
+<p><strong>大马</strong>：指的是功能更全面、复杂的恶意程序，能够进行高级的恶意操作，如完全控制受害系统、进行数据破坏、横向移动等。</p>
+<ul>
+<li>体积大，功能全</li>
+<li>会调用系统的关键函数</li>
+<li>以代码加密进行隐藏</li>
+</ul>
+<p></p>
+<h3 id="为什么会使用内存马"><a class="markdownIt-Anchor" href="#为什么会使用内存马"></a> 为什么会使用内存马</h3>
+<p>传统 WebShell 的连接方式，都是先通过某种漏洞将恶意的脚本木马文件上传，然后通过 WebShell 管理软件（中国猜到、蚁剑、冰蝎）进行链接。</p>
+<p>这种方式目前仍然流行，但是由于近几年防火墙，IDS、IPS、流量分析等各种安全设备的普及和更新，这种连接方式非常容易被设备捕获拦截，而且由于文件是明文存放在服务器端，所以又很容易被杀毒软件所查杀。在今天看来这种传统连接方式已经过时，于是乎，进化了一系列的加密一句话木马，但是这种方式还是不能绕过有类似文件监控的杀毒软件，于是乎又进化了新一代的 WebShell——内存马。</p>
+<h2 id="内存马"><a class="markdownIt-Anchor" href="#内存马"></a> 内存马</h2>
+<p>内存马，也被称为无文件马，是一种无文件攻击的技术手段。</p>
+<p>**表现：**它主要通过在系统内存中远程加载执行、驻留在注册表中或滥用常用的白名单工具来实现攻击，从而躲避传统安全软件的检测。</p>
+<p>**行为：**内存马允许攻击者访问系统，进而启用后续的恶意活动，如破坏系统、提升特权或在网络上横向传播恶意代码。</p>
+<p>**特征：**执行后不会留下任何痕迹，这使得内存马难以被检测和清楚。</p>
+<h2 id="内存马的类型"><a class="markdownIt-Anchor" href="#内存马的类型"></a> 内存马的类型</h2>
+<p>内存马的类型主要有以下几种：</p>
+<h3 id="servlet-api-型"><a class="markdownIt-Anchor" href="#servlet-api-型"></a> Servlet-API 型</h3>
+<p>通过动态注册新的 listener、filter 或 servlet 来实现命令执行等功能。特定框架、容器的内存马原理与此类似，例如 Spring 的 Controller 内存马，Tomcat 的 valve 内存马。</p>
+<h3 id="字节码增强型"><a class="markdownIt-Anchor" href="#字节码增强型"></a> 字节码增强型</h3>
+<p>通过 Java 的 Instrumenmentation 动态修改已有代码，实现命令执行等功能。</p>
+<p></p>
+<h2 id="内存马的主要特点"><a class="markdownIt-Anchor" href="#内存马的主要特点"></a> 内存马的主要特点</h2>
+<h3 id="无逻辑结构边界难以被发现"><a class="markdownIt-Anchor" href="#无逻辑结构边界难以被发现"></a> 无逻辑结构边界，难以被发现</h3>
+<p>内存马仅存在于进程的内存空间中，通常与正常的代码、数据混淆。</p>
+<h3 id="缺乏稳定的静态特征难以被识别"><a class="markdownIt-Anchor" href="#缺乏稳定的静态特征难以被识别"></a> 缺乏稳定的静态特征，难以被识别</h3>
+<p>内存马缺乏结构化的静态形式，它依附于进程运行期间的输入数据，数据可能被加密混淆，因此无法通过内存马本身的特征识别。</p>
+<h3 id="种类多检测机制复杂而多样"><a class="markdownIt-Anchor" href="#种类多检测机制复杂而多样"></a> 种类多，检测机制复杂而多样</h3>
+<p>内存马有二进制代码片段（Shellcode）、PowerShell脚本、Web中间件等类型，每种类型又可细分，不同类型内存马的执行方式、恶意代码触发机制各不相同，导致检测方式多样。</p>
+<p></p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wiki/" class="category-chain-item">wiki</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/wiki/%E5%AE%89%E5%85%A8/" class="category-chain-item">安全</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" class="print-no-link">#内存马</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【网安】內存马</div>
+      <div>https://hodlyounger.github.io/2024/12/25/wiki/安全/【网安】內存马/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年12月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/12/26/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91ASP.Net%20%E9%83%A8%E7%BD%B2%E5%88%B0%20IIS/" title="【环境搭建】ASP.Net 部署到 IIS">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【环境搭建】ASP.Net 部署到 IIS</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/12/25/A_%E5%86%85%E5%8A%9F/WinSafe/%E3%80%90ASP.Net%E3%80%91/%E3%80%90ASP.Net%E3%80%91%E5%86%85%E5%AD%98%E9%A9%AC/" title="【ASP.Net】内存马">
+                        <span class="hidden-mobile">【ASP.Net】内存马</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

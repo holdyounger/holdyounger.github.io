@@ -21,24 +21,23 @@
   <meta name="author" content="mingming">
   <meta name="keywords" content>
   
-    <meta name="description" content="概述：实现一个最简单的helloworld驱动，微软官方有相关教程 编写 Hello World Windows 驱动程序 (KMDF) - Windows drivers | Microsoft Learn">
+    <meta name="description" content="概述：Windows 测试模式下绕过签名校验，便于测试">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【驱动】HelloWorld驱动与安装">
-<meta property="og:url" content="https://hodlyounger.github.io/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/HelloWorld%E9%A9%B1%E5%8A%A8%E4%B8%8E%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:title" content="【驱动】3-测试模式下签名绕过">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/11/29/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%913-%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%AD%BE%E5%90%8D%E7%BB%95%E8%BF%87/index.html">
 <meta property="og:site_name" content="oone">
-<meta property="og:description" content="概述：实现一个最简单的helloworld驱动，微软官方有相关教程 编写 Hello World Windows 驱动程序 (KMDF) - Windows drivers | Microsoft Learn">
+<meta property="og:description" content="概述：Windows 测试模式下绕过签名校验，便于测试">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-10-27T01:24:02.084Z">
-<meta property="article:modified_time" content="2024-10-11T03:32:32.522Z">
+<meta property="article:published_time" content="2024-11-29T06:43:20.798Z">
+<meta property="article:modified_time" content="2024-12-06T08:28:45.525Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="驱动">
-<meta property="article:tag" content="driver">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>【驱动】HelloWorld驱动与安装 - oone</title>
+  <title>【驱动】3-测试模式下签名绕过 - oone</title>
 
   <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -206,7 +205,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="【驱动】HelloWorld驱动与安装"></span>
+            <span id="subtitle" data-typed-text="【驱动】3-测试模式下签名绕过"></span>
           
         </div>
 
@@ -217,8 +216,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-10-27 09:24" pubdate>
-          2023年10月27日 上午
+        <time datetime="2024-11-29 14:43" pubdate>
+          2024年11月29日 下午
         </time>
       </span>
     
@@ -229,7 +228,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          84 字
+          922 字
         
       </span>
     
@@ -240,7 +239,7 @@
         
         
         
-          1 分钟
+          8 分钟
         
       </span>
     
@@ -277,17 +276,59 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">【驱动】HelloWorld驱动与安装</h1>
+            <h1 id="seo-header">【驱动】3-测试模式下签名绕过</h1>
             
             
               <div class="markdown-body">
                 
                 <blockquote>
-<p>概述：实现一个最简单的helloworld驱动，微软官方有相关教程 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/gettingstarted/writing-a-very-small-kmdf--driver">编写 Hello World Windows 驱动程序 (KMDF) - Windows drivers | Microsoft Learn</a></p>
+<p>概述：Windows 测试模式下绕过签名校验，便于测试</p>
 </blockquote>
 <span id="more"></span>
-<h2 id="demo"><a class="markdownIt-Anchor" href="#demo"></a> Demo</h2>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// #include &lt;ntddk.h&gt;</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ntifs.h&gt;</span></span><br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">UnloadDriver</span><span class="hljs-params">(PDRIVER_OBJECT pDriver)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;Bye, Driver&quot;</span>);<br><br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br><br><span class="hljs-function">NTSTATUS <span class="hljs-title">DriverEntry</span><span class="hljs-params">(PDRIVER_OBJECT pDriver, PUNICODE_STRING pReg)</span></span><br><span class="hljs-function"></span>&#123;<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;Hello World, Driver&quot;</span>);<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;PDRIVER_OBJECT-&gt; [0x%08x]&quot;</span>, pDriver);<br>	<span class="hljs-built_in">DbgPrint</span>(<span class="hljs-string">&quot;PUNICODE_STRING-&gt;[%ws]&quot;</span>, pReg-&gt;Buffer);<br><br>	pDriver-&gt;DriverUnload = UnloadDriver;<br><br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.lyshark.com/post/c94e06f5.html">驱动开发：测试模式过DSE签名 | LyShark®</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freebuf.com/articles/paper/281035.html">新生吃老饭之无签驱动的两种加载方式 - FreeBuf网络安全行业门户</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="dse"><a class="markdownIt-Anchor" href="#dse"></a> DSE</h2>
+<p>Windows DSE（Driver Signature Enforcement）机制是微软Windows操作系统中的一项关键安全特性，旨在确保只有经过验证和签名的驱动程序才能被加载到系统中。以下是DSE机制的主要功能和特点：</p>
+<ol>
+<li>
+<p><strong>安全性和验证</strong>：DSE的主要目的是保护操作系统免受恶意或不稳定的驱动程序影响。通过确保所有加载的驱动程序都经过签名验证，DSE帮助防止恶意代码和不安全的软件干扰系统操作。</p>
+</li>
+<li>
+<p><strong>数字签名</strong>：驱动程序需要使用有效的数字证书进行签名。数字签名通过公钥加密技术保证驱动程序的来源和完整性。签名证书由受信任的证书颁发机构颁发，证书包含开发者的公钥以及CA的签名信息。</p>
+</li>
+<li>
+<p><strong>内核模式驱动程序加载</strong>：Windows操作系统内核模式下的驱动程序需要经过DSE的验证过程，以确保其签名有效。如果签名有效，系统会允许驱动程序加载，并将其映射到内核空间；如果签名无效，系统会阻止驱动程序加载，并提供错误信息给用户或管理员。</p>
+</li>
+<li>
+<p><strong>代码完整性检查</strong>：DSE还包括代码完整性检查，用于确保驱动程序在加载时没有被篡改。驱动程序的哈希值（如SHA256）会与签名中的哈希值进行比对，以确保驱动程序的内容与签名时的一致性。</p>
+</li>
+<li>
+<p><strong>Secure Boot配合</strong>：DSE可以与Secure Boot配合使用，进一步提升系统的安全性。Secure Boot确保在启动阶段仅允许经过认证的操作系统和驱动程序加载，防止未授权的代码在启动阶段运行。</p>
+</li>
+<li>
+<p><strong>DSE运行模式</strong>：在强制模式下，DSE确保所有驱动程序都经过数字签名。这是Windows的默认设置，从Vista及后续版本开始就已经启用。在测试模式下，DSE允许加载未签名的驱动程序，主要用于开发和测试阶段。</p>
+</li>
+<li>
+<p><strong>用户和管理员控制</strong>：用户可以通过高级启动选项临时禁用DSE，以便安装或测试未签名的驱动程序。在企业环境或特殊需求下，管理员可以通过组策略或注册表设置来永久禁用DSE，但这种做法会降低系统的安全性。</p>
+</li>
+<li>
+<p><strong>政策管理</strong>：在企业环境中，IT管理员可以使用组策略配置和管理DSE设置，确保符合组织的安全和合规要求。</p>
+</li>
+</ol>
+<p>DSE机制通过这些方式确保了系统中运行的所有驱动程序都经过认证，降低了潜在的安全风险，提高了系统的稳定性和安全性。</p>
+<h2 id="bypass"><a class="markdownIt-Anchor" href="#bypass"></a> ByPass</h2>
+<p>仅限于在 Windows 测试模式下使用这种方式，通过修改 PKLDR_DATA_TABLE_ENTRY.Flags 来达到测试模式下需要验签的问题。</p>
+<p>更改 <code>_KLDR_DATA_TABLE_ENTRY</code> 的 FLAGS， <code>pLdrData-&gt;data | 0x20</code> 置位。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 绕过签名检查</span><br>BOOLEAN <span class="hljs-title function_">BypassCheckSign</span><span class="hljs-params">(PDRIVER_OBJECT pDriverObject)</span><br>&#123;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _WIN64</span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG64 __Undefined1;<br>		ULONG64 __Undefined2;<br>		ULONG64 __Undefined3;<br>		ULONG64 NonPagedDebugInfo;<br>		ULONG64 DllBase;<br>		ULONG64 EntryPoint;<br>		ULONG SizeOfImage;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>		USHORT  LoadCount;<br>		USHORT  __Undefined5;<br>		ULONG64 __Undefined6;<br>		ULONG   CheckSum;<br>		ULONG   __padding1;<br>		ULONG   TimeDateStamp;<br>		ULONG   __padding2;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG unknown1;<br>		ULONG unknown2;<br>		ULONG unknown3;<br>		ULONG unknown4;<br>		ULONG unknown5;<br>		ULONG unknown6;<br>		ULONG unknown7;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	PKLDR_DATA_TABLE_ENTRY pLdrData = (PKLDR_DATA_TABLE_ENTRY)pDriverObject-&gt;DriverSection;<br>	pLdrData-&gt;Flags = pLdrData-&gt;Flags | <span class="hljs-number">0x20</span>;<br><br>	<span class="hljs-keyword">return</span> TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>如何使用</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 驱动入口地址</span><br>NTSTATUS <span class="hljs-title function_">DriverEntry</span><span class="hljs-params">(IN PDRIVER_OBJECT Driver, PUNICODE_STRING RegistryPath)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (BypassCheckSign(Driver))<br>		DbgPrint(<span class="hljs-string">&quot;Bypass Sign Success.&quot;</span>);<br><br>	Driver-&gt;DriverUnload = UnloadDriver;<br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -346,8 +387,6 @@
       
         <a href="/tags/%E9%A9%B1%E5%8A%A8/" class="print-no-link">#驱动</a>
       
-        <a href="/tags/driver/" class="print-no-link">#driver</a>
-      
     </div>
   
 </div>
@@ -358,8 +397,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>【驱动】HelloWorld驱动与安装</div>
-      <div>https://hodlyounger.github.io/2023/10/27/A_OS/Windows/驱动/windows驱动开发教程/HelloWorld驱动与安装/</div>
+      <div>【驱动】3-测试模式下签名绕过</div>
+      <div>https://hodlyounger.github.io/2024/11/29/A_OS/Windows/驱动/windows驱动开发教程/【驱动】3-测试模式下签名绕过/</div>
     </div>
     <div class="license-meta">
       
@@ -371,7 +410,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年10月27日</div>
+          <div>2024年11月29日</div>
         </div>
       
       
@@ -403,9 +442,11 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87(VS2022)/" title="【驱动】Visual Studio 2022 驱动开发环境准备">
+                      <a href="/2024/11/29/Omnivore/2024-11-29/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F%E8%BF%87DSE%E7%AD%BE%E5%90%8D%20-%20LyShark%C2%AE/" title="驱动开发：测试模式过DSE签名 | LyShark®
+">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">【驱动】Visual Studio 2022 驱动开发环境准备</span>
+                        <span class="hidden-mobile">驱动开发：测试模式过DSE签名 | LyShark®
+</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -413,8 +454,10 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/EasyDriver/Windows%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E5%90%8D%E7%A7%B0%E9%81%8D%E5%8E%86/" title="【驱动】Windows内核模块名称遍历">
-                        <span class="hidden-mobile">【驱动】Windows内核模块名称遍历</span>
+                      <a href="/2024/11/22/Omnivore/2024-11-22/%5B%E5%8E%9F%E5%88%9B%5D%5B%E5%8E%9F%E5%88%9B%5DApiSetSchema-API%E9%9B%86-%E8%A7%A3%E6%9E%90-%E7%BC%96%E7%A8%8B%E6%8A%80%E6%9C%AF-%E7%9C%8B%E9%9B%AA-%E5%AE%89%E5%85%A8%E7%A4%BE%E5%8C%BA-%E5%AE%89%E5%85%A8%E6%8B%9B%E8%81%98-kanxue.com/" title="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+">
+                        <span class="hidden-mobile">[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
