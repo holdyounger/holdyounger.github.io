@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_%E5%86%85%E5%8A%9F/WinSafe/%E3%80%90ASP.Net%E3%80%91/%E3%80%90ASP.Net%E3%80%91ASP.Net%20MVC%20Filter%20%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image-20241226152339437.png">
 <meta property="og:image" content="https://hodlyounger.github.io/2024/12/26/A_%E5%86%85%E5%8A%9F/WinSafe/%E3%80%90ASP.Net%E3%80%91/%E3%80%90ASP.Net%E3%80%91ASP.Net%20MVC%20Filter%20%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC/image-20241226152429672.png">
 <meta property="article:published_time" content="2024-12-26T06:59:27.658Z">
-<meta property="article:modified_time" content="2024-12-26T07:24:45.439Z">
+<meta property="article:modified_time" content="2024-12-31T06:28:41.908Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="CSharp">
 <meta property="article:tag" content="IIS">
@@ -233,7 +233,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.6k 字
+          2k 字
         
       </span>
     
@@ -244,7 +244,7 @@
         
         
         
-          14 分钟
+          18 分钟
         
       </span>
     
@@ -290,7 +290,17 @@
 <p>概述：<a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> MVC Filter 型内存马 说明及实例</p>
 </blockquote>
 <span id="more"></span>
-<h2 id="aspnet"><a class="markdownIt-Anchor" href="#aspnet"></a> <a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> MVC Filter 型内存马</h2>
+<details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>相关关键字</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>可根据相关关键字去拓展阅读</p>
+<ul>
+<li>蚁剑 - <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/AntSwordProject/antSword">AntSwordProject/antSword: 中国蚁剑是一款跨平台的开源网站管理工具。AntSword is a cross-platform website management toolkit.</a></li>
+<li>内存马</li>
+<li>ASP</li>
+<li>.Net</li>
+</ul>
+</div>
+</details><h2 id="aspnet"><a class="markdownIt-Anchor" href="#aspnet"></a> <a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> MVC Filter 型内存马</h2>
 <details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关文章</div>
 <div class="callout-fold"></div></summary><div class="callout-body">
 <p>MVC Filter 指南</p>
@@ -302,9 +312,10 @@
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.cnblogs.com/sunny3158/p/11683554.html">C# ASP.NET MVC中Filter过滤器的使用 通过注册到Global.asax注册为全局 过滤所有action - sunny123456 - 博客园</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/izj007/wechat/blob/5aa2a3014901e6d9518db31da498ac7fd9105e6a/articles/%5BSecurity%E4%B8%A8Art%5D-2023-11-11-ASP.NET%20%E5%86%85%E5%AD%98%E9%A9%AC%E4%B8%8E%E9%AD%94%E6%94%B9%E8%9A%81%E5%89%91%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE.md">wechat/articles/[Security丨Art]-2023-11-11-ASP.NET 内存马与魔改蚁剑内存马回显.md at 5aa2a3014901e6d9518db31da498ac7fd9105e6a · izj007/wechat</a></li>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://yzddmr6.com/posts/asp-net-memory-filter/">ASP.NET下的内存马(一)：filter内存马 -</a> 阅力值 ⭐⭐⭐⭐</li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://rivers.chaitin.cn/blog/cq954lp0lnechd244oug">ASP.NET 内存马与魔改蚁剑内存马回显 | 长亭百川云</a> - 阅力值 ⭐⭐⭐⭐</li>
 </ul>
 </div>
-</details><p></p>
+</details><p><a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> MVC Filter 型内存马的一大特性就是必须依赖于 <code>system.web.mvc.dll</code> 这个东西，也就是只能在 .net mvc 下使用，执行权限为iis用户权限。</p>
 <h3 id="什么是-aspnet-mvc-filter-型内存马"><a class="markdownIt-Anchor" href="#什么是-aspnet-mvc-filter-型内存马"></a> 什么是 <a target="_blank" rel="external nofollow noopener noreferrer" href="http://ASP.Net">ASP.Net</a> MVC Filter 型内存马</h3>
 <ul>
 <li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://asp.net/">ASP.NET</a> MVC（Model - View - Controller）是一种用于构建 Web 应用程序的框架。Filter（过滤器）是这个框架中的一个重要组件，它可以在请求处理管道的不同阶段对请求进行预处理或后处理。</li>
@@ -364,6 +375,19 @@
 <li><strong>权限控制</strong>：确保只有授权的代码才能添加或修改过滤器。对<code>GlobalFilters.Filters</code>的访问应该进行严格的权限控制，防止未经授权的代码进行过滤器的注入。</li>
 <li><strong>安全编码实践</strong>：遵循安全编码原则，避免出现代码注入等漏洞，这样可以从源头上减少内存马被注入的风险。例如，在使用用户输入来动态创建对象或者调用方法时，要进行充分的安全检查。</li>
 </ul>
+<h2 id="检测实例"><a class="markdownIt-Anchor" href="#检测实例"></a> 检测实例</h2>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/yzddmr6/ASP.NET-Memshell-Scanner">yzddmr6/ASP.NET-Memshell-Scanner: asp.net内存马检测工具</a></li>
+</ul>
+</div>
+</details><h3 id="检测原理"><a class="markdownIt-Anchor" href="#检测原理"></a> 检测原理</h3>
+<p>主要是通过 <code>global.asax</code> 中全局注册的 <code>GlobalFilters</code> 来获取当前注册的模块都有哪些。</p>
+<p><strong>代码</strong></p>
+<p>以下代码为我个人在上述参考基础上简化后的代码，仅自测使用。</p>
+<p>主要两个接口，一个是获取当前注册的所有过滤器的接口 <code>GetLoadedFilters</code>，一个是根据程序集的 Type 和 HashCode 卸载程序集的接口 <code>DeleteFilter</code>。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">using</span> System;<br><span class="hljs-keyword">using</span> System.Collections.Generic;<br><span class="hljs-keyword">using</span> System.Linq;<br><span class="hljs-keyword">using</span> System.Reflection;<br><span class="hljs-keyword">using</span> System.Text;<br><span class="hljs-keyword">using</span> System.Threading.Tasks;<br><span class="hljs-keyword">using</span> System.Web.Mvc;<br><span class="hljs-keyword">using</span> System.Web.Script.Serialization;<br><span class="hljs-keyword">using</span> System.Xml.Linq;<br><br><span class="hljs-keyword">namespace</span> <span class="hljs-title">FilterScann</span><br>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">FilterScanerType</span><br>    &#123;<br>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Filter_Type;<br>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Filter_Order;<br>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Filter_Scope;<br>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Filter_CodeBase;<br>        <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Filter_HashCode;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title">FilterScanner</span><br>    &#123;<br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">string</span> <span class="hljs-title">GetLoadedFilters</span>()</span><br>        &#123;<br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                <span class="hljs-built_in">string</span> strFilters = <span class="hljs-literal">null</span>;<br>                List&lt;FilterScanerType&gt; filters = <span class="hljs-keyword">new</span> List&lt;FilterScanerType&gt;();<br><br>                GlobalFilterCollection globalFilterCollection = GlobalFilters.Filters;<br><br>                <span class="hljs-keyword">foreach</span> (Filter filter <span class="hljs-keyword">in</span> globalFilterCollection)<br>                &#123;<br>                    DnrspFilter dnrspFilter = <span class="hljs-keyword">new</span> FilterScanerType();<br>                    dnrspFilter.Filter_Type = filter.Instance.GetType().ToString();<br>                    dnrspFilter.Filter_Order = filter.Order.ToString();<br>                    dnrspFilter.Filter_Scope = filter.Scope.ToString();<br>                    dnrspFilter.Filter_CodeBase = filter.Instance.GetType().Assembly.CodeBase.ToString();<br>                    dnrspFilter.Filter_HashCode = filter.Instance.GetType().Assembly.GetHashCode().ToString();<br>                    filters.Add(dnrspFilter);<br>                &#125;<br><br>                JavaScriptSerializer serializer = <span class="hljs-keyword">new</span> JavaScriptSerializer();<br>                <span class="hljs-built_in">string</span> ReportData = serializer.Serialize(filters);<br>                <span class="hljs-keyword">return</span> strFilters;<br>            &#125;<br>            <span class="hljs-keyword">catch</span> (Exception e)<br>            &#123;<br>                <span class="hljs-keyword">return</span> e.ToString();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">bool</span> <span class="hljs-title">DeleteFilter</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> filterType, <span class="hljs-built_in">string</span> hashcode</span>)</span><br>        &#123;<br>            <span class="hljs-keyword">try</span><br>            &#123;<br>                GlobalFilterCollection globalFilterCollection = GlobalFilters.Filters;<br><br>                <span class="hljs-keyword">foreach</span> (Filter filter <span class="hljs-keyword">in</span> globalFilterCollection)<br>                &#123;<br>                    <span class="hljs-built_in">string</span> strType = filter.Instance.GetType().ToString();<br>                    <span class="hljs-built_in">string</span> strHashCode = filter.Instance.GetType().Assembly.GetHashCode().ToString().GetHashCode().ToString();<br>                    <span class="hljs-keyword">if</span>(strType.Equals(filterType) &amp;&amp; hashcode.Equals(strHashCode))<br>                    &#123;<br>                        FieldInfo filtersField = globalFilterCollection.GetType().GetField(<span class="hljs-string">&quot;_filters&quot;</span>,<br>                            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);<br>                        List&lt;Filter&gt; filtersList = (List&lt;Filter&gt;)filtersField.GetValue(globalFilterCollection);<br>                        <span class="hljs-built_in">bool</span> flag = filtersList.Remove(filter);<br>                        <span class="hljs-keyword">if</span> (flag)<br>                        &#123;<br>                            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>                        &#125;<br>                        <span class="hljs-keyword">else</span><br>                        &#123;<br>                            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>                        &#125;<br>                    &#125;<br>                &#125;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125;<br>            <span class="hljs-keyword">catch</span> (Exception e)<br>            &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -471,6 +495,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/12/30/A_OS/Windows/%E6%B3%A8%E5%86%8C%E8%A1%A8/%E3%80%90%E4%BB%BB%E5%8A%A1%E6%A0%8F%E3%80%91%E6%B3%A8%E5%86%8C%E8%A1%A8%E7%9B%B8%E5%85%B3/" title="【任务栏】注册表相关">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【任务栏】注册表相关</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

