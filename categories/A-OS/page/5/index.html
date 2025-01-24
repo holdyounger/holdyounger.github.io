@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -204,6 +363,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -222,13 +382,43 @@
                 
 
 <div class="list-group">
-  <p class="h4">共计 199 篇文章</p>
+  <p class="h4">共计 204 篇文章</p>
   <hr>
   
   
     
       
       <p class="h5">2024</p>
+    
+    <a href="/2024/08/31/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91ALPC/" class="list-group-item list-group-item-action">
+      <time>08-31</time>
+      <div class="list-group-item-title">【RPC】ALPC 调用详解（翻译|TODO）</div>
+    </a>
+  
+    
+    <a href="/2024/08/24/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E7%A6%81%E7%94%A8%E7%AD%BE%E5%90%8D/" class="list-group-item list-group-item-action">
+      <time>08-24</time>
+      <div class="list-group-item-title">【驱动】禁用签名</div>
+    </a>
+  
+    
+    <a href="/2024/08/20/A_OS/Windows/%E7%BB%84%E7%AD%96%E7%95%A5/%E5%AE%89%E5%85%A8%E8%AE%BE%E7%BD%AE/%E8%B4%A6%E6%88%B7%E7%AD%96%E7%95%A5/%E3%80%90%E7%BB%84%E7%AD%96%E7%95%A5%E3%80%91%E5%AF%86%E7%A0%81%E7%AD%96%E7%95%A5/" class="list-group-item list-group-item-action">
+      <time>08-20</time>
+      <div class="list-group-item-title">【组策略】密码策略</div>
+    </a>
+  
+    
+    <a href="/2024/08/19/A_OS/Windows/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/%E3%80%90win%E3%80%91%E9%80%9A%E8%BF%87PID%E8%8E%B7%E5%8F%96%E7%AB%AF%E5%8F%A3/" class="list-group-item list-group-item-action">
+      <time>08-19</time>
+      <div class="list-group-item-title">【win】通过PID获取端口</div>
+    </a>
+  
+    
+    <a href="/2024/08/13/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%AF%BC%E8%AF%BB/" class="list-group-item list-group-item-action">
+      <time>08-13</time>
+      <div class="list-group-item-title">Windows API 索引</div>
+    </a>
+  
     
     <a href="/2024/08/12/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E3%80%90Win7%E3%80%91%E5%BC%B9%E5%87%BAU%E7%9B%98/" class="list-group-item list-group-item-action">
       <time>08-12</time>
@@ -259,42 +449,12 @@
       <div class="list-group-item-title">【DbgHelp】通过PDB在PE中查找函数</div>
     </a>
   
-    
-    <a href="/2024/08/09/A_OS/Windows/PnP/%E3%80%90PnP%E3%80%91CodeCollect/" class="list-group-item list-group-item-action">
-      <time>08-09</time>
-      <div class="list-group-item-title">【PnP】 CodeCollections</div>
-    </a>
-  
-    
-    <a href="/2024/08/07/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90%E5%B7%A5%E5%85%B7%E3%80%91%E7%BB%99%E6%96%87%E4%BB%B6%E5%A4%B9%E8%AE%BE%E7%BD%AEIcon/" class="list-group-item list-group-item-action">
-      <time>08-07</time>
-      <div class="list-group-item-title">【工具】给文件夹设置Icon</div>
-    </a>
-  
-    
-    <a href="/2024/07/22/A_OS/Windows/Windows%20%E6%96%87%E4%BB%B6/%E3%80%90WinFile%E3%80%91credwiz/" class="list-group-item list-group-item-action">
-      <time>07-22</time>
-      <div class="list-group-item-title">【WinFile】credwiz.exe</div>
-    </a>
-  
-    
-    <a href="/2024/07/17/A_OS/Windows/IIS/%E3%80%90IIS%E3%80%91IIS-Raid/" class="list-group-item list-group-item-action">
-      <time>07-17</time>
-      <div class="list-group-item-title">【IIS】IIS-Raid 后门模块使用</div>
-    </a>
-  
-    
-    <a href="/2024/07/17/A_OS/Windows/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/%E3%80%90%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E3%80%91IIS/" class="list-group-item list-group-item-action">
-      <time>07-17</time>
-      <div class="list-group-item-title">【环境搭建】IIS</div>
-    </a>
-  
 </div>
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/categories/A-OS/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/3/#board">3</a><a class="page-number" href="/categories/A-OS/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/categories/A-OS/page/6/#board">6</a><a class="page-number" href="/categories/A-OS/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/20/#board">20</a><a class="extend next" rel="next" href="/categories/A-OS/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/categories/A-OS/page/4/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/3/#board">3</a><a class="page-number" href="/categories/A-OS/page/4/#board">4</a><span class="page-number current">5</span><a class="page-number" href="/categories/A-OS/page/6/#board">6</a><a class="page-number" href="/categories/A-OS/page/7/#board">7</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/21/#board">21</a><a class="extend next" rel="next" href="/categories/A-OS/page/6/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -401,6 +561,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

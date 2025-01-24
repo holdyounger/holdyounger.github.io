@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -204,6 +363,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -222,13 +382,43 @@
                 
 
 <div class="list-group">
-  <p class="h4">共计 199 篇文章</p>
+  <p class="h4">共计 204 篇文章</p>
   <hr>
   
   
     
       
       <p class="h5">2023</p>
+    
+    <a href="/2023/10/27/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90Win%E3%80%91%E5%86%85%E5%AD%98%E6%B8%85%E7%90%86/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【Win】内存清理</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91%E5%AE%9A%E4%BD%8D%20UMDH/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【内存泄漏】使用 UMDH 定位用户模式内存泄漏</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/%E3%80%90%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E3%80%91WinDbg%E5%AE%9A%E4%BD%8D%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【内存泄漏】windbg 定位内存泄漏</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/%E3%80%90win%E3%80%91%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【Windows】共享文件夹</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/%E3%80%90win%E3%80%91%E8%81%9A%E7%84%A6%E4%B8%8D%E6%9B%B4%E6%96%B0/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【win】聚焦不更新</div>
+    </a>
+  
     
     <a href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90windows%E3%80%91%E3%80%90cmd%E3%80%91%E8%8E%B7%E5%8F%96IP%E5%88%B0%E5%89%AA%E5%88%87%E6%9D%BF/" class="list-group-item list-group-item-action">
       <time>10-27</time>
@@ -259,42 +449,12 @@
       <div class="list-group-item-title">【cmd】 sc创建服务</div>
     </a>
   
-    
-    <a href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90cmd%E3%80%91route/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【cmd】route</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/WinUser/winuser%E4%BB%8B%E7%BB%8D/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">winuser说明</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90win%E3%80%91Win7%20%E9%A9%B1%E5%8A%A8%E6%9C%AA%E7%AD%BE%E5%90%8D%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">Win7 使用未签名驱动程序</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/Visual%20Studio/%E6%97%A0%E6%B3%95%E8%A7%A3%E6%9E%90%E7%9A%84%E5%A4%96%E9%83%A8%E7%AC%A6%E5%8F%B7%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【Visual Studio】C++ 常见错误——无法解析的外部符号</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/Visual%20Studio/%E3%80%90Visual%20Studio%E3%80%91%E6%96%87%E4%BB%B6%E5%86%85%E7%BD%AE%E5%BC%95%E5%85%A5/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【Visual Studio】内置引入文件</div>
-    </a>
-  
 </div>
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/categories/A-OS/page/16/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/15/#board">15</a><a class="page-number" href="/categories/A-OS/page/16/#board">16</a><span class="page-number current">17</span><a class="page-number" href="/categories/A-OS/page/18/#board">18</a><a class="page-number" href="/categories/A-OS/page/19/#board">19</a><a class="page-number" href="/categories/A-OS/page/20/#board">20</a><a class="extend next" rel="next" href="/categories/A-OS/page/18/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/categories/A-OS/page/16/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/15/#board">15</a><a class="page-number" href="/categories/A-OS/page/16/#board">16</a><span class="page-number current">17</span><a class="page-number" href="/categories/A-OS/page/18/#board">18</a><a class="page-number" href="/categories/A-OS/page/19/#board">19</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/21/#board">21</a><a class="extend next" rel="next" href="/categories/A-OS/page/18/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -401,6 +561,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

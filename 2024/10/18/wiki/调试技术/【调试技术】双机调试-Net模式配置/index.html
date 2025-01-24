@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://hodlyounger.github.io/2024/10/18/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95-Net%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AE/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/image-20231007153351852.png">
 <meta property="og:image" content="https://hodlyounger.github.io/2024/10/18/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95-Net%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AE/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91%E5%8F%8C%E6%9C%BA%E8%B0%83%E8%AF%95/image-20231007153906684.png">
 <meta property="article:published_time" content="2024-10-18T13:30:01.428Z">
-<meta property="article:modified_time" content="2024-11-12T01:01:47.785Z">
+<meta property="article:modified_time" content="2025-01-23T09:15:27.442Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="进程">
@@ -78,7 +78,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -103,6 +105,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -205,7 +364,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -234,7 +393,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          474 字
+          475 字
         
       </span>
     
@@ -260,6 +419,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -303,7 +463,7 @@
 <p><strong>关闭数字签名校验</strong></p>
 <figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmd">bcdedit /<span class="hljs-built_in">set</span> nointegritychecks on  <br>bcdedit /<span class="hljs-built_in">set</span> loadoptions DISABLE_INTEGRITY_CHECKS<br></code></pre></td></tr></table></figure>
 <p>注意：不能有多余的空格</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs powershell">bcdedit /debug on<br><br><span class="hljs-comment"># hostip 为调试当前机器的ip</span><br>bcdedit /dbgsettings net hostip:w.x.y.z port:n<br></code></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs powershell">bcdedit /debug on<br><br>bcdedit /bootdebug on<br><br><span class="hljs-comment"># hostip 为调试当前机器的ip</span><br>bcdedit /dbgsettings net hostip:w.x.y.z port:n<br></code></pre></td></tr></table></figure>
 <img src="【调试技术】双机调试/image-20231007153425384.png" srcset="/img/loading.gif" lazyload alt="开启调试模式" style="zoom:80%;">
 <h3 id="存在多个网卡时"><a class="markdownIt-Anchor" href="#存在多个网卡时"></a> 存在多个网卡时</h3>
 <p>如果目标机有多个网卡，还需要执行如下命令：</p>
@@ -482,6 +642,33 @@
             </div>
 
             
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '8691f1a2857042bc96222e20d7369a62'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
           </article>
         </div>
       </div>
@@ -723,6 +910,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

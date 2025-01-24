@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -208,6 +367,137 @@
         </div>
       
     </div>
+    
+      <div style="height:500px" id="bubbles"></div>
+      <script>
+        circleMagic();
+        function circleMagic(options) {
+            let width;
+            let height;
+            let canvas;
+            let ctx;
+            let animateHeader = true;
+            const circles = [];
+    
+            const settings = options || {
+                color: 'rgba(255,255,255,.3)',
+                radius: 10,
+                density: 0.1,
+                clearOffset: 0.7
+            }
+    
+            const container = document.getElementById('bubbles');
+            initContainer();
+            addListeners();
+    
+            function initContainer() {
+                width = container.offsetWidth;
+                height = container.offsetHeight - 120;
+    
+                initCanvas();
+                canvas = document.getElementById('homeTopCanvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.style.position = 'absolute';
+                canvas.style.left = '0';
+                canvas.style.bottom = '0';
+                ctx = canvas.getContext('2d');
+    
+                for (let x = 0; x < width * settings.density; x++) {
+                    const c = new Circle();
+                    circles.push(c);
+                }
+                animate();
+            }
+    
+            function initCanvas() {
+                const canvasElement = document.createElement('canvas');
+                canvasElement.id = 'homeTopCanvas';
+                canvasElement.style.pointerEvents = 'none';
+                container.appendChild(canvasElement);
+                canvasElement.parentElement.style.overflow = 'hidden';
+            }
+    
+            function addListeners() {
+                window.addEventListener('scroll', scrollCheck, false);
+                window.addEventListener('resize', resize, false);
+            }
+    
+            function scrollCheck() {
+                if (document.body.scrollTop > height) {
+                    animateHeader = false;
+                } else {
+                    animateHeader = true;
+                }
+            }
+    
+            function resize() {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                container.height = height + 'px';
+                canvas.width = width;
+                canvas.height = height;
+            }
+    
+            function animate() {
+                if (animateHeader) {
+                    ctx.clearRect(0, 0, width, height);
+                    for (const i in circles) {
+                        circles[i].draw();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+    
+            function randomColor() {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                const alpha = Math.random().toPrecision(2);
+                return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+            }
+    
+            function Circle() {
+                const that = this;
+                (function () {
+                    that.pos = {};
+                    init();
+                })();
+                function init() {
+                    that.pos.x = Math.random() * width;
+                    that.pos.y = height + Math.random() * 100;
+                    that.alpha = 0.1 + Math.random() * settings.clearOffset;
+                    that.scale = 0.1 + Math.random() * 0.3;
+                    that.speed = Math.random();
+                    if (settings.color === 'random') {
+                        that.color = randomColor();
+                    } else {
+                        that.color = settings.color;
+                    }
+                }
+                this.draw = function () {
+                    if (that.alpha <= 0) {
+                        init();
+                    }
+                    that.pos.y -= that.speed;
+                    that.alpha -= 0.0005;
+                    ctx.beginPath();
+                    ctx.arc(
+                        that.pos.x,
+                        that.pos.y,
+                        that.scale * settings.radius,
+                        0,
+                        2 * Math.PI,
+                        false
+                    );
+                    ctx.fillStyle = that.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        }
+      </script>
+    
   </div>
 </div>
 
@@ -225,6 +515,459 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90windows%E3%80%91%E3%80%90cmd%E3%80%91%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E5%A4%B9/" target="_self">
+          【windows】【cmd】删除文件夹
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90windows%E3%80%91%E3%80%90cmd%E3%80%91%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E5%A4%B9/" target="_self">
+        <div>
+          12345678@echo offif &quot;%1&quot; == &quot;h&quot; goto beginmshta vbscript:createobject(&quot;wscript.shell&quot;).run(&quot;&quot;&quot;%~nx0&quot;&quot; h&quot;,0)(window.close)&amp;&amp;exit:begi
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/cmd/" class="category-chain-item">cmd</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Windows-bat/">#Windows/bat</a>
+            
+              <a href="/tags/Windows-%E6%96%87%E4%BB%B6%E5%A4%B9/">#Windows/文件夹</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90windows%E3%80%91%E3%80%90cmd%E3%80%91%E6%B8%85%E7%90%86DNS%E7%BC%93%E5%AD%98/" target="_self">
+          【windows】【cmd】清理DNS缓存
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90windows%E3%80%91%E3%80%90cmd%E3%80%91%E6%B8%85%E7%90%86DNS%E7%BC%93%E5%AD%98/" target="_self">
+        <div>
+          在Windows系统上清理DNS缓存有几种方法，以下是其中两种常用的方法： 方法一：使用ipconfig命令   打开命令提示符：按下Win + R键，在运行对话框中输入cmd，然后按下回车键。   在命令提示符窗口中，输入以下命令并按下回车键： 1ipconfig /flushdns 这将清除本地计算机上的DNS缓存。   在命令提示符窗口中，您将看到一条消息提示&quot;DNS Resolv
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/cmd/" class="category-chain-item">cmd</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Windows/">#Windows</a>
+            
+              <a href="/tags/Windows-cmd/">#Windows/cmd</a>
+            
+              <a href="/tags/DNS/">#DNS</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/cmd/%E4%BF%AE%E6%94%B9ip%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%B7%83%E7%82%B9%E6%95%B0/" target="_self">
+          【windows】【cmd】修改网络配置的 InterfaceMetric
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/cmd/%E4%BF%AE%E6%94%B9ip%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%B7%83%E7%82%B9%E6%95%B0/" target="_self">
+        <div>
+          使用脚本修改网卡跃点数 InterfaceMetric   使用到的接口  Get-NetIPInterface Set-NetIPInterface Get-NetAdapter   需求描述 需要修改当前跃点数为 1 的ip接口，修改其跃点数为 90  解决方案  设置ip接口的跃点数均需要管理员权限   思路一 源文件  通过 Get-NetIPInterface 获取需要修改的IP接口
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/cmd/" class="category-chain-item">cmd</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/cmd/sc%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1/" target="_self">
+          【cmd】 sc创建服务
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/cmd/sc%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1/" target="_self">
+        <div>
+          概述：sc命令的使用|创建服务  [toc]  sc 创建服务  如何将exe注册为windows服务，让其直接从后台运行 帮助手册 sc create /?   方法一：使用windows自带的命令sc，首先我们要用管理员运行cmd 注册服务： 1sc create TestService binpath= &quot;D:\Test\TestService.exe&quot; start=
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/cmd/" class="category-chain-item">cmd</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Windows-cmd/">#Windows/cmd</a>
+            
+              <a href="/tags/windows/">#windows</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90cmd%E3%80%91route/" target="_self">
+          【cmd】route
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/cmd/%E3%80%90cmd%E3%80%91route/" target="_self">
+        <div>
+          概述：windows route命令的用法|查看路由|修改路由|删除路由
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/cmd/" class="category-chain-item">cmd</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Windows-cmd/">#Windows/cmd</a>
+            
+              <a href="/tags/route/">#route</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/A_OS/Windows/WinUser/winuser%E4%BB%8B%E7%BB%8D/" target="_self">
+          winuser说明
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/WinUser/winuser%E4%BB%8B%E7%BB%8D/" target="_self">
+        <div>
+          Winuser.h 标头 - Win32 apps | Microsoft Learn [toc]  winuser 相关函数说明  GetSystemMetrics  GetSystemMetrics 函数 (winuser.h) - Win32 apps | Microsoft Learn 检索指定的系统指标或系统配置设置。 请注意， GetSystemMetrics 检索的所有维度都以像素为
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/WinUser/" class="category-chain-item">WinUser</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Windows-winuser/">#Windows/winuser</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -532,480 +1275,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/ShellCode/ShellCode/" target="_self">
-          ShellCode
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/ShellCode/ShellCode/" target="_self">
-        <div>
-          好文 Windows Shellcode学习笔记——通过VisualStudio生成shellcode 1powershell.exe Invoke-WebRequest -Uri &#x27;https://10.218.80.215/client/360EPP145433958[10.218.80.215-8080]-W.exe&#x27; -OutFile &#x27;%temp%/360
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/ShellCode/" class="category-chain-item">ShellCode</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Windows/">#Windows</a>
-            
-              <a href="/tags/code-shellcode/">#code/shellcode</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91RT_MAINFEST/" target="_self">
-          RT_MAINFEST 文件
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/%E3%80%90WIN%E3%80%91RT_MAINFEST/" target="_self">
-        <div>
-          概述: MAINFEST文件说明及相关使用
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/%E6%96%87%E4%BB%B6%E4%B8%8E%E7%BB%93%E6%9E%84%E4%BD%93/" class="category-chain-item">文件与结构体</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Windows/">#Windows</a>
-            
-              <a href="/tags/PE/">#PE</a>
-            
-              <a href="/tags/Windows-dll/">#Windows/dll</a>
-            
-              <a href="/tags/Windows-exe/">#Windows/exe</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/IPC/windows%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" target="_self">
-          windows进程间通信整理
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/IPC/windows%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" target="_self">
-        <div>
-          概述：windows进程间通信的各种方式  graph LR  A(windows进程间通信) --> B["管道(pipe)"] A --> C["邮件槽(Mailslots)"] A --> D["文件映射(fileMapping)"] A --> E["信号量(Semaphore)"] A --> F["信号(signal)"] A --> G["套接字(Socket)"] A --> H
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/IPC/" class="category-chain-item">IPC</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Windows/">#Windows</a>
-            
-              <a href="/tags/IPC/">#IPC</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/GetLastError/%E3%80%90GetLastError%E3%80%91126/" target="_self">
-          【GetLastError】126
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/GetLastError/%E3%80%90GetLastError%E3%80%91126/" target="_self">
-        <div>
-          概述：LoadLibrary加载失败，返回126，解决方法。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="category-chain-item">异常及错误处理</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/%E5%BC%82%E5%B8%B8%E5%8F%8A%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/GetLastError/" class="category-chain-item">GetLastError</a>
-  
-  
-
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Windows/">#Windows</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91FormatErrMessage/" target="_self">
-          【winapi】FormatMessage函数的使用
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91FormatErrMessage/" target="_self">
-        <div>
-          概述：FormatMessage 函数的使用
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/API/" class="category-chain-item">API</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Windows/">#Windows</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90WIN%E3%80%91Detours%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_self">
-          【WIN】Detours的使用
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90WIN%E3%80%91Detours%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_self">
-        <div>
-          概述：Detours 的说明和简单使用   Detours Detours 是微软提供的一套工具，主要用于win32 API的拦截 Github：microsoft/Detours: Detours is a software package for monitoring and instrumenting API calls on Windows. It is distributed in s
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/A-OS/Windows/%E5%B7%A5%E5%85%B7/" class="category-chain-item">工具</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/hook/">#hook</a>
-            
-              <a href="/tags/Detours/">#Detours</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/52/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/51/#board">51</a><a class="page-number" href="/page/52/#board">52</a><span class="page-number current">53</span><a class="page-number" href="/page/54/#board">54</a><a class="page-number" href="/page/55/#board">55</a><a class="page-number" href="/page/56/#board">56</a><a class="extend next" rel="next" href="/page/54/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/52/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/51/#board">51</a><a class="page-number" href="/page/52/#board">52</a><span class="page-number current">53</span><a class="page-number" href="/page/54/#board">54</a><a class="page-number" href="/page/55/#board">55</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/#board">57</a><a class="extend next" rel="next" href="/page/54/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -1111,6 +1385,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

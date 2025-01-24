@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -204,6 +363,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -222,13 +382,43 @@
                 
 
 <div class="list-group">
-  <p class="h4">共计 199 篇文章</p>
+  <p class="h4">共计 204 篇文章</p>
   <hr>
   
   
     
       
       <p class="h5">2023</p>
+    
+    <a href="/2023/12/26/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%913-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E5%8F%8A%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%A6%82%E8%BF%B0/" class="list-group-item list-group-item-action">
+      <time>12-26</time>
+      <div class="list-group-item-title">【原理剖析】3-操作系统进程控制及进程间通信概述</div>
+    </a>
+  
+    
+    <a href="/2023/12/26/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%915-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%80%9A%E4%BF%A1/" class="list-group-item list-group-item-action">
+      <time>12-26</time>
+      <div class="list-group-item-title">【原理剖析】5-进程间通信方式之信号通信</div>
+    </a>
+  
+    
+    <a href="/2023/12/26/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%916-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%80%9A%E4%BF%A1/" class="list-group-item list-group-item-action">
+      <time>12-26</time>
+      <div class="list-group-item-title">【原理剖析】6-进程间通信方式之信号量通信</div>
+    </a>
+  
+    
+    <a href="/2023/12/26/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%914-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="list-group-item list-group-item-action">
+      <time>12-26</time>
+      <div class="list-group-item-title">【原理剖析】4-进程间通信方式之消息队列</div>
+    </a>
+  
+    
+    <a href="/2023/12/25/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%912-Linux%E5%86%85%E6%A0%B8%E5%8F%8A%E8%BF%9B%E7%A8%8B%E4%BB%8B%E7%BB%8D/" class="list-group-item list-group-item-action">
+      <time>12-25</time>
+      <div class="list-group-item-title">【原理剖析】Linux内核及进程概述</div>
+    </a>
+  
     
     <a href="/2023/12/18/A_OS/Linux/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90/%E3%80%90%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E3%80%911-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" class="list-group-item list-group-item-action">
       <time>12-18</time>
@@ -259,42 +449,12 @@
       <div class="list-group-item-title">【COM】通过COM组件IFileOperation越权复制文件</div>
     </a>
   
-    
-    <a href="/2023/11/08/A_OS/Windows/RPC/%E3%80%90RPC%E3%80%91RpcView%20%E7%9B%B8%E5%85%B3/" class="list-group-item list-group-item-action">
-      <time>11-08</time>
-      <div class="list-group-item-title">【RPC】RpcView是如何检测的</div>
-    </a>
-  
-    
-    <a href="/2023/11/06/A_OS/Windows/API/CreateRemoteThread/%E3%80%90winapi%E3%80%91%E8%BF%9C%E7%A8%8B%E5%8A%A0%E8%BD%BD%E5%92%8C%E9%87%8A%E6%94%BEDLL/" class="list-group-item list-group-item-action">
-      <time>11-06</time>
-      <div class="list-group-item-title">【winapi】远程加载和释放DLL</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E6%8C%87%E5%AE%9A%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%B7%B2%E6%A0%87%E8%AE%B0%E4%B8%BA%E5%88%A0%E9%99%A4%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【驱动】指定的服务已标记为删除如何解决</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E5%B8%B8%E8%A7%81%E5%AE%89%E8%A3%85%E9%94%99%E8%AF%AF/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【驱动】常见安装错误</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Windows/%E9%A9%B1%E5%8A%A8/%E3%80%90%E9%A9%B1%E5%8A%A8%E3%80%91%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84wfp%E9%A9%B1%E5%8A%A8/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【驱动】一个完整的wfp驱动</div>
-    </a>
-  
 </div>
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/categories/A-OS/page/11/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/10/#board">10</a><a class="page-number" href="/categories/A-OS/page/11/#board">11</a><span class="page-number current">12</span><a class="page-number" href="/categories/A-OS/page/13/#board">13</a><a class="page-number" href="/categories/A-OS/page/14/#board">14</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/20/#board">20</a><a class="extend next" rel="next" href="/categories/A-OS/page/13/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/categories/A-OS/page/11/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/10/#board">10</a><a class="page-number" href="/categories/A-OS/page/11/#board">11</a><span class="page-number current">12</span><a class="page-number" href="/categories/A-OS/page/13/#board">13</a><a class="page-number" href="/categories/A-OS/page/14/#board">14</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/21/#board">21</a><a class="extend next" rel="next" href="/categories/A-OS/page/13/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -401,6 +561,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

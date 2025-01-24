@@ -29,7 +29,7 @@
 <meta property="og:description" content="概述：双机调试快速设置脚本">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-07T01:27:01.081Z">
-<meta property="article:modified_time" content="2025-01-07T01:29:12.196Z">
+<meta property="article:modified_time" content="2025-01-23T09:07:37.476Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="批处理">
 <meta property="article:tag" content="bat">
@@ -72,7 +72,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -97,6 +99,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -199,7 +358,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -228,7 +387,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          24 字
+          484 字
         
       </span>
     
@@ -239,7 +398,7 @@
         
         
         
-          1 分钟
+          5 分钟
         
       </span>
     
@@ -254,6 +413,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -286,7 +446,7 @@
 </blockquote>
 <span id="more"></span>
 <h2 id="双机调试脚本"><a class="markdownIt-Anchor" href="#双机调试脚本"></a> 双机调试脚本</h2>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmd">bcdedit /<span class="hljs-built_in">set</span> testsigning on<br><br>::启动<br>bcdedit /debug on<br></code></pre></td></tr></table></figure>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><code class="hljs cmd">@<span class="hljs-built_in">echo</span> off<br><span class="hljs-built_in">setlocal</span> enabledelayedexpansion<br><br><span class="hljs-built_in">echo</span> 开始工作，当前目录为: <span class="hljs-variable">%cd%</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">REM 创建一个临时文件夹，用于测试权限</span><br><span class="hljs-built_in">set</span> &quot;testFolder=C:\Windows\System32\AdminTest1&quot;<br><span class="hljs-comment"></span><br><span class="hljs-comment">REM 尝试创建一个文件夹</span><br><span class="hljs-built_in">mkdir</span> &quot;<span class="hljs-variable">%testFolder%</span>&quot; <span class="hljs-number">2</span>&gt;<span class="hljs-built_in">nul</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">REM 检查是否成功创建</span><br><span class="hljs-keyword">if</span> <span class="hljs-keyword">exist</span> &quot;<span class="hljs-variable">%testFolder%</span>&quot; (<br>    <span class="hljs-built_in">rmdir</span> &quot;<span class="hljs-variable">%testFolder%</span>&quot;<br>) <span class="hljs-keyword">else</span> (<br>    <span class="hljs-built_in">echo</span> 当前进程没有管理员权限,结束运行<br>	<span class="hljs-built_in">pause</span><br><span class="hljs-function">	goto:<span class="hljs-title">eof</span></span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">for</span> /<span class="hljs-title">F</span> &quot;<span class="hljs-title">tokens</span>=1,2 <span class="hljs-title">delims</span>=#&quot; %%<span class="hljs-title">a</span> <span class="hljs-title">in</span> (&#x27;&quot;<span class="hljs-title">prompt</span> #$<span class="hljs-title">H</span>#$<span class="hljs-title">E</span># &amp; <span class="hljs-title">echo</span> <span class="hljs-title">on</span> &amp; <span class="hljs-title">for</span> %%<span class="hljs-title">b</span> <span class="hljs-title">in</span> (1) <span class="hljs-title">do</span> <span class="hljs-title">rem</span>&quot;&#x27;) <span class="hljs-title">do</span> (</span><br><span class="hljs-function">  <span class="hljs-title">set</span> &quot;<span class="hljs-title">DEL</span>=%%<span class="hljs-title">a</span>&quot;</span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function">:<span class="hljs-title">start</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">:: 提示用户选择</span><br><span class="hljs-function"><span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 02 &quot;请选择一个选项：&quot;</span><br><span class="hljs-function"><span class="hljs-title">echo</span>.</span><br><span class="hljs-function"><span class="hljs-title">echo</span> 1: 网络调试</span><br><span class="hljs-function"><span class="hljs-title">echo</span> 2: 串口调试</span><br><span class="hljs-function"><span class="hljs-title">echo</span> 3: 退出</span><br><span class="hljs-function"></span><br><span class="hljs-function">:: 使用 <span class="hljs-title">choice</span> 命令获取用户输入</span><br><span class="hljs-function"><span class="hljs-title">choice</span> /<span class="hljs-title">C</span> 123 /<span class="hljs-title">M</span> &quot;请输入你的选择:&quot;</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">set</span> <span class="hljs-title">USER_CHOICE</span>=%<span class="hljs-title">ERRORLEVEL</span>%</span><br><span class="hljs-function"></span><br><span class="hljs-function">:: 根据用户选择执行不同的处理逻辑</span><br><span class="hljs-function"><span class="hljs-title">if</span> &quot;%<span class="hljs-title">USER_CHOICE</span>%&quot;==&quot;1&quot; (</span><br><span class="hljs-function">    <span class="hljs-title">echo</span> 你选择了选项1</span><br><span class="hljs-function"><span class="hljs-comment">    rem 在这里添加选项1的处理逻辑</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit.exe</span> -<span class="hljs-title">set</span> <span class="hljs-title">TESTSIGNING</span> <span class="hljs-title">ON</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit.exe</span> -<span class="hljs-title">set</span> <span class="hljs-title">loadoptions</span> <span class="hljs-title">DDISABLE_INTEGRITY_CHECKS</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">set</span> <span class="hljs-title">nointegritychecks</span> <span class="hljs-title">on</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">debug</span> <span class="hljs-title">on</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">bootdebug</span> <span class="hljs-title">on</span></span><br><span class="hljs-function"><span class="hljs-comment">	rem 输入ip</span></span><br><span class="hljs-function">	<span class="hljs-title">set</span> /<span class="hljs-title">p</span> <span class="hljs-title">InputIp</span>=&quot;请输入调试主机<span class="hljs-title">IP</span>地址:&quot;</span><br><span class="hljs-function">	<span class="hljs-title">echo</span> 输入<span class="hljs-title">IP</span>为:!<span class="hljs-title">InputIp</span>!</span><br><span class="hljs-function"><span class="hljs-comment">	rem 输入调试端口</span></span><br><span class="hljs-function">	<span class="hljs-title">set</span> /<span class="hljs-title">P</span> <span class="hljs-title">InputPort</span>=&quot;请输入调式端口地址:&quot;</span><br><span class="hljs-function">	<span class="hljs-title">echo</span> 输入端口为:!<span class="hljs-title">InputPort</span>!</span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">dbgsettings</span> <span class="hljs-title">net</span> <span class="hljs-title">hostip</span>:!<span class="hljs-title">InputIp</span>! <span class="hljs-title">port</span>:!<span class="hljs-title">InputPort</span>!</span><br><span class="hljs-function">	<span class="hljs-title">echo</span> 请手动配置总线编号、设备编号和功能编号</span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span></span><br><span class="hljs-function">	<span class="hljs-title">pause</span></span><br><span class="hljs-function">	<span class="hljs-title">goto:eof</span></span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">if</span> &quot;%<span class="hljs-title">USER_CHOICE</span>%&quot;==&quot;2&quot; (</span><br><span class="hljs-function">	<span class="hljs-title">echo</span> <span class="hljs-title">test1</span></span><br><span class="hljs-function">    <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 0<span class="hljs-title">b</span> &quot;开始配置串口调试：&quot;</span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">set</span> <span class="hljs-title">testsigning</span> <span class="hljs-title">on</span></span><br><span class="hljs-function"><span class="hljs-comment">	rem 启动</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit</span> /<span class="hljs-title">debug</span> <span class="hljs-title">on</span></span><br><span class="hljs-function"><span class="hljs-comment">	rem 永久禁用数字签名</span></span><br><span class="hljs-function">	<span class="hljs-title">bcdedit.exe</span> /<span class="hljs-title">set</span> <span class="hljs-title">nointegritychecks</span> <span class="hljs-title">on</span></span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">if</span> &quot;%<span class="hljs-title">USER_CHOICE</span>%&quot;==&quot;3&quot; (</span><br><span class="hljs-function">    <span class="hljs-title">echo</span> 你选择了退出</span><br><span class="hljs-function">    <span class="hljs-title">exit</span></span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function">:: 参数1为空情况下打印提示</span><br><span class="hljs-function"><span class="hljs-title">if</span> &quot;%~1&quot;==&quot;&quot; (</span><br><span class="hljs-function">	<span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 0<span class="hljs-title">C</span> &quot;[<span class="hljs-title">Error</span>]没有提供参数1&quot;</span><br><span class="hljs-function">	<span class="hljs-title">echo</span>.</span><br><span class="hljs-function">	</span><br><span class="hljs-function">	<span class="hljs-title">call</span> :<span class="hljs-title">UsagePrint</span></span><br><span class="hljs-function">	<span class="hljs-title">echo</span>.</span><br><span class="hljs-function">	</span><br><span class="hljs-function">	<span class="hljs-title">goto:eof</span></span><br><span class="hljs-function">)</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">goto:eof</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">:<span class="hljs-title">UsagePrint</span></span><br><span class="hljs-function">	<span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 02 &quot;[<span class="hljs-title">Usage</span>]:&quot;</span><br><span class="hljs-function">	<span class="hljs-title">echo</span>.</span><br><span class="hljs-function"></span><br><span class="hljs-function">	<span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 02 &quot;    %~<span class="hljs-title">nx0</span> [<span class="hljs-title">OutputDir</span>] [<span class="hljs-title">ui</span> <span class="hljs-title">version</span>]&quot;</span><br><span class="hljs-function">	<span class="hljs-title">echo</span>.</span><br><span class="hljs-function"><span class="hljs-title">goto:eof</span></span><br><span class="hljs-function"></span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 0<span class="hljs-title">C</span> &quot;<span class="hljs-title">red</span>&quot;</span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 0<span class="hljs-title">b</span> &quot;<span class="hljs-title">blue</span>&quot;</span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 02 &quot;<span class="hljs-title">green</span>&quot;</span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 19 &quot;<span class="hljs-title">yellow</span>&quot;</span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 2<span class="hljs-title">F</span> &quot;<span class="hljs-title">black</span>&quot;</span><br><span class="hljs-function">:: <span class="hljs-title">call</span> :<span class="hljs-title">ColorText</span> 4<span class="hljs-title">e</span> &quot;<span class="hljs-title">white</span>&quot;</span><br><span class="hljs-function">:<span class="hljs-title">ColorText</span></span><br><span class="hljs-function">@<span class="hljs-title">echo</span> <span class="hljs-title">off</span></span><br><span class="hljs-function">:: 移除冒号</span><br><span class="hljs-function"><span class="hljs-title">set</span> &quot;<span class="hljs-title">input</span>=%~2&quot;</span><br><span class="hljs-function"><span class="hljs-title">set</span> &quot;<span class="hljs-title">input</span>=!<span class="hljs-title">input</span>::=：!&quot;</span><br><span class="hljs-function">&lt;<span class="hljs-title">nul</span> <span class="hljs-title">set</span> /<span class="hljs-title">p</span> &quot;.=%<span class="hljs-title">DEL</span>%&quot; &gt; &quot;!<span class="hljs-title">input</span>!&quot;</span><br><span class="hljs-function"><span class="hljs-title">findstr</span> /<span class="hljs-title">v</span> /<span class="hljs-title">a</span>:%1 /<span class="hljs-title">R</span> &quot;^$&quot; &quot;!<span class="hljs-title">input</span>!&quot; <span class="hljs-title">nul</span></span><br><span class="hljs-function"><span class="hljs-title">del</span> &quot;!<span class="hljs-title">input</span>!&quot; &gt; <span class="hljs-title">nul</span> 2&gt;&amp;1</span><br><span class="hljs-function"><span class="hljs-title">goto</span> :<span class="hljs-title">eof</span></span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">pause</span></span><br></code></pre></td></tr></table></figure>
                 
               </div>
             
@@ -414,6 +574,33 @@
             </div>
 
             
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '6331737aaf352eed6e743a4b6f25bc48'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
           </article>
         </div>
       </div>
@@ -655,6 +842,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

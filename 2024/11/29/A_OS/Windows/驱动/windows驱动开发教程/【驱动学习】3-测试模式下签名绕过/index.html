@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme="dark">
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/88082435?v=4">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="mingming">
+  <meta name="keywords" content>
+  
+    <meta name="description" content="概述：Windows 测试模式下绕过签名校验，便于测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【驱动学习】3-测试模式下签名绕过">
+<meta property="og:url" content="https://hodlyounger.github.io/2024/11/29/A_OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/%E3%80%90%E9%A9%B1%E5%8A%A8%E5%AD%A6%E4%B9%A0%E3%80%913-%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%AD%BE%E5%90%8D%E7%BB%95%E8%BF%87/index.html">
+<meta property="og:site_name" content="oone">
+<meta property="og:description" content="概述：Windows 测试模式下绕过签名校验，便于测试">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-11-29T06:43:20.798Z">
+<meta property="article:modified_time" content="2025-01-24T02:04:30.451Z">
+<meta property="article:author" content="mingming">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="驱动">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>【驱动学习】3-测试模式下签名绕过 - oone</title>
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css">
+
+  <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css">
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css">
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/CusFluid.css">
+<link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hodlyounger.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":"holdyounger.github.io"}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/color-schema.js"></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"><link rel="alternate" href="/atom.xml" title="oone" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Montarius</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【驱动学习】3-测试模式下签名绕过"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-11-29 14:43" pubdate>
+          2024年11月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          922 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+    
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【驱动学习】3-测试模式下签名绕过</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>概述：Windows 测试模式下绕过签名校验，便于测试</p>
+</blockquote>
+<span id="more"></span>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.lyshark.com/post/c94e06f5.html">驱动开发：测试模式过DSE签名 | LyShark®</a></li>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.freebuf.com/articles/paper/281035.html">新生吃老饭之无签驱动的两种加载方式 - FreeBuf网络安全行业门户</a></li>
+</ul>
+</div>
+</details><p></p>
+<h2 id="dse"><a class="markdownIt-Anchor" href="#dse"></a> DSE</h2>
+<p>Windows DSE（Driver Signature Enforcement）机制是微软Windows操作系统中的一项关键安全特性，旨在确保只有经过验证和签名的驱动程序才能被加载到系统中。以下是DSE机制的主要功能和特点：</p>
+<ol>
+<li>
+<p><strong>安全性和验证</strong>：DSE的主要目的是保护操作系统免受恶意或不稳定的驱动程序影响。通过确保所有加载的驱动程序都经过签名验证，DSE帮助防止恶意代码和不安全的软件干扰系统操作。</p>
+</li>
+<li>
+<p><strong>数字签名</strong>：驱动程序需要使用有效的数字证书进行签名。数字签名通过公钥加密技术保证驱动程序的来源和完整性。签名证书由受信任的证书颁发机构颁发，证书包含开发者的公钥以及CA的签名信息。</p>
+</li>
+<li>
+<p><strong>内核模式驱动程序加载</strong>：Windows操作系统内核模式下的驱动程序需要经过DSE的验证过程，以确保其签名有效。如果签名有效，系统会允许驱动程序加载，并将其映射到内核空间；如果签名无效，系统会阻止驱动程序加载，并提供错误信息给用户或管理员。</p>
+</li>
+<li>
+<p><strong>代码完整性检查</strong>：DSE还包括代码完整性检查，用于确保驱动程序在加载时没有被篡改。驱动程序的哈希值（如SHA256）会与签名中的哈希值进行比对，以确保驱动程序的内容与签名时的一致性。</p>
+</li>
+<li>
+<p><strong>Secure Boot配合</strong>：DSE可以与Secure Boot配合使用，进一步提升系统的安全性。Secure Boot确保在启动阶段仅允许经过认证的操作系统和驱动程序加载，防止未授权的代码在启动阶段运行。</p>
+</li>
+<li>
+<p><strong>DSE运行模式</strong>：在强制模式下，DSE确保所有驱动程序都经过数字签名。这是Windows的默认设置，从Vista及后续版本开始就已经启用。在测试模式下，DSE允许加载未签名的驱动程序，主要用于开发和测试阶段。</p>
+</li>
+<li>
+<p><strong>用户和管理员控制</strong>：用户可以通过高级启动选项临时禁用DSE，以便安装或测试未签名的驱动程序。在企业环境或特殊需求下，管理员可以通过组策略或注册表设置来永久禁用DSE，但这种做法会降低系统的安全性。</p>
+</li>
+<li>
+<p><strong>政策管理</strong>：在企业环境中，IT管理员可以使用组策略配置和管理DSE设置，确保符合组织的安全和合规要求。</p>
+</li>
+</ol>
+<p>DSE机制通过这些方式确保了系统中运行的所有驱动程序都经过认证，降低了潜在的安全风险，提高了系统的稳定性和安全性。</p>
+<h2 id="bypass"><a class="markdownIt-Anchor" href="#bypass"></a> ByPass</h2>
+<p>仅限于在 Windows 测试模式下使用这种方式，通过修改 PKLDR_DATA_TABLE_ENTRY.Flags 来达到测试模式下需要验签的问题。</p>
+<p>更改 <code>_KLDR_DATA_TABLE_ENTRY</code> 的 FLAGS， <code>pLdrData-&gt;data | 0x20</code> 置位。</p>
+<p><strong>代码</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 绕过签名检查</span><br>BOOLEAN <span class="hljs-title function_">BypassCheckSign</span><span class="hljs-params">(PDRIVER_OBJECT pDriverObject)</span><br>&#123;<br><span class="hljs-meta">#<span class="hljs-keyword">ifdef</span> _WIN64</span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG64 __Undefined1;<br>		ULONG64 __Undefined2;<br>		ULONG64 __Undefined3;<br>		ULONG64 NonPagedDebugInfo;<br>		ULONG64 DllBase;<br>		ULONG64 EntryPoint;<br>		ULONG SizeOfImage;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>		USHORT  LoadCount;<br>		USHORT  __Undefined5;<br>		ULONG64 __Undefined6;<br>		ULONG   CheckSum;<br>		ULONG   __padding1;<br>		ULONG   TimeDateStamp;<br>		ULONG   __padding2;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">else</span></span><br>	<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">KLDR_DATA_TABLE_ENTRY</span></span><br><span class="hljs-class">	&#123;</span><br>		LIST_ENTRY listEntry;<br>		ULONG unknown1;<br>		ULONG unknown2;<br>		ULONG unknown3;<br>		ULONG unknown4;<br>		ULONG unknown5;<br>		ULONG unknown6;<br>		ULONG unknown7;<br>		UNICODE_STRING path;<br>		UNICODE_STRING name;<br>		ULONG   Flags;<br>	&#125; KLDR_DATA_TABLE_ENTRY, * PKLDR_DATA_TABLE_ENTRY;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	PKLDR_DATA_TABLE_ENTRY pLdrData = (PKLDR_DATA_TABLE_ENTRY)pDriverObject-&gt;DriverSection;<br>	pLdrData-&gt;Flags = pLdrData-&gt;Flags | <span class="hljs-number">0x20</span>;<br><br>	<span class="hljs-keyword">return</span> TRUE;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>如何使用</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// 驱动入口地址</span><br>NTSTATUS <span class="hljs-title function_">DriverEntry</span><span class="hljs-params">(IN PDRIVER_OBJECT Driver, PUNICODE_STRING RegistryPath)</span><br>&#123;<br>	<span class="hljs-keyword">if</span> (BypassCheckSign(Driver))<br>		DbgPrint(<span class="hljs-string">&quot;Bypass Sign Success.&quot;</span>);<br><br>	Driver-&gt;DriverUnload = UnloadDriver;<br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/A-OS/" class="category-chain-item">A_OS</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/" class="category-chain-item">Windows</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/%E9%A9%B1%E5%8A%A8/" class="category-chain-item">驱动</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/A-OS/Windows/%E9%A9%B1%E5%8A%A8/windows%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B/" class="category-chain-item">windows驱动开发教程</a>
+  
+  
+
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Windows/" class="print-no-link">#Windows</a>
+      
+        <a href="/tags/%E9%A9%B1%E5%8A%A8/" class="print-no-link">#驱动</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【驱动学习】3-测试模式下签名绕过</div>
+      <div>https://hodlyounger.github.io/2024/11/29/A_OS/Windows/驱动/windows驱动开发教程/【驱动学习】3-测试模式下签名绕过/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>mingming</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年11月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/" rel="external nofollow noopener noreferrer">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/11/29/Omnivore/2024-11-29/%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%9A%E6%B5%8B%E8%AF%95%E6%A8%A1%E5%BC%8F%E8%BF%87DSE%E7%AD%BE%E5%90%8D%20-%20LyShark%C2%AE/" title="驱动开发：测试模式过DSE签名 | LyShark®
+">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">驱动开发：测试模式过DSE签名 | LyShark®
+</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/11/22/Omnivore/2024-11-22/%5B%E5%8E%9F%E5%88%9B%5D%5B%E5%8E%9F%E5%88%9B%5DApiSetSchema-API%E9%9B%86-%E8%A7%A3%E6%9E%90-%E7%BC%96%E7%A8%8B%E6%8A%80%E6%9C%AF-%E7%9C%8B%E9%9B%AA-%E5%AE%89%E5%85%A8%E7%A4%BE%E5%8C%BA-%E5%AE%89%E5%85%A8%E6%8B%9B%E8%81%98-kanxue.com/" title="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+">
+                        <span class="hidden-mobile">[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '38884c302d1d63dee90bbf2e6910bfed'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="external nofollow noopener noreferrer"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="external nofollow noopener noreferrer"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script>
+  <link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+<script src="/js/events.js"></script>
+<script src="/js/plugins.js"></script>
+
+
+  <script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script src="/js/img-lazyload.js"></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script src="/js/boot.js"></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

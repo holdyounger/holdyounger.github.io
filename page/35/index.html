@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -208,6 +367,137 @@
         </div>
       
     </div>
+    
+      <div style="height:500px" id="bubbles"></div>
+      <script>
+        circleMagic();
+        function circleMagic(options) {
+            let width;
+            let height;
+            let canvas;
+            let ctx;
+            let animateHeader = true;
+            const circles = [];
+    
+            const settings = options || {
+                color: 'rgba(255,255,255,.3)',
+                radius: 10,
+                density: 0.1,
+                clearOffset: 0.7
+            }
+    
+            const container = document.getElementById('bubbles');
+            initContainer();
+            addListeners();
+    
+            function initContainer() {
+                width = container.offsetWidth;
+                height = container.offsetHeight - 120;
+    
+                initCanvas();
+                canvas = document.getElementById('homeTopCanvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.style.position = 'absolute';
+                canvas.style.left = '0';
+                canvas.style.bottom = '0';
+                ctx = canvas.getContext('2d');
+    
+                for (let x = 0; x < width * settings.density; x++) {
+                    const c = new Circle();
+                    circles.push(c);
+                }
+                animate();
+            }
+    
+            function initCanvas() {
+                const canvasElement = document.createElement('canvas');
+                canvasElement.id = 'homeTopCanvas';
+                canvasElement.style.pointerEvents = 'none';
+                container.appendChild(canvasElement);
+                canvasElement.parentElement.style.overflow = 'hidden';
+            }
+    
+            function addListeners() {
+                window.addEventListener('scroll', scrollCheck, false);
+                window.addEventListener('resize', resize, false);
+            }
+    
+            function scrollCheck() {
+                if (document.body.scrollTop > height) {
+                    animateHeader = false;
+                } else {
+                    animateHeader = true;
+                }
+            }
+    
+            function resize() {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                container.height = height + 'px';
+                canvas.width = width;
+                canvas.height = height;
+            }
+    
+            function animate() {
+                if (animateHeader) {
+                    ctx.clearRect(0, 0, width, height);
+                    for (const i in circles) {
+                        circles[i].draw();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+    
+            function randomColor() {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                const alpha = Math.random().toPrecision(2);
+                return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+            }
+    
+            function Circle() {
+                const that = this;
+                (function () {
+                    that.pos = {};
+                    init();
+                })();
+                function init() {
+                    that.pos.x = Math.random() * width;
+                    that.pos.y = height + Math.random() * 100;
+                    that.alpha = 0.1 + Math.random() * settings.clearOffset;
+                    that.scale = 0.1 + Math.random() * 0.3;
+                    that.speed = Math.random();
+                    if (settings.color === 'random') {
+                        that.color = randomColor();
+                    } else {
+                        that.color = settings.color;
+                    }
+                }
+                this.draw = function () {
+                    if (that.alpha <= 0) {
+                        init();
+                    }
+                    that.pos.y -= that.speed;
+                    that.alpha -= 0.0005;
+                    ctx.beginPath();
+                    ctx.arc(
+                        that.pos.x,
+                        that.pos.y,
+                        that.scale * settings.radius,
+                        0,
+                        2 * Math.PI,
+                        false
+                    );
+                    ctx.fillStyle = that.color;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        }
+      </script>
+    
   </div>
 </div>
 
@@ -225,6 +515,410 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%95%B4%E7%90%86/%E3%80%90Fork%E3%80%91%E5%BF%AB%E6%8D%B7%E9%94%AE/" target="_self">
+          【Fork】快捷键整理
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%95%B4%E7%90%86/%E3%80%90Fork%E3%80%91%E5%BF%AB%E6%8D%B7%E9%94%AE/" target="_self">
+        <div>
+          [toc]  Fork 快捷键  General Navigation  Ctrl1 - Show Changes view (second press will focus commit field) Ctrl2 - Show All Commits view (second press will jump to HEAD) Ctrl0 - Reveal HEAD CtrlP - Show Qu
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%95%B4%E7%90%86/" class="category-chain-item">快捷键整理</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/">#快捷键</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F%E5%90%8D%E7%BC%A9%E5%86%99/" target="_self">
+          【手册】常用变量名缩写
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F%E5%90%8D%E7%BC%A9%E5%86%99/" target="_self">
+        <div>
+          变量名 缩写     addition add   address addr   administrator adm   answer ans   application app   arguments args   array arr   assemble asm   asynchronization asyn   attribute attr   authority/authorize
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
+            
+              <a href="/tags/%E6%89%8B%E5%86%8C-%E5%8F%98%E9%87%8F/">#手册/变量</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%91%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%E8%84%9A%E6%9C%AC/" target="_self">
+          【配置】Wiki自动更新脚本
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%91%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%E8%84%9A%E6%9C%AC/" target="_self">
+        <div>
+          123456789101112131415161718192021222324252627282930313233343536373839404142434445464748@echo off:reInputecho                                      Git自动更新脚本（输入序号选择命令）echo ==============================
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/" class="category-chain-item">个人配置</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
+            
+              <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89/">#自定义</a>
+            
+              <a href="/tags/Config/">#Config</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%91Typora%E5%9B%BE%E5%83%8F%E9%85%8D%E7%BD%AE/" target="_self">
+          【配置】Typora 图像配置
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%91Typora%E5%9B%BE%E5%83%8F%E9%85%8D%E7%BD%AE/" target="_self">
+        <div>
+          图片保存路径： 1./$&#123;filename&#125;/ rename-file 插件上传配置 1&#123;localFolder:3&#125;/&#123;origin&#125; 图源： 1https://source.unsplash.com/1280x640/?Technology
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/" class="category-chain-item">个人配置</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%B8%AA%E6%80%A7%E5%8C%96/">#个性化</a>
+            
+              <a href="/tags/typora/">#typora</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%913-hexo%E4%B8%BB%E9%A2%98%E5%BF%AB%E6%8D%B7%E9%94%AE/" target="_self">
+          【配置】3-hexo 主题快捷键
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/%E3%80%90%E9%85%8D%E7%BD%AE%E3%80%913-hexo%E4%B8%BB%E9%A2%98%E5%BF%AB%E6%8D%B7%E9%94%AE/" target="_self">
+        <div>
+          快捷键为vim风格的。按键可能与vimium（chrome插件）的快捷键有冲突，插件设置屏蔽掉此站的快捷键即可  说明  全局    Key Descption     s/S 全屏/取消全屏   w/W 打开/关闭文章目录   i/I 获取搜索框焦点   j/J 向下滑动   k/K 向上滑动   gg/GG 到最顶端   shift+G/g 到最下端     搜索框    Key Descpt
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/%E4%B8%AA%E4%BA%BA%E9%85%8D%E7%BD%AE/" class="category-chain-item">个人配置</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/hexo/">#hexo</a>
+            
+              <a href="/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/">#快捷键</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91safecode/" target="_self">
+          【手册】代码规范，安全编码
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/%E3%80%90%E6%89%8B%E5%86%8C%E3%80%91safecode/" target="_self">
+        <div>
+          TrustClient 相关  1） win api使用宏控制 123#ifdef Q_OS_WIN	#include &lt;Windows.h&gt;#endif  内存相关  函数段  申请内存  12345678void *zallloc(size_t len) &#123;    void *p = malloc(len);    if(p) &#123;        memset(
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-10-27 09:24" pubdate>
+              2023-10-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/code/">#code</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -499,435 +1193,11 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Git/%E3%80%90GIT%E3%80%91Git%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/" target="_self">
-          【GIT】速查手册
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Git/%E3%80%90GIT%E3%80%91Git%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/" target="_self">
-        <div>
-          查看远程仓 1git remote -v  分支  查看 12345678# 查看本地分支git branch# 查看远程分支git branch -r# 查看所有分支git branch -a  删除 12345678910111213141516171819# 删除远程分支git push origin --delete [branch_name]2. 删除本地分支区别git branch
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/Git/" class="category-chain-item">Git</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
-            
-              <a href="/tags/Git/">#Git</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Git/%E3%80%90GIT%E3%80%91Git%20emoji%E6%89%8B%E5%86%8C/" target="_self">
-          【GIT】emoji手册
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Git/%E3%80%90GIT%E3%80%91Git%20emoji%E6%89%8B%E5%86%8C/" target="_self">
-        <div>
-          gitmoji | An emoji guide for your commit messages    emoji emoji 代码 commit 说明      🎨 (调色板) :art: 改进代码结构 / 代码格式    ⚡️ (闪电) 🐎 (赛马) :zap: :racehorse: 提升性能    🔥 (火焰) :fire: 移除代码或文件    🐛 (bug) :bug: 修复
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/Git/" class="category-chain-item">Git</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
-            
-              <a href="/tags/git/">#git</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Game/LOL/" target="_self">
-          英雄联盟语录
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/Game/LOL/" target="_self">
-        <div>
-          仁义道德，也是一种奢侈。——亚索 千军万马一将在，探囊取物有何难。——皇子 落叶的一生，只是为了归根么。——亚索 我对你的爱就如闪电，狂暴而剧烈，飞出的飞镖，是我向你传达的思念。——狂暴之心 且听风吟，御剑于心。——亚索 一曲终了，繁花散尽，伊人已逝，只余一声空叹。——死亡颂唱者 我只是部落遗子，你确是高贵公主，我愿把我生命的力量化为三刀为你而战，只为证明我，配的上你。——蛮族之王 我对你的爱就
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/Game/" class="category-chain-item">Game</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E8%AF%AD%E5%BD%95/">#语录</a>
-            
-              <a href="/tags/LOL/">#LOL</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91%E5%B8%B8%E8%A7%81%E5%91%BD%E5%90%8D%E7%BC%A9%E5%86%99/" target="_self">
-          【English】常见编程命名缩写
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91%E5%B8%B8%E8%A7%81%E5%91%BD%E5%90%8D%E7%BC%A9%E5%86%99/" target="_self">
-        <div>
-          通用 缩写 翻译 控件 缩写 翻译     address addr 地址 calendar cdr 日历   application app 应用程序 messageDialog msgdlg 消息框   asynchronization asyn 异步 drawer drw 抽屉   average avg 平均数 buttonGroup btngrp 按钮分组   bitmap bmp
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/En/" class="category-chain-item">En</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
-            
-              <a href="/tags/%E9%80%9F%E6%9F%A5/">#速查</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91CodeEn_from_Windows/" target="_self">
-          【English】《深入理解Windows操作系统》一书附录中英语单词整理
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91CodeEn_from_Windows/" target="_self">
-        <div>
-          摘自《深入理解Windows操作系统》附录章节的英语对照。   《深入理解Windows操作系统》术语对照表    英文 对照     access token 访问令牌   access validation 访问验证   access-control entry，ACE 访问控制项   access-control list，ACL 访间控制列表   Active Directory 活动目
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/En/" class="category-chain-item">En</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
-            
-              <a href="/tags/%E4%B9%A6%E7%B1%8D/">#书籍</a>
-            
-              <a href="/tags/%E4%B9%A6%E7%B1%8D-%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E3%80%8B/">#书籍/《深入理解Windows操作系统》</a>
-            
-              <a href="/tags/%E8%8B%B1%E8%AF%AD/">#英语</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91CodeEn/" target="_self">
-          【English】编程常用英语词汇
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/10/27/E_%E6%89%8B%E5%86%8C/En/%E3%80%90English%E3%80%91CodeEn/" target="_self">
-        <div>
-          编程常用英语整理  一、交互式环境与print输出 1、print：打印/输出 2、coding：编码 3、syntax：语法 4、error：错误 5、invalid：无效 6、identifier：名称/标识符 7、character ：字符  二、字符串的操作 1、user：用户 2、name：姓名/名称 3、attribute：字段/属性 4、value：值  三、重复/转换/替换/原始
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-10-27 09:24" pubdate>
-              2023-10-27
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/" class="category-chain-item">E_手册</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/E-%E6%89%8B%E5%86%8C/En/" class="category-chain-item">En</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E6%89%8B%E5%86%8C/">#手册</a>
-            
-              <a href="/tags/%E8%8B%B1%E8%AF%AD/">#英语</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/page/34/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/#board">33</a><a class="page-number" href="/page/34/#board">34</a><span class="page-number current">35</span><a class="page-number" href="/page/36/#board">36</a><a class="page-number" href="/page/37/#board">37</a><span class="space">&hellip;</span><a class="page-number" href="/page/56/#board">56</a><a class="extend next" rel="next" href="/page/36/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/page/34/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/#board">33</a><a class="page-number" href="/page/34/#board">34</a><span class="page-number current">35</span><a class="page-number" href="/page/36/#board">36</a><a class="page-number" href="/page/37/#board">37</a><span class="space">&hellip;</span><a class="page-number" href="/page/57/#board">57</a><a class="extend next" rel="next" href="/page/36/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -1033,6 +1303,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

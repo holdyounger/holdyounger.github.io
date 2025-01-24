@@ -62,7 +62,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -87,6 +89,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -189,7 +348,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -204,6 +363,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -222,13 +382,43 @@
                 
 
 <div class="list-group">
-  <p class="h4">共计 199 篇文章</p>
+  <p class="h4">共计 204 篇文章</p>
   <hr>
   
   
     
       
       <p class="h5">2023</p>
+    
+    <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91FormatErrMessage/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【winapi】FormatMessage函数的使用</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/%E5%B7%A5%E5%85%B7/%E3%80%90WIN%E3%80%91Detours%E7%9A%84%E4%BD%BF%E7%94%A8/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【WIN】Detours的使用</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91API_%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E5%BA%93/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【Win】加载动态库 (loadlibrary)</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E8%8E%B7%E5%8F%96%E7%B3%BB%E7%BB%9F%E5%9F%9F%E5%90%8D/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【WINAPI】系统获取系统主机域名</div>
+    </a>
+  
+    
+    <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6/" class="list-group-item list-group-item-action">
+      <time>10-27</time>
+      <div class="list-group-item-title">【winapi】删除文件夹下所有文件</div>
+    </a>
+  
     
     <a href="/2023/10/27/A_OS/Windows/API/%E3%80%90winapi%E3%80%91VirtualProtect/" class="list-group-item list-group-item-action">
       <time>10-27</time>
@@ -259,42 +449,12 @@
       <div class="list-group-item-title">【winapi】FormatMessageA</div>
     </a>
   
-    
-    <a href="/2023/10/27/A_OS/Mac/%E3%80%90Mac%E3%80%91Xcode/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">Xcode 下载与安装</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Linux/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%8ALinux%E5%86%85%E6%A0%B8/6%20Linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">Linux 进程管理</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Linux/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%8ALinux%E5%86%85%E6%A0%B8/5%20Linux%E8%BF%9B%E7%A8%8B%E6%A6%82%E5%BF%B5/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">【Linux】进程概念</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Linux/readme/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">Linux 导读大纲</div>
-    </a>
-  
-    
-    <a href="/2023/10/27/A_OS/Linux/Linux%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/Readme/" class="list-group-item list-group-item-action">
-      <time>10-27</time>
-      <div class="list-group-item-title">Linux 基础入门</div>
-    </a>
-  
 </div>
 
 
   <nav aria-label="navigation">
     <span class="pagination" id="pagination">
-      <a class="extend prev" rel="prev" href="/categories/A-OS/page/18/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/17/#board">17</a><a class="page-number" href="/categories/A-OS/page/18/#board">18</a><span class="page-number current">19</span><a class="page-number" href="/categories/A-OS/page/20/#board">20</a><a class="extend next" rel="next" href="/categories/A-OS/page/20/#board"><i class="iconfont icon-arrowright"></i></a>
+      <a class="extend prev" rel="prev" href="/categories/A-OS/page/18/#board"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/categories/A-OS/">1</a><span class="space">&hellip;</span><a class="page-number" href="/categories/A-OS/page/17/#board">17</a><a class="page-number" href="/categories/A-OS/page/18/#board">18</a><span class="page-number current">19</span><a class="page-number" href="/categories/A-OS/page/20/#board">20</a><a class="page-number" href="/categories/A-OS/page/21/#board">21</a><a class="extend next" rel="next" href="/categories/A-OS/page/20/#board"><i class="iconfont icon-arrowright"></i></a>
     </span>
   </nav>
 
@@ -401,6 +561,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 

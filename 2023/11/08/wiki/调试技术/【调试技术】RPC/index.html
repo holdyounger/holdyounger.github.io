@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20241012110532570.png">
 <meta property="og:image" content="https://hodlyounger.github.io/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/IMG-20241010174126068.png">
 <meta property="article:published_time" content="2023-11-07T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-11-01T08:10:17.386Z">
+<meta property="article:modified_time" content="2025-01-23T01:57:47.293Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="调试技术">
 <meta property="article:tag" content="RPC">
@@ -80,7 +80,9 @@
 
 
   
+<link rel="stylesheet" href="/css/CusFluid.css">
 <link rel="stylesheet" href="/css/callout_blocks.css">
+<link rel="stylesheet" href="/css/ScrollAnimation.css">
 
 
 
@@ -105,6 +107,163 @@
 
 
 <body>
+  
+    
+
+    <style type="text/css">
+        #loading {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap {
+            animation: spin 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px
+        }
+
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px
+        }
+
+        .loader-line-wrap:nth-child(1) {
+            animation-delay: -50ms
+        }
+
+        .loader-line-wrap:nth-child(2) {
+            animation-delay: -0.1s
+        }
+
+        .loader-line-wrap:nth-child(3) {
+            animation-delay: -150ms
+        }
+
+        .loader-line-wrap:nth-child(4) {
+            animation-delay: -0.2s
+        }
+
+        .loader-line-wrap:nth-child(5) {
+            animation-delay: -250ms
+        }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: #ea4747;
+            height: 90px;
+            width: 90px;
+            top: 7px
+        }
+
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: #eaea47;
+            height: 76px;
+            width: 76px;
+            top: 14px
+        }
+
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: #47ea47;
+            height: 62px;
+            width: 62px;
+            top: 21px
+        }
+
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: #47eaea;
+            height: 48px;
+            width: 48px;
+            top: 28px
+        }
+
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: #4747ea;
+            height: 34px;
+            width: 34px;
+            top: 35px
+        }
+
+        @keyframes spin {
+
+            0%,
+            15% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+
+    <div id="loading">
+        <div class="loader-inner">
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+                <div class="loader-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const loaded = function () {
+                window.onload = function () {
+                    const loader = document.getElementById("loading");
+                    loader.className = "fadeout";
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                    }, 
+                    
+                );
+                }
+            };
+            loaded();
+        })();
+    </script>
+  
   
 
   <header>
@@ -207,7 +366,7 @@
 
   
 
-<div id="banner" class="banner" parallax="true" style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+<div id="banner" class="banner" parallax="true" style="background: url('/images/viewbanner.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -262,6 +421,7 @@
 
       
     </div>
+    
   </div>
 </div>
 
@@ -320,7 +480,7 @@
 <details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>简单使用</div>
 <div class="callout-fold"></div></summary><div class="callout-body">
 <p>可以看到 RpcView 可以看到 RPC 进程使用的协议 <strong>ncacn_np</strong> ，以及 <strong>ncacn_np</strong> 协议对应的管道名 <code>\\pipe\\hello</code>。那本次调试的目标就是对标 RpcView。在 windbg 中可以查看一个进程 RPC 详细详细。</p>
-<style>.odfuhemlarrc{zoom:80%;}</style><img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload class="odfuhemlarrc" alt="RPC进程信息">
+<style>.pfttdsueqotv{zoom:80%;}</style><img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload class="pfttdsueqotv" alt="RPC进程信息">
 </div>
 </details><h2 id="调试步骤"><a class="markdownIt-Anchor" href="#调试步骤"></a> 调试步骤</h2>
 <h3 id="使用微软官方的-dbgrpcexe"><a class="markdownIt-Anchor" href="#使用微软官方的-dbgrpcexe"></a> 使用微软官方的 dbgrpc.exe</h3>
@@ -410,10 +570,7 @@
 </ol>
 <p>到此，一次完整的调用就被展现出来了。在被调用看到的堆栈如下所示：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c">[<span class="hljs-number">0x0</span>]   rpcss!_Connect   <span class="hljs-number">0x3d23efeb48</span>   <span class="hljs-number">0x7ffe6730b4b3</span>   <br>[<span class="hljs-number">0x1</span>]   RPCRT4!Invoke+<span class="hljs-number">0x73</span>   <span class="hljs-number">0x3d23efeb50</span>   <span class="hljs-number">0x7ffe6730a282</span><br>[<span class="hljs-number">0x2</span>]   RPCRT4!NdrStubCall2Heap+<span class="hljs-number">0x342</span>   <span class="hljs-number">0x3d23efec90</span>   <span class="hljs-number">0x7ffe672ae1ca</span>   <br>[<span class="hljs-number">0x3</span>]   RPCRT4!NdrStubCall2+<span class="hljs-number">0x3a</span>   <span class="hljs-number">0x3d23efef20</span>   <span class="hljs-number">0x7ffe672edfda</span>   <br>[<span class="hljs-number">0x4</span>]   RPCRT4!NdrServerCall2+<span class="hljs-number">0x1a</span>   <span class="hljs-number">0x3d23efef50</span>   <span class="hljs-number">0x7ffe672e9188</span>   <br>[<span class="hljs-number">0x5</span>]   RPCRT4!DispatchToStubInCNoAvrf+<span class="hljs-number">0x18</span>   <span class="hljs-number">0x3d23efef80</span>   <span class="hljs-number">0x7ffe672ca3a6</span>   <br>[<span class="hljs-number">0x6</span>]   RPCRT4!RPC_INTERFACE::DispatchToStubWorker+<span class="hljs-number">0x1a6</span>   <span class="hljs-number">0x3d23efefd0</span>   <span class="hljs-number">0x7ffe672c9cf8</span>   <br>[<span class="hljs-number">0x7</span>]   RPCRT4!RPC_INTERFACE::DispatchToStub+<span class="hljs-number">0xf8</span>   <span class="hljs-number">0x3d23eff0b0</span>   <span class="hljs-number">0x7ffe672d74bf</span>   <br>[<span class="hljs-number">0x8</span>]   RPCRT4!LRPC_SCALL::DispatchRequest+<span class="hljs-number">0x31f</span>   <span class="hljs-number">0x3d23eff120</span>   <span class="hljs-number">0x7ffe672d68c8</span>   <br>[<span class="hljs-number">0x9</span>]   RPCRT4!LRPC_SCALL::HandleRequest+<span class="hljs-number">0x7f8</span>   <span class="hljs-number">0x3d23eff1f0</span>   <span class="hljs-number">0x7ffe672d5eb1</span>   <br>[<span class="hljs-number">0xa</span>]   RPCRT4!LRPC_ADDRESS::HandleRequest+<span class="hljs-number">0x341</span>   <span class="hljs-number">0x3d23eff300</span>   <span class="hljs-number">0x7ffe672d591e</span>   <br>[<span class="hljs-number">0xb</span>]   RPCRT4!LRPC_ADDRESS::ProcessIO+<span class="hljs-number">0x89e</span>   <span class="hljs-number">0x3d23eff3a0</span>   <span class="hljs-number">0x7ffe672da032</span>   <br>[<span class="hljs-number">0xc</span>]   RPCRT4!LrpcIoComplete+<span class="hljs-number">0xc2</span>   <span class="hljs-number">0x3d23eff4e0</span>   <span class="hljs-number">0x7ffe68170330</span>   <br>[<span class="hljs-number">0xd</span>]   ntdll!TppAlpcpExecuteCallback+<span class="hljs-number">0x260</span>   <span class="hljs-number">0x3d23eff580</span>   <span class="hljs-number">0x7ffe681a2f86</span>   <br>[<span class="hljs-number">0xe</span>]   ntdll!TppWorkerThread+<span class="hljs-number">0x456</span>   <span class="hljs-number">0x3d23eff600</span>   <span class="hljs-number">0x7ffe670a7344</span>   <br>[<span class="hljs-number">0xf</span>]   KERNEL32!BaseThreadInitThunk+<span class="hljs-number">0x14</span>   <span class="hljs-number">0x3d23eff900</span>   <span class="hljs-number">0x7ffe681a26b1</span>   <br>[<span class="hljs-number">0x10</span>]   ntdll!RtlUserThreadStart+<span class="hljs-number">0x21</span>   <span class="hljs-number">0x3d23eff930</span>   <span class="hljs-number">0x0</span>   <br></code></pre></td></tr></table></figure>
-<p></p>
-<p></p>
 <p>StackOver Flow 真是非常有含金量。尽管在之前的学习了解 RPC 过程中已经有观察到 <code>RpcInterfaceInformation</code> 这个关键变量。如 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/klezVirus/RpcProxyInvoke/blob/3f07a06891bc234ec1a1ea93f62a8b3e8e57b263/%5BSlides%5D%20Unraveling%20an%20RPC%20Thread%20-%20How%20Attackers%20Abuse%20Server%20Calls%20for%20Code%20Execution.pdf">RPCCraft</a> 中甚至已经对该结构体详细说明，但是由于对 NdrClientCall 的调试不够到位，遂一直没有头绪。这次调试也算是了解到了 RPC 的一些关键调用。</p>
-<p></p>
 <h2 id="command-断点"><a class="markdownIt-Anchor" href="#command-断点"></a> Command 断点</h2>
 <h3 id="rpc-客户端"><a class="markdownIt-Anchor" href="#rpc-客户端"></a> RPC 客户端</h3>
 <p>在 NdrClientCall2 添加命令断点查看 RPC 调用信息</p>
@@ -559,6 +716,33 @@
             </div>
 
             
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '557329d2d36034e1764443436f0a1144'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
           </article>
         </div>
       </div>
@@ -800,6 +984,11 @@
   <script src="/js/local-search.js"></script>
 
 
+
+
+  
+<script src="/js/CusFluid.js"></script>
+<script src="/js/ScrollAnimation.js"></script>
 
 
 
