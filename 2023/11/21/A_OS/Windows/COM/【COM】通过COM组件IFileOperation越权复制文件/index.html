@@ -660,7 +660,7 @@
 <p>根据上一小节的内容，此时已经执行到了 Appinfo 所在的进程。查看 appinfo 所在进程的所有线程，查找相关线程：</p>
    <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c"># 这里会输出所有线程的堆栈信息 ffffa18d9265a2c0<br>!process ffffa18d9265a2c0 <span class="hljs-number">7</span><br><br># 找相关的那个就行，如下所示，搜索 consent<br>THREAD ffffa18d92e95080  Cid <span class="hljs-number">02</span>a0<span class="hljs-number">.0</span>aac  Teb: <span class="hljs-number">0000008049</span>ae2000 Win32Thread: ffffa18d92eb12d0 WAIT: (UserRequest) UserMode Non-Alertable<br>            ffffa18d94034080  ProcessObject<br>        Not impersonating<br>        DeviceMap                 ffffdf048f637420<br>        Owning Process            ffffa18d9265a2c0       Image:         svchost.exe<br>        Attached Process          N/A            Image:         N/A<br>        Wait Start TickCount      <span class="hljs-number">28038</span>          Ticks: <span class="hljs-number">25</span> (<span class="hljs-number">0</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00.390</span>)<br>        Context Switch Count      <span class="hljs-number">3626</span>           IdealProcessor: <span class="hljs-number">1</span>             <br>        UserTime                  <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00.015</span><br>        KernelTime                <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00.375</span><br>        Win32 Start Address ntdll!TppWorkerThread (<span class="hljs-number">0x00007ffdc99a2b30</span>)<br>        Stack Init ffff9c8af4a45c90 Current ffff9c8af4a456a0<br>        Base ffff9c8af4a46000 Limit ffff9c8af4a40000 Call <span class="hljs-number">0000000000000000</span><br>        Priority <span class="hljs-number">9</span>  BasePriority <span class="hljs-number">8</span>  IoPriority <span class="hljs-number">2</span>  PagePriority <span class="hljs-number">5</span><br>        Child-SP          RetAddr               : Args to Child                                                           : Call Site<br>        ffff9c8a`f4a456e0 fffff801`<span class="hljs-number">7f</span>455330     : ffffa18d`<span class="hljs-number">00000008</span> <span class="hljs-number">00000000</span>`ffffffff ffff9c8a`<span class="hljs-number">00000000</span> ffffa18d`<span class="hljs-number">95631158</span> : nt!KiSwapContext+<span class="hljs-number">0x76</span><br>        ffff9c8a`f4a45820 fffff801`<span class="hljs-number">7f</span>45485f     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> ffff9c8a`f4a459e0 <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> : nt!KiSwapThread+<span class="hljs-number">0x500</span><br>        ffff9c8a`f4a458d0 fffff801`<span class="hljs-number">7f</span>454103     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> fffff801`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> ffffa18d`<span class="hljs-number">92e951</span>c0 : nt!KiCommitThreadWait+<span class="hljs-number">0x14f</span><br>        ffff9c8a`f4a45970 fffff801`<span class="hljs-number">7f</span>858dd1     : ffffa18d`<span class="hljs-number">94034080</span> fffff801`<span class="hljs-number">00000006</span> ffff9c8a`f4a45b01 ffff9c8a`f4a45b00 : nt!KeWaitForSingleObject+<span class="hljs-number">0x233</span><br>        ffff9c8a`f4a45a60 fffff801`<span class="hljs-number">7f</span>858d2a     : ffffa18d`<span class="hljs-number">92e95080</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> : nt!ObWaitForSingleObject+<span class="hljs-number">0x91</span><br>        ffff9c8a`f4a45ac0 fffff801`<span class="hljs-number">7f</span>624ef5     : ffffa18d`<span class="hljs-number">92e90000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00001000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> : nt!NtWaitForSingleObject+<span class="hljs-number">0x6a</span><br>        ffff9c8a`f4a45b00 <span class="hljs-number">00007f</span>fd`c99ed064     : <span class="hljs-number">00007f</span>fd`c72730ce <span class="hljs-number">00000000</span>`<span class="hljs-number">00000022</span> <span class="hljs-number">00000023</span>`<span class="hljs-number">00000004</span> <span class="hljs-number">00000004</span>`<span class="hljs-number">00000000</span> : nt!KiSystemServiceCopyEnd+<span class="hljs-number">0x25</span> (TrapFrame @ ffff9c8a`f4a45b00)<br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7e5b8 <span class="hljs-number">00007f</span>fd`c72730ce     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000022</span> <span class="hljs-number">00000023</span>`<span class="hljs-number">00000004</span> <span class="hljs-number">00000004</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000024</span> : ntdll!NtWaitForSingleObject+<span class="hljs-number">0x14</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7e5c0 <span class="hljs-number">00007f</span>fd`<span class="hljs-number">99</span>a178d9     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000001</span> <span class="hljs-number">00000080</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00002508</span> : KERNELBASE!WaitForSingleObjectEx+<span class="hljs-number">0x8e</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7e660 <span class="hljs-number">00007f</span>fd`<span class="hljs-number">99</span>a171e3     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">0000024</span>c`d154cfa0 <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000004</span> : appinfo!AiLaunchConsentUI+<span class="hljs-number">0x559</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7e880 <span class="hljs-number">00007f</span>fd`<span class="hljs-number">99</span>a32ff1     : <span class="hljs-number">00000000</span>`<span class="hljs-number">00000002</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00002568</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00004000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000002</span> : appinfo!AiCheckLUA+<span class="hljs-number">0x343</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7ea60 <span class="hljs-number">00007f</span>fd`<span class="hljs-number">99</span>a339b6     : <span class="hljs-number">0000024</span>c`d428c760 <span class="hljs-number">0000024</span>c`d428c810 <span class="hljs-number">0000024</span>c`d428c810 <span class="hljs-number">0000024</span>c`d0f7ac08 : appinfo!AipGetTokenForService+<span class="hljs-number">0x245</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7eb80 <span class="hljs-number">00007f</span>fd`c7f4b4b3     : <span class="hljs-number">0000024</span>c`d3236b80 <span class="hljs-number">0000024</span>c`d2f71de0 <span class="hljs-number">00000000</span>`<span class="hljs-number">00000000</span> <span class="hljs-number">00000000</span>`<span class="hljs-number">00000002</span> : appinfo!RAiGetTokenForCOM+<span class="hljs-number">0x206</span><br>        <span class="hljs-number">00000080</span>`<span class="hljs-number">4b</span>e7ec40 <span class="hljs-number">00007f</span>fd`c7fac5ea     : <span class="hljs-number">0000024</span>c`d3236b80 <span class="hljs-number">0000024</span>c`d00f9320 <span class="hljs-number">0000024</span>c`d0f7a8e0 <span class="hljs-number">00007f</span>fd`<span class="hljs-number">99</span>a35e30 : RPCRT4!Invoke+<span class="hljs-number">0x73</span><br></code></pre></td></tr></table></figure>
 <p>从上述堆栈可以看到最先开始调用的接口为<code>appinfo!RAiGetTokenForCOM</code>，并且是通过 RPC 调用进来的。 最后调用的函数为 <code>appinfo!AiLaunchConsentUI</code>，appinfo 最后的处理则是调用通过 <code>AiLaunchProcess</code> 如下所示：</p>
-<style>.yvuoplknigll{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/upload_263b033e836f67237affdf830127e4e3.png" srcset="/img/loading.gif" lazyload class="yvuoplknigll" alt="启动 Consent进程 ">
+<style>.zbkegbvfvvxf{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/upload_263b033e836f67237affdf830127e4e3.png" srcset="/img/loading.gif" lazyload class="zbkegbvfvvxf" alt="启动 Consent进程 ">
 <p>Buffer 内容如下所示</p>
 <ul>
 <li>参数1：创建 consent 进程的PID</li>
@@ -859,19 +859,19 @@
 <ol>
 <li>
 <p>g_lpExcludedWindowsDirs</p>
-<style>.tmofcveqyewe{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144246182.png" srcset="/img/loading.gif" lazyload class="tmofcveqyewe" alt="g_lpExcludedWindowsDirs">
+<style>.bbatsbhiqyqx{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144246182.png" srcset="/img/loading.gif" lazyload class="bbatsbhiqyqx" alt="g_lpExcludedWindowsDirs">
 </li>
 <li>
 <p>g_lpIncludedWindowsDirs</p>
-<style>.cdhkeuugdgxq{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144356534.png" srcset="/img/loading.gif" lazyload class="cdhkeuugdgxq" alt="g_lpIncludedWindowsDirs">
+<style>.kpnbdrgefjfv{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144356534.png" srcset="/img/loading.gif" lazyload class="kpnbdrgefjfv" alt="g_lpIncludedWindowsDirs">
 </li>
 <li>
 <p>g_lpIncludedSystemDirs</p>
-<style>.lsbxymstsuqz{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144431054.png" srcset="/img/loading.gif" lazyload class="lsbxymstsuqz" alt="g_lpIncludedSystemDirs">
+<style>.ljvuatpdufnx{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144431054.png" srcset="/img/loading.gif" lazyload class="ljvuatpdufnx" alt="g_lpIncludedSystemDirs">
 </li>
 <li>
 <p>g_lpIncludedPFDirs</p>
-<style>.iatquywmgoof{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144529859.png" srcset="/img/loading.gif" lazyload class="iatquywmgoof" alt="g_lpIncludedPFDirs">
+<style>.gnfthtpslqpj{zoom:80%;}</style><img src="/2023/11/21/A_OS/Windows/COM/%E3%80%90COM%E3%80%91%E9%80%9A%E8%BF%87COM%E7%BB%84%E4%BB%B6IFileOperation%E8%B6%8A%E6%9D%83%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6/image-20231122144529859.png" srcset="/img/loading.gif" lazyload class="gnfthtpslqpj" alt="g_lpIncludedPFDirs">
 </li>
 </ol>
 <p></p>
@@ -1034,23 +1034,40 @@
   
     <article id="comments" lazyload>
       
-  <div id="gitalk-container"></div>
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#gitalk-container', function() {
-      Fluid.utils.createCssLink('/css/gitalk.css')
-      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
-        var options = Object.assign(
-          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
-          {
-            id: '0b5f2a4e366aa582d67b91b1e87a9174'
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"holdyounger/GitTalk","repo-id":"R_kgDONu2TJA","category":"Announcements","category-id":"DIC_kwDONu2TJM4CmTLH","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
           }
-        )
-        var gitalk = new Gitalk(options);
-        gitalk.render('gitalk-container');
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
       });
-    });
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
 
 
     </article>

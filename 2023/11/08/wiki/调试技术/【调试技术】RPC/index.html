@@ -480,7 +480,7 @@
 <details class="custom-callout note" open><summary class="callout-title"><div class="callout-icon"></div><div>简单使用</div>
 <div class="callout-fold"></div></summary><div class="callout-body">
 <p>可以看到 RpcView 可以看到 RPC 进程使用的协议 <strong>ncacn_np</strong> ，以及 <strong>ncacn_np</strong> 协议对应的管道名 <code>\\pipe\\hello</code>。那本次调试的目标就是对标 RpcView。在 windbg 中可以查看一个进程 RPC 详细详细。</p>
-<style>.pfttdsueqotv{zoom:80%;}</style><img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload class="pfttdsueqotv" alt="RPC进程信息">
+<style>.yoxyrvylysoo{zoom:80%;}</style><img src="/2023/11/08/wiki/%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/%E3%80%90%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF%E3%80%91RPC/image-20231108152509853.png" srcset="/img/loading.gif" lazyload class="yoxyrvylysoo" alt="RPC进程信息">
 </div>
 </details><h2 id="调试步骤"><a class="markdownIt-Anchor" href="#调试步骤"></a> 调试步骤</h2>
 <h3 id="使用微软官方的-dbgrpcexe"><a class="markdownIt-Anchor" href="#使用微软官方的-dbgrpcexe"></a> 使用微软官方的 dbgrpc.exe</h3>
@@ -720,23 +720,40 @@
   
     <article id="comments" lazyload>
       
-  <div id="gitalk-container"></div>
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#gitalk-container', function() {
-      Fluid.utils.createCssLink('/css/gitalk.css')
-      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
-        var options = Object.assign(
-          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
-          {
-            id: '557329d2d36034e1764443436f0a1144'
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"holdyounger/GitTalk","repo-id":"R_kgDONu2TJA","category":"Announcements","category-id":"DIC_kwDONu2TJM4CmTLH","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
           }
-        )
-        var gitalk = new Gitalk(options);
-        gitalk.render('gitalk-container');
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
       });
-    });
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
 
 
     </article>

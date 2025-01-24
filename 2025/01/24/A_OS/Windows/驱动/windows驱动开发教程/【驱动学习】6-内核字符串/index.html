@@ -29,7 +29,7 @@
 <meta property="og:description" content="概述：内核开发字符串使用">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-01-24T02:01:07.692Z">
-<meta property="article:modified_time" content="2025-01-24T02:07:29.395Z">
+<meta property="article:modified_time" content="2025-01-24T08:14:33.683Z">
 <meta property="article:author" content="mingming">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="驱动">
@@ -387,7 +387,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          16 字
+          547 字
         
       </span>
     
@@ -398,7 +398,7 @@
         
         
         
-          1 分钟
+          5 分钟
         
       </span>
     
@@ -445,7 +445,25 @@
 <p>概述：内核开发字符串使用</p>
 </blockquote>
 <span id="more"></span>
-<h2 id="内核字符串"><a class="markdownIt-Anchor" href="#内核字符串"></a> 内核字符串</h2>
+<details class="custom-callout quote" open><summary class="callout-title"><div class="callout-icon"></div><div>相关参考：</div>
+<div class="callout-fold"></div></summary><div class="callout-body">
+<ul>
+<li><a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.lyshark.com/post/357654b2.html">驱动开发：内核字符串转换方法 | LyShark®</a></li>
+<li></li>
+</ul>
+</div>
+</details><h2 id="内核字符串"><a class="markdownIt-Anchor" href="#内核字符串"></a> 内核字符串</h2>
+<p>内核编程中主要使用的字符串有两种格式：</p>
+<ul>
+<li><code>UNICODE_STRING</code></li>
+<li><code>ANSI_STRING</code></li>
+</ul>
+<p>在 Windows 内核中，字符串的处理十分重要。稍有不慎就会造成系统蓝屏。因此，对于字符串的处理必须遵循严格的安全规则，以确保不会引发ge’zhong</p>
+<h2 id="demo"><a class="markdownIt-Anchor" href="#demo"></a> Demo</h2>
+<p>需要注意的是，参考的教程直接修改内存的方式会崩溃蓝屏。修改常量区内存需要先修改内存属性才可以。这里我是在网上随便找了一个方式。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// #include &lt;ntddk.h&gt;</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;ntifs.h&gt;</span></span><br><br>NTSTATUS <span class="hljs-title function_">UnloadDriver</span><span class="hljs-params">(PDRIVER_OBJECT pDriver)</span><br>&#123;<br>	DbgPrint(<span class="hljs-string">&quot;Bye, Driver\n&quot;</span>);<br><br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br><br>KIRQL <span class="hljs-title function_">WPOFFx64</span><span class="hljs-params">()</span><br>&#123;<br>	KIRQL irql = KeRaiseIrqlToDpcLevel();<br>	UINT64 cr0 = __readcr0();<br>	cr0 &amp;= <span class="hljs-number">0xfffffffffffeffff</span>;<br>	__writecr0(cr0);<br>	_disable();<br>	<span class="hljs-keyword">return</span> irql;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">WPONx64</span><span class="hljs-params">(KIRQL irql)</span><br>&#123;<br>	UINT64 cr0 = __readcr0();<br>	cr0 |= <span class="hljs-number">0x10000</span>;<br>	_enable();<br>	__writecr0(cr0);<br>	KeLowerIrql(irql);<br>&#125;<br><br>NTSTATUS <span class="hljs-title function_">DriverEntry</span><span class="hljs-params">(PDRIVER_OBJECT pDriver, PUNICODE_STRING pReg)</span><br>&#123;<br>	DbgPrint(<span class="hljs-string">&quot;Hello World, Driver\n&quot;</span>);<br>	DbgPrint(<span class="hljs-string">&quot;PDRIVER_OBJECT-&gt; [0x%08x]\n&quot;</span>, pDriver);<br>	DbgPrint(<span class="hljs-string">&quot;PUNICODE_STRING-&gt;[%ws]\n&quot;</span>, pReg-&gt;Buffer);<br><br><br>	<span class="hljs-comment">// 定义内核字符串</span><br>	ANSI_STRING ansi;<br>	UNICODE_STRING unicode;<br>	UNICODE_STRING str;<br><br>	<span class="hljs-comment">// 定义普通字符串</span><br>	<span class="hljs-type">char</span>* chr = <span class="hljs-string">&quot;Hello Kernel Test&quot;</span>;<br>	<span class="hljs-type">wchar_t</span>* wchr = (WCHAR*)<span class="hljs-string">&quot;Hello Kernel Test&quot;</span>;<br><br>	<span class="hljs-comment">// 初始化字符串，有多种方式可以选择</span><br>	RtlInitAnsiString(&amp;ansi, chr);<br>	RtlInitUnicodeString(&amp;unicode, chr);<br>	RtlInitUnicodeString(&amp;str, <span class="hljs-string">L&quot;Hello Kernel Test&quot;</span>);<br><br><span class="hljs-meta">#<span class="hljs-keyword">if</span> 0</span><br>	<span class="hljs-comment">// 创建 MDL</span><br>	PMDL mdl = IoAllocateMdl(chr, <span class="hljs-built_in">strlen</span>(chr) + <span class="hljs-number">1</span>, FALSE, FALSE, <span class="hljs-literal">NULL</span>);<br>	<span class="hljs-keyword">if</span> (!mdl) &#123;<br>		DbgPrint(<span class="hljs-string">&quot;Failed to allocate MDL.\n&quot;</span>);<br>		<span class="hljs-keyword">return</span> STATUS_INSUFFICIENT_RESOURCES;<br>	&#125;<br><br>	<span class="hljs-comment">// 锁定内存页</span><br>	MmBuildMdlForNonPagedPool(mdl);<br><br>	<span class="hljs-comment">// 映射 MDL 到系统地址空间</span><br>	PVOID baseAddress = MmGetSystemAddressForMdlSafe(mdl, MdlMappingNoExecute);<br>	<span class="hljs-keyword">if</span> (!baseAddress) &#123;<br>		DbgPrint(<span class="hljs-string">&quot;Failed to map MDL to system address space.\n&quot;</span>);<br>		IoFreeMdl(mdl);<br>		<span class="hljs-keyword">return</span> STATUS_INSUFFICIENT_RESOURCES;<br>	&#125;<br><br>	<span class="hljs-comment">// 修改内存保护属性为可读写</span><br>	NTSTATUS status = MmProtectMdlSystemAddress(mdl, PAGE_READWRITE);<br>	<span class="hljs-keyword">if</span> (!NT_SUCCESS(status)) &#123;<br>		DbgPrint(<span class="hljs-string">&quot;Failed to change memory protection: %x\n&quot;</span>, status);<br>		IoFreeMdl(mdl);<br>		<span class="hljs-keyword">return</span> status;<br>	&#125;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br><br>	<span class="hljs-comment">// 改变原始字符串，看下效果，这里应该是不能修改的，编译后位于常量区，要修改必须先修改内存属性才可以。否则会报错</span><br>	KIRQL irql = WPOFFx64();<br>	<span class="hljs-comment">// 修改字符串内容</span><br>	chr[<span class="hljs-number">0</span>] = <span class="hljs-string">&#x27;h&#x27;</span>; <span class="hljs-comment">// 将 &#x27;H&#x27; 改为 &#x27;h&#x27;</span><br>	chr[<span class="hljs-number">6</span>] = <span class="hljs-string">&#x27;k&#x27;</span>; <span class="hljs-comment">// 将 &#x27;K&#x27; 改为 &#x27;k&#x27;</span><br><br>	WPONx64(irql);<br><br>	<span class="hljs-comment">// 打印</span><br>	DbgPrint(<span class="hljs-string">&quot;[*] 输出ANSI: %Z \n&quot;</span>, &amp;ansi);<br>	DbgPrint(<span class="hljs-string">&quot;[*] 输出WCHAR: %Z \n&quot;</span>, &amp;unicode);<br>	DbgPrint(<span class="hljs-string">&quot;[*] 输出字符串: %wZ \n&quot;</span>, &amp;str);<br><br>	pDriver-&gt;DriverUnload = UnloadDriver;<br><br>	<span class="hljs-keyword">return</span> STATUS_SUCCESS;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs coq">Hello World, Driver<br>PDRIVER_OBJECT-&gt; [<span class="hljs-number">0x0d66de30</span>]<br>PUNICODE_STRING-&gt;[\REGISTRY\MACHINE\SYSTEM\ControlSet001\Services\KmdfString]<br>[*] 输出ANSI: hello kernel <span class="hljs-keyword">Test</span> <br>[*] 输出WCHAR: hello kernel <span class="hljs-keyword">Test</span><br>[*] 输出字符串: Hello Kernel <span class="hljs-keyword">Test</span> <br>Bye, Driver<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -579,23 +597,40 @@
   
     <article id="comments" lazyload>
       
-  <div id="gitalk-container"></div>
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#gitalk-container', function() {
-      Fluid.utils.createCssLink('/css/gitalk.css')
-      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
-        var options = Object.assign(
-          {"clientID":"Ov23liuUBceo0zmiFO90","clientSecret":"4887e8e17787372fb9c79c88f939cdac79b5f7c4","repo":"GitTalk","owner":"holdyounger","admin":["holdyounger"],"language":"zh-CN","labels":["Gitalk"],"perPage":15,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
-          {
-            id: 'f4786d0cc931ee1502270b0632da3902'
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"holdyounger/GitTalk","repo-id":"R_kgDONu2TJA","category":"Announcements","category-id":"DIC_kwDONu2TJM4CmTLH","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
           }
-        )
-        var gitalk = new Gitalk(options);
-        gitalk.render('gitalk-container');
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
       });
-    });
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
 
 
     </article>
