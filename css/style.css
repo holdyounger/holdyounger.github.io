@@ -170,7 +170,7 @@ code {
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;
-  background-image: url("./css/images/logo.png");
+  background-image: url("images/logo.png");
   background-size: 40px 40px;
 }
 #container {
@@ -1355,21 +1355,200 @@ div .article-more-link {
   margin: 0 auto;
 }
 .toc-article {
-  background: #f9f9f9;
-  margin: 2em 0 0 0.2em;
-  padding: 1em;
-  border: 1px solid #000;
-  border-radius: 0px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  position: fixed /* 固定位置 */;
+  top: 20% /* 距离页面顶部的距离，可根据需要调整 */;
+  right: 20px /* 距离页面右侧的距离，可根据需要调整 */;
+  width: 300px /* 设置目录的宽度 */;
+  min-width: 48px;
+  min-height: 48px;
+  -webkit-transition: width 0.22s ease, padding 0.22s ease;
+  -moz-transition: width 0.22s ease, padding 0.22s ease;
+  -ms-transition: width 0.22s ease, padding 0.22s ease;
+  transition: width 0.22s ease, padding 0.22s ease;
+  overflow: hidden;
+  background-color: #fff /* 背景颜色 */;
+  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.1) /* 添加阴影 */;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1) /* 添加阴影 */;
+  z-index: 1000 /* 确保目录浮动在其他内容之上 */;
 }
-.toc-article .toc-title {
-  font-size: 120%;
+.toc-article.collapsed {
+  width: 48px;
+  padding: 6px;
+/* 隐藏标题文本和内容，但保留切换按钮可见 */
+/* 折叠时使容器背景透明并去除阴影，便于按钮浮在上方 */
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-color: transparent;
+/* 折叠时把按钮固定到视口右侧，保证始终可见 */
 }
-.toc-article strong {
-  padding: 0.3em 1;
+.toc-article.collapsed .toc-title {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+/* 隐藏标题文本，但保留 toggle 可见 */
 }
-ol.toc {
-  width: 100%;
-  margin: 1em 2em 0 0;
+.toc-article.collapsed .toc-title .toc-label {
+  display: none;
+}
+.toc-article.collapsed .toc-title .toc-toggle {
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: box !important;
+  display: flex !important;
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  width: 36px;
+  height: 36px;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  margin: 0;
+  z-index: 9999;
+}
+.toc-article.collapsed #toc-content {
+  display: none;
+}
+.toc-article.collapsed .toc-sidebar {
+  display: none;
+}
+.toc-article.collapsed .toc-toggle {
+  position: fixed !important;
+  right: 20px;
+  top: 20%;
+  margin: 0;
+  z-index: 99999;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: box !important;
+  display: flex !important;
+}
+.toc-title {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  font-weight: bold;
+}
+.toc-toggle {
+  background: #595d62 /* 按钮背景颜色 */;
+  color: #fff /* 按钮文字颜色 */;
+  border: none;
+  border-radius: 50% /* 圆形按钮 */;
+  cursor: pointer;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.2) /* 添加阴影 */;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2) /* 添加阴影 */;
+  -webkit-transition: background 0.3s ease, -webkit-transform 0.3s ease /* 添加过渡效果 */;
+  -moz-transition: background 0.3s ease, -moz-transform 0.3s ease /* 添加过渡效果 */;
+  -ms-transition: background 0.3s ease, -ms-transform 0.3s ease /* 添加过渡效果 */;
+  transition: background 0.3s ease, transform 0.3s ease /* 添加过渡效果 */;
+/* 默认绝对定位，保证在折叠/展开状态均可见 */
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2000;
+  display: -webkit-box !important;
+  display: -moz-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: box !important;
+  display: flex !important;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  width: 40px;
+  height: 40px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto;
+  padding: 0;
+  line-height: 1;
+}
+.toc-toggle:hover {
+  background: #0056b3 /* 鼠标悬停时的背景颜色 */;
+  -webkit-transform: scale(1.1) /* 鼠标悬停时放大效果 */;
+  -moz-transform: scale(1.1) /* 鼠标悬停时放大效果 */;
+  -ms-transform: scale(1.1) /* 鼠标悬停时放大效果 */;
+  transform: scale(1.1) /* 鼠标悬停时放大效果 */;
+}
+#toc-content {
+  margin-top: 10px;
+  max-height: 400px /* 设置最大高度 */;
+  overflow-y: auto /* 如果内容超出高度，添加滚动条 */;
+}
+#toc-content.hidden {
+  display: none;
 }
 #toc {
   line-height: 1em;
@@ -1427,6 +1606,212 @@ ol.toc {
 }
 .lg-outer .lg-thumb-item {
   border-radius: 0 !important;
+}
+.toc-sidebar {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 20px;
+  background-color: #f9f9f9 /* 浅灰背景 */;
+  border-radius: 5px /* 圆角 */;
+  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.1) /* 添加阴影 */;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1) /* 添加阴影 */;
+  font-size: 0.9em;
+  color: #333 /* 默认字体颜色 */;
+  position: relative;
+  max-height: 400px /* 限制最大高度 */;
+  overflow-y: auto /* 超出内容滚动 */;
+  -webkit-transition: all 0.3s ease /* 添加过渡效果 */;
+  -moz-transition: all 0.3s ease /* 添加过渡效果 */;
+  -ms-transition: all 0.3s ease /* 添加过渡效果 */;
+  transition: all 0.3s ease /* 添加过渡效果 */;
+}
+.toc-sidebar:hover {
+  -webkit-box-shadow: 0 4px 10px rgba(0,0,0,0.2) /* 悬停时阴影增强 */;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2) /* 悬停时阴影增强 */;
+}
+.toc-sidebar .toc-title {
+  font-weight: bold;
+  font-size: 1em;
+  color: #555 /* 标题颜色 */;
+  margin-bottom: 10px;
+}
+.toc-sidebar ul {
+  padding-left: 20px;
+}
+.toc-sidebar ul li {
+  list-style-type: none;
+  margin-bottom: 5px;
+}
+.toc-sidebar ul li a {
+  color: #007bff /* 链接颜色 */;
+  text-decoration: none;
+}
+.toc-sidebar ul li a:hover {
+  color: #0056b3 /* 悬停时链接颜色 */;
+  text-decoration: underline;
+}
+.code-wrapper {
+  position: relative;
+}
+.code-wrapper pre {
+  margin: 0;
+}
+.code-wrapper .code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.code-wrapper .code-copy-btn:hover {
+  background: rgba(0,0,0,0.8);
+}
+.code-wrapper .code-copy-tip {
+  position: absolute;
+  top: 32px;
+  right: 8px;
+  -webkit-transform: translateX(50%);
+  -moz-transform: translateX(50%);
+  -ms-transform: translateX(50%);
+  transform: translateX(50%);
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  z-index: 6;
+  white-space: nowrap;
+  opacity: 0;
+  -webkit-animation: fade-in-out 1.2s forwards;
+  -moz-animation: fade-in-out 1.2s forwards;
+  -ms-animation: fade-in-out 1.2s forwards;
+  animation: fade-in-out 1.2s forwards;
+}
+@-moz-keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  20% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+}
+@-webkit-keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  20% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+}
+@-o-keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  20% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+}
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
+  20% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(-5px);
+    -moz-transform: translateY(-5px);
+    -ms-transform: translateY(-5px);
+    transform: translateY(-5px);
+  }
 }
 #comments {
   padding: 20px;
