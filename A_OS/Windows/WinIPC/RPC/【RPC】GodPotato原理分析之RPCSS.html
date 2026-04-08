@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【RPC】GodPotato原理分析之RPCSS</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【RPC】GodPotato原理分析之RPCSS"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【RPC】GodPotato原理分析之RPCSS"/><meta name="twitter:description" content="概述：在 [[【RPC】GodPotato原理分析|GodPotato原理分析 文中，描述了 GodPotato 的大致逻辑，但是对核心的处理操作部分没有处理，也就是——RPCSS 的接口 Hook 部分，本文就这一部分进行记录。 调试环境 Windows Server 2016 前文：GodPotato原理分析 调试 代码部分我们已经了解了，那么调试部分就比较简单了，双机调试挂载目标进程，在 combase!_UseProtseq 处下断点即可。当然，整体的流程可以结合 IDA 反汇编的代码查看。 UseProtseq 函数原型 ⚠️ 注意 UseProtseq 在不同版本下的参数可能不同..."/><meta property="og:description" content="概述：在 [[【RPC】GodPotato原理分析|GodPotato原理分析 文中，描述了 GodPotato 的大致逻辑，但是对核心的处理操作部分没有处理，也就是——RPCSS 的接口 Hook 部分，本文就这一部分进行记录。 调试环境 Windows Server 2016 前文：GodPotato原理分析 调试 代码部分我们已经了解了，那么调试部分就比较简单了，双机调试挂载目标进程，在 combase!_UseProtseq 处下断点即可。当然，整体的流程可以结合 IDA 反汇编的代码查看。 UseProtseq 函数原型 ⚠️ 注意 UseProtseq 在不同版本下的参数可能不同..."/><meta property="og:image:alt" content="概述：在 [[【RPC】GodPotato原理分析|GodPotato原理分析 文中，描述了 GodPotato 的大致逻辑，但是对核心的处理操作部分没有处理，也就是——RPCSS 的接口 Hook 部分，本文就这一部分进行记录。 调试环境 Windows Server 2016 前文：GodPotato原理分析 调试 代码部分我们已经了解了，那么调试部分就比较简单了，双机调试挂载目标进程，在 combase!_UseProtseq 处下断点即可。当然，整体的流程可以结合 IDA 反汇编的代码查看。 UseProtseq 函数原型 ⚠️ 注意 UseProtseq 在不同版本下的参数可能不同..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/A_OS/Windows/WinIPC/RPC/【RPC】GodPotato原理分析之RPCSS"/><meta property="twitter:url" content="https://holdyounger.github.io/A_OS/Windows/WinIPC/RPC/【RPC】GodPotato原理分析之RPCSS"/><link rel="icon" href="../../../../static/icon.png"/><meta name="description" content="概述：在 [[【RPC】GodPotato原理分析|GodPotato原理分析 文中，描述了 GodPotato 的大致逻辑，但是对核心的处理操作部分没有处理，也就是——RPCSS 的接口 Hook 部分，本文就这一部分进行记录。 调试环境 Windows Server 2016 前文：GodPotato原理分析 调试 代码部分我们已经了解了，那么调试部分就比较简单了，双机调试挂载目标进程，在 combase!_UseProtseq 处下断点即可。当然，整体的流程可以结合 IDA 反汇编的代码查看。 UseProtseq 函数原型 ⚠️ 注意 UseProtseq 在不同版本下的参数可能不同..."/><meta name="generator" content="Quartz"/><link href="../../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="A_OS/Windows/WinIPC/RPC/【RPC】GodPotato原理分析之RPCSS"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-231"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-231" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/">A_OS</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/">Windows</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/WinIPC/">WinIPC</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/WinIPC/RPC/">RPC</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【RPC】GodPotato原理分析之RPCSS</a></div></nav><h1 class="article-title">【RPC】GodPotato原理分析之RPCSS</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:48.905Z">2026年4月07日</time><span>16分钟阅读</span></p><ul class="tags"><li><a href="../../../../tags/Windows开发/RPC" class="internal tag-link">Windows开发/RPC</a></li><li><a href="../../../../tags/漏洞利用/Potato提权" class="internal tag-link">漏洞利用/Potato提权</a></li></ul></div></div><article class="popover-hint"><blockquote>
+<p>概述：在 [[<a href="../../../../【RPC】[[【RPC】GodPotato原理分析|GodPotato原理分析]]" class="internal alias" data-slug="【RPC】[[【RPC】GodPotato原理分析|GodPotato原理分析]]">【RPC】GodPotato原理分析|GodPotato原理分析</a> 文中，描述了 GodPotato 的大致逻辑，但是对核心的处理操作部分没有处理，也就是——RPCSS 的接口 <a href="../../../../A_OS/Windows/注入与Hook/【Hook】Hook模版" class="internal alias" data-slug="A_OS/Windows/注入与Hook/【Hook】Hook模版">Hook</a> 部分，本文就这一部分进行记录。</p>
+</blockquote>
+
+<blockquote class="callout info" data-callout="info">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>调试环境 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Windows Server 2016</p>
+</div>
+</blockquote>
+<p>前文：<a href="../../../../【[[【调试技术】RPC|RPC]]】GodPotato原理分析" class="internal alias" data-slug="【[[【调试技术】RPC|RPC]]】GodPotato原理分析">GodPotato原理分析</a></p>
+<h2 id="调试">调试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调试" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>代码部分我们已经了解了，那么调试部分就比较简单了，<a href="../../../../wiki/调试技术/【调试技术】双机调试-串口调试" class="internal alias" data-slug="wiki/调试技术/【调试技术】双机调试-串口调试">双机调试</a>挂载目标进程，在 <code>combase!_UseProtseq</code> 处下断点即可。当然，整体的流程可以结合 <a href="../../../../G_工具/【工具】IDA-使用详记" class="internal alias" data-slug="G_工具/【工具】IDA-使用详记">IDA</a> 反汇编的代码查看。</p>
+<p><strong>UseProtseq 函数原型</strong></p>
+<p>⚠️ 注意 <code>UseProtseq</code> 在不同版本下的参数可能不同</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">__int64</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> __fastcall</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> UseProtseq</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">hRpc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        unsigned</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> __int16</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> wTowerId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">        unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> int</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">pdwTCPPort</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        tagDUALSTRINGARRAY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> **</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">ppsaNewBindings</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        tagDUALSTRINGARRAY</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> **</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">ppsaSecurity</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></figure>
+<h3 id="调试准备">调试准备<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调试准备" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ol>
+<li>
+<p>添加进程断点</p>
+<pre><code>!gflag +ksl;
+sxe cpr:GodPotato.exe
+</code></pre>
+</li>
+<li>
+<p>查看被调用接口
+这个断点需要添加在 <code>rpcss</code> 服务中</p>
+<pre><code>bu RPCRT4!Invoke+0x73-2d &quot;.echo \&quot;RPCRT4!Invoke Call:\&quot;;u r10 l5;gc&quot;
+</code></pre>
+<p>或者我们也可以在被调试程序(GodPotato)中添加 <code>RPCRT4!NdrClientCall2</code> 断点查看 RPC 都调用了那些接口：</p>
+<pre><code>bu RPCRT4!NdrClientCall2 &quot;k&quot;
+</code></pre>
+</li>
+<li>
+<p>查看 GodPotato Hook 接口</p>
+<pre><code>bp combase!_UseProtseq
+</code></pre>
+</li>
+</ol>
+<h3 id="触发断点">触发断点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#触发断点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 GodPotato 源码中，调用 <code>unmarshalTrigger.Trigger()</code> 就触发相关断点了（最终调用的是 <code>combase!CoUnmarshalInterface</code>）。</p>
+<h4 id="clientresolveoxid-断点"><code>ClientResolveOXID</code> 断点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#clientresolveoxid-断点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><code>CoUnmarshalInterface</code> 接口调用时，使用了正常申请的 <code>OXID</code> 来定位和访问服务器上的对象，这一步 RPC 操作是验证 <code>OXID</code>，<code>GodPotato</code> 发起的堆栈如下所示：</p>
+<pre><code># Child-SP          RetAddr               Call Site
+00 00000000`008fde28 00007ffb`c9a3963a     RPCRT4!NdrClientCall2
+01 (Inline Function) --------`--------     combase!ClientResolveOXID+0x4a [onecore\com\combase\idl\internal\daytona\objfre\amd64\lclor_c.c @ 279]
+02 00000000`008fde30 00007ffb`c99db6c3     combase!CRpcResolver::ClientResolveOXID+0xca [onecore\com\combase\dcomrem\resolver.cxx @ 1207]
+03 00000000`008fdec0 00007ffb`c98f3597     combase!COXIDTable::ClientResolveOXID+0x1190db [onecore\com\combase\dcomrem\ipidtbl.cxx @ 3111]
+04 00000000`008fe070 00007ffb`c98efd6b     combase!ReadObjRef+0x247 [onecore\com\combase\dcomrem\marshal.cxx @ 9974]
+05 00000000`008fe140 00007ffb`74d6d1e7     combase!CoUnmarshalInterface+0x7b [onecore\com\combase\dcomrem\coapi.cxx @ 1962]
+06 00000000`008fe5f0 00007ffb`154fa678     mscorwks!DoNDirectCall__PatchGetThreadCall+0x7b
+07 00000000`008fe690 00007ffb`154fa3d8     0x00007ffb`154fa678
+08 00000000`008fe7f0 00007ffb`154fa32b     0x00007ffb`154fa3d8
+09 00000000`008fe840 00007ffb`154f8c78     0x00007ffb`154fa32b
+0a 00000000`008fe8b0 00007ffb`154f06e4     0x00007ffb`154f8c78
+0b 00000000`008feb50 00007ffb`74d6d9c2     0x00007ffb`154f06e4
+0c 00000000`008fee70 00007ffb`74c75a23     mscorwks!CallDescrWorker+0x82
+0d 00000000`008feec0 00007ffb`7515d231     mscorwks!CallDescrWorkerWithHandler+0xd3
+0e 00000000`008fef60 00007ffb`74cc73b3     mscorwks!MethodDesc::CallDescr+0x2b1
+0f 00000000`008ff1a0 00007ffb`74ce9b88     mscorwks!ClassLoader::RunMain+0x22b
+10 00000000`008ff400 00007ffb`7524c6bd     mscorwks!Assembly::ExecuteMainMethod+0xbc
+11 00000000`008ff6f0 00007ffb`74cf6d73     mscorwks!SystemDomain::ExecuteMainMethod+0x47d
+12 00000000`008ffcc0 00007ffb`74cda434     mscorwks!ExecuteEXE+0x47
+13 00000000`008ffd10 00007ffb`b26ed6ea     mscorwks!CorExeMain+0xac
+14 00000000`008ffd70 00007ffb`b4bcac42     mscoreei!CorExeMain+0xfa
+15 00000000`008ffdd0 00007ffb`c8b97374     MSCOREE!CorExeMain_Exported+0x72
+16 00000000`008ffe00 00007ffb`caa7cc91     KERNEL32!BaseThreadInitThunk+0x14
+17 00000000`008ffe30 00000000`00000000     ntdll!RtlUserThreadStart+0x21
+</code></pre>
+<p>会通过 <code>rpc</code> 使用 <code>NdrClientCall2</code> 调用到 <code>rpcss</code> 服务的 <code>ClientResolveOXID</code></p>
+<blockquote class="callout info" data-callout="info">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p> <strong>ClientResolveOXID 功能说明：</strong></p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>在 COM 分布式环境中，对象导出标识符（OXID，Object Export Identifier）用于唯一标识服务器上的一个导出对象集。<code>ClientResolveOXID</code> 接口的主要功能是让客户端根据给定的 OXID 解析出与之关联的服务器信息和对象信息，从而建立与服务器上特定对象的连接，以便后续调用该对象的接口方法。</p>
+</div>
+</blockquote>
+<h4 id="resolveoxid2-调用">ResolveOxid2 调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#resolveoxid2-调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<blockquote>
+<p>当一个客户端要调用一个远程COM对象时，它需要通过 <code>ResolveOxid2 </code>函数来获取对象的绑定信息， 获取到的绑定信息通常会指向RPC端点映射器(\pipe\epmapper)，以便客户端可以进一步查询服务的端点信息</p>
+</blockquote>
+<p>首次 <code>rpcss!ClientResolveOXID</code> 被调用后，rpcss 就会通过 <code>ResolveOxid2</code> 来获取 <code>EndPoint</code> 这一步仍会通过 rpc 调用，</p>
+<p>位于 <code>rpcss</code> 中的 <code>ClientResolveOXID</code> 接口一步步（通过 <code>ResolveOxid2</code>）调用到 <code>rpcss!CProcess::UseProtseqIfNeeded</code>，这个接口同样是调用的 rpc 接口，被调用接口的相关信息如下所示：</p>
+<pre><code>1: kd> !NdrClientCall2
+ Tue Feb 11 17:57:13.679 2025 (UTC + 8:00) NdrClientCall2() Stack 
+	[RPC] Request Function: rpcss!CProcess::UseProtseqIfNeeded  
+addr_rpc_interface:0x7fff330b1080
+	[RPC] Caller Info:
+		Name:svchost.exe
+		PID:904
+		Command:C:\Windows\system32\svchost.exe -k RPCSS -p
+	[RPC] GUID&amp;Procederes: {18f70770-8e64-11cf-9af1-0020af6e72f4}:1
+@$NdrClientCall2()
+</code></pre>
+<p>可以看到被调用 rpc 的 <code>GUID</code> 为 <code>{18f70770-8e64-11cf-9af1-0020af6e72f4}</code>，调用接口 ID 为 <code>1</code>。这个 GUID 和 ID 是不是很熟悉 😂。就是 <code>UseProtseq</code> 接口（通过 Hook 修改的接口）。从 <code>UseProtseqIfNeeded</code> 调用到了 <code>GodPotato</code> 中<code>combase!UseProtseq</code></p>
+<p>调用堆栈如下所示：</p>
+<pre><code>0: kd> k
+ # Child-SP          RetAddr               Call Site
+00 00000016`b57fed28 00007fff`330489f0     rpcss!CProcess::UseProtseqIfNeeded
+01 00000016`b57fed30 00007fff`33051a27     rpcss!CServerOxid::LazyUseProtseq+0x58
+02 00000016`b57fed80 00007fff`33052943     rpcss!ResolveOxidCommon+0x1bb
+03 00000016`b57fef20 00007fff`36dea2d3     rpcss!ResolveOxid2+0x173
+04 00000016`b57fefb0 00007fff`36d825a7     RPCRT4!Invoke+0x73
+05 00000016`b57ff030 00007fff`36dd0c3a     RPCRT4!NdrStubCall2+0x3f7
+06 00000016`b57ff380 00007fff`36dcb128     RPCRT4!NdrServerCall2+0x1a
+07 00000016`b57ff3b0 00007fff`36da8146     RPCRT4!DispatchToStubInCNoAvrf+0x18
+08 00000016`b57ff400 00007fff`36da7a98     RPCRT4!RPC_INTERFACE::DispatchToStubWorker+0x1a6
+09 00000016`b57ff4e0 00007fff`36da8601     RPCRT4!RPC_INTERFACE::DispatchToStub+0xf8
+0a 00000016`b57ff550 00007fff`36da795f     RPCRT4!OSF_SCALL::DispatchHelper+0x125
+0b 00000016`b57ff670 00007fff`36da9265     RPCRT4!OSF_SCALL::DispatchRPCCall+0x7b
+0c 00000016`b57ff6a0 00007fff`36da8f49     RPCRT4!OSF_SCALL::ProcessReceivedPDU+0x2b9
+0d 00000016`b57ff770 00007fff`36dbc01f     RPCRT4!OSF_SCALL::BeginRpcCall+0xbd
+0e 00000016`b57ff7a0 00007fff`36db6dbd     RPCRT4!OSF_SCONNECTION::ProcessReceiveComplete+0x5eb
+0f 00000016`b57ff8a0 00007fff`36e45a04     RPCRT4!CO_ConnectionThreadPoolCallback+0xed
+10 00000016`b57ff920 00007fff`37a21d19     RPCRT4!CO_RecvInlineCompletion+0x24
+11 00000016`b57ff960 00007fff`379fd79a     ntdll!TppSimplepExecuteCallback+0x99
+12 00000016`b57ff9b0 00007fff`36847374     ntdll!TppWorkerThread+0x68a
+13 00000016`b57ffcb0 00007fff`379fcc91     KERNEL32!BaseThreadInitThunk+0x14
+14 00000016`b57ffce0 00000000`00000000     ntdll!RtlUserThreadStart+0x21
+</code></pre>
+<h4 id="infouseprotseqifneeded-发起的调用">【INFO】UseProtseqIfNeeded 发起的调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#infouseprotseqifneeded-发起的调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>UseProtseqIfNeeded 发起的调用信息是通过 CProcess::GetBindingHandleCopy 返回的 RPC_BINDING_HANDLE，这个接口可以看到调用客户端的 PID</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-12_14-40-6.png" alt="image2025-2-12_14-40-6"/></p>
+<p>相关调试信息如下所示，可以看到目标 PID 为 GodPotato：</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-12_14-44-38.png" alt="image2025-2-12_14-44-38"/></p>
+<h4 id="useprotseqifneed-被调用">UseProtseqIfNeed 被调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#useprotseqifneed-被调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>由于通过 Marshal.WriteIntPtr(DispatchTablePtr, Marshal.GetFunctionPointerForDelegate(useProtseqDelegate)); 写入的 Hook 直接修改了RPC调用表（DispatchTable）中 <code>UseProtseq</code> 的地址，这一步会直接调用到如下所示的位置，最后跳转到写入的 delegatefun 接口中</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-12_14-57-42.png" alt="image2025-2-12_14-57-42"/></p>
+<p>在 <code>delegatefun</code> 接口中，写入了需要被连接的服务端信息：</p>
+<ol>
+<li>“ncacn_np:localhost/pipe/GodPotato[\pipe\epmapper]”</li>
+<li>“ncacn_ip_<a href="../../../../B_Code/网络编程/tcp/【网络编程】tcp.flags" class="internal alias" data-slug="B_Code/网络编程/tcp/【网络编程】tcp.flags">TCP</a>:Second Call![135]”</li>
+</ol>
+<p>相关调试信息如下所示：</p>
+<pre><code>0:008> kvn
+ # Child-SP          RetAddr               : Args to Child                                                           : Call Site
+00 00000000`1bc7eba0 00007ffb`ca73a2d3     : 00000000`00eec480 00000000`00000007 00000000`00000000 00000000`00eed790 : mscorwks!UMThunkStubAMD64+0x7a
+01 00000000`1bc7ec40 00007ffb`ca6d25a7     : 00007ffb`c9b407e2 00000000`00eed5c0 00000000`00edb7a0 00000000`00000006 : RPCRT4!Invoke+0x73
+02 00000000`1bc7ecb0 00007ffb`ca720c3a     : 00000000`00000000 00000000`00000000 00000000`00eec5d0 00000000`1bc7f038 : RPCRT4!NdrStubCall2+0x3f7
+03 00000000`1bc7f000 00007ffb`ca71b128     : 00000000`00eed400 00000000`00000001 00000000`00000000 00007ffb`ca70d84d : RPCRT4!NdrServerCall2+0x1a
+04 00000000`1bc7f030 00007ffb`ca6f8146     : 00000000`1bc7f094 00000000`1bc7f090 00000000`1bc7f230 ffffffff`fffffffb : RPCRT4!DispatchToStubInCNoAvrf+0x18
+05 00000000`1bc7f080 00007ffb`ca6f7a98     : 00000000`00ee0d20 00000000`00000000 00000000`00000000 00000000`00000000 : RPCRT4!RPC_INTERFACE::DispatchToStubWorker+0x1a6
+06 00000000`1bc7f160 00007ffb`ca7050af     : 00000000`00000000 00000000`1bc7f2f8 00000000`00eec480 00000000`00ee0d20 : RPCRT4!RPC_INTERFACE::DispatchToStub+0xf8
+07 00000000`1bc7f1d0 00007ffb`ca7044b8     : 00000000`0001241b 00000000`00000001 00000000`00000000 00000000`00ee3e90 : RPCRT4!LRPC_SCALL::DispatchRequest+0x31f
+08 00000000`1bc7f2a0 00007ffb`ca703aa1     : 00000000`00e10000 00000000`00ee3bd0 00000000`00000000 00000000`00000000 : RPCRT4!LRPC_SCALL::HandleRequest+0x7f8
+09 00000000`1bc7f3b0 00007ffb`ca70350e     : 00000000`00000000 00000000`00000000 00000000`00000001 00000000`00edc6b0 : RPCRT4!LRPC_ADDRESS::HandleRequest+0x341
+0a 00000000`1bc7f450 00007ffb`ca707b62     : 00000000`00eed480 00000000`00edb7a0 00000000`00edc7b8 00000000`1bc7f828 : RPCRT4!LRPC_ADDRESS::ProcessIO+0x89e
+0b 00000000`1bc7f590 00007ffb`caa50330     : 00000000`00000000 00000000`1bc7f638 00000000`1bc7f828 00000000`00000000 : RPCRT4!LrpcIoComplete+0xc2
+0c 00000000`1bc7f630 00007ffb`caa7d566     : 00000000`00000000 00000000`00eca100 00000000`00000000 00000000`00edb760 : ntdll!TppAlpcpExecuteCallback+0x260
+0d 00000000`1bc7f6b0 00007ffb`c8b97374     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!TppWorkerThread+0x456
+0e 00000000`1bc7f9b0 00007ffb`caa7cc91     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x14
+0f 00000000`1bc7f9e0 00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x21
+0:008> dq 00000000`1bc7ec40
+00000000`1bc7ec40  00000000`00eec480 00000000`00000007
+00000000`1bc7ec50  00000000`00000000 00000000`00eed790
+00000000`1bc7ec60  00000000`00eed7a0 00000000`00eed7b0
+00000000`1bc7ec70  00000000`00000000 00007ffb`c9b406d2
+00000000`1bc7ec80  00000000`00eec5d0 00000000`1bc7f038
+00000000`1bc7ec90  00000000`00edb7a0 00000000`00000000
+00000000`1bc7eca0  00000000`00eec5d0 00007ffb`ca6d25a7
+00000000`1bc7ecb0  00007ffb`c9b407e2 00000000`00eed5c0
+0:008> dq 00000000`00eed7a0 l1
+00000000`00eed7a0  00000000`00eeeb00
+0:008> du 00000000`00eeeb00
+00000000`00eeeb00  &quot;OMncacn_np:localhost/pipe/GodPot&quot;
+00000000`00eeeb40  &quot;ato[\pipe\epmapper]&quot;
+0:008> du 00000000`00eeeb68
+00000000`00eeeb68  &quot;ncacn_ip_tcp:Second Call!&quot;
+ 
+ 
+# 写入的内容如下所示：
+00000000`00a462c0  4f 00 4d 00 6e 00 63 00-61 00 63 00 6e 00 5f 00  O.M.n.c.a.c.n._.
+00000000`00a462d0  6e 00 70 00 3a 00 6c 00-6f 00 63 00 61 00 6c 00  n.p.:.l.o.c.a.l.
+00000000`00a462e0  68 00 6f 00 73 00 74 00-2f 00 70 00 69 00 70 00  h.o.s.t./.p.i.p.
+00000000`00a462f0  65 00 2f 00 47 00 6f 00-64 00 50 00 6f 00 74 00  e./.G.o.d.P.o.t.
+00000000`00a46300  61 00 74 00 6f 00 5b 00-5c 00 70 00 69 00 70 00  a.t.o.[.\.p.i.p.
+00000000`00a46310  65 00 5c 00 65 00 70 00-6d 00 61 00 70 00 70 00  e.\.e.p.m.a.p.p.
+00000000`00a46320  65 00 72 00 5d 00 00 00-6e 00 63 00 61 00 63 00  e.r.]...n.c.a.c.
+00000000`00a46330  6e 00 5f 00 69 00 70 00-5f 00 74 00 63 00 70 00  n._.i.p._.t.c.p.
+00000000`00a46340  3a 00 53 00 65 00 63 00-6f 00 6e 00 64 00 20 00  :.S.e.c.o.n.d. .
+00000000`00a46350  43 00 61 00 6c 00 6c 00-21 00 00 00 00 00 00 00  C.a.l.l.!.......
+</code></pre>
+<h4 id="resolveoxid2-如何确定要调用的服务端是哪个">ResolveOxid2 如何确定要调用的服务端是哪个<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#resolveoxid2-如何确定要调用的服务端是哪个" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在 UseProtseq 调用返回后，如下所示的堆栈，在 ResolveOxidCommon+0x180 位置调用了 rpcss!CServerOxid::GetRemoteInfo ，其中 r8 结构体为 __MIDL_ILocalObjectExporter_0007，查看 r8 就可以看到</p>
+<pre><code>00 000000c7`0f8fe8d0 00007ffb`c60d2943     rpcss!ResolveOxidCommon+0x180
+01 000000c7`0f8fea70 00007ffb`ca73a2d3     rpcss!ResolveOxid2+0x173
+02 000000c7`0f8feb00 00007ffb`ca6d25a7     RPCRT4!Invoke+0x73
+ 
+ 
+# 查看调用的服务端
+1: kd> dt __MIDL_ILocalObjectExporter_0007 @r8
+combase!__MIDL_ILocalObjectExporter_0007
+   +0x000 dwTid            : 0xffffffff
+   +0x004 dwPid            : 0xbd4
+   +0x008 dwAuthnHint      : 5
+   +0x00c dcomVersion      : tagCOMVERSION
+   +0x010 containerVersion : CONTAINERVERSION
+   +0x028 ipidRemUnknown   : _GUID {0000fc01-0bd4-ffff-204e-8c9f56b06ce7}
+   +0x038 dwFlags          : 0x2000000
+   +0x040 psa              : (null)
+   +0x048 guidProcessIdentifier : _GUID {25897763-3dc2-4432-bd48-9d5ae6f0c61c}
+   +0x058 processHostId    : 0
+   +0x060 clientDependencyBehavior : 0 ( OR_OXID_CLIENT_DEPENDENCY_NONE )
+   +0x068 packageFullName  : (null)
+   +0x070 userSid          : (null)
+   +0x078 appcontainerSid  : (null)
+   +0x080 primaryOxid      : 0xb0a1aef8`d63b5b01
+   +0x088 primaryIpidRemUnknown : _GUID {0000fc01-0bd4-ffff-204e-8c9f56b06ce7}
+1: kd> !process 0xbd4 0
+Searching for Process with Cid == bd4
+PROCESS ffffd1817db76080
+    SessionId: 1  Cid: 0bd4    Peb: 0071e000  ParentCid: 1aa4
+    DirBase: 104e66000  ObjectTable: ffffe18381c45700  HandleCount: 237.
+    Image: GodPotato.exe
+</code></pre>
+<h4 id="正常调用下-useportseq-的返回">正常调用下 UsePortSeq 的返回<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#正常调用下-useportseq-的返回" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在不Hook情况下调用时，UseProtSeq 中通过 CopyDsaWithSecurityBindings 获取绑定的信息，如下所示：</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-17_17-46-26.png" alt="image2025-2-17_17-46-26"/></p>
+<p>返回内容如下所示：</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-17_17-48-3.png" alt="image2025-2-17_17-48-3"/></p>
+<h4 id="godpotato-hook-情况下的返回">GodPotato Hook 情况下的返回<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#godpotato-hook-情况下的返回" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>ClientResolveOXID 在启用 Hook 情况下的调试。</p>
+<h5 id="在-godpotato-查看发起的调用信息">在 GodPotato 查看发起的调用信息：<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#在-godpotato-查看发起的调用信息" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-12_18-7-0.png" alt="image2025-2-12_18-7-0"/></p>
+<p>如上图所示，从 GodPotato 的 combase!ClientResolveOXID 开始，可以看到此时发起的请求信息，所请求的 rpc 接口为：<strong>{e60c73e6-88f9-11cf-9af1-0020af6e72f4}:5</strong>，该接口如下所示：</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-12_18-23-29.png" alt="image2025-2-12_18-23-29"/></p>
+<h5 id="rpcss-服务中-_clientresolveoxid-的第一次调用">RPCSS 服务中 _ClientResolveOXID 的第一次调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rpcss-服务中-_clientresolveoxid-的第一次调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>第一次调用时为了绑定 rpc ，让 rpcss 可以调用到 <code>rpcss!ResolveOxid2</code>，相关信息如下所示：</p>
+<pre><code>Protocol:00007ffb`c6132400  &quot;ncacn_ip_tcp&quot;
+NetworkAddr:0000026a`9d33d476  &quot;127.0.0.1&quot;
+Endpoint:00007ffb`c613c5a8  &quot;135&quot;
+rax=000000c70f8fe3f0 rbx=0000026a9d535720 rcx=0000000000000000
+rdx=00007ffbc6132400 rsi=00007ffbc6132400 rdi=00007ffbc613c5a8
+rip=00007ffbc6106cd7 rsp=000000c70f8fe370 rbp=0000026a9d33d476
+ r8=0000026a9d33d476  r9=00007ffbc613c5a8 r10=0000000000000000
+r11=0000000000000246 r12=0000000000000000 r13=0000026a9cd0d570
+r14=000000c70f8fe530 r15=843a9ba89403af3c
+iopl=0         nv up ei pl zr na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000246
+rpcss!CreateRemoteBindingToOr+0x6b:
+0033:00007ffb`c6106cd7 48ff151a660200  call    qword ptr [rpcss!_imp_RpcStringBindingComposeW (00007ffb`c612d2f8)] ds:002b:00007ffb`c612d2f8={RPCRT4!RpcStringBindingComposeW (00007ffb`ca6e38d0)}
+0: kd> k
+ # Child-SP          RetAddr               Call Site
+00 000000c7`0f8fe370 00007ffb`c60d65a8     rpcss!CreateRemoteBindingToOr+0x6b
+01 000000c7`0f8fe3e0 00007ffb`c6072d65     rpcss!CMid::GetBinding+0x488
+02 000000c7`0f8fe4c0 00007ffb`c606e451     rpcss!ResolveClientOXID+0xa05
+03 000000c7`0f8fe9d0 00007ffb`ca73a2d3     rpcss!_ClientResolveOXID+0xe1
+04 000000c7`0f8fea80 00007ffb`ca6d25a7     RPCRT4!Invoke+0x73
+05 000000c7`0f8feb10 00007ffb`ca720c3a     RPCRT4!NdrStubCall2+0x3f7
+06 000000c7`0f8fee60 00007ffb`ca71b128     RPCRT4!NdrServerCall2+0x1a
+07 000000c7`0f8fee90 00007ffb`ca6f8146     RPCRT4!DispatchToStubInCNoAvrf+0x18
+08 000000c7`0f8feee0 00007ffb`ca6f7a98     RPCRT4!RPC_INTERFACE::DispatchToStubWorker+0x1a6
+09 000000c7`0f8fefc0 00007ffb`ca7050af     RPCRT4!RPC_INTERFACE::DispatchToStub+0xf8
+0a 000000c7`0f8ff030 00007ffb`ca7044b8     RPCRT4!LRPC_SCALL::DispatchRequest+0x31f
+0b 000000c7`0f8ff100 00007ffb`ca703aa1     RPCRT4!LRPC_SCALL::HandleRequest+0x7f8
+0c 000000c7`0f8ff210 00007ffb`ca70350e     RPCRT4!LRPC_ADDRESS::HandleRequest+0x341
+0d 000000c7`0f8ff2b0 00007ffb`ca707b62     RPCRT4!LRPC_ADDRESS::ProcessIO+0x89e
+0e 000000c7`0f8ff3f0 00007ffb`caa50330     RPCRT4!LrpcIoComplete+0xc2
+0f 000000c7`0f8ff490 00007ffb`caa7d566     ntdll!TppAlpcpExecuteCallback+0x260
+10 000000c7`0f8ff510 00007ffb`c8b97374     ntdll!TppWorkerThread+0x456
+11 000000c7`0f8ff810 00007ffb`caa7cc91     KERNEL32!BaseThreadInitThunk+0x14
+12 000000c7`0f8ff840 00000000`00000000     ntdll!RtlUserThreadStart+0x21
+</code></pre>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-13_9-12-14.png" alt="image2025-2-13_9-12-14"/></p>
+<h5 id="rpcss-服务中-_clientresolveoxid-的第二次调用">RPCSS 服务中 _ClientResolveOXID 的第二次调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rpcss-服务中-_clientresolveoxid-的第二次调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<pre><code>Protocol:00007ffb`c613c5d8  &quot;ncacn_np&quot;
+NetworkAddr:000000c7`0f8fe262  &quot;localhost/pipe/GodPotato&quot;
+Endpoint:00007ffb`c613c5f0  &quot;\pipe\epmapper&quot;
+rax=000000c70f8fe250 rbx=000000c70f8fe260 rcx=0000000000000000
+rdx=00007ffbc613c5d8 rsi=00007ffbc613c5d8 rdi=00007ffbc613c5f0
+rip=00007ffbc6106cd7 rsp=000000c70f8fe1d0 rbp=000000c70f8fe262
+ r8=000000c70f8fe262  r9=00007ffbc613c5f0 r10=000000007fffffd4
+r11=0000000080070057 r12=0000000000000000 r13=0000000000000001
+r14=0000026a9d2bf940 r15=0000000000000000
+iopl=0         nv up ei pl zr na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00000246
+rpcss!CreateRemoteBindingToOr+0x6b:
+0033:00007ffb`c6106cd7 48ff151a660200  call    qword ptr [rpcss!_imp_RpcStringBindingComposeW (00007ffb`c612d2f8)] ds:002b:00007ffb`c612d2f8={RPCRT4!RpcStringBindingComposeW (00007ffb`ca6e38d0)}
+0: kd> k
+ # Child-SP          RetAddr               Call Site
+00 000000c7`0f8fe1d0 00007ffb`c60d60ea     rpcss!CreateRemoteBindingToOr+0x6b
+01 000000c7`0f8fe240 00007ffb`c60c9d39     rpcss!TestBindingGetHandle+0x18a
+02 000000c7`0f8fe2f0 00007ffb`c60d5938     rpcss!CTestBindingPPing::NextCall+0x29
+03 000000c7`0f8fe340 00007ffb`c60b8b26     rpcss!CParallelPing::Ping+0x1b8
+04 000000c7`0f8fe3b0 00007ffb`c6073a73     rpcss!CClientOxid::GetInfo+0x449e6
+05 000000c7`0f8fe4c0 00007ffb`c606e451     rpcss!ResolveClientOXID+0x1713
+06 000000c7`0f8fe9d0 00007ffb`ca73a2d3     rpcss!_ClientResolveOXID+0xe1
+07 000000c7`0f8fea80 00007ffb`ca6d25a7     RPCRT4!Invoke+0x73
+08 000000c7`0f8feb10 00007ffb`ca720c3a     RPCRT4!NdrStubCall2+0x3f7
+09 000000c7`0f8fee60 00007ffb`ca71b128     RPCRT4!NdrServerCall2+0x1a
+0a 000000c7`0f8fee90 00007ffb`ca6f8146     RPCRT4!DispatchToStubInCNoAvrf+0x18
+0b 000000c7`0f8feee0 00007ffb`ca6f7a98     RPCRT4!RPC_INTERFACE::DispatchToStubWorker+0x1a6
+0c 000000c7`0f8fefc0 00007ffb`ca7050af     RPCRT4!RPC_INTERFACE::DispatchToStub+0xf8
+0d 000000c7`0f8ff030 00007ffb`ca7044b8     RPCRT4!LRPC_SCALL::DispatchRequest+0x31f
+0e 000000c7`0f8ff100 00007ffb`ca703aa1     RPCRT4!LRPC_SCALL::HandleRequest+0x7f8
+0f 000000c7`0f8ff210 00007ffb`ca70350e     RPCRT4!LRPC_ADDRESS::HandleRequest+0x341
+10 000000c7`0f8ff2b0 00007ffb`ca707b62     RPCRT4!LRPC_ADDRESS::ProcessIO+0x89e
+11 000000c7`0f8ff3f0 00007ffb`caa50330     RPCRT4!LrpcIoComplete+0xc2
+12 000000c7`0f8ff490 00007ffb`caa7d566     ntdll!TppAlpcpExecuteCallback+0x260
+13 000000c7`0f8ff510 00007ffb`c8b97374     ntdll!TppWorkerThread+0x456
+14 000000c7`0f8ff810 00007ffb`caa7cc91     KERNEL32!BaseThreadInitThunk+0x14
+15 000000c7`0f8ff840 00000000`00000000     ntdll!RtlUserThreadStart+0x21
+</code></pre>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-13_11-47-49.png" alt="image2025-2-13_11-47-49"/></p>
+<p>与第一次调用的区别</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-17_15-31-12.png" alt="image2025-2-17_15-31-12"/></p>
+<h5 id="rpcss-服务中-_clientresolveoxid-的第三次调用">RPCSS 服务中 _ClientResolveOXID 的第三次调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rpcss-服务中-_clientresolveoxid-的第三次调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>验证了下只有 GodPotato 内写入两条 EndPoint 时，才能触发成功，后续补充下为什么写一个 EndPoint <a href="../../../../A_OS/Windows/权限与会话/【权限与会话】提权" class="internal alias" data-slug="A_OS/Windows/权限与会话/【权限与会话】提权">提权</a>失败的情况</p>
+<pre><code># 两次调用的堆栈是一样的
+1: kd> k
+ # Child-SP          RetAddr               Call Site
+00 00000016`b5afe5d0 00007fff`330560ea     rpcss!CreateRemoteBindingToOr+0x6b
+01 00000016`b5afe640 00007fff`33049d39     rpcss!TestBindingGetHandle+0x18a
+02 00000016`b5afe6b0 00007fff`33055938     rpcss!CTestBindingPPing::NextCall+0x29
+03 00000016`b5afe700 00007fff`33038b26     rpcss!CParallelPing::Ping+0x1b8
+04 00000016`b5afe770 00007fff`32ff3a73     rpcss!CClientOxid::GetInfo+0x449e6
+05 00000016`b5afe880 00007fff`32fee451     rpcss!ResolveClientOXID+0x1713
+06 00000016`b5afed90 00007fff`36dea2d3     rpcss!_ClientResolveOXID+0xe1
+07 00000016`b5afee40 00007fff`36d825a7     RPCRT4!Invoke+0x73
+08 00000016`b5afeed0 00007fff`36dd0c3a     RPCRT4!NdrStubCall2+0x3f7
+09 00000016`b5aff220 00007fff`36dcb128     RPCRT4!NdrServerCall2+0x1a
+0a 00000016`b5aff250 00007fff`36da8146     RPCRT4!DispatchToStubInCNoAvrf+0x18
+0b 00000016`b5aff2a0 00007fff`36da7a98     RPCRT4!RPC_INTERFACE::DispatchToStubWorker+0x1a6
+0c 00000016`b5aff380 00007fff`36db50af     RPCRT4!RPC_INTERFACE::DispatchToStub+0xf8
+0d 00000016`b5aff3f0 00007fff`36db44b8     RPCRT4!LRPC_SCALL::DispatchRequest+0x31f
+0e 00000016`b5aff4c0 00007fff`36db3aa1     RPCRT4!LRPC_SCALL::HandleRequest+0x7f8
+0f 00000016`b5aff5d0 00007fff`36db350e     RPCRT4!LRPC_ADDRESS::HandleRequest+0x341
+10 00000016`b5aff670 00007fff`36db7b62     RPCRT4!LRPC_ADDRESS::ProcessIO+0x89e
+11 00000016`b5aff7b0 00007fff`379d0330     RPCRT4!LrpcIoComplete+0xc2
+12 00000016`b5aff850 00007fff`379fd566     ntdll!TppAlpcpExecuteCallback+0x260
+13 00000016`b5aff8d0 00007fff`36847374     ntdll!TppWorkerThread+0x456
+14 00000016`b5affbd0 00007fff`379fcc91     KERNEL32!BaseThreadInitThunk+0x14
+15 00000016`b5affc00 00000000`00000000     ntdll!RtlUserThreadStart+0x21
+ 
+ 
+ 
+# RPC EndPoint 信息如下所示：
+Protocol:00007fff`330b2400  &quot;ncacn_ip_tcp&quot;
+NetworkAddr:00000016`b5afe662  &quot;Second Call!&quot;
+Endpoint:00007fff`330bc5a8  &quot;135&quot;
+</code></pre>
+<p>与 hook 写入的第一个 endpoint 对比如下：</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-17_15-55-1.png" alt="image2025-2-17_15-55-1"/></p>
+<h3 id="useprotseq-函数及参数说明">UseProtseq 函数及参数说明<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#useprotseq-函数及参数说明" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote>
+<p>相关参考：</p>
+<ol>
+<li><a href="../../../../B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串" class="internal alias" data-slug="B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串">字符串</a>绑定 - Win32 apps | Microsoft Learn
+<a href="https://learn.microsoft.com/zh-cn/windows/win32/rpc/string-binding" class="external">https://learn.microsoft.com/zh-cn/windows/win32/rpc/string-binding<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li>ncacn_np 属性 - Win32 apps | Microsoft Learn
+<a href="https://learn.microsoft.com/zh-cn/windows/win32/midl/ncacn-np" class="external">https://learn.microsoft.com/zh-cn/windows/win32/midl/ncacn-np<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li>终结点属性 - Win32 apps | Microsoft Learn
+<a href="https://learn.microsoft.com/zh-cn/windows/win32/midl/endpoint" class="external">https://learn.microsoft.com/zh-cn/windows/win32/midl/endpoint<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ol>
+</blockquote>
+<p>在 Hook 的 UseProtseq 函数中，主要修改了 ppdsaNewBindings 参数，写入了如下所示的两条 EndPoint 的相关信息：</p>
+<ol>
+<li>“ncacn_np:localhost/pipe/GodPotato[\pipe\epmapper]”</li>
+<li>“ncacn_ip_tcp:Second Call![135]“</li>
+</ol>
+<h4 id="endpoint">EndPoint<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#endpoint" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>[endpoint] 属性指定一个或多个已知端口， (通信终结点) 接口的服务器侦听呼叫。</p>
+<pre><code>endpoint(``&quot;protocol-sequence:[endpoint-port]&quot;` `[ , ...] )
+</code></pre>
+<h4 id="ncacn_np">ncacn_np<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ncacn_np" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>ncacn_np 关键字 (keyword) 将命名管道标识为终结点的协议系列。</p>
+<pre><code>endpoint(``&quot;ncacn_np:server-name[\\pipe\\pipe-name]&quot;``)
+</code></pre>
+<p>对于 “ncacn_np:localhost/pipe/GodPotato[\pipe\epmapper]” 形式的 EndPoint 来说，解析可以分为三个部分。分别是：</p>
+<ul>
+<li>协议：ncacn_np</li>
+<li>服务器名称：localhost/pipe/GodPotato</li>
+<li>管道名：\pipe\pipe-name</li>
+</ul>
+<p><strong>为什么服务器名称是 localhost/pipe/GodPotato ?</strong></p>
+<p>因为要连接的目标对象是本地（localhost）的服务端管道，填写本地IP也行，但是不能为空。</p>
+<pre><code>public` `readonly string serverPipe = $``&quot;\\\\.\\pipe\\{&quot;``GodPotato``&quot;}\\pipe\\epmapper&quot;``;
+</code></pre>
+<p>通过这个管道，GodPotato 才能通过模拟来获取高权限<a href="../../../../A_OS/Windows/权限与会话/【权限与会话】Windows-令牌" class="internal alias" data-slug="A_OS/Windows/权限与会话/【权限与会话】Windows-令牌">令牌</a>。</p>
+<p>\pipe\pipe-name 为管道信息</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image2025-2-18_17-51-17.png" alt="image2025-2-18_17-51-17"/></p>
+<p>总体流程如下所示：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\r\n\tA[GodPotato:CoUnmarshalInterface] --> B\r\n\tB[GodPotato:ClientResolveOXID2] -- RPC调用 --> C\r\n\tC[rpcss服务中的rpcss!ClientResolveOXID2] -- \&quot;绑定 ncacn_ip_tcp:127.0.0.1[135]\&quot; --> D\r\n\tD[rpcss!ResolveOxid2] --> E\r\n\tE[rpcss!CProcess::UseProtseqIfNeeded] -- 获取 EndPoint 信息 --> F\r\n\tF[GodPotato!HookFun->combase!UseProtseq] -- 返回自己创建的 EndPoint --> G\r\n\tG[rpcss:ClientResolveOXID2] -- 解析返回的第一个 EndPoint --> H\r\n\tH[rpcss:ClientResolveOXID2] -- 解析返回的第二个 EndPoint --> I\r\n\tI[连接到 GodPotato 中创建的服务端]&quot;">flowchart TD
+	A[GodPotato:CoUnmarshalInterface] --> B
+	B[GodPotato:ClientResolveOXID2] -- RPC调用 --> C
+	C[rpcss服务中的rpcss!ClientResolveOXID2] -- &quot;绑定 ncacn_ip_tcp:127.0.0.1[135]&quot; --> D
+	D[rpcss!ResolveOxid2] --> E
+	E[rpcss!CProcess::UseProtseqIfNeeded] -- 获取 EndPoint 信息 --> F
+	F[GodPotato!HookFun->combase!UseProtseq] -- 返回自己创建的 EndPoint --> G
+	G[rpcss:ClientResolveOXID2] -- 解析返回的第一个 EndPoint --> H
+	H[rpcss:ClientResolveOXID2] -- 解析返回的第二个 EndPoint --> I
+	I[连接到 GodPotato 中创建的服务端]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="useprotseq-断点"><code>UseProtseq</code> 断点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#useprotseq-断点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><code>dt /v
+# 或者
+dx -r1 Debugger.State.Scripts.CodeFlow.Contents.host.currentThread.Stack.Frames[0]
+</code></pre>
+<p>主要关注参数 <code>ppsaNewBindings</code> 就行</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image-20250113163645797.png" alt="image-20250113163645797"/></p>
+<p>代码中对 <code>ppsaNewBindings</code> 的使用就只有 <code>CopyStringArray</code></p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image-20250113163811219.png" alt="image-20250113163811219"/></p>
+<p>在 <code>call    combase!CopyStringArray</code> 处添加断点，然后看执行完成后的内容就行。单步跳过，查看写入的内容</p>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image-20250113164001427.png" alt="image-20250113164001427"/></p>
+<p>可以看到其写入的内容由三部分，<code>WNameEntries</code>、<code>wSecurityOffset</code>、<code>aStringArray</code></p>
+<ul>
+<li><code>WNameEntries</code>: <code>aStringArray</code> 的长度</li>
+<li><code>wSecurityOffset</code>：<code>UseProtseq</code> 的最后一个参数的长度</li>
+</ul>
+<p>其中 <code>aStringArray</code> 的内容为 <code>ncalrpc:[OLE9EC507FE2C47565F9B30D6BC6C29]</code>。而 GodPotato 则修改了这一部分逻辑，写入的 <code>ncacn_np:localhost/pipe/GodPotato[\pipe\epmapper]</code>
+<img src="../../../../【RPC】GodPotato原理分析之RPCSS/image-20250116142917217.png" alt="调试截图"/></p>
+<h2 id="获取参数个数">获取参数个数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#获取参数个数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   FullPtrUsed : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   RpcSsAllocUsed : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   ObjectProc : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasRpcFlags : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   IgnoreObjectException : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasCommOrFault : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   UseNewInitRoutines : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   Unused : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">INTERPRETER_FLAGS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PINTERPRETER_FLAGS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   ServerMustSize : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   ClientMustSize : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasReturn : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasPipes : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   Unused : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasAsyncUuid : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasExtensions : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">   HasAsyncHandle : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">INTERPRETER_OPT_FLAGS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PINTERPRETER_OPT_FLAGS</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _NDR_DCOM_OI2_PROC_HEADER</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">               HandleType;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // The Oi header</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    INTERPRETER_FLAGS           OldOiFlags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              RpcFlagsLow;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">       //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              RpcFlagsHi;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              ProcNum;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              StackSize;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">         //</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // expl handle descr is never generated        //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              ClientBufferSize;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  // The Oi2 header</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> short</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">              ServerBufferSize;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  //</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    INTERPRETER_OPT_FLAGS       Oi2Flags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          //</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">               NumberParams;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      //</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">NDR_DCOM_OI2_PROC_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PNDR_DCOM_OI2_PROC_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h2 id="rpc结构体解析">RPC结构体解析<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rpc结构体解析" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这里我参考 GodPotato 的 [[【.Net】index|C#]] 版本实现了 C++ 版本的解析。同时尽可能的完善了部分细节以便于学习了解相关结构体。</p>
+<p>链接：<a href="https://Github.com/holdyounger/DecodeRPCStruct" class="external">holdyounger/DecodeRPCStruct: Decode RPC_SERVER_INTERFACE Struct，take combase.dll as an example<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>对于 <code>ProcString</code> 字段的解析参考了 <code>rpcrt4!MulNdrpInitializeContextFromProc</code> 函数。</p>
+<p>对应代码的 PE 文件可以使用 <a href="https://github.com/holdyounger/DecodeRPCStruct/actions/runs/12923652850" class="external">https://github.com/holdyounger/DecodeRPCStruct/actions/runs/12923652850<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="godpotato-管道建立调试">GodPotato 管道建立调试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#godpotato-管道建立调试" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>记录下管道连接过程</p>
+<ol>
+<li>
+<p>通过 <code>NMP_CreateFile</code> 连接 GodPotato 的管道</p>
+<pre><code>bp RPCRT4!NMP_CreateFile &quot;du @rcx&quot;
+</code></pre>
+</li>
+<li>
+<p>调用 <code>IopCreateFile</code></p>
+<pre><code>bp nt!IopCreateFile &quot;dt _OBJECT_ATTRIBUTES @r8;.thread&quot;
+
+
+#调用了两次
+1. \??\UNC\localhost\pipe\GodPotato\pipe\epmapper·
+2. \Device\NamedPipe\GodPotato\pipe\epmapper
+</code></pre>
+<p><img src="../../../../【RPC】GodPotato原理分析之RPCSS/image-20250226124255575.png" alt="image-20250226124255575"/></p>
+</li>
+<li></li>
+</ol></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-59" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#调试" data-for="调试">调试</a></li><li class="depth-1"><a href="#调试准备" data-for="调试准备">调试准备</a></li><li class="depth-1"><a href="#触发断点" data-for="触发断点">触发断点</a></li><li class="depth-1"><a href="#useprotseq-函数及参数说明" data-for="useprotseq-函数及参数说明">UseProtseq 函数及参数说明</a></li><li class="depth-0"><a href="#获取参数个数" data-for="获取参数个数">获取参数个数</a></li><li class="depth-0"><a href="#rpc结构体解析" data-for="rpc结构体解析">RPC结构体解析</a></li><li class="depth-0"><a href="#godpotato-管道建立调试" data-for="godpotato-管道建立调试">GodPotato 管道建立调试</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../../postscript.js" type="module" data-persist="true"></script></html>

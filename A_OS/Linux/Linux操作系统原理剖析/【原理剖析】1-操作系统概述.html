@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【原理剖析】Linux操作系统原理剖析——操作系统概述</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【原理剖析】Linux操作系统原理剖析——操作系统概述"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【原理剖析】Linux操作系统原理剖析——操作系统概述"/><meta name="twitter:description" content="概述：本章知识点 什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍 0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图： 可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。 操作..."/><meta property="og:description" content="概述：本章知识点 什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍 0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图： 可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。 操作..."/><meta property="og:image:alt" content="概述：本章知识点 什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍 0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图： 可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。 操作..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】1-操作系统概述"/><meta property="twitter:url" content="https://holdyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】1-操作系统概述"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="概述：本章知识点 什么是操作系统 操作系统有哪些功能 操作系统的发展历史 操作系统的分类 操作系统的结构组成 Linux 操作系统介绍 0x01 什么是操作系统 众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图： 可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。 操作..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="A_OS/Linux/Linux操作系统原理剖析/【原理剖析】1-操作系统概述"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-41"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-41" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/">A_OS</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/Linux/">Linux</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/Linux/Linux操作系统原理剖析/">Linux操作系统原理剖析</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【原理剖析】Linux操作系统原理剖析——操作系统概述</a></div></nav><h1 class="article-title">【原理剖析】Linux操作系统原理剖析——操作系统概述</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:48.008Z">2026年4月07日</time><span>17分钟阅读</span></p><ul class="tags"><li><a href="../../../tags/Linux" class="internal tag-link">Linux</a></li><li><a href="../../../tags/书籍/编程/《linux操作系统原理剖析》" class="internal tag-link">书籍/编程/《linux操作系统原理剖析》</a></li></ul></div></div><article class="popover-hint"><blockquote>
+<p>概述：本章知识点</p>
+<ul>
+<li>什么是操作系统</li>
+<li>操作系统有哪些功能</li>
+<li>操作系统的发展历史</li>
+<li>操作系统的分类</li>
+<li>操作系统的结构组成</li>
+<li>Linux <strong>操作系统介绍</strong></li>
+</ul>
+</blockquote>
+<h2 id="0x01-什么是操作系统">0x01 什么是操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x01-什么是操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>众所周知，计算机系统是有计算机硬件和计算机软件组成的，而计算机硬件主要是指大家所熟知的中央处理器（CPU）、硬盘、内存、主板、显卡等等，而计算机软件其实是分层次的，在计算机硬件上运行的计算机软件最底层其实就是操作系统。如下图所示，是计算机系统层次结构图：</p>
+<p><img src="../../../【原理剖析】1-操作系统概述/IMG-20240820093402643.png" alt="操作系统层次结构图"/></p>
+<p>可以说操作系统就是直接运行在计算机硬件裸机上的第一层软件，是操作系统为上层应用提供了计算机硬件的操作接口和基础功能，并将计算机硬件外设的数据信号等获取到的数据传递给上层应用。</p>
+<h2 id="操作系统有哪些功能">操作系统有哪些功能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#操作系统有哪些功能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>知道了操作系统在计算机系统中所处的位置后，就应该明白操作系统的主要目的就是为了方便用户使用计算机系统和提高计算机系统资源利用率而诞生的软件系统。</p>
+<p>操作系统的主要功能可用概况为以下两方面：</p>
+<ul>
+<li>提供人机接口</li>
+<li>管理计算机资源</li>
+</ul>
+<h3 id="人机接口">人机接口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#人机接口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>提供人机接口其实就是运行在计算机硬件上的操作系统为用户的使用提供了方式和方法。最简单的方式就是我们开发人员在计算机上基于操作系统进行软件的开发和使用，从而实现了程序的开发运行。</p>
+<p>大家都知道，像 C 、<a href="../../../B_Code/CPP/【CPP】开发经验" class="internal alias" data-slug="B_Code/CPP/【CPP】开发经验">C++</a> 一类的编译性语言编写的程序在真正运行起来之前是需要进行代码编译、链接后才能运行的。其中，代码编译是将高级语言编译成简单的二进制文件，而引入链接后就需要用到操作系统下的库的概念（尤其是动态库链接），最后到真正运行程序时，程序其实是在操作系统的基础上才运行起来的。</p>
+<p>现在，我们大家来简单练习一个最基本的程序员入门程序 “hello world!” 。大家基于现在的 Ubuntu 操作系统环境，在终端窗口下使用 <code>vim</code> 编辑器编写代码，具体命令如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vim</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello.c</span></span></code></pre></figure>
+<p>在打开的 VI 窗口中，使用 <code>i</code> 切换到输入状态，然后编写入如下代码：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;stdio.h></span></span>
+<span data-line> </span>
+<span data-line><span>int main(int argc, char **argv)</span></span>
+<span data-line><span>{</span></span>
+<span data-line><span>    printf(&quot;hello world!\n&quot;);</span></span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>在填写完代码内容后，按下 <code>Esc</code> 切换到正常模式，输入 <code>:wq</code> 保存内容退出 Vi 编辑器，然后通过以下命令完成 C 代码的编译：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 仅进行编译操作，不进行链接</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -c</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello.o</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 完成链接操作，产生可执行文件</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello.o</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello</span></span></code></pre></figure>
+<p>此时，产生的 <code>hello</code> 可执行文件就是基于 Ubuntu（Linux）操作系统的可以运行的程序，如果简单脱离这个操作系统，这个程序是无法运行起来的。我们可以通过 <code>file</code> 命令来查看这个文件的基本属性：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">file</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hello</span></span></code></pre></figure>
+<p>结果如下：</p>
+<p><img src="../../../【原理剖析】1-操作系统概述/IMG-20240820093402876.png" alt="图片描述"/></p>
+<p>通过这样简单的一个程序的编译、运行练习，大家应该明白操作系统所提供的人机接口是什么了吧？其实人机接口主要就是为了给人们提供与计算机进行交互的接口功能。</p>
+<h3 id="管理计算机资源">管理计算机资源<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#管理计算机资源" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>计算机系统的资源总的来说分为硬件资源和软件资源，硬件资源有处理器、存储器、外设等；软件资源则大部分指程序和数据。</p>
+<p>操作系统提供了大量用于管理这些资源的功能。具体如下：</p>
+<ul>
+<li>处理器资源管理：处理器调度、进程控制、进程通信、进程同步</li>
+<li>存储管理：<a href="../../../B_Code/CPP/【CPP】内存分配" class="internal alias" data-slug="B_Code/CPP/【CPP】内存分配">内存分配</a>、地址转换、内存保护、内存扩充</li>
+<li>设备管理：设备分配、缓冲管理、设备驱动、设备无关性</li>
+<li>文件管理：文件存储空间管理、目录管理、文件操作、文件权限控制</li>
+</ul>
+<p>下面通过一个简单的输入、输出程序来演示操作系统管理设备的功能，构建实现一个 <code>input</code> 的程序，创建源文件：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vim</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> input.c</span></span></code></pre></figure>
+<p>在源文件中添加如下内容：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;stdio.h></span></span>
+<span data-line> </span>
+<span data-line><span>int main(int argc, char **argv)</span></span>
+<span data-line><span>{</span></span>
+<span data-line><span>    char msg[128] = {0};</span></span>
+<span data-line><span>    int ret = 0;</span></span>
+<span data-line> </span>
+<span data-line><span>    printf(&quot;Please Input message: \n&quot;);</span></span>
+<span data-line><span>    scanf(&quot;%s&quot;, msg);</span></span>
+<span data-line> </span>
+<span data-line><span>    printf(&quot;Your input message : \n&quot;);</span></span>
+<span data-line><span>    printf(&quot;%s\n&quot;, msg);</span></span>
+<span data-line> </span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>添加完成代码后，使用编译器进行编译和运行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> input.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> input</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">./input</span></span></code></pre></figure>
+<p>执行结果如下：</p>
+<p><img src="../../../【原理剖析】1-操作系统概述/IMG-20240820093403055.png" alt="图片描述"/></p>
+<p>从这个程序的运行过程中能够看出，当程序执行开始，屏幕上会显示我们想要打印的<a href="../../../B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串" class="internal alias" data-slug="B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串">字符串</a>数据，这里就用到了操作系统的输出设备管理功能，将数据发送给显卡进行显示；然后我们通过键盘输入了消息数据，操作系统管理的输入设备（键盘）获取到我们敲击键盘的事件消息后拼成了最终输入的消息数据送给运行的应用程序，然后应用程序最终重新将获取到的数据打印显示到了屏幕上。具体流程参考如下：</p>
+<p><img src="../../../【原理剖析】1-操作系统概述/IMG-20240820093403107.png" alt="图片描述"/></p>
+<h2 id="0x03-操作系统的分类">0x03 操作系统的分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x03-操作系统的分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>从一开始的裸机到单任务处理的单片机，最后发展成为如今的多任务并发处理的现代计算机，计算机系统发展迅速，而在计算机系统中十分重要的操作系统也发展形成了多种类不同的操作系统。</p>
+<p>由于应对的场景不同，操作系统根据处理多任务的不同方式可以分为：</p>
+<ul>
+<li>分时操作系统：目前大部分桌面操作系统都属于分时操作系统，其中最主要的区别就是多任务分时共享计算机的处理资源。目前所见到的 Windows、Ubuntu、MacOS 等桌面操作系统都属于分时操作系统。</li>
+<li>实时操作系统：实时操作系统针对工业和需要及时处理数据消息而设计的操作系统，有及时性、可靠性等特点。这类型操作系统多指嵌入式操作系统，有 rtos、uCOSII 等等。</li>
+</ul>
+<h2 id="0x04-操作系统的结构组成">0x04 操作系统的结构组成<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x04-操作系统的结构组成" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>操作系统是一个大型的软件系统，是由许多独立功能的程序模块组成的，这些程序模块共同构成了一个完整的操作系统。大部分的操作系统都可以被分为这样两种结构：层次结构和微内核结构。</p>
+<ol>
+<li>层次结构 层次结构操作系统的设计思想主要是按照操作系统各个模块的功能和相互之间的依存关系而设计。而操作系统应该分为多少层，各个层应该在什么位置其实都是层次结构操作系统的设计关键点。处于最底层的程序模块往往成为操作系统的内核。这部分程序模块的功能包括系统中断处理程序、各个外设驱动程序、高优先级处理频率高的程序模块（如时钟管理程序、进程调度程序、低级通信模块、内存管理模块等等）。一般情况下，为了整个操作系统的效率，系统内核部分会在计算机系统工作过程中常驻内存中持续运行。</li>
+<li>微内核结构 与层次结构相对的就是微内核结构。微内核结构的操作系统其实就是把操作系统中的基本功能模块组织为操作系统的微内核，而其他功能模块尽量做到内核以外，通过调用内核来实现。微内核机构是具有如下优点：</li>
+</ol>
+<ul>
+<li>简化内核代码维护工作：微内核代码量少，结构简单易于维护。当需要增加操作系统功能时，通常情况下仅需要在内核以外进行即可；</li>
+<li>建构灵活：在微内核上可以开发实现多种类型的操作系统。例如：在微内核结构上提供一组 Unix 服务程序，那么操作系统对于用户来说就是 Unix 系统，而提供一组 Windows 服务程序则就像是 Windows 系统一样。</li>
+<li>安全性高：由于大部分的功能模块都是处于内核以外的部分运行实现，其实类似高级用户一样的层次，则相对于操作系统来说更安全，大部分功能模块产生的漏洞不会影响到系统内核部分。</li>
+<li>方便移植：由于硬件相关的部分都包含在微内核中，当需要进行系统移植时，只需要修改微内核代码以适应不同的硬件平台即可进行系统移植，而对于操作系统中各个功能模块以及更上层的应用层来说不需要做任何改变。</li>
+</ul>
+<h2 id="linux-操作系统介绍">Linux 操作系统介绍<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#linux-操作系统介绍" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>经过对操作系统的介绍，详细大家对于计算机系统中的操作系统应该有了一定的概念。本课程重点研究的操作系统是 Linux 操作系统，现在就简单介绍一下关于 Linux 操作系统。前面实现练习操作的 Ubuntu 桌面操作系统就是一个基于 Linux 内核实现的 Linux 桌面操作系统。</p>
+<p>Linux 系统有两种不同的含义：</p>
+<ul>
+<li>一方面单指 Linus Torvalds 维护的开源代码 Unix 类操作系统的内核 Linux；</li>
+<li>另一方面指的是以 Linux 内核为基础的整个操作系统，所以这种方式表示的 Linux 指的是包含内核、系统工具、完整的开发环境和应用的类 Unix 操作系统；</li>
+</ul>
+<p>Linux 现在是个人计算机和工作站上的 Unix 类操作系统。按照层次结构的观点，在同一种硬件平台上，Linux 可以提供和 Unix 相同的服务，即相同的用户级和程序员级接口。Linux 绝不是简化版的 Unix，相反，Linux 是强有力和具有创新意义的 Unix 操作系统，不仅继承了 Unix 的特征，而且在许多方面超过了 Unix 。作为 Unix 类操作系统，Linux 操作系统具有如下基本特征：</p>
+<ul>
+<li>是真正的多用户、多任务操作系统</li>
+<li>符合 POSIX 标准的操作系统</li>
+<li>提供具有内置安全措施的分层的文件系统</li>
+<li>提供 shell 命令解释程序和编程语言</li>
+<li>提供强大的管理功能，包括远程管理功能</li>
+<li>具有内核的编程接口</li>
+<li>具有图形用户接口</li>
+<li>具有大量有用的实用程序和通信、联网工具</li>
+<li>具有面向屏幕的编辑软件</li>
+</ul>
+<h2 id="linux的内核特征">Linux的内核特征<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#linux的内核特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Linux 操作系统的核心稳定而且高效，以独占的方式执行最底层任务，保证其他程序的正常运行是整个系统的核心和独特的性质。</p>
+<p>1、接口特色</p>
+<p>按照 POSIX 标准，可以运行 Unix 程序的系统就是 Unix，使用 Linux 系统也属于 Unix 的一种。为此，Linux 系统提供了和一般 Unix 系统相同的标准界面，包括程序级和用户级的。</p>
+<p>2、功能特色</p>
+<p>Linux 核心最早运行在 Intel 80386 系统 PC 机上，如今，Linux 已经能够正常运行在 APPLe、DEC alpha、MIPS、Motorola 等等一系列计算机上。同时，一些改进的嵌入式 Linux 核心也可以运行在手机、家电等设备上。Linux 系统支出多种硬件设备，并且由于 Linux 系统下的驱动程序的开发方式相比 Windows 等其他操作系统更为简单，所以越来越多的硬件厂商也针对 Linux 操作系统提供设备驱动。此外，Linux 的内存管理采用多级分页的方式；使用专用文件系统 Ext2 可以提供方便有效的文件共享及保护机制；内置 <a href="../../../B_Code/网络编程/tcp/【网络编程】tcp.flags" class="internal alias" data-slug="B_Code/网络编程/tcp/【网络编程】tcp.flags">TCP</a>/IP 协议栈也提供了各种高效的网络功能，包括基本的进程间通信、网络文件服务等等。</p>
+<h2 id="linux的版本查看">Linux的版本查看<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#linux的版本查看" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Linux 内核采用的是双树系统，一棵树是稳定树，主要用于发行；另一棵树是非稳定树或者开发树，用于产品开发、改进。Linux 版本序号的形式为 x.y.z ，对于稳定树来说，y 是偶数；而对于开发树拉说，y 是相比稳定树大一的奇数。</p>
+<p>我们可以在 Linux 操作系统的终端窗口下通过命令来获取当前操作系统的版本号，具体如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">uname</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -a</span></span></code></pre></figure>
+<p>结果显示如下：</p>
+<p><img src="../../../【原理剖析】1-操作系统概述/IMG-20240820093403164.png" alt="图片描述"/></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-7" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#0x01-什么是操作系统" data-for="0x01-什么是操作系统">0x01 什么是操作系统</a></li><li class="depth-0"><a href="#操作系统有哪些功能" data-for="操作系统有哪些功能">操作系统有哪些功能</a></li><li class="depth-1"><a href="#人机接口" data-for="人机接口">人机接口</a></li><li class="depth-1"><a href="#管理计算机资源" data-for="管理计算机资源">管理计算机资源</a></li><li class="depth-0"><a href="#0x03-操作系统的分类" data-for="0x03-操作系统的分类">0x03 操作系统的分类</a></li><li class="depth-0"><a href="#0x04-操作系统的结构组成" data-for="0x04-操作系统的结构组成">0x04 操作系统的结构组成</a></li><li class="depth-0"><a href="#linux-操作系统介绍" data-for="linux-操作系统介绍">Linux 操作系统介绍</a></li><li class="depth-0"><a href="#linux的内核特征" data-for="linux的内核特征">Linux的内核特征</a></li><li class="depth-0"><a href="#linux的版本查看" data-for="linux的版本查看">Linux的版本查看</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>

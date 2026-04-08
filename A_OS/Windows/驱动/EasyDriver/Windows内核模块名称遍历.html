@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【驱动】Windows内核模块名称遍历</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【驱动】Windows内核模块名称遍历"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【驱动】Windows内核模块名称遍历"/><meta name="twitter:description" content="概述：内核遍历模块名称 0x01、查看LDR Windows 内核模块信息是以结构体 _LDR_DATA_TABLE_ENTRY 形式存在于系统。 _LDR_DATA_TABLE_ENTRY 的基地址在 PEB当中，以下为是一个示例查看 _LDR_DATA_TABLE_ENTRY 结构体的示例： 环境：windows双机调试，调试环境 win10."/><meta property="og:description" content="概述：内核遍历模块名称 0x01、查看LDR Windows 内核模块信息是以结构体 _LDR_DATA_TABLE_ENTRY 形式存在于系统。 _LDR_DATA_TABLE_ENTRY 的基地址在 PEB当中，以下为是一个示例查看 _LDR_DATA_TABLE_ENTRY 结构体的示例： 环境：windows双机调试，调试环境 win10."/><meta property="og:image:alt" content="概述：内核遍历模块名称 0x01、查看LDR Windows 内核模块信息是以结构体 _LDR_DATA_TABLE_ENTRY 形式存在于系统。 _LDR_DATA_TABLE_ENTRY 的基地址在 PEB当中，以下为是一个示例查看 _LDR_DATA_TABLE_ENTRY 结构体的示例： 环境：windows双机调试，调试环境 win10."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/A_OS/Windows/驱动/EasyDriver/Windows内核模块名称遍历"/><meta property="twitter:url" content="https://holdyounger.github.io/A_OS/Windows/驱动/EasyDriver/Windows内核模块名称遍历"/><link rel="icon" href="../../../../static/icon.png"/><meta name="description" content="概述：内核遍历模块名称 0x01、查看LDR Windows 内核模块信息是以结构体 _LDR_DATA_TABLE_ENTRY 形式存在于系统。 _LDR_DATA_TABLE_ENTRY 的基地址在 PEB当中，以下为是一个示例查看 _LDR_DATA_TABLE_ENTRY 结构体的示例： 环境：windows双机调试，调试环境 win10."/><meta name="generator" content="Quartz"/><link href="../../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="A_OS/Windows/驱动/EasyDriver/Windows内核模块名称遍历"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-614"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-614" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/">A_OS</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/">Windows</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/驱动/">驱动</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../../A_OS/Windows/驱动/EasyDriver/">EasyDriver</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【驱动】Windows内核模块名称遍历</a></div></nav><h1 class="article-title">【驱动】Windows内核模块名称遍历</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:49.705Z">2026年4月07日</time><span>8分钟阅读</span></p><ul class="tags"><li><a href="../../../../tags/Windows内核/驱动" class="internal tag-link">Windows内核/驱动</a></li><li><a href="../../../../tags/Windows" class="internal tag-link">Windows</a></li></ul></div></div><article class="popover-hint"><blockquote>
+<p>概述：内核遍历模块名称</p>
+</blockquote>
+
+<h2 id="0x01查看ldr">0x01、查看LDR<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x01查看ldr" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Windows 内核模块信息是以结构体 <code>_LDR_DATA_TABLE_ENTRY</code> 形式存在于系统。 <code>_LDR_DATA_TABLE_ENTRY</code> 的基地址在 <a href="../../../../wiki/调试技术/【调试技术】PEB" class="internal alias" data-slug="wiki/调试技术/【调试技术】PEB">PEB</a>当中，以下为是一个示例查看 <code>_LDR_DATA_TABLE_ENTRY</code> 结构体的示例：</p>
+<blockquote>
+<p>环境：windows双机调试，调试环境 win10. 调试，目标 notepad.exe</p>
+</blockquote>
+<ol>
+<li>
+<p>获取进程id</p>
+<pre><code>0: kd> !process 0 0 notepad.exe
+PROCESS ffffc6835560a080
+    SessionId: 1  Cid: 167c    Peb: 88dcc01000  ParentCid: 1ad8
+    DirBase: 6590e000  ObjectTable: ffffdd03a141b380  HandleCount: 520.
+    Image: notepad.exe
+</code></pre>
+</li>
+<li>
+<p>获取LDR</p>
+<pre><code>0: kd> .process /p ffffc6835560a080; !peb 88dcc01000
+Implicit process is now ffffc683`5560a080
+.cache forcedecodeuser done
+PEB at 00000088dcc01000
+    InheritedAddressSpace:    No
+    ReadImageFileExecOptions: No
+    BeingDebugged:            No
+    ImageBaseAddress:         00007ff613310000
+    NtGlobalFlag:             0
+    NtGlobalFlag2:            0
+    Ldr                       00007ffb244fc4c0
+    Ldr.Initialized:          Yes
+    Ldr.InInitializationOrderModuleList: 000001acec0f24f0 . 000001acf1b23db0
+    Ldr.InLoadOrderModuleList:           000001acec0f2660 . 000001acf1b23d90
+    Ldr.InMemoryOrderModuleList:         000001acec0f2670 . 000001acf1b23da0
+                    Base TimeStamp                     Module
+            7ff613310000 52b5327b Dec 21 14:17:31 2013 C:\Windows\system32\notepad.exe
+            7ffb24390000 feef31d3 Jul 15 16:12:03 2105 C:\Windows\SYSTEM32\ntdll.dll
+            7ffb23b40000 23c0ab5e Jan 03 19:15:42 1989 C:\Windows\System32\KERNEL32.DLL
+            7ffb21ae0000 6b4de7c9 Jan 18 18:22:01 2027 C:\Windows\System32\KERNELBASE.dll
+            7ffb233f0000 7086f0b5 Oct 28 22:20:37 2029 C:\Windows\System32\GDI32.dll
+            7ffb21de0000 0dcd0213 May 04 04:26:59 1977 C:\Windows\System32\win32u.dll
+            7ffb21f00000 d31e9fa0 Mar 29 16:45:20 2082 C:\Windows\System32\gdi32full.dll
+            7ffb21e10000 39255ccf May 19 23:25:03 2000 C:\Windows\System32\msvcp_win.dll
+            7ffb22180000 2bd748bf Apr 23 09:39:11 1993 C:\Windows\System32\ucrtbase.dll
+            7ffb22850000 12e47419 Jan 17 20:56:57 1980 C:\Windows\System32\USER32.dll
+            7ffb23090000 ab88b7a1 Mar 12 22:37:21 2061 C:\Windows\System32\combase.dll
+            7ffb236b0000 ed79d6e2 Apr 02 14:04:18 2096 C:\Windows\System32\RPCRT4.dll
+            7ffb238c0000 29534f79 Dec 21 22:28:09 1991 C:\Windows\System32\shcore.dll
+            7ffb235f0000 564f9f39 Nov 21 06:31:21 2015 C:\Windows\System32\msvcrt.dll
+            7ffb20490000 db2b08ef Jul 09 13:23:59 2086 C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.1110_none_60b5254171f9507e\COMCTL32.dll
+            7ffb23050000 68ff10be Oct 27 14:27:10 2025 C:\Windows\System32\IMM32.DLL
+                5e050000 627c7a26 May 12 11:08:22 2022 C:\Program Files (x86)\360\360Safe\safemon\SafeWrapper.dll
+            7ffb223f0000 c9418262 Dec 30 08:27:14 2076 C:\Windows\System32\ADVAPI32.dll
+            7ffb224a0000 9003cbde Jul 26 05:45:02 2046 C:\Windows\System32\sechost.dll
+            7ffb217a0000 618b690d Nov 10 14:39:09 2021 C:\Program Files (x86)\360\360Safe\safemon\capid64.dll
+            7ffb237e0000 19bb5737 Sep 06 22:52:39 1983 C:\Windows\System32\SHLWAPI.dll
+            7ffb21760000 63e49296 Feb 09 14:28:38 2023 C:\Program Files (x86)\360\360EDRSensor\safemon\360EFP64.dll
+            7ffb21740000 f0713fcd Oct 30 14:42:21 2097 C:\Windows\SYSTEM32\kernel.appcore.dll
+            7ffb222b0000 856685b0 Dec 03 03:17:04 2040 C:\Windows\System32\bcryptPrimitives.dll
+            7ffb1e4f0000 16108836 Sep 24 20:23:18 1981 C:\Windows\system32\uxtheme.dll
+            7ffb23970000 a7c9263e Mar 16 02:13:18 2059 C:\Windows\System32\clbcatq.dll
+            7ffb18890000 0b3246d4 Dec 15 10:58:28 1975 C:\Windows\System32\MrmCoreR.dll
+            7ffb23c00000 480c18d7 Apr 21 12:32:23 2008 C:\Windows\System32\SHELL32.dll
+            7ffb1eac0000 7521c788 Apr 10 02:27:20 2032 C:\Windows\SYSTEM32\windows.storage.dll
+            7ffb20ec0000 db45726f Jul 29 14:13:03 2086 C:\Windows\system32\Wldp.dll
+            7ffb23a20000 0e8d3a56 Sep 26 23:42:14 1977 C:\Windows\System32\MSCTF.dll
+            7ffb225d0000 d42edff1 Oct 22 04:56:17 2082 C:\Windows\System32\OLEAUT32.dll
+            7ffb14380000 63a36c45 Dec 22 04:27:49 2022 C:\Windows\system32\TextShaping.dll
+            7ffafdbb0000 97acfd33 Aug 21 20:10:27 2050 C:\Windows\System32\efswrt.dll
+            7ffb0fb70000 0d302819 Jan 05 05:03:21 1977 C:\Windows\System32\MPR.dll
+            7ffb1d420000 1b27f2ab Jun 09 12:20:59 1984 C:\Windows\SYSTEM32\wintypes.dll
+            7ffb1b3f0000 60d2769c Jun 23 07:47:40 2021 C:\Windows\System32\twinapi.appcore.dll
+            7ffb20e30000 24cdd509 Jul 26 23:13:13 1989 C:\Windows\System32\oleacc.dll
+            7ffb18640000 f0c41b7e Jan 01 11:05:34 2098 C:\Windows\SYSTEM32\textinputframework.dll
+            7ffb1db70000 ce358de3 Aug 19 04:30:27 2079 C:\Windows\System32\CoreUIComponents.dll
+            7ffb1ded0000 d76cf31a Jul 12 19:59:22 2084 C:\Windows\System32\CoreMessaging.dll
+            7ffb22780000 aff3315b Jul 18 10:18:03 2063 C:\Windows\System32\WS2_32.dll
+            7ffb215c0000 3d60ad04 Aug 19 16:32:04 2002 C:\Windows\SYSTEM32\ntmarta.dll
+            7ffb22ec0000 2f888521 Apr 10 09:08:49 1995 C:\Windows\System32\ole32.dll
+            7ffb226a0000 20677495 Mar 25 14:09:25 1987 C:\Windows\System32\comdlg32.dll
+            7ffb1d320000 332d6f47 Mar 18 00:20:23 1997 C:\Windows\system32\PROPSYS.dll
+            7ffaf0910000 55510662 May 12 03:43:30 2015 C:\Windows\System32\DUI70.dll
+            7ffaf0870000 3edb1f69 Jun 02 17:56:57 2003 C:\Windows\System32\DUser.dll
+            7ffb1e7d0000 7ecc0a11 May 30 20:58:57 2037 C:\Windows\System32\dwmapi.dll
+            7ffb05360000 b95c5d4e Jul 18 19:55:58 2068 C:\Windows\system32\explorerframe.dll
+            7ffb1b110000 1fcf100d Nov 29 23:55:57 1986 C:\Windows\system32\WindowsCodecs.dll
+            7ffb22280000 9723b943 May 09 17:20:03 2050 C:\Windows\System32\bcrypt.dll
+            7ffb219a0000 62b75706 Jun 26 02:42:14 2022 C:\Windows\system32\profapi.dll
+            7ffb052f0000 3aad9df3 Mar 13 12:11:31 2001 C:\Windows\System32\thumbcache.dll
+            7ffb1be70000 223f725e Mar 17 14:29:50 1988 C:\Windows\SYSTEM32\policymanager.dll
+            7ffb202e0000 f390ead1 Jun 29 04:13:05 2099 C:\Windows\system32\msvcp110_win.dll
+            7ffb055b0000 49f7aa8e Apr 29 09:17:02 2009 C:\Windows\system32\dataExchange.dll
+            7ffb1c650000 e193dcb4 Dec 05 03:44:52 2089 C:\Windows\system32\d3d11.dll
+            7ffb1d580000 05174257 Sep 15 21:06:31 1972 C:\Windows\system32\dcomp.dll
+            7ffb1f390000 e3f3eb09 Mar 11 09:04:09 2091 C:\Windows\system32\dxgi.dll
+            7ffaf0820000 ca7e2859 Aug 27 12:51:37 2077 C:\Windows\System32\Windows.UI.FileExplorer.dll
+            7ffb052c0000 be357357 Feb 15 05:12:55 2071 C:\Windows\system32\edputil.dll
+            7ffb21eb0000 1ede815d May 31 12:43:09 1986 C:\Windows\System32\CFGMGR32.dll
+            7ffb13cd0000 f30ed2fb Mar 22 11:56:43 2099 C:\Windows\System32\Windows.FileExplorer.Common.dll
+            7ffb17050000 724543b6 Oct 02 11:25:42 2030 C:\Windows\System32\iertutil.dll
+            7ffb1e3c0000 c42be918 Apr 18 01:34:16 2074 C:\Windows\SYSTEM32\atlthunk.dll
+            7ffb16670000 da4754f3 Jan 17 20:11:31 2086 C:\Windows\System32\StructuredQuery.dll
+            7ffb0d2f0000 c8e913db Oct 24 06:36:11 2076 C:\Windows\System32\Windows.StateRepOSItoryPS.dll
+            7ffb01680000 61e9c87f Jan 21 04:39:27 2022 C:\Windows\system32\Windows.Storage.Search.dll
+            7ffb1e3d0000 3ffe0471 Jan 09 09:31:29 2004 C:\Windows\system32\LINKINFO.dll
+            7ffb21950000 441329cb Mar 12 03:49:31 2006 C:\Windows\system32\SspiCli.dll
+            7ffae9d40000 e3a65137 Jan 11 12:23:19 2091 C:\Program Files\Common Files\microsoft shared\ink\tiptsf.dll
+            7ffb23840000 a2ae2189 Jun 27 16:40:41 2056 C:\Windows\System32\coml2.dll
+            7ffb07d90000 3f50139a Aug 30 11:01:46 2003 C:\Windows\System32\twinapi.dll
+            7ffb1e3e0000 9d68abf2 Sep 08 02:31:14 2053 C:\Windows\system32\apphelp.dll
+            7ffb22a50000 7680a595 Jan 01 05:48:05 2033 C:\Windows\System32\SETUPAPI.dll
+            7ffb21890000 14531102 Oct 21 22:56:02 1980 C:\Windows\SYSTEM32\VERSION.dll
+            7ffb055f0000 6a605d4a Jul 22 14:03:54 2026 C:\Windows\system32\cldapi.dll
+            7ffb21600000 2ea9f33d Oct 23 13:23:09 1994 C:\Windows\system32\FLTLIB.DLL
+            7ffb13620000 cfe5ad8c Jul 11 23:04:44 2080 C:\Users\holdy\AppData\Local\Microsoft\OneDrive\23.189.0910.0001\FileSyncShell64.dll
+            7ffb22020000 884d1633 Jun 19 09:15:31 2042 C:\Windows\System32\CRYPT32.dll
+            7ffb0c940000 42b0d806 Jun 16 09:38:14 2005 C:\Windows\SYSTEM32\WININET.dll
+            7ffb1fe00000 7aec0e44 May 09 10:28:20 2035 C:\Windows\SYSTEM32\Secur32.dll
+            7ffb1d7a0000 5e1a2a61 Jan 12 04:04:49 2020 C:\Windows\SYSTEM32\WTSAPI32.dll
+            7ffb21920000 ccba460f Nov 04 11:54:55 2078 C:\Windows\SYSTEM32\USERENV.dll
+            7ffb20d30000 28e89a43 Oct 01 23:54:43 1991 C:\Windows\system32\CRYPTBASE.DLL
+            7ffb18e60000 75e918f4 Sep 08 06:55:48 2032 C:\Windows\System32\EhStorShell.dll
+            7ffb13b40000 a373b917 Nov 24 13:43:51 2056 C:\Windows\SYSTEM32\ntshrui.dll
+            7ffb140f0000 8c31e680 Jul 14 11:41:52 2044 C:\Windows\System32\cscui.dll
+            7ffb16cd0000 5430eec3 Oct 05 15:09:55 2014 C:\Windows\system32\srvcli.dll
+            7ffb0bc50000 31063a34 Jan 24 21:55:00 1996 C:\Windows\system32\cscapi.dll
+            7ffb18ea0000 b8ca2d77 Mar 29 22:40:55 2068 C:\Windows\system32\WINMM.dll
+            7ffb1d7c0000 13731e9b May 05 02:06:19 1980 C:\Windows\system32\mssprxy.dll
+            7ffb16d00000 7499a51d Dec 28 20:12:13 2031 C:\Windows\System32\urlmon.dll
+            7ffb20d90000 fcf57d1b Jun 27 02:06:19 2104 C:\Windows\System32\netutils.dll
+            7ffb1e380000 499386c1 Feb 12 10:17:37 2009 C:\Windows\system32\NetworkExplorer.dll
+    SubSystemData:     00007ffb1b5cf1d0
+    ProcessHeap:       000001acec0f0000
+    ProcessParameters: 000001acec0f1c90
+    CurrentDirectory:  'C:\Users\holdy\'
+    WindowTitle:  'C:\Windows\system32\notepad.exe'
+    ImageFile:    'C:\Windows\system32\notepad.exe'
+    CommandLine:  '&quot;C:\Windows\system32\notepad.exe&quot; '
+    DllPath:      '&lt; Name not readable >'
+    Environment:  000001acec0f0fe0
+        =::=::\
+        ALLUSERSprofile=C:\ProgramData
+        APPDATA=C:\Users\holdy\AppData\Roaming
+        CLASSPATH=C:\Program Files\Java\jdk-17\lib
+        CommonProgramFiles=C:\Program Files\Common Files
+        CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+        CommonProgramW6432=C:\Program Files\Common Files
+        COMPUTERNAME=DESKTOP-SM6JRAO
+        ComSpec=C:\Windows\system32\cmd.exe
+        DriverData=C:\Windows\System32\Drivers\DriverData
+        HOMEDRIVE=C:
+        HOMEPATH=\Users\holdy
+        JAVA_HOME=C:\Program Files\Java\jdk-17
+        LOCALAPPDATA=C:\Users\holdy\AppData\Local
+        LOGONSERVER=\\DESKTOP-SM6JRAO
+        NUMBER_OF_PROCESSORS=2
+        OneDrive=C:\Users\holdy\OneDrive
+        OneDriveConsumer=C:\Users\holdy\OneDrive
+        OS=Windows_NT
+        Path=%JAVA_HOME%\bin;C:\Program Files\Java\jdk-17\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Users\holdy\AppData\Local\Microsoft\WindowsApps;
+        PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+        PROCESSOR_ARCHITECTURE=AMD64
+        PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 140 Stepping 1, GenuineIntel
+        PROCESSOR_LEVEL=6
+        PROCESSOR_REVISION=8c01
+        ProgramData=C:\ProgramData
+        ProgramFiles=C:\Program Files
+        ProgramFiles(x86)=C:\Program Files (x86)
+        ProgramW6432=C:\Program Files
+        PSModulePath=C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+        PUBLIC=C:\Users\Public
+        SESSIONNAME=Console
+        SystemDrive=C:
+        SystemRoot=C:\Windows
+        TEMP=C:\Users\holdy\AppData\Local\Temp
+        TMP=C:\Users\holdy\AppData\Local\Temp
+        USERDOMAIN=DESKTOP-SM6JRAO
+        USERDOMAIN_ROAMINGPROFILE=DESKTOP-SM6JRAO
+        USERNAME=holdy
+        USERPROFILE=C:\Users\holdy
+        windir=C:\Windows
+</code></pre>
+</li>
+<li>
+<p>查看LDR</p>
+<pre><code>0: kd> dt _LDR_DATA_TABLE_ENTRY 00007ffb244fc4c0
+ntdll!_LDR_DATA_TABLE_ENTRY
+   +0x000 InLoadOrderLinks : _LIST_ENTRY [ 0x00000001`00000058 - 0x00000000`00000000 ]
+   +0x010 InMemoryOrderLinks : _LIST_ENTRY [ 0x000001ac`ec0f2660 - 0x000001ac`f1b23d90 ]
+   +0x020 InInitializationOrderLinks : _LIST_ENTRY [ 0x000001ac`ec0f2670 - 0x000001ac`f1b23da0 ]
+   +0x030 DllBase          : 0x000001ac`ec0f24f0 Void
+   +0x038 EntryPoint       : 0x000001ac`f1b23db0 Void
+   +0x040 SizeOfImage      : 0
+   +0x048 FullDllName      : _UNICODE_STRING &quot;&quot;
+   +0x058 BaseDllName      : _UNICODE_STRING &quot;&quot;
+   +0x068 FlagGroup        : [4]  &quot;&quot;
+   +0x068 Flags            : 0
+   +0x068 PackagedBinary   : 0y0
+   +0x068 MarkedForRemoval : 0y0
+   +0x068 ImageDll         : 0y0
+   +0x068 LoadNotificationsSent : 0y0
+   +0x068 TelemetryEntryProcessed : 0y0
+   +0x068 ProcessStaticImport : 0y0
+   +0x068 InLegacyLists    : 0y0
+   +0x068 InIndexes        : 0y0
+   +0x068 ShimDll          : 0y0
+   +0x068 InExceptionTable : 0y0
+   +0x068 ReservedFlags1   : 0y00
+   +0x068 LoadInProgress   : 0y0
+   +0x068 LoadConfigProcessed : 0y0
+   +0x068 EntryProcessed   : 0y0
+   +0x068 ProtectDelayLoad : 0y0
+   +0x068 ReservedFlags3   : 0y00
+   +0x068 DontCallForThreads : 0y0
+   +0x068 ProcessAttachCalled : 0y0
+   +0x068 ProcessAttachFailed : 0y0
+   +0x068 CorDeferredValIDAte : 0y0
+   +0x068 CorImage         : 0y0
+   +0x068 DontRelocate     : 0y0
+   +0x068 CorILOnly        : 0y0
+   +0x068 ChpeImage        : 0y0
+   +0x068 ReservedFlags5   : 0y00
+   +0x068 Redirected       : 0y0
+   +0x068 ReservedFlags6   : 0y00
+   +0x068 CompatDatabaseProcessed : 0y0
+   +0x06c ObsoleteLoadCount : 0
+   +0x06e TlsIndex         : 0
+   +0x070 HashLinks        : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]
+   +0x080 TimeDateStamp    : 0x16510000
+   +0x088 EntryPointActivationContext : 0x00000000`00020000 _ACTIVATION_CONTEXT
+   +0x090 Lock             : 0x61db9c30`00000000 Void
+   +0x098 DdagNode         : 0x00770073`0002815d _LDR_DDAG_NODE
+   +0x0a0 NodeModuleLink   : _LIST_ENTRY [ 0x00690072`00650076 - 0x00340036`00790066 ]
+   +0x0b0 LoadContext      : 0x006c006c`0064002e _LDRP_LOAD_CONTEXT
+   +0x0b8 ParentDllBase    : (null) 
+   +0x0c0 SwitchBackContext : (null) 
+   +0x0c8 BaseAddressIndexNode : _RTL_BALANCED_NODE
+   +0x0e0 MappingInfoIndexNode : _RTL_BALANCED_NODE
+   +0x0f8 OriginalBase     : 0x61db9c30`00000001
+   +0x100 LoadTime         : _LARGE_INTEGER 0x00770073`0002815d
+   +0x108 BaseNameHashValue : 0x650076
+   +0x10c LoadReason       : 0x690072 (No matching name)
+   +0x110 ImplicitPathOptions : 0x790066
+   +0x114 ReferenceCount   : 0x340036
+   +0x118 DependentLoadFlags : 0x64002e
+   +0x11c SigningLevel     : 0x6c 'l'
+</code></pre>
+</li>
+</ol>
+<h2 id="0x02通过驱动程序读取-ldr">0x02、通过驱动程序读取 LDR<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x02通过驱动程序读取-ldr" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>上述我们已经知道了 <code>_LDR_DATA_TABLE_ENTRY</code> 的结构体，下一步就可以根据其结构体在驱动程序中读取内核模块了。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _LDR_DATA_TABLE_ENTRY</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InLoadOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InMemoryOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InInitializationOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PVOID      DllBase;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PVOID      EntryPoint;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UINT64    SizeOfImage;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UNICODE_STRING FullDllName;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UNICODE_STRING BaseDllName;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LDR_DATA_TABLE_ENTRY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PLDR_DATA_TABLE_ENTRY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>在驱动进程中，<code>NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, UNICODE_STRING RegistryPath)</code> 的 <code>DriverObject</code> 保存了当前驱动的 LDR_DATA_TABLE_ENTRY 地址。</p>
+<p>基于这一点，完整的程序代码如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &lt;wdm.h></span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _LDR_DATA_TABLE_ENTRY</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InLoadOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InMemoryOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LIST_ENTRY InInitializationOrderLinks;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PVOID      DllBase;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PVOID      EntryPoint;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UINT64    SizeOfImage;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UNICODE_STRING FullDllName;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    UNICODE_STRING BaseDllName;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">LDR_DATA_TABLE_ENTRY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PLDR_DATA_TABLE_ENTRY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">VOID</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DriverUnload</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PDRIVER_OBJECT</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> DriverObject</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    DbgPrint</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;DriverUnload&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">NTSTATUS</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> DriverEntry</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PDRIVER_OBJECT</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> DriverObject</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">UNICODE_STRING</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> RegistryPath</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    NTSTATUS status </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> STATUS_SUCCESS;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    DbgPrint</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;DriverEntry&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DriverObject->DriverUnload </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DriverUnload;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PLDR_DATA_TABLE_ENTRY pDection </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DriverObject->DriverSection;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    //获取当前驱动的LDR_DATA_TABLE_ENTRY地址</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    PLDR_DATA_TABLE_ENTRY pCurrentDection </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pDection;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    //记录当前驱动LDR_DATA_TABLE_ENTRY地址</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    do</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        pDection </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pDection->InLoadOrderLinks.Flink;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   //先查询下一个</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        DbgPrint</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;%ws&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, pDection->BaseDllName.Buffer);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    //输出模块名</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    } </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (pCurrentDection </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pDection);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    //遍历到当前驱动LDR_DATA_TABLE_ENTRY地址时，说明查询结束</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> status;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>程序输出如下所示：</p>
+<p><img src="../../../../Windows内核模块名称遍历/image-20231009111116408.png" alt="image-20231009111116408"/></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-149" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#0x01查看ldr" data-for="0x01查看ldr">0x01、查看LDR</a></li><li class="depth-0"><a href="#0x02通过驱动程序读取-ldr" data-for="0x02通过驱动程序读取-ldr">0x02、通过驱动程序读取 LDR</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+"/><meta name="twitter:description" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com Omnivore Read on Omnivore Read Original Highlights API 集架构 ⤴️ [原创][原创]ApiSetSchema/API集-解析 17337 GetModuleHandle的API = 获取Get/模块Module/句柄Handle 其实“句柄/Handle”就是地址。 GetModuleHandle返回的是模块地址 见过“api-x-x-xxx.dll”的文件名称吧？就叫它是“api集”吧 当GetModuleHandle（a..."/><meta property="og:description" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com Omnivore Read on Omnivore Read Original Highlights API 集架构 ⤴️ [原创][原创]ApiSetSchema/API集-解析 17337 GetModuleHandle的API = 获取Get/模块Module/句柄Handle 其实“句柄/Handle”就是地址。 GetModuleHandle返回的是模块地址 见过“api-x-x-xxx.dll”的文件名称吧？就叫它是“api集”吧 当GetModuleHandle（a..."/><meta property="og:image:alt" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com Omnivore Read on Omnivore Read Original Highlights API 集架构 ⤴️ [原创][原创]ApiSetSchema/API集-解析 17337 GetModuleHandle的API = 获取Get/模块Module/句柄Handle 其实“句柄/Handle”就是地址。 GetModuleHandle返回的是模块地址 见过“api-x-x-xxx.dll”的文件名称吧？就叫它是“api集”吧 当GetModuleHandle（a..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/Omnivore/2024-11-22/[原创][原创]ApiSetSchema-API集-解析-编程技术-看雪-安全社区-安全招聘-kanxue.com"/><meta property="twitter:url" content="https://holdyounger.github.io/Omnivore/2024-11-22/[原创][原创]ApiSetSchema-API集-解析-编程技术-看雪-安全社区-安全招聘-kanxue.com"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com Omnivore Read on Omnivore Read Original Highlights API 集架构 ⤴️ [原创][原创]ApiSetSchema/API集-解析 17337 GetModuleHandle的API = 获取Get/模块Module/句柄Handle 其实“句柄/Handle”就是地址。 GetModuleHandle返回的是模块地址 见过“api-x-x-xxx.dll”的文件名称吧？就叫它是“api集”吧 当GetModuleHandle（a..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="Omnivore/2024-11-22/[原创][原创]ApiSetSchema-API集-解析-编程技术-看雪-安全社区-安全招聘-kanxue.com"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1271"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1271" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Omnivore/">Omnivore</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Omnivore/2024-11-22/">2024 11 22</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>[原创][原创]ApiSetSchema/API集 解析 编程技术 看雪 安全社区|安全招聘|kanxue.com
+</a></div></nav><h1 class="article-title">[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com
+</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:52.531Z">2026年4月07日</time><span>36分钟阅读</span></p><ul class="tags"><li><a href="../../tags/Omnivore" class="internal tag-link">Omnivore</a></li></ul></div></div><article class="popover-hint"><h1 id="原创原创apisetschemaapi集-解析-编程技术-看雪-安全社区安全招聘kanxuecom">[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#原创原创apisetschemaapi集-解析-编程技术-看雪-安全社区安全招聘kanxuecom" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p><a href="../.././../tags/Omnivore" class="tag-link internal alias" data-slug="tags/Omnivore">Omnivore</a></p>
+<p><a href="https://omnivore.app/me/api-set-schema-api-kanxue-com-19353209aca" class="external">Read on Omnivore<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>
+<a href="https://bbs.kanxue.com/thread-268497.htm" class="external">Read Original<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="highlights">Highlights<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#highlights" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p>API 集架构 <a href="https://omnivore.app/me/api-set-schema-api-kanxue-com-19353209aca#22e72a01-cb67-4b76-80ac-e088c7882c2a" class="external">⤴️<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</blockquote>
+<hr/>
+<p>[原创][原创]ApiSetSchema/API集-解析</p>
+<p>17337</p>
+<p>GetModuleHandle的API = 获取Get/模块Module/句柄Handle<br/>
+其实“句柄/Handle”就是地址。 GetModuleHandle返回的是模块地址<br/>
+见过“api-x-x-xxx.dll”的文件名称吧？就叫它是“api集”吧</p>
+<p>当GetModuleHandle（api集名称）参数里面的字符串是api集,<br/>
+GetModuleHandle还能找到正确的模块地址。看看微软官方介绍API集</p>
+<p><a href="https://docs.microsoft.com/zh-cn/windows/win32/apiindex/windows-apisets?redirectedfrom=MSDN" class="external">https://docs.microsoft.com/zh-cn/windows/win32/apiindex/windows-apisets?redirectedfrom=MSDN<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<p>没有说明其中转换字符的原理。emmm不想打字了,我上成果吧,国内是没有关于API集的知识的。 很多人自写“GetModuleHandle”功能 却不会解析 API集 导致不够兼容。。API集有4个版本,分别是6.1、6.2、6.3、10.0版本</p>
+<p>我下面直接放代码吧实在不想打字了。累了！</p>
+<p>既然都看到这里了！！！<br/>
+你肯定是理解不透的！！！<br/>
+来看看我下面翻译的文章</p>
+<p><span class="text-highlight">API 集架构</span><br/>
+Windows 7 对 Win32 子系统的较低级别进行了重大重组。长期熟悉的 ADVAPI32 函数移至 KERNEL32。这两个函数中的许多函数都移到了一个名为 KERNELBASE 的新 DLL 中。其他 ADVAPI32 函数被移动到名为 SECHOST 的新 DLL。Windows 7 中的许多可执行文件从名称异常长的新 DLL 中导入函数，例如 API-MS-Win-Core-LocalRegistry-L1-1-0.dll。这种导入由 ADVAPI32 和 KERNEL32、用于一般支持的 DLL（如 MFC42、MSVCRT 和 OLE32）、许多服务以及各种其他可执行文件完成，所有其他可执行文件都通过 Windows 的较低级别，直至 SHELL32 和 SHLWAPI。不管发生了什么，它在 Windows 8 中得到了进一步的发展。不仅有很多具有长名称的 DLL，而且它们也适用于内核模式。</p>
+<p>这方面的官方文档并不多。适用于 Windows 7 的原始软件开发工具包 (SDK) 在关于新低级二进制文件的简短页面中只提到了 KERNELBASE外部链接, 并没有提及具有不寻常名称的新 DLL。如果没有更多关于它的记录，那么从某种意义上说，应该不会有太多惊喜。毕竟，Windows 分发的更高级别的可执行文件继续像以前一样从 KERNEL32 之类的 DLL 中导入，并且由于 SDK 没有用于新 DLL 的导入库，因此其意图肯定是在 Microsoft 之外编写的程序，而且可能大多数是在 Microsoft 内部编写，对新的 DLL 一无所知，应该不受影响。无论如何，具有长名称的新 DLL 只是存根，其中实现的所有导出函数不会超过硬编码失败所需。此外，这些失败的实现并非都得到了很好的关注：例如，参见CreateFileW在 API-MS-Win-Core-File-L1-1-0.dll 中返回硬编码的NULL (0) 而不是 INVALID_HANDLE_VALUE (-1)。</p>
+<p>在另一种意义上，文档的缺乏可能令人惊讶，这取决于人们期望被告知的有关 Windows 体系结构的内容，以评估其安全性和稳健性。这些新的 DLL 是 NTDLL 如何在加载用户模式模块时解析导入的小而重要的修饰的一部分。事实证明，所有从任何模块名称以 API- 开头（不区分大小写）的 DLL 中的所有导入都会检查新形式的重定向。Windows 8 添加了 EXT- 作为适用的前缀，并在加载内核模式模块时对内核的导入解析以及在加载内核（和 HAL 等）时对加载器的导入应用相同的修饰。由于很多 Windows 可执行文件从具有这些前缀的模块导入，</p>
+<p>也许微软和计算机安全行业都只是缓慢地正式确定或评估 Windows 中的位置的这种巨大变化。尽管 Windows 7 的引入似乎在 Microsoft 之外几乎完全没有引起注意，但 Windows 8 和 Windows 8.1 的 SDK 带来了导入库，非 Microsoft 程序员可以使用这些库从新的 DLL 中导入，甚至还有一些文档，通常是Windows API 集外部链接，以及 Windows 8 API 集外部链接和 Windows 8.1 API 集外部链接。</p>
+<p>奇怪的是——与否，也许取决于你是将它看作是一个实践的 Windows 程序员还是一个竞争操作系统的设计者——API 集外部链接的大部分文档都在一项专利中： 可组合 API 集的动态管理（提交2013 年 6 月 7 日，即 Windows 8.1 发布前一点）。推断微软更关心阻止其发明被复制而不是帮助其用户了解他们如何受到影响可能过于愤世嫉俗了，但即便如此，Windows 体系结构正在做一些重要的事情，而且大多数情况下都没有公开由微软或外部评论。</p>
+<p>机制<br/>
+在 Windows 7 中，从 DLL 导入的新重定向由 NTDLL 管理，作为通过激活上下文进行隔离的首选替代方法。是否重定向来自任何特定 API 或 EXT 模块的导入完全取决于 System32 目录中名为 ApiSetSchema.dll 的新文件的内容。虽然 ApiSetSchema 是一个 DLL，但它只需要用于数据。在系统初始化的第 1 阶段，NT 内核将整个文件映射到内核模式地址空间。从那里，想要的数据被映射到每个新初始化进程的用户模式地址空间，并且指向这个数据的指针被放置在一个名为ApiSetMap的新成员中 （在 x86 和 x64 构建中分别位于偏移量 0x38 和 0x68），流程的半文件化PEB 结构体。内核仅将数据识别为名为“.apiset”并对齐到 64KB 的部分的全部内容（即，IMAGE_SECTION_HEADER 中的VirtualAddress成员的低 16 位清零）。内核与解释这些内容无关：它只是将它们提供给 NTDLL 来解释。相反，NTDLL 不知道内容来自哪里。对于 NTDLL，每当要解析从另一个模块到一个模块的导入时，ApiSetMap给出的地址处的任何内容都被接受为一个映射，从中可以了解是否要从其他地方解析导入。</p>
+<p>通过让内核加入重定向游戏，Windows 8 使这种巧妙的划分变得复杂。实际上，内核自己的导入会受到重定向的影响。为了在任何内核代码执行之前完成这种重定向，加载 ApiSetSchema 的工作被提交给加载内核的 Windows 加载器 (WINLOAD)。同样，地图是“.apiset”部分的全部内容（尽管现在没有对齐要求）。同样，这些内容只是假设具有正确的格式。WINLOAD 加载映射并使用它（以解析内核本身、HAL 和内核首次执行之前必须准备好的其他模块的导入）。内核不加载映射，但它知道映射来自 ApiSetSchema 文件。 LOADER_PARAMETER_BLOCK 结构。然后内核找到加载的映像，提取它自己的“.apiset”部分副本，然后卸载映像。除了这些准备中的更改以及内核也解释用于重定向内核模式模块（例如驱动程序）中的导入的映射之外，该机制（甚至到文件格式）与 Windows 7 相同。</p>
+<p>API 集架构扩展<br/>
+在 Windows 8.1 及更高版本中，WINLOAD 全权负责构建地图。ApiSetSchema 在内核初始化时已经卸载。内核对地图的来源一无所知。它只是在LOADER_PARAMETER_BLOCK的扩展中获取地址和大小，并接受那里的任何内容。</p>
+<p>在这些版本中，API 集到主机的映射不需要来自一个 DLL。System32 目录中名为 ApiSetSchema.dll 的文件是必需的，但仅作为基本架构。除非该文件中的标志将此映射标记为密封WINLOAD 会在注册表中查找更多文件以扩展映射。可以有任意多个 模式扩展：</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sOgWXRrzZBwf41ycyVJlWVTssVa9T8bI29vTXy453jNM/https://bbs.kanxue.com/upload/attach/202107/930945_K5KADW44UA8TWSJ.jpg" alt/></p>
+<p>的子项是除了每个不同无关 子项允许不同的扩展名。WINLOAD 识别 子项中的Name和FileName值，但只解释后者。数据的 文件名value 命名 System32 目录中的文件。该文件具有与 ApiSetSchema 相同的格式，但具有不同的解释。基本架构是一个 API 集列表，并为每个 API 集提供了将 API 集重定向到主机的规则（可能取决于谁正在导入），架构扩展是一个主机列表，并为每个主机提供了一个 API 集列表本主机实现。WINLOAD 负责将扩展合并到基础中。原则似乎是，如果 API 集由架构扩展中列出的主机实现，则 API 集重定向到该主机，而不是基本架构中指定的任何内容。的组成架构，与基本模式格式相同，是 WINLOAD 本身用于解析导入的内容，也是内核和 NTDLL 接收的所有内容，作为它们用于解析导入的映射。</p>
+<p>原始数据格式<br/>
+该映射以标题开头，紧接着是一组条目，每个条目描述一个 API 集。但是请注意，Windows 8.1 中的架构扩展适用不同的解释。在下面的整个描述中，首先呈现基本模式和组合模式的结构，模式扩展的差异留给每个结构后的注释。</p>
+<p>命名空间数组<br/>
+固定大小的头部最初是 8 字节，但 6.3 版本将其扩展为 0x10。适用于 Windows 8 和 Windows 8.1 的 SDK 中名为 APISET.H 的文件记录了 Microsoft 的地图标题（包括数组）的名称是API_SET_NAMESPACE_ARRAY。（本文中给出的所有符号名称均来自该文件。）</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sH0RVWr8hCKn76dT2HJrdE6GhrQWuV8bJMzj_YH8xpss/https://bbs.kanxue.com/upload/attach/202107/930945_FFKBR6UYC5J7AWA.jpg" alt/></p>
+<p>Version 成员的唯一已知解释是 WINLOAD 并且只有在寻找模式扩展时才会这样做。Size成员的唯一已知解释也是由 WINLOAD 进行的，并且只有在实际发生扩展时才如此（例如，新主机的名称至少会附加到基本架构中）。</p>
+<p>该旗成员是有意义的，只是到WINLOAD。0x01 位（API_SET_SCHEMA_FLAGS_SEALED）仅在 System32 目录中的 ApiSetSchema.dll 中重要。如果已设置，则此文件中的基本架构是整个地图。WINLOAD 不会在注册表中查找架构扩展。0x02 位 ( API_SET_SCHEMA_FLAGS_HOST_EXTENSION ) 仅在命名为架构扩展的文件中重要。必须设置它，否则 WINLOAD 会忽略该文件。</p>
+<p>在架构扩展中，Array中的Count条目 列出主机，而不是 API 集。</p>
+<p>命名空间条目<br/>
+数组中的每个条目都是一个API_SET_NAMESPACE_ENTRY。每个最初都是 0x0C 字节，在 6.3 版本中扩展为 0x18。每个都命名一个 API 集，但没有 API- 前缀（或 6.2 及更高版本中的 EXT- 前缀）并且没有文件扩展名。名称采用 Unicode 格式且不以空字符结尾。假定数组已按不区分大小写的字母顺序排序。</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sf_1B9GlZkt-ONvPpAb2aW2aWSbxhc52Evo4jRXTSSDo/https://bbs.kanxue.com/upload/attach/202107/930945_7M977ZKT7AF8D4M.jpg" alt/></p>
+<p>该旗成员是有意义的，只是到WINLOAD。0x01 位 ( API_SET_SCHEMA_ENTRY_FLAGS_SEALED ) 仅在 System32 目录中的 ApiSetSchema.dll 中重要。如果已设置，则此条目描述的 API 集不能被架构扩展覆盖。</p>
+<p>尽管NameLength正式是Microsoft 随 SDK 发布的标头中的 ULONG以供更高版本使用，但 NTDLL 的 Windows 7 实现仅使用低 16 位。</p>
+<p>列出 API 集主机的结构是 API_SET_VALUE_ARRAY，如下所述。</p>
+<p>在模式扩展中，API_SET_NAMESPACE_ENTRY 命名主机，即从一个或多个 API 集导入的 DLL 可以重定向到。名称再次采用 Unicode 格式，而不是以空字符结尾。假设没有对数组进行排序。该DataOffset被再次从地图到起始位置的偏移API_SET_VALUE_ARRAY，但列出API设置主机工具（并应重定向到这台主机，没有任何主机的基础架构被指定为）。</p>
+<p>值数组<br/>
+如果要从中导入的模块是在数组中找到的 API 集，则导入可能会重定向到某个主机模块。在 6.3 版之前，NTDLL 假定至少指定了一个主机（否则为什么要列出 API 集）。更高版本允许 API 集可以定义但不活动，从不命名主机的意义上说（大概是预期将在模式扩展中指定主机）。API 集的主机由标头和数组描述。Microsoft 的标题（包括数组）的名称是API_SET_VALUE_ARRAY。最初，标头仅包含数组中的条目计数。6.3 版将此标头扩展为 8 个字节。</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sugRlhi6YIpLiidATFt6EMKIMQouk6JE9NdlmDvQ40Os/https://bbs.kanxue.com/upload/attach/202107/930945_867TT3PAC3E9F4E.jpg" alt/></p>
+<p>在架构扩展中，数组列表 API集中的Count条目 ，而不是主机。</p>
+<p>值输入<br/>
+值数组中的每个条目都是一个API_SET_VALUE_ENTRY。每个是 0x10 或 0x14 字节，具体取决于版本。数组中的第一个条目描述了一个默认主机。根据导入模块的名称选择后续条目（如果有）。假定这些特殊主机的条目已经按导入模块的不区分大小写的字母顺序排序。但是请注意，还没有看到为任何一个 API 集定义两个以上主机的模式。</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sZUzy6QztvSxKqC6ab56togN80-0OTgoPhRy37TCn6Jk/https://bbs.kanxue.com/upload/attach/202107/930945_N9V5N9CKCJ6CK5J.jpg" alt/></p>
+<p>两个名称均采用 Unicode 并且不以空字符结尾。对于默认主机，没有指定导入模块，NameOffset和 NameLength成员是不相关的，观察到为 0。</p>
+<p>尽管ValueLength正式是Microsoft 随 Windows 8 和 Windows 8.1 的 SDK 发布的标头中的 ULONG，但静态分析工具的注释记录了长度必须适合 16 位，而 NTDLL 仅使用低 16 位。当 WINLOAD 处理模式扩展中的值条目时，它使用整个双字。</p>
+<p>在架构扩展中，ValueOffset和 ValueLength命名一个 API 集。WINLOAD 要求此 API 集已在基本架构中定义。</p>
+<p>Windows 10 中的数据格式<br/>
+版本 10.0 对数据格式进行了足够多的更改，因此看起来更新鲜。最显着的变化是引入了哈希表，这样命名空间条目的二进制搜索可以更快地比较 32 位哈希，而不是不区分大小写的字符串。另一个是删除API_SET_VALUE_ARRAY的简化。也许对某些人来说更值得注意的不是数据格式本身的变化，而是微软正式披露的变化：在适用于 Windows 10 的 SDK 中，APISET.H 删除了结构定义。</p>
+<p>命名空间头<br/>
+标头是 0x1C 字节，其中第一个 0x10 与 6.3 版的标头兼容。地图现在有两个数组。即使命名空间条目数组仍然跟在标题之后，如果仅在一个尚未观察到的示例中，两个数组都通过给出它们的偏移量来定位。</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,spgaDMzmcV4yVq4plwfh_0CJSetlfEPTn8gtPnrIALW4/https://bbs.kanxue.com/upload/attach/202107/930945_W9RXPEMXPXXU6VK.jpg" alt/></p>
+<p>哈希条目<br/>
+散列字符序列的算法是从零开始，然后对于每个字符，将前一个散列乘以来自标题的乘数，并添加字符的小写转换。每个哈希条目是 0x08 字节：</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sIxtdsbbTn3LJwSLmah-GPgl1iO_E32N5qx25uyA2u1U/https://bbs.kanxue.com/upload/attach/202107/930945_RKK4PNWZDX94ZJX.jpg" alt/></p>
+<p>假设散列条目已经按散列的递增顺序排序。为了找到一个假定的 API 集的API_SET_NAMESPACE_ENTRY，NTDLL 首先将假定的名称散列到但不包括最后一个连字符，然后在散列条目数组中搜索具有相同散列的条目。只有当找到匹配的散列时，才会比较名称本身。请注意，在版本 10 中，API 集名称的最后一部分，即从最后一个连字符开始，是无关紧要的。</p>
+<p>命名空间条目<br/>
+描述单个 API 集的API_SET_NAMESPACE_ENTRY 略有变化。API 集的名称再次使用 Unicode，没有空终止符，但现在包含早期版本省略的前缀。API 集的主机由API_SET_VALUE_ENTRY 结构数组直接描述，而不是通过API_SET_VALUE_ARRAY间接描述。后者的主机计数移动到命名空间条目。</p>
+<p><img src="https://proxy-prod.omnivore-image-cache.app/0x0,sseWJp5PE3pP0MLxUDKrQSdmPlDR5Gl-bj-3qluR4nZw/https://bbs.kanxue.com/upload/attach/202107/930945_7DADTR4BKQKPEYZ.jpg" alt/></p>
+<p>该API_SET_VALUE_ENTRY是从6.3版本不变，但非零标志为一个API集观察（为0x18的API-MS-WIN-安全提供商l1-1-0，然后才在x86版本）。</p>
+<p><code>/</code> <code>/</code> <code>宽是</code> <code>1</code> <code>窄是</code> <code>0</code></p>
+<p><code>DWORD 查找指定字节(ULONG64 地址, INT8 字节, INT8 宽与窄)</code></p>
+<p><code>{</code></p>
+<p>“ <code>INT</code> <code>i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>INT</code> <code>字节</code> <code>1</code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(宽与窄)</code> <code>/</code> <code>/</code> <code>宽是</code> <code>1</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(!字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) !</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code></p>
+<p>“ <code>return</code> <code>i</code> <code>*</code> <code>2</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>do</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(字节</code> <code>1</code> <code>=</code> <code>=</code> <code>字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>i </code> <code>*</code> <code>2</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code> <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) !</code> <code>=</code> <code>0</code> <code>);</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code> <code>{</code> <code>/</code> <code>/</code> <code>窄是</code> <code>0</code></p>
+<p>“ <code>if</code> <code>(!字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) !</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code></p>
+<p>“ <code>return</code> <code>i;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>do</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>if</code> <code>(字节</code> <code>1</code> <code>=</code> <code>=</code> <code>字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>i;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code> <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) !</code> <code>=</code> <code>0</code> <code>);</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>/</code> <code>/</code> <code>返回的是长度 如果是</code> <code>0</code> <code>就是失败</code></p>
+<p><code>BOOLEAN 宽到窄字符(ULONG64 宽地址, ULONG64 窄地址, WORD 长度)</code></p>
+<p><code>{</code></p>
+<p>“ <code>WORD i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>BYTE</code> <code>*</code> <code>窄节字 </code> <code>=</code> <code>NULL;</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(宽地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>))</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>窄节字 </code> <code>=</code> <code>(BYTE</code> <code>*</code> <code>)窄地址 </code> <code>+</code> <code>i;</code></p>
+<p>“ <code>*</code> <code>窄节字 </code> <code>=</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(宽地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(i ></code> <code>=</code> <code>长度)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>1</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>/</code> <code>/</code> <code>宽字符比较窄字符 按窄字符长度标准</code></p>
+<p><code>BOOLEAN 宽比较窄字符(ULONG64 s1, ULONG64 s2,WORD 长度)</code></p>
+<p><code>{</code></p>
+<p>“ <code>WORD i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>BYTE 字节, 字节</code> <code>1</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>while</code> <code>((字节 ^ 字节</code> <code>1</code> <code>) </code> <code>=</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(长度 </code> <code>=</code> <code>=</code> <code>i)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>1</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>void 解析模块名(char</code> <code>*</code> <code>模块名,char</code> <code>*</code> <code>正确模块名)</code></p>
+<p><code>{</code></p>
+<p>“ <code>/</code> <code>/</code> <code>x64</code></p>
+<p>“ <code>ULONG64 ApiSetSchema地址 </code> <code>=</code> <code>*</code> <code>(ULONG64</code> <code>*</code> <code>)(__readgsqword(</code> <code>0x60</code> <code>) </code> <code>+</code> <code>0x68</code> <code>);</code></p>
+<p>“ <code>WORD 版本 </code> <code>=</code> <code>*</code> <code>(DWORD</code> <code>*</code> <code>)ApiSetSchema地址;</code></p>
+<p>“ <code>WORD API集数量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_命名空间条目_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集名称_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_长度 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_值数组_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集_值数组_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_长度 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集_原名称_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集遍历数 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD 模块名长度 </code> <code>=</code> <code>查找指定字节((ULONG64)模块名, </code> <code>0</code> <code>, </code> <code>0</code> <code>);</code></p>
+<p>“ <code>WORD API集版本_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集数量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集命名空间条目_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集命名空间条目_大小 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_长度_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_值数组_地址_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_长度_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_地址_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD 模块名长度_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(!模块名长度)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>/</code> <code>/</code> <code>-</code> <code>4</code> <code>是因为.dll 字节大小是</code> <code>4</code> <code>在API集名称里面 没有.dll 是为了节省字节内存</code></p>
+<p>“ <code>模块名长度 </code> <code>-</code> <code>=</code> <code>4</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>if</code> <code>(版本</code> <code>=</code> <code>=</code> <code>6</code> <code>||版本</code> <code>=</code> <code>=</code> <code>5</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>API集版本_偏移 </code> <code>=</code> <code>0x10</code> <code>;</code></p>
+<p>“ <code>API集数量_偏移 </code> <code>=</code> <code>0xC</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_偏移量_偏移 </code> <code>=</code> <code>0x10</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_大小 </code> <code>=</code> <code>0x18</code> <code>;</code></p>
+<p>“ <code>API集名称_长度_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集名称_偏移量_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_值数组_地址_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集_原名称_偏移量_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_原名称_长度_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集名称_地址_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>模块名长度_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>API集_命名空间条目_偏移量 </code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(ApiSetSchema地址 </code> <code>+</code> <code>API集命名空间条目_偏移量_偏移);</code></p>
+<p>“ <code>goto 解析;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code> <code>if</code> <code>(版本</code> <code>=</code> <code>=</code> <code>3</code> <code>||版本</code> <code>=</code> <code>=</code> <code>4</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>API集版本_偏移 </code> <code>=</code> <code>0x14</code> <code>;</code></p>
+<p>“ <code>API集数量_偏移 </code> <code>=</code> <code>0xC</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_偏移量_偏移 </code> <code>=</code> <code>0x10</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_大小 </code> <code>=</code> <code>0x18</code> <code>;</code></p>
+<p>“ <code>API集名称_长度_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集名称_偏移量_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_值数组_地址_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集_原名称_偏移量_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_原名称_长度_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集名称_地址_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>模块名长度_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>API集_命名空间条目_偏移量 </code> <code>=</code> <code>ApiSetSchema地址 </code> <code>+</code> <code>API集命名空间条目_偏移量_偏移;</code></p>
+<p>“ <code>goto 解析;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code> <code>if</code> <code>(版本</code> <code>=</code> <code>=</code> <code>2</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>API集版本_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集数量_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_偏移量_偏移 </code> <code>=</code> <code>0x8</code> <code>;</code></p>
+<p>“ <code>API集命名空间条目_大小 </code> <code>=</code> <code>0xC</code> <code>;</code></p>
+<p>“ <code>API集名称_长度_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集名称_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>API集_值数组_地址_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_原名称_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>API集_原名称_长度_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集名称_地址_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>模块名长度_偏移 </code> <code>=</code> <code>0x4</code> <code>;</code></p>
+<p>“ <code>API集_命名空间条目_偏移量 </code> <code>=</code> <code>API集命名空间条目_偏移量_偏移;</code></p>
+<p>“ <code>goto 解析;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>goto 无API集;</code></p>
+<p>“ <code>}</code></p>
+<p><code>无API集:</code></p>
+<p>“ <code>memmove(正确模块名, 模块名, 模块名长度</code> <code>+</code> <code>4</code> <code>);</code></p>
+<p>“ <code>return</code> <code>;</code></p>
+<p><code>解析:</code></p>
+<p>“ <code>API集数量 </code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(ApiSetSchema地址 </code> <code>+</code> <code>API集数量_偏移);</code></p>
+<p>“ <code>WORD i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p><code>继续遍历:</code></p>
+<p>“ <code>/</code> <code>/</code> <code>循环检测有没有一致的 API集名称长度</code></p>
+<p>“ <code>do</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>API集遍历数 </code> <code>=</code> <code>i </code> <code>*</code> <code>API集命名空间条目_大小;</code></p>
+<p>“ <code>API集名称_长度 </code> <code>=</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(ApiSetSchema地址 </code> <code>+</code> <code>API集_命名空间条目_偏移量 </code> <code>+</code> <code>API集遍历数 </code> <code>+</code> <code>API集名称_长度_偏移)</code> <code>/</code> <code>2</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(API集名称_长度 </code> <code>=</code> <code>=</code> <code>(模块名长度 </code> <code>-</code> <code>模块名长度_偏移))</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>break</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code> <code>while</code> <code>(i &lt;</code> <code>=</code> <code>API集数量);</code></p>
+<p>“ <code>if</code> <code>(i > API集数量)</code> <code>/</code> <code>/</code> <code>自己循环完毕就是没有 API集</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>goto 无API集;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>API集名称_偏移量 </code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(ApiSetSchema地址 </code> <code>+</code> <code>API集_命名空间条目_偏移量 </code> <code>+</code> <code>API集遍历数 </code> <code>+</code> <code>API集名称_偏移量_偏移);</code></p>
+<p>“ <code>API集名称_地址 </code> <code>=</code> <code>ApiSetSchema地址 </code> <code>+</code> <code>API集名称_偏移量;</code></p>
+<p>“ <code>/</code> <code>/</code> <code>检测 字符串是不是一样！ 不是一样的话就去 循环</code> <code>10</code> <code>结束函数</code></p>
+<p>“ <code>if</code> <code>(!宽比较窄字符(API集名称_地址, (ULONG64)模块名 </code> <code>+</code> <code>API集名称_地址_偏移, API集名称_长度))</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>goto 继续遍历;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>/</code> <code>/</code> <code>6.3</code> <code>版本是 API集版本_偏移</code> <code>=</code> <code>0x14</code> <code>, </code> <code>10</code> <code>版本是API集版本_偏移</code> <code>=</code> <code>0x10</code></p>
+<p>“ <code>API集_值数组_偏移量</code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(ApiSetSchema地址 </code> <code>+</code> <code>API集_命名空间条目_偏移量 </code> <code>+</code> <code>API集遍历数 </code> <code>+</code> <code>API集版本_偏移);</code></p>
+<p>“ <code>API集_值数组_地址 </code> <code>=</code> <code>ApiSetSchema地址 </code> <code>+</code> <code>API集_值数组_偏移量 </code> <code>+</code> <code>API集_值数组_地址_偏移;</code></p>
+<p>“ <code>API集_原名称_偏移量 </code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(API集_值数组_地址 </code> <code>+</code> <code>API集_原名称_偏移量_偏移);</code></p>
+<p>“ <code>API集_原名称_长度 </code> <code>=</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(API集_值数组_地址 </code> <code>+</code> <code>API集_原名称_长度_偏移);</code></p>
+<p>“ <code>API集_原名称_地址 </code> <code>=</code> <code>ApiSetSchema地址 </code> <code>+</code> <code>API集_原名称_偏移量;</code></p>
+<p>“ <code>if</code> <code>(!API集_原名称_长度)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>API集_原名称_长度 </code> <code>=</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(API集_值数组_地址 </code> <code>+</code> <code>API集_原名称_长度_偏移 </code> <code>+</code> <code>0x8</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(!API集_原名称_长度)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>goto 无API集;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>API集_原名称_偏移量 </code> <code>=</code> <code>*</code> <code>(WORD</code> <code>*</code> <code>)(API集_值数组_地址 </code> <code>+</code> <code>API集_原名称_偏移量_偏移</code> <code>+</code> <code>0x8</code> <code>);</code></p>
+<p>“ <code>API集_原名称_地址 </code> <code>=</code> <code>ApiSetSchema地址 </code> <code>+</code> <code>API集_原名称_偏移量;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>goto 结束;</code></p>
+<p><code>结束:</code></p>
+<p>“ <code>if</code> <code>(宽到窄字符(API集_原名称_地址, (ULONG64)正确模块名, API集_原名称_长度 </code> <code>/</code> <code>2</code> <code>))</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code> <code>{</code></p>
+<p>“ <code>memmove(正确模块名, 模块名, 模块名长度</code> <code>+</code> <code>4</code> <code>);</code></p>
+<p>“ <code>return</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p><code>}</code></p>
+<p><code>/</code> <code>/</code> <code>宽是</code> <code>1</code> <code>窄是</code> <code>0</code></p>
+<p><code>DWORD 查找指定字节(ULONG64 地址, INT8 字节, INT8 宽与窄)</code></p>
+<p><code>{</code></p>
+<p>“ <code>INT</code> <code>i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>INT</code> <code>字节</code> <code>1</code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(宽与窄)</code> <code>/</code> <code>/</code> <code>宽是</code> <code>1</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(!字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) !</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code></p>
+<p>“ <code>return</code> <code>i</code> <code>*</code> <code>2</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>do</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(字节</code> <code>1</code> <code>=</code> <code>=</code> <code>字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>i </code> <code>*</code> <code>2</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code> <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) !</code> <code>=</code> <code>0</code> <code>);</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>else</code> <code>{</code> <code>/</code> <code>/</code> <code>窄是</code> <code>0</code></p>
+<p>“ <code>if</code> <code>(!字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) !</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code></p>
+<p>“ <code>return</code> <code>i;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>do</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>if</code> <code>(字节</code> <code>1</code> <code>=</code> <code>=</code> <code>字节)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>i;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>} </code> <code>while</code> <code>(</code> <code>*</code> <code>((INT8</code> <code>*</code> <code>)地址 </code> <code>+</code> <code>i) !</code> <code>=</code> <code>0</code> <code>);</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>/</code> <code>/</code> <code>返回的是长度 如果是</code> <code>0</code> <code>就是失败</code></p>
+<p><code>BOOLEAN 宽到窄字符(ULONG64 宽地址, ULONG64 窄地址, WORD 长度)</code></p>
+<p><code>{</code></p>
+<p>“ <code>WORD i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>BYTE</code> <code>*</code> <code>窄节字 </code> <code>=</code> <code>NULL;</code></p>
+<p>“ <code>while</code> <code>(</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(宽地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>))</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>窄节字 </code> <code>=</code> <code>(BYTE</code> <code>*</code> <code>)窄地址 </code> <code>+</code> <code>i;</code></p>
+<p>“ <code>*</code> <code>窄节字 </code> <code>=</code> <code>*</code> <code>(BYTE</code> <code>*</code> <code>)(宽地址 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(i ></code> <code>=</code> <code>长度)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>1</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>/</code> <code>/</code> <code>宽字符比较窄字符 按窄字符长度标准</code></p>
+<p><code>BOOLEAN 宽比较窄字符(ULONG64 s1, ULONG64 s2,WORD 长度)</code></p>
+<p><code>{</code></p>
+<p>“ <code>WORD i </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>BYTE 字节, 字节</code> <code>1</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>while</code> <code>((字节 ^ 字节</code> <code>1</code> <code>) </code> <code>=</code> <code>=</code> <code>0</code> <code>)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节 </code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s1 </code> <code>+</code> <code>i </code> <code>*</code> <code>2</code> <code>);</code></p>
+<p>“ <code>if</code> <code>(</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) ></code> <code>=</code> <code>'a'</code> <code>)</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i) </code> <code>-</code> <code>0x20</code> <code>;</code></p>
+<p>“ <code>else</code></p>
+<p>“ <code>字节</code> <code>1</code> <code>=</code> <code>*</code> <code>((BYTE</code> <code>*</code> <code>)s2 </code> <code>+</code> <code>i);</code></p>
+<p>“ <code>i</code> <code>+</code> <code>+</code> <code>;</code></p>
+<p>“ <code>if</code> <code>(长度 </code> <code>=</code> <code>=</code> <code>i)</code></p>
+<p>“ <code>{</code></p>
+<p>“ <code>return</code> <code>1</code> <code>;</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>}</code></p>
+<p>“ <code>return</code> <code>0</code> <code>;</code></p>
+<p><code>}</code></p>
+<p><code>void 解析模块名(char</code> <code>*</code> <code>模块名,char</code> <code>*</code> <code>正确模块名)</code></p>
+<p><code>{</code></p>
+<p>“ <code>/</code> <code>/</code> <code>x64</code></p>
+<p>“ <code>ULONG64 ApiSetSchema地址 </code> <code>=</code> <code>*</code> <code>(ULONG64</code> <code>*</code> <code>)(__readgsqword(</code> <code>0x60</code> <code>) </code> <code>+</code> <code>0x68</code> <code>);</code></p>
+<p>“ <code>WORD 版本 </code> <code>=</code> <code>*</code> <code>(DWORD</code> <code>*</code> <code>)ApiSetSchema地址;</code></p>
+<p>“ <code>WORD API集数量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_命名空间条目_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集名称_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集名称_长度 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_值数组_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集_值数组_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_偏移量 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集_原名称_长度 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集_原名称_地址 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>ULONG64 API集遍历数 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD 模块名长度 </code> <code>=</code> <code>查找指定字节((ULONG64)模块名, </code> <code>0</code> <code>, </code> <code>0</code> <code>);</code></p>
+<p>“ <code>WORD API集版本_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集数量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p>“ <code>WORD API集命名空间条目_偏移量_偏移 </code> <code>=</code> <code>0</code> <code>;</code></p>
+<p><a href="https://bbs.kanxue.com/thread-275828.htm" class="external">[注意]传递专业知识、拓宽行业人脉——看雪讲师团队等你加入！<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-400" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#原创原创apisetschemaapi集-解析-编程技术-看雪-安全社区安全招聘kanxuecom" data-for="原创原创apisetschemaapi集-解析-编程技术-看雪-安全社区安全招聘kanxuecom">[原创][原创]ApiSetSchema/API集-解析-编程技术-看雪-安全社区|安全招聘|kanxue.com</a></li><li class="depth-1"><a href="#highlights" data-for="highlights">Highlights</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

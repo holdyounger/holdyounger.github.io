@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【调试技术】windbg 随手记</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【调试技术】windbg 随手记"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【调试技术】windbg 随手记"/><meta name="twitter:description" content="相关工具整理： API Monitor PCHunter工具 Windbg 脚本 可参考微软官方文档调试：调试方法 - Windows drivers | Microsoft Learn windbg mcp 提示词 【角色】你是 Windows 内核/应用调试专家。 【任务】基于 CDB 输出，推理崩溃根因，直至生成最终报告 【文件】 【规则】 1."/><meta property="og:description" content="相关工具整理： API Monitor PCHunter工具 Windbg 脚本 可参考微软官方文档调试：调试方法 - Windows drivers | Microsoft Learn windbg mcp 提示词 【角色】你是 Windows 内核/应用调试专家。 【任务】基于 CDB 输出，推理崩溃根因，直至生成最终报告 【文件】 【规则】 1."/><meta property="og:image:alt" content="相关工具整理： API Monitor PCHunter工具 Windbg 脚本 可参考微软官方文档调试：调试方法 - Windows drivers | Microsoft Learn windbg mcp 提示词 【角色】你是 Windows 内核/应用调试专家。 【任务】基于 CDB 输出，推理崩溃根因，直至生成最终报告 【文件】 【规则】 1."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/wiki/调试技术/【调试技术】Windbg随手记"/><meta property="twitter:url" content="https://holdyounger.github.io/wiki/调试技术/【调试技术】Windbg随手记"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="相关工具整理： API Monitor PCHunter工具 Windbg 脚本 可参考微软官方文档调试：调试方法 - Windows drivers | Microsoft Learn windbg mcp 提示词 【角色】你是 Windows 内核/应用调试专家。 【任务】基于 CDB 输出，推理崩溃根因，直至生成最终报告 【文件】 【规则】 1."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="wiki/调试技术/【调试技术】Windbg随手记"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1352"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1352" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/">wiki</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/调试技术/">调试技术</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【调试技术】windbg 随手记</a></div></nav><h1 class="article-title">【调试技术】windbg 随手记</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:53.287Z">2026年4月07日</time><span>14分钟阅读</span></p><ul class="tags"><li><a href="../../tags/Windows" class="internal tag-link">Windows</a></li><li><a href="../../tags/调试工具/WinDbg" class="internal tag-link">调试工具/WinDbg</a></li></ul></div></div><article class="popover-hint"><blockquote>
+<p>相关工具整理：</p>
+<ol>
+<li>API Monitor</li>
+<li>PCHunter工具</li>
+<li><a href="../../wiki/调试技术/【调试技术】Windbg基础命令" class="internal alias" data-slug="wiki/调试技术/【调试技术】Windbg基础命令">Windbg</a> 脚本</li>
+</ol>
+</blockquote>
+
+<p>可参考微软官方文档调试：<a href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/debugging-techniques" class="external">调试方法 - Windows drivers | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+<h2 id="windbg-mcp-提示词">windbg mcp 提示词<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#windbg-mcp-提示词" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>【角色】你是 Windows 内核/应用调试专家。
+【任务】基于 CDB 输出，推理崩溃根因，直至生成最终报告
+【文件】 
+【规则】
+1. 尽可能分析具体原因
+2. 告诉我为什么它崩溃了，并给出可能的修复建议
+3. 将分析结果输出到 MarkDown 文件
+</code></pre>
+<h2 id="3264切换">32/64切换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3264切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="shell" data-theme="github-light github-dark"><code data-language="shell" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">.load</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> wow64exts</span></span></code></pre></figure>
+<h2 id="设置微软pdb服务器">设置微软PDB服务器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#设置微软pdb服务器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>srv*D:\Symbols*https://msdl.microsoft.com/download/symbols</span></span></code></pre></figure>
+<h2 id="保存-dump">保存 dump<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#保存-dump" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>.dump /ma C:\dumps\myapp.dmp</span></span></code></pre></figure>
+<h2 id="调试技巧">调试技巧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调试技巧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>直接按回车可以执行上一条命令</li>
+<li>使用分分号作为分隔符，可以在同一行输入多条命令</li>
+<li>按上下方向键可以浏览和选择以前输入过的命令</li>
+<li>当命令提示符显示为<em>BUSY</em>时，即使命令编辑框可以输入命令，但是这个命令也不会被马上执行，要等WinDBG恢复到空闲状态才能执行</li>
+<li>使用Ctrl+Break 来终止一个长时间未完成的命令。如果使用KD或则CDB，那么用Ctrl+C</li>
+<li>选择菜单<span>→</span>Edit_>Write Window Text to File可以把之前敲过的所有命令记录到文件</li>
+</ul>
+<h2 id="伪寄存器">伪寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#伪寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>WinDBG自动定义了很多伪寄存器。在命令行和命令文件中都可以使用伪寄存器。WinDBG会自动将其替换（展开）为合适的值。例如下面这个@$scopeip 就是一个伪寄存器，它代表当前的eip指针。</p>
+<img src="../../【调试技术】Windbg随手记/image-20231113101710681.png" alt="eip"/>
+<p>下表列出了windbg所定义的部分寄存器(字典型知识，需要时查阅即可)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:left;">伪寄存器</th><th style="text-align:left;">含义</th></tr></thead><tbody><tr><td style="text-align:left;">$ea</td><td style="text-align:left;">调试目标所执行上一条指令的有效地址</td></tr><tr><td style="text-align:left;">$ea2</td><td style="text-align:left;">调试目标所执行上一条指令的第二个有效地址</td></tr><tr><td style="text-align:left;">$exp</td><td style="text-align:left;">表达式评估器所评估的上一条表达式</td></tr><tr><td style="text-align:left;">$ra</td><td style="text-align:left;">当前堆栈的返回地址。<br/>这个在执行命令中特别有用。例如，<strong>g @$ra</strong> 将一直执行到返回地址处（虽然，对于“步出(stepping out)”当前函数<a href="http://www.dbgtech.net/windbghelp/hh/debugger/r16_cmds_c_320ddebd-6cca-410d-b6bd-d8720b4494e3.xml.htm" class="external"><strong>gu (Go Up)</strong><svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>是一个更加准备有效的方法）。</td></tr><tr><td style="text-align:left;"><strong>$ip</strong></td><td style="text-align:left;">指令指针寄存器：  <em>x86 处理器</em>：和 <strong>eip</strong> 相同 <em>Itanium 处理器</em>：涉及 <strong>iip</strong>（请看表后的注解） <em>x64处理器</em>：和<strong>rip</strong>相同</td></tr><tr><td style="text-align:left;">$eip</td><td style="text-align:left;">指令指针寄存器</td></tr><tr><td style="text-align:left;">$eventip</td><td style="text-align:left;">当前调试事件发生时的指令指针</td></tr><tr><td style="text-align:left;">$previp</td><td style="text-align:left;">上一事件的指令指针</td></tr><tr><td style="text-align:left;">$relip</td><td style="text-align:left;">与当前事件关联的指令指针</td></tr><tr><td style="text-align:left;">$scopeip</td><td style="text-align:left;">当前上下文的指令指针</td></tr><tr><td style="text-align:left;">$exentry</td><td style="text-align:left;">当前进程的入口地址</td></tr><tr><td style="text-align:left;">$retreg</td><td style="text-align:left;">首要的函数返回值寄存器</td></tr><tr><td style="text-align:left;">$retreg64</td><td style="text-align:left;">64位格式的首要函数返回寄存器</td></tr><tr><td style="text-align:left;">$csp</td><td style="text-align:left;">栈顶指针ESP</td></tr><tr><td style="text-align:left;">$p</td><td style="text-align:left;">上一个内存显示命令所打印的第一个值</td></tr><tr><td style="text-align:left;">$proc</td><td style="text-align:left;">当前进程EPROCESS结构的指针</td></tr><tr><td style="text-align:left;">$thread</td><td style="text-align:left;">当前线程ETHREAD结构的指针</td></tr><tr><td style="text-align:left;">$peb</td><td style="text-align:left;">当前进程的进程环境块(PEB)的地址</td></tr><tr><td style="text-align:left;">$teb</td><td style="text-align:left;">当前线程的线程环境块(TEB)地址</td></tr><tr><td style="text-align:left;">$tpid</td><td style="text-align:left;">拥有当前线程的进程ID(PID)</td></tr><tr><td style="text-align:left;">$tid</td><td style="text-align:left;">当前线程的线程ID</td></tr><tr><td style="text-align:left;">$bpx</td><td style="text-align:left;">X号断点的地址</td></tr><tr><td style="text-align:left;">$frame</td><td style="text-align:left;">当前栈帧的序号</td></tr><tr><td style="text-align:left;">$dbgtime</td><td style="text-align:left;">当前时间</td></tr><tr><td style="text-align:left;">$callret</td><td style="text-align:left;">使用.call命令调用的上一个函数的返回值</td></tr><tr><td style="text-align:left;">$ptrsize</td><td style="text-align:left;">调试目标所在系统的指针类型宽度</td></tr><tr><td style="text-align:left;">$pagesize</td><td style="text-align:left;">调试目标所在的系统的内存页字节数</td></tr><tr><td style="text-align:left;">自定义伪寄存器</td><td style="text-align:left;"><code>$t1</code>、<code>$t2</code></td></tr></tbody></table></div>
+<h2 id="查看入参">查看入参<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看入参" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># </span><span style="--shiki-light:#B31D28;--shiki-light-font-style:italic;--shiki-dark:#FDAEB7;--shiki-dark-font-style:italic;">0n1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 就是堆栈ID</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.frame </span><span style="--shiki-light:#B31D28;--shiki-light-font-style:italic;--shiki-dark:#FDAEB7;--shiki-dark-font-style:italic;">0n1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; dv </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">t </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">v </span></span></code></pre></figure>
+<h2 id="命令整理">命令整理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#命令整理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="-0n-命令">? 0n 命令<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-0n-命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windbg中的 ?0n 是一个命令，用来设置表达式的数制为十进制。具体来说，当你需要查看一个内存地址或者变量以十进制格式时，可以使用 ?0n 命令。</p>
+<p>在Windbg中，数制的表示：</p>
+<ul>
+<li>
+<p>0x表示十六进制</p>
+</li>
+<li>
+<p>0n表示十进制</p>
+</li>
+<li>
+<p>0t表示八进制</p>
+</li>
+<li>
+<p>0y表示二进制。</p>
+</li>
+</ul>
+<p>Windbg默认数制为十六进制。</p>
+<h3 id="切换线程">切换线程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#切换线程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在WinDbg中，可以使用以下命令来切换线程：</p>
+<ol>
+<li><code>~</code> 命令：用于切换当前活动线程。例如，<code>~0s</code>将切换到线程ID为0的线程。</li>
+<li><code>~*</code> 命令：用于切换到所有线程中的下一个线程。</li>
+<li><code>~[]</code> 命令：用于切换到特定索引的线程。例如，<code>~[3]s</code>将切换到索引为3的线程。</li>
+</ol>
+<p>请注意，使用这些命令时，要确保已经在调试会话中加载了适当的符号和源代码，并且已经打开了需要调试的进程和线程。</p>
+<h3 id="切换进程">切换进程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#切换进程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在WinDbg中，可以使用以下命令来切换进程：</p>
+<ol>
+<li><code>|</code> 命令：用于切换当前活动进程。例如，<code>|1s</code>将切换到进程ID为1的进程。</li>
+<li><code>~*</code> 命令：用于切换到所有进程中的下一个进程。</li>
+<li><code>~[]</code> 命令：用于切换到特定索引的进程。例如，<code>~[3]s</code>将切换到索引为3的进程。</li>
+</ol>
+<p>请注意，使用这些命令时，要确保已经在调试会话中加载了适当的符号和源代码，并且已经打开了需要调试的进程和线程。</p>
+<h3 id="process-命令">!process 命令<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#process-命令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在Windows Debugger（WinDbg）中，<code>!process</code>命令用于显示有关特定进程或所有进程的信息，包括EPROCESS块。</p>
+<p>该命令的语法随Windows版本的不同而有所不同。</p>
+<p>在Windows NT 4.0中，它的语法如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="swift" data-theme="github-light github-dark"><code data-language="swift" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process[Process[Flags]]</span></span></code></pre></figure>
+<p>在Windows 2000中，它的语法如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="swift" data-theme="github-light github-dark"><code data-language="swift" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process[</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sSession] [Process[Flags]]</span></span></code></pre></figure>
+<p>在Windows XP及更高版本中，它的语法如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="swift" data-theme="github-light github-dark"><code data-language="swift" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process[</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sSession] [</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mModule] [Process[Flags]]</span></span></code></pre></figure>
+<p>以上命令中的参数含义如下：</p>
+<ul>
+<li>
+<p><code>/sSession</code>（Windows 2000及之后）指定拥有给定进程的会话（session）。</p>
+</li>
+<li>
+<p><code>/mModule</code>（Windows XP及之后）指定拥有需要的进程的模块。</p>
+</li>
+<li>
+<p><code>Process</code> 指定目标机上某个进程的16进制地址或者进程ID。</p>
+</li>
+<li>
+<p><code>Flags</code> 是用于控制命令行为的标志位，例如，<code>/d</code> 用于显示完整的进程环境块，<code>/c</code> 用于显示完整的线程环境块等。</p>
+</li>
+</ul>
+<p>以上信息仅供参考，如需更多信息，建议咨询专业的技术人员。</p>
+<h3 id="idt">!IDT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在WinDbg中，<code>!idt</code>命令用于显示中断分配表（Interrupt Dispatch Table，简称IDT）中的中断服务例程（Interrupt Service Routine，简称ISR）。</p>
+<p>该命令的语法为：<code>!idt [IDT]</code>，其中<code>IDT</code>是可选项，用于指定要显示的特定IDT。</p>
+<p>如果未指定IDT，并且在没有指定<code>-a</code>选项的情况下，该命令将简短地显示目标机上所有处理器的IDT。</p>
+<p>如果指定了<code>-a</code>选项，该命令将显示所有IDT的ISR。</p>
+<p>如果需要获取该命令的帮助文本，可以在调试器命令窗口中使用<code>!idt -?</code>命令。</p>
+<p>需要注意的是，该命令只能对x64或者x86目标机使用。</p>
+<h3 id="查看dll加载">查看dll加载<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看dll加载" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>eb ntdll!ShowSnaps 1</span></span></code></pre></figure>
+<p><code>eb ntdll!ShowSnaps 1</code>这一命令是在Windows的NT操作系统内核（ntdll.dll）中调试多线程应用程序时使用的。它用于启用或禁用快照调试（Snapshots），这是一种在调试期间捕获特定系统状态的调试技术。</p>
+<p>在这里，<code>eb</code>是指“编辑二进制”（Edit Binary）的命令，它允许你修改内存中的二进制数据。<code>ntdll!ShowSnaps</code>是你要修改的函数，而<code>1</code>是你要设置的值。在调试多线程应用时，<code>ShowSnaps</code>函数用于控制是否启用快照调试。如果将其设置为1，则启用快照调试；如果设置为0，则禁用快照调试。</p>
+<p>需要注意的是，修改系统内核的代码可能会对系统造成严重的破坏，因此，除非你非常清楚自己在做什么，否则不建议进行这样的操作。在大多数情况下，如果你认为需要修改系统内核的代码来调试你的应用程序，那么你可能需要寻找其他方法，或者寻求专业的帮助。</p>
+<h2 id="设置日志记录位置">设置日志记录位置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#设置日志记录位置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 打开日志</span></span>
+<span data-line><span>.logopen /t c:\logs\mylogfile.txt</span></span>
+<span data-line> </span>
+<span data-line><span># 关闭日志</span></span>
+<span data-line><span>.logclose</span></span></code></pre></figure>
+<h2 id="查看-call-寄存器时调用的函数">查看 call 寄存器时调用的函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看-call-寄存器时调用的函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>相关文章： <a href="../../【调试技术】logexts" class="internal alias" data-slug="【调试技术】logexts">【调试技术】logexts</a></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bu RPCRT4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Invoke</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x73</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;u r10&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bu RPCRT4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Invoke</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x73-5</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;r ;gc&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 高级一点的用法</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 在 r10 被更新后看就可以了</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bu RPCRT4</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Invoke</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x73</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">2d </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;u r10 L5;gc&quot;</span></span></code></pre></figure>
+<p>调试的汇编代码如下所示，为 <code>RPCRT4!invoke+73的位置</code>：</p>
+<p><img src="../../【调试技术】Windbg随手记/IMG-20241011105121069.png" alt="image-20240830174957739"/></p>
+<p>当然还有可能会因为反汇编失败导致阻塞，这里可以根据自己的需求加入一些判断。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 先保存一下寄存器，如果函数执行结束后返回的值为0，则对原来的地址进行反汇编，否则不执行操作</span></span>
+<span data-line><span>ba e1 RPCRT4!Invoke+0x62 &quot;r $t1 = @r10;p;.if(@eax == 0){gc}.else{r;? @r10}&quot;</span></span></code></pre></figure>
+<h2 id="查看-loadlibrary-加载的-dll">查看 LoadLibrary 加载的 dll<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看-loadlibrary-加载的-dll" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>相关函数如下，具体情况具体调试，大致如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">016</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> x kernelbase</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Loadlibrary</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">76e2c780          KERNELBASE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">LoadLibraryA (void)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">76e2ffb0          KERNELBASE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">LoadLibraryExW (void)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">76e2c810          KERNELBASE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">LoadLibraryW (_LoadLibraryW@</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">76e2efb0          KERNELBASE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">LoadLibraryExA (_LoadLibraryExA@</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">12</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></figure>
+<p><strong>LoadLibraryEx</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">bu</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> KERNELBASE!LoadLibraryEx</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;dU poi(esp+4);&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># cmd 也可以自己加点 flag</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">.printf</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> /on</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;--->&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">dU</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> poi</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">esp+4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<h2 id="查看-createfile-创建的是哪个文件并查看调用堆栈">查看 CreateFile 创建的是哪个文件并查看调用堆栈<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看-createfile-创建的是哪个文件并查看调用堆栈" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">bu</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> KERNELBASE!CreateFileA</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;.printf /on </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">---></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">; dU poi(esp+4);&quot;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 也可以按自己的需要添加后续操作</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">bu</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> KERNELBASE!CreateFileW</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;.printf /on </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">---></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">; dU poi(esp+4);!clrstack;gc&quot;</span></span></code></pre></figure>
+<h2 id="脚本遍历大小固定的结构体">【脚本】遍历大小固定的结构体<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#脚本遍历大小固定的结构体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>如下所示 00007ffdf4044028 地址存放的是一个 <code>_UNICODE_STRING*</code> 的指针， <code>_UNICODE_STRING</code> 的大小为 0x10。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (r $t0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;@$t0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;r $t0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">@$t0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">){ r $t1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$t0</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x10</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; dS 00007ffd`f4044028</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">$t1 } </span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 如果不知道结构体大小是多少，可以使用??命令计算</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ??</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(nt</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">_UNICODE_STRING) </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">unsigned int64 </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x10</span></span></code></pre></figure>
+<p>运行结果如下所示，打印了三个<a href="../../B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串" class="internal alias" data-slug="B_Code/GO/Go简明手册/Go语言基础/字符串/【Go简明手册】字符串">字符串</a>。</p>
+<img src="../../【调试技术】Windbg随手记/image-20231129123908261.png" alt="image-20231129123908261" style="zoom:80%;"/>
+<h2 id="进程">【进程】<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="调试进程">调试进程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调试进程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote>
+<p><a href="../../wiki/调试技术/【调试技术】双机调试-串口调试" class="internal alias" data-slug="wiki/调试技术/【调试技术】双机调试-串口调试">双机调试</a>下，调试进程要用到 <code>!process</code> 和 <code>.process</code> 命令，进入进程空间后，命令同用户态调试</p>
+</blockquote>
+<ol>
+<li>
+<p>查看某个进程</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 查看某个进程</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> 目标进程名 获取目标进程EPROCESS基本信息</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 例如查看 svchost.exe</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> svchost.exe</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"># 查看加载了某个模块的进程</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">process /m ntdll.dll </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> svchost.exe</span></span>
+<span data-line> </span></code></pre></figure>
+</li>
+<li>
+<p>.process /p +EPROCESS信息 切换到目标进程空间</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.process /p 进程地址</span></span></code></pre></figure>
+</li>
+<li>
+<p>.reload /f /user 强制重新加载用户态符号</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.reload /f /user</span></span></code></pre></figure>
+</li>
+<li>
+<p>.process /i /p 目标进程的EPROCESS 侵入式调试</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">.process /i /p 进程地址</span></span></code></pre></figure>
+</li>
+<li>
+<p>bp 目标API 执行下断点命令</p>
+</li>
+</ol>
+<h3 id="查看模块加载">查看模块加载<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看模块加载" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>bp ntdll!LdrLoadDll</span></span>
+<span data-line> </span>
+<span data-line><span>在断点下输入：</span></span>
+<span data-line> </span>
+<span data-line><span>eb Kd_LDR_MASK ffffffff</span></span>
+<span data-line><span>eb Kd_MM_MASK ffffffff</span></span>
+<span data-line><span>eb Kd_DEFAULT_MASK ffffffff</span></span>
+<span data-line> </span>
+<span data-line><span>eb ntdll!ShowSnaps 1</span></span>
+<span data-line><span>eb ntdll!ShowErrors 1</span></span></code></pre></figure>
+<h3 id="进程入口堆栈">进程入口堆栈<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程入口堆栈" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0: kd> kcn</span></span>
+<span data-line><span> # Call Site</span></span>
+<span data-line><span>00 consent!WinMain</span></span>
+<span data-line><span>01 consent!__mainCRTStartup</span></span>
+<span data-line><span>02 KERNEL32!BaseThreadInitThunk</span></span>
+<span data-line><span>03 ntdll!RtlUserThreadStart</span></span></code></pre></figure>
+<h3 id="进程入口断点">进程入口断点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程入口断点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>将 <code>consent.exe</code> 修改为自己的模块名即可，exe 和 dll 文件都支持</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 设置内核断点</span></span>
+<span data-line><span>sxr;	</span></span>
+<span data-line><span>!gflag -ksl</span></span>
+<span data-line><span>!gflag +ksl;</span></span>
+<span data-line><span>sxe cpr consent.exe;sxe ld consent.exe</span></span></code></pre></figure>
+<h3 id="死锁调试">死锁调试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#死锁调试" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout quote" data-callout="quote">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>相关参考 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ol>
+<li><a href="https://www.cnblogs.com/fjicn/p/3405716.html" class="external">使用Windbg找出死锁，解决生产环境中运行的软件不响应请求的问题 - 诶碧司 - 博客园<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://www.codeleading.com/article/15586425213/" class="external">Windows卡死问题分析 - 代码先锋网<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/debugging-a-deadlock" class="external">调试死锁 - Windows drivers | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/debugger/debugging-a-stalled-system" class="external">调试已停止的系统 - Windows drivers | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ol>
+</div>
+</blockquote>
+<h3 id="查看-ipv4-地址">查看 IPv4 地址<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看-ipv4-地址" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>r @$t0 = 3f45B412; .printf &quot;%u.%u.%u.%u\n&quot;,((@$t0&amp;FF)),((@$t0>>08)&amp;FF),((@$t0>>10)&amp;FF),((@$t0 >>18)&amp;FF)</span></span></code></pre></figure>
+<h2 id="内存布局">内存布局<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内存布局" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>
+<p>UUID 内存布局
+前三位为小段序，后两位为大端序</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="shellcode" data-theme="github-light github-dark"><code data-language="shellcode" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>{4c3d624d-fd6b-49a3-b9b7-09cb3cd3f047}</span></span>
+<span data-line> </span>
+<span data-line><span>0:010> db 000000E906BFEC50</span></span>
+<span data-line><span>000000e9`06bfec50  4d 62 3d 4c 6b fd a3 49-b9 b7 09 cb 3c d3 f0 47  Mb=Lk..I....&lt;..G</span></span></code></pre></figure>
+</li>
+</ol></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-466" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#windbg-mcp-提示词" data-for="windbg-mcp-提示词">windbg mcp 提示词</a></li><li class="depth-0"><a href="#3264切换" data-for="3264切换">32/64切换</a></li><li class="depth-0"><a href="#设置微软pdb服务器" data-for="设置微软pdb服务器">设置微软PDB服务器</a></li><li class="depth-0"><a href="#保存-dump" data-for="保存-dump">保存 dump</a></li><li class="depth-0"><a href="#调试技巧" data-for="调试技巧">调试技巧</a></li><li class="depth-0"><a href="#伪寄存器" data-for="伪寄存器">伪寄存器</a></li><li class="depth-0"><a href="#查看入参" data-for="查看入参">查看入参</a></li><li class="depth-0"><a href="#命令整理" data-for="命令整理">命令整理</a></li><li class="depth-1"><a href="#-0n-命令" data-for="-0n-命令">? 0n 命令</a></li><li class="depth-1"><a href="#切换线程" data-for="切换线程">切换线程</a></li><li class="depth-1"><a href="#切换进程" data-for="切换进程">切换进程</a></li><li class="depth-1"><a href="#process-命令" data-for="process-命令">!process 命令</a></li><li class="depth-1"><a href="#idt" data-for="idt">!IDT</a></li><li class="depth-1"><a href="#查看dll加载" data-for="查看dll加载">查看dll加载</a></li><li class="depth-0"><a href="#设置日志记录位置" data-for="设置日志记录位置">设置日志记录位置</a></li><li class="depth-0"><a href="#查看-call-寄存器时调用的函数" data-for="查看-call-寄存器时调用的函数">查看 call 寄存器时调用的函数</a></li><li class="depth-0"><a href="#查看-loadlibrary-加载的-dll" data-for="查看-loadlibrary-加载的-dll">查看 LoadLibrary 加载的 dll</a></li><li class="depth-0"><a href="#查看-createfile-创建的是哪个文件并查看调用堆栈" data-for="查看-createfile-创建的是哪个文件并查看调用堆栈">查看 CreateFile 创建的是哪个文件并查看调用堆栈</a></li><li class="depth-0"><a href="#脚本遍历大小固定的结构体" data-for="脚本遍历大小固定的结构体">【脚本】遍历大小固定的结构体</a></li><li class="depth-0"><a href="#进程" data-for="进程">【进程】</a></li><li class="depth-1"><a href="#调试进程" data-for="调试进程">调试进程</a></li><li class="depth-1"><a href="#查看模块加载" data-for="查看模块加载">查看模块加载</a></li><li class="depth-1"><a href="#进程入口堆栈" data-for="进程入口堆栈">进程入口堆栈</a></li><li class="depth-1"><a href="#进程入口断点" data-for="进程入口断点">进程入口断点</a></li><li class="depth-1"><a href="#死锁调试" data-for="死锁调试">死锁调试</a></li><li class="depth-1"><a href="#查看-ipv4-地址" data-for="查看-ipv4-地址">查看 IPv4 地址</a></li><li class="depth-0"><a href="#内存布局" data-for="内存布局">内存布局</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

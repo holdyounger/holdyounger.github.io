@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【PE】PE文件结构1</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【PE】PE文件结构1"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【PE】PE文件结构1"/><meta name="twitter:description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析） 参考文章： ‘PE文件格式学习（一）概述 - CodeAntenna’ www.winitor.com/pdf/Windows-Portable-Executable.pdf 0x01 前言 PE(Portable Executable)，即可移植的执行体。 Linux平台：ELF（Executable and Linking Format）文件结构。 Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。 0x02 P..."/><meta property="og:description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析） 参考文章： ‘PE文件格式学习（一）概述 - CodeAntenna’ www.winitor.com/pdf/Windows-Portable-Executable.pdf 0x01 前言 PE(Portable Executable)，即可移植的执行体。 Linux平台：ELF（Executable and Linking Format）文件结构。 Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。 0x02 P..."/><meta property="og:image:alt" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析） 参考文章： ‘PE文件格式学习（一）概述 - CodeAntenna’ www.winitor.com/pdf/Windows-Portable-Executable.pdf 0x01 前言 PE(Portable Executable)，即可移植的执行体。 Linux平台：ELF（Executable and Linking Format）文件结构。 Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。 0x02 P..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/wiki/PE/【PE】PE文件结构1"/><meta property="twitter:url" content="https://holdyounger.github.io/wiki/PE/【PE】PE文件结构1"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="概述：PE文件结构基础认识之DOS头和PE头（以 rpcrt4.dll 为例分析） 参考文章： ‘PE文件格式学习（一）概述 - CodeAntenna’ www.winitor.com/pdf/Windows-Portable-Executable.pdf 0x01 前言 PE(Portable Executable)，即可移植的执行体。 Linux平台：ELF（Executable and Linking Format）文件结构。 Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。 0x02 P..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="wiki/PE/【PE】PE文件结构1"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1299"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1299" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/">wiki</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/PE/">PE</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【PE】PE文件结构1</a></div></nav><h1 class="article-title">【PE】PE文件结构1</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:52.651Z">2026年4月07日</time><span>18分钟阅读</span></p></div></div><article class="popover-hint"><blockquote>
+<p>概述：<a href="../../wiki/PE/【PE】PE文件结构1" class="internal alias" data-slug="wiki/PE/【PE】PE文件结构1">PE文件</a>结构基础认识之DOS头和PE头（以 <code>rpcrt4.dll</code> 为例分析）</p>
+</blockquote>
+
+<p>参考文章：</p>
+<ul>
+<li>‘<a href="https://codeantenna.com/a/FZyG6BgvR5" class="external">PE文件格式学习（一）概述 - CodeAntenna<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>’</li>
+<li><a href="https://www.winitor.com/pdf/Windows-Portable-Executable.pdf" class="external">https://www.winitor.com/pdf/Windows-Portable-Executable.pdf<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+<h2 id="0x01-前言">0x01 前言<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x01-前言" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>PE(Portable Executable)，即可移植的执行体。</p>
+<ul>
+<li>
+<p>Linux平台：ELF（Executable and Linking Format）文件结构。</p>
+</li>
+<li>
+<p>Windows平台下，所有的可执行文件。诸如：exe、dll、sys、ocx、com等均适用PE文件结构，这些使用PE文件结构也被称为PE文件。</p>
+</li>
+</ul>
+<h2 id="0x02-pe结构">0x02 PE结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x02-pe结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>PE 结构是由<strong>若干个复杂的结构体组合</strong>而成的，不是单单的一个结构体那么简单，它的结构就像文件系统的结构是由多个结构体组成的。PE结构 包含的结构体有 <strong>DOS 头、PE 标识、文件头、可选头、目录结构、节表</strong>等。如下图所示：</p>
+<p><img src="../../【PE】PE文件结构1/pe.png" alt="pe"/></p>
+<h3 id="dos头">DOS头<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dos头" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>DOS头中声明用的寄存器(我们可以看到e_ss、e_sp、e_ip、e_cs还是16位的寄存器)，所以在32位/64为系统中用到的只有两个成员了（第一个和最后一个）。无论是32位还是64位PE文件，其文件的头部必定是DOS头。大小为 <span class="text-highlight">40H(64字节)</span>。相关结构如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// WORD 为2字节</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// DWORD 为4字节</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _IMAGE_DOS_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      // DOS .EXE header(※Magic DOS signature MZ(4Dh 5Ah):MZ标记)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_magic;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                     // Magic number</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_cblp;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                      // Bytes on last page of file</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_cp;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // Pages in file</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_crlc;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                      // Relocations</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_cparhdr;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                   // Size of header in paragraphs</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_minalloc;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // Minimum extra paragraphs needed</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_maxalloc;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // Maximum extra paragraphs needed</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_ss;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // Initial (relative) SS value</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_sp;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // Initial SP value</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_csum;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                      // Checksum</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_ip;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // Initial IP value</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_cs;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                        // Initial (relative) CS value</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_lfarlc;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // File address of relocation table</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_ovno;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                      // Overlay number</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_res[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // Reserved words</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_oemid;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                     // OEM identifier (for e_oeminfo)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_oeminfo;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                   // OEM information; e_oemid specific</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD   e_res2[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // Reserved words</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    LONG   e_lfanew;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // File address of new exe header</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  } </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IMAGE_DOS_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PIMAGE_DOS_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>DOS 头又分为两部分，<span class="text-highlight">MZ头部</span> 和 <span class="text-highlight">DOS存根</span>。</p>
+<h4 id="mz头部">MZ头部<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mz头部" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>
+<p><strong>MZ文件头</strong>：IMAGE_DOS_HEADER 结构体，其大小占64个字节，并且该结构中的最后一个LONG类型<code>e_lfanew</code>成员指向PE文件头的位置为中的PE文件头标志的地址。
+DOS头中有两个重要的成员，分别是 <code>e_magic</code> 和 <code>e_lfanew</code>，如PE文件结构说明一图所示：</p>
+<ul>
+<li><code>e_magic</code>：对应 MZ标识(固定值) ，也就是 <code>0x5A4D</code></li>
+<li><code>e_lfanew</code>: 指pe的偏移量，对应的PE数据块的基地址</li>
+</ul>
+<p><img src="../../【PE】PE文件结构1/image-20231109153335507.png" alt="MZ头部"/></p>
+</li>
+</ul>
+<h4 id="dos存根dos-stub">DOS存根（DOS stub）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dos存根dos-stub" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>DOS头(<code>IMAGE_DOS_HEADER</code>)和PE头(<code>IMAGE_NT_HEADERS</code>)中间的空余位置是一些垃圾值以及编译器填充的一些 *The is program cannot be run in DOS mode.*或 <em>This program must be run under Win32</em> 等信息。这些信息就是 DOS存根。DOS存根实际上是一段<strong>汇编代码</strong>。用于在DOS环境下启动PE文件时输出一些上述文本。</p>
+<p><img src="../../【PE】PE文件结构1/image-20231109154333707.png" alt="DOS stub"/></p>
+<blockquote>
+<p>在pe文件利用的时候，我们可以把payload写入到当前区域，诸如存放我们的shellcode，在读取时，获取dos头字节数，减去MZ头字节数，即为dos存根字节大小。然后拿去操作加载shellcode等。</p>
+</blockquote>
+<h3 id="pe头">PE头<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pe头" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在MS-DOS头下main，就是PE头，PE头是PE相关结构NT映像头（<code>IMAGE_NT_HEADER</code>）的简称，其中包含许多PE装载器用到的重要字段。PE头又分为标准PE头和可选PE头，其同为NT结构的成员：</p>
+<p><code>IMAGE_NT_HEADER</code>数据结构定义：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">//NT头</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">//pNTHeader = dosHeader + dosHeader->e_lfanew;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> _IMAGE_NT_HEADERS{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">00</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> DWORD Signature;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   //PE文件标识:ASCII的&quot;PE\0\0&quot;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">04</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> _IMAGE_FILE_HEADER FileHeader;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">18</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> _IMAGE_OPTIONAL_HEADER OptionalHeader;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></figure>
+<p>根据DOS头的<code>e_lfanew</code>成员我们就可以找到NT头，NT头的第一个成员<code>Signature</code>是<code>PE\0\0</code>（0X50 0X45 0X00 0X00四字节的签名），后两个成员则分别是标准PE头<code>FileHeader</code>（<code>_IMAGE_FILE_HEADER</code>）和<code>OptionalHeader</code>可选PE头（<code>_IMAGE_OPTIONAL_HEADER</code>）。</p>
+<p><img src="../../【PE】PE文件结构1/image-20231109155516699.png" alt="PE头"/></p>
+<h4 id="pe标识-signature">PE标识 Signature<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pe标识-signature" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>将文件标识为 PE 映像的 4 字节签名。字节为<code>PE\0\0</code>。这个字段是PE文件的标志字段，通常设置成 <code>00004550h</code>，其ASCII码为 <code>PE00</code>，这个字段是PE文件头的开始，前面的<code>DOS_HEADER</code>结构中的字段<code>e_lfanew</code>字段就是指向这里。</p>
+<h4 id="文件头-fileheader">文件头 FileHeader<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文件头-fileheader" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>文件头结构体为 <code>_IMAGE_FILE_HEADER</code>，见<a href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_file_header" class="external">IMAGE_FILE_HEADER (winnt.h) - Win32 apps | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>。结构体成员变量如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _IMAGE_FILE_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD Machine;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">			//运行平台</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD NumberOfSections;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//文件的区块数目</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DWORD TimeDateStamp;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//文件创建的用时间戳标识的日期</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DWORD PointerToSymbolTable;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">		//指向符号表（用于调试）</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DWORD NumberOfSymbols;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">			//符号表中符号的个数</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD SizeOfOptionalHeader;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">		//IMAGE_OPTIONAL_HEADER32结构大小</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    WORD Characteristics;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">			//文件属性</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IMAGE_FILE_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PIMAGE_FILE_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>参照上述结构体，分析一下 <code>RPCrt4.dll</code> 的 FileHeader 成员。</p>
+<p>PE头存储内容如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="pe头" data-theme="github-light github-dark"><code data-language="pe头" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Offset      0  1  2  3  4  5  6  7   8  9  A  B  C  D  E  F</span></span>
+<span data-line> </span>
+<span data-line><span>000000E0                            50 45 00 00 4C 01 06 00           PE  L   </span></span>
+<span data-line><span>000000F0   77 7B 41 86 00 00 00 00  00 00 00 00 E0 00 02 21   w{A?       ? !</span></span></code></pre></figure>
+<p>现在有数据也知道结构体，可以根据存储的内容知道 <code>rpcrt4.dll</code> 的一些信息了（地址是由低位向高位增长的，这里直接复制粘贴了，读者知道这回事就行）</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>成员变量</th><th>Machine</th><th>NumberOfSections</th><th>TimeDateStamp</th><th>PointerToSymbolTable</th><th>NumberOfSymbols</th><th>SizeOfOptionalHeader</th><th>Characteristics</th></tr></thead><tbody><tr><td>大小</td><td>WORD</td><td>WORD</td><td>DWORD</td><td>DWORD</td><td>DWORD</td><td>WORD</td><td>WORD</td></tr><tr><td>值</td><td>4C 01</td><td>06 00</td><td>77 7B 41 86</td><td>00 00 00 00</td><td>00 00 00 00</td><td>E0 00</td><td>02 21</td></tr><tr><td>说明</td><td>0x014C 表示当前体系结构类型为 x86</td><td>当前PE文件的节数，当前所示有 6 个</td><td>当前PE文件的时间戳</td><td>符号表的偏移量（以字节为单位），如果没有 COFF 符号表，则为 0</td><td>符号表中的符号数，当前为 0</td><td>可选文件头大小，当前所示有 224 个</td><td>图像的特征 0x2102</td></tr><tr><td>补充</td><td>机器标识</td><td>标识区块的数目，关于区块后面会详细讲</td><td>指的就是PE文件创建的事件，这个时间是指从1970年1月1日到创建该文件的所有的秒数</td><td></td><td></td><td>紧跟着IMAGE_FILE_HEADER后面的数据大小，这也是一个数据结构，它叫做IMAGE_OPTIONAL_HEADER,其大小依赖于是64位还是32位文件。32位文件值通常是00EOh，对于64位值通常为00F0h</td><td>普通EXE文件这个字段值为010fh，DLL文件这个字段一般是0210h</td></tr></tbody></table></div>
+<blockquote>
+<p>最后一个参数图像特征 <code>Characteristics</code> 的值 0x2102 的说明</p>
+<ul>
+<li>0x2000 该图像是一个DLL文件，虽然是可执行文件，但不能直接运行</li>
+<li>0x0100 计算机支持32位</li>
+<li>0x0002 该文件是可执行文件，（没有未解析的外部引用）</li>
+</ul>
+</blockquote>
+<h4 id="可选头-optionalheader">可选头 OptionalHeader<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#可选头-optionalheader" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>可选PE头紧接着标准PE头，其大小在标准PE头中给出：大小为 <code>E0H</code> 即224字节。<code>_IMAGE_OPTIONAL_HEADER</code>结构如下所示：</p>
+<blockquote>
+<p>WinNT.h 中的实际 <strong>结构IMAGE_OPTIONAL_HEADER32命名</strong> ， <strong>IMAGE_OPTIONAL_HEADER</strong> 定义为 <strong>IMAGE_OPTIONAL_HEADER32</strong>。 但是，如果定义了 <strong>_WIN64</strong> ，则 <strong>IMAGE_OPTIONAL_HEADER</strong> 定义为 <strong>IMAGE_OPTIONAL_HEADER64</strong>。</p>
+</blockquote>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    _IMAGE_OPTIONAL_HEADER</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	// Standard      fields. </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x00*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     Magic;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                       // 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x02*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         BYTE     MajorLinkerVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          // 链接程序的主版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x03*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         BYTE     MinorLinkerVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          // 链接程序的次版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x04*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfCode;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // 所有含代码的节的总大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x08*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfInitializedData;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">       // 所有含已初始化数据的节的总大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x0c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfUninitializedData;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     // 所有含未初始化数据的节的大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x10*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    AddressOfEntryPoint;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">         // 程序执行入口RVA</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x14*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    BaseOfCode;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // 代码的区块的起始RVA</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x18*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    BaseOfData;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                  // 数据的区块的起始RVA</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	// NT additional fields.  以下是属于NT结构增加的领域。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x1c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    ImageBase;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                   // *程序的首选装载地址</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x20*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SectionAlignment;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">            // *内存中的区块的对齐大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x24*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    FileAlignment;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">               // *文件中的区块的对齐大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x28*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MajorOperatingSystemVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> // 要求操作系统最低版本号的主版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x2a*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MinorOperatingSystemVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> // 要求操作系统最低版本号的副版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x2c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MajorImageVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           // 可运行于操作系统的主版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x2e*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MinorImageVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           // 可运行于操作系统的次版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x30*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MajorSubsystemVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">       // 要求最低子系统版本的主版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x32*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     MinorSubsystemVersion;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">       // 要求最低子系统版本的次版本号</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x34*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    Win32VersionValue;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           // 莫须有字段，不被病毒利用的话一般为0</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x38*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfImage;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                 // 映像装入内存后的总尺寸</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x3c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfHeaders;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">               // 所有头+区块表的尺寸大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x40*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    CheckSum;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                    // 映像的校检和</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x44*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     Subsystem;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                   // 可执行文件期望的子系统</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x46*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         WORD     DllCharacteristics;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          // DllMain()函数何时被调用，默认为0</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x48*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfStackReserve;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          // 初始化时的栈大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x4c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfStackCommit;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           // 初始化时实际提交的栈大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x50*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfHeapReserve;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">           // 初始化时保留的堆大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x54*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    SizeOfHeapCommit;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">            // 初始化时实际提交的堆大小</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x58*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    LoaderFlags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">                 // 与调试有关，默认为0 </span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x5c*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         DWORD    NumberOfRvaAndSizes;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">         // 下边数据目录的项数，这个字段自Windows NT发布以来，一直是16</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	/*+0x60*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">         IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	// *数据目录表</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">IMAGE_OPTIONAL_HEADER32</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PIMAGE_OPTIONAL_HEADER32</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span></code></pre></figure>
+<p>上述共计 31 个字段，常用的一般是加<code>*</code>的几个。这里还是简单的按照内存和结构体一一对应分析看下。</p>
+<p>内存如下所示：</p>
+<p><img src="../../【PE】PE文件结构1/image-20231109164320229.png" alt="OptionalHeader 内存块"/></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>成员变量</th><th>大小</th><th>值</th><th>说明</th><th>补充</th></tr></thead><tbody><tr><td>Magic</td><td>WORD</td><td>0B 01</td><td>映像文件的状态，0x01 标识当前是可执行映像</td><td></td></tr><tr><td>MajorLinkerVersion</td><td>BYTE</td><td>0E</td><td>链接器的主要版本号，当前是 14</td><td></td></tr><tr><td>MinorLinkerVersion</td><td>BYTE</td><td>14</td><td>链接器的次要版本号，当前是 20</td><td></td></tr><tr><td>SizeOfCode</td><td>DWORD</td><td>00 C2 0A 00</td><td>如果有多个代码节，则为代码节的大小（以字节为单位）或所有此类节的总和。</td><td></td></tr><tr><td>SizeOfInitializedData</td><td>DWORD</td><td>00 EA 00 00</td><td>初始化的数据节的大小。代码节的大小或所有此类节的总和</td><td></td></tr><tr><td>SizeOfUninitializedData</td><td>DWORD</td><td>00 00 00 00</td><td>未初始化数据节的大小</td><td></td></tr><tr><td>AddressOfEntryPoint</td><td>DWORD</td><td>50 D3 03 00</td><td>指向入口点函数的指针</td><td></td></tr><tr><td>BaseOfCode</td><td>DWORD</td><td>00 10 00 00</td><td>指向代码部分的开头的指针</td><td></td></tr><tr><td>BaseOfData</td><td>DWORD</td><td>00 E0 0A 00</td><td>指向数据部分开头（相对于图像基数）的指针。</td><td></td></tr><tr><td>ImageBase</td><td>DWORD</td><td>00 00 F8 4E</td><td>图像加载到内存中的第一个字节的首选地址。 此值是 64K 字节的倍数。 DLL 的默认值为 0x10000000。 应用程序的默认值为 0x00400000，0x00010000 Windows CE除外。</td><td></td></tr><tr><td>SectionAlignment</td><td>DWORD</td><td>00 10 00 00</td><td>内存中加载的节的对齐方式（以字节为单位）。 此值必须大于或等于 <strong>FileAlignment</strong> 成员。 默认值是系统的页大小。</td><td></td></tr><tr><td>FileAlignment</td><td>DWORD</td><td>00 02 00 00</td><td>图像文件中各部分的原始数据的对齐方式（以字节为单位）。 该值应为介于 512 和 64K 之间的幂 (（含) ）。 默认值为 512。 如果 <strong>SectionAlignment</strong> 成员小于系统页面大小，则此成员必须与 <strong>SectionAlignment</strong> 相同。</td><td></td></tr><tr><td>MajorOperatingSystemVersion</td><td>WORD</td><td>0A 00</td><td>所需操作系统的主版本号。 0x0A 为 10</td><td></td></tr><tr><td>MinorOperatingSystemVersion</td><td>WORD</td><td>00 00</td><td>所需操作系统的次要版本号。</td><td></td></tr><tr><td>MajorImageVersion</td><td>WORD</td><td>0A 00</td><td>映像的主版本号。</td><td></td></tr><tr><td>MinorImageVersion</td><td>WORD</td><td>00 00</td><td>映像的次要版本号。</td><td></td></tr><tr><td>MajorSubsystemVersion</td><td>WORD</td><td>0A 00</td><td>子系统的主版本号。</td><td></td></tr><tr><td>MinorSubsystemVersion</td><td>WORD</td><td>00 00</td><td>子系统的次要版本号。</td><td></td></tr><tr><td>Win32VersionValue</td><td>DWORD</td><td>00 00 00 00</td><td>此成员是保留的，必须为 0。</td><td></td></tr><tr><td>SizeOfImage</td><td>DWORD</td><td>00 F0 0B 00</td><td>图像的大小（以字节为单位），包括所有标头。 必须是 <strong>SectionAlignment</strong> 的倍数。</td><td></td></tr><tr><td>SizeOfHeaders</td><td>DWORD</td><td>00 04 00 00</td><td>以下项的组合大小，舍入为 <strong>FileAlignment</strong> 成员中指定的值的倍数。</td><td></td></tr><tr><td>CheckSum</td><td>DWORD</td><td>3B 06 0C 00</td><td>映像文件校验和。 以下文件在加载时进行验证：所有驱动程序、在启动时加载的任何 DLL，以及加载到关键系统进程中的任何 DLL。</td><td></td></tr><tr><td>Subsystem</td><td>WORD</td><td>03 00</td><td>运行此映像所需的子系统。 定义了以下值。 0x03 标识 windows 字符膜片式用户界面（CUI）系统</td><td></td></tr><tr><td>DllCharacteristics</td><td>WORD</td><td>40 41</td><td>图像的 DLL 特征。 定义了以下值。</td><td></td></tr><tr><td>SizeOfStackReserve</td><td>DWORD</td><td>00 00 04 00</td><td></td><td></td></tr><tr><td>SizeOfStackCommit</td><td>DWORD</td><td>00 10 00 00</td><td></td><td></td></tr><tr><td>SizeOfHeapReserve</td><td>DWORD</td><td>00 00 10 00</td><td></td><td></td></tr><tr><td>SizeOfHeapCommit</td><td>DWORD</td><td>00 10 00 00</td><td></td><td></td></tr><tr><td>LoaderFlags</td><td>DWORD</td><td>00 00 00 00</td><td></td><td></td></tr><tr><td>NumberOfRvaAndSizes</td><td>DWORD</td><td>10 00 00 00</td><td></td><td></td></tr><tr><td>DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES]</td><td>IMAGE_DATA_DIRECTORY</td><td>16个指针地址，大小为 80H</td><td>这个是一个指针类型，指向 IMAGE_DATA_DIRECTORY 结构的指针。会根据传入的索引号返回不同指向的结构体</td><td></td></tr></tbody></table></div>
+<p>最后一个成员变量结构体如下所示，详见<a href="https://learn.microsoft.com/zh-cn/windows/win32/api/winnt/ns-winnt-image_data_directory" class="external">IMAGE_DATA_DIRECTORY (winnt.h) - Win32 apps | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _IMAGE_DATA_DIRECTORY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DWORD   VirtualAddress;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    DWORD   Size;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">//占用16*8 = 128Byte = 80H = E0H(可选PE头默认大小) - 60H(前面所有成员固定占用大小)</span></span></code></pre></figure>
+<p>关于最后一个成员变量，可枚举的 <code>IMAGE_NUMBEROF_DIRECTORY_ENTRIES</code> 索引总共有15个，外加一个保留指针。也就是说，在 <strong>DataDirectory</strong> 位置存放了 16 个指针。可以参考之前的PE头对照一下，剩下的PE内存刚好存放了 16 个指针，参考 PE 块的总大小，剩下的部分大小也刚好为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">80</span><span class="mord mathnormal">h</span></span></span></span> 。</p>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">16</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">128</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">80</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span></p>
+<p>如下图所示：</p>
+<p><img src="../../【PE】PE文件结构1/image-20231110171825757.png" alt="DataDirectory 内存"/></p>
+<h3 id="节表">节表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#节表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>下篇文章记录</p>
+<h3 id="节表数据">节表数据<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#节表数据" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>下篇文章记录</p>
+<h2 id="0x03">0x03<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x03" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>补充一段代码，演示简单获取 Section 各个段的信息</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ULONGLONG</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FindSignatureCode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">::</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">operator</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">()</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">CString</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> module</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">std</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vector</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ULONG</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">> </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">signatureCodes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	DBGTRACE;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (signatureCodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	ULONGLONG							addr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	DWORD								cbSize;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	HMODULE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">							pHmodule </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	ModuleSectionInfo_T					ModuleSectionInfo;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	HANDLE  hModuleSnap </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">CreateToolhelp32Snapshot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(TH32CS_SNAPMODULE, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">GetCurrentProcessId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> 	// 模块快照句柄</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	MODULEENTRY32 me32 </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> { </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> };</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  // 模块入口</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	me32.dwSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(MODULEENTRY32);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">  // 申请空间</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	// 打印模块名</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Module32Next</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hModuleSnap, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">me32)) {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (module.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">CompareNoCase</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(me32.szModule) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">			Debug_Run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">L&quot;Find Module(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">)&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, me32.szModule);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">			break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	ULONGLONG ulModuleBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ULONGLONG)me32.modBaseAddr;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	ULONGLONG ulModuleSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ULONGLONG)me32.modBaseSize;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	HANDLE hProcess </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> OpenProcess</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(PROCESS_CREATE_THREAD </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROCESS_VM_OPERATION </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROCESS_VM_WRITE </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROCESS_VM_READ, FALSE, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">GetCurrentProcessId</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	CHAR</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> szBuffer </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> new</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> CHAR[ulModuleSize];</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">	ZeroMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(szBuffer, ulModuleSize);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	SIZE_T sReadSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ReadProcessMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, (LPCVOID)ulModuleBase, szBuffer, ulModuleSize, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sReadSize))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">size_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> offset </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; offset </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ulModuleSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> signatureCodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">() </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; offset</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">			int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">			for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> signatureCodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(); i</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">				ULONGLONG ReadMem </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ULONG</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)(szBuffer </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> offset </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)));</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">				ULONGLONG SigCode </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> signatureCodes[i];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">				if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (SigCode </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ReadMem)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">				{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">					break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">				}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">			if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> signatureCodes.</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">size</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">())</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">				addr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ulModuleBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> offset);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">				Debug_Run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">L&quot;Found Signature Code:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">%lld</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, addr);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">				break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	else</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">		Debug_Error</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">L&quot;ReadProcessMemory Failed </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">GetLastError</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">());</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#if</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">EnumProcessModulesEx</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hpro, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">cbSize, LIST_MODULES_ALL)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	pHmodule </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (HMODULE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">malloc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(cbSize);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (pHmodule </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">EnumProcessModulesEx</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hpro, pHmodule, cbSize, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">cbSize, LIST_MODULES_ALL)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ULONG i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> cbSize </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pHmodule); i</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">		GetModulePdataSection</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hpro, me32.hModule, );</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#endif</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> // 0</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">GetModulePdataSection</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, me32.hModule, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ModuleSectionInfo)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	VOID PTR_T PTR_T	pCandidate;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY	pRuntimeEntry;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	PUNWIND_INFO	pUnWindInfo;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">disable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:4305)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	pCandidate </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (VOID PTR_T PTR_T)ModuleSectionInfo.pBase;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">pop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ReadProcessMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, pCandidate, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pRuntimeEntry, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(VOID PTR_T), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">))	</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pRuntimeEntry->BeginAddress; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pRuntimeEntry->EndAddress; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(VOID PTR_T))</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">			Debug_Run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">L&quot;RUNTIME_FUNCTION-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">%p</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">,i , (VOID PTR_T)i);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		pUnWindInfo </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (PUNWIND_INFO)pRuntimeEntry->UnwindInfoAddress;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">	CloseHandle</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">	CloseHandle</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hModuleSnap);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> addr;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>GetModulePdataSection 的实现</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">BOOL</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> FindSignatureCode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">::</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">GetModulePdataSection</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">HANDLE</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> hProcess</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">VOID</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> pModule</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ModuleSectionInfo_T</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> pModuleSectionInfo</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	IMAGE_DOS_HEADER		ImageDosHeader;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	IMAGE_NT_HEADERS		ImageNtHeaders;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	IMAGE_SECTION_HEADER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	pImageSectionHeader;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	UINT					SectionIdx;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	IMAGE_SECTION_HEADER	ImageSectionHeader;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	UCHAR</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">					pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (UCHAR</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)pModule;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	BOOL					bResult </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FALSE;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ReadProcessMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, pBase, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ImageDosHeader, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ImageDosHeader), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ImageDosHeader.e_magic </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> IMAGE_DOS_SIGNATURE) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ReadProcessMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageDosHeader.e_lfanew, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ImageNtHeaders, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ImageNtHeaders), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (ImageNtHeaders.Signature </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> IMAGE_NT_SIGNATURE) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	// For 64bits, add the size of IMAGE_NT_HEADERS64 to its own base to get the base of the IMAGE_SECTION_HEADER table</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">	//</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#ifdef</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _WIN64</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">push</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">disable</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:4127)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (SQLPLUGIN_IS_WOW64 </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TRUE) pImageSectionHeader </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (IMAGE_SECTION_HEADER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)((UINT_PTR)pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageDosHeader.e_lfanew </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(IMAGE_NT_HEADERS));</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#pragma</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> warning</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">pop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	else</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#endif</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		pImageSectionHeader </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (IMAGE_SECTION_HEADER</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)((UINT_PTR)pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageDosHeader.e_lfanew </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(IMAGE_NT_HEADERS32));</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (SectionIdx </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; SectionIdx </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageNtHeaders.FileHeader.NumberOfSections; SectionIdx</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ReadProcessMemory</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(hProcess, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pImageSectionHeader[SectionIdx], </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">ImageSectionHeader, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(ImageSectionHeader), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">goto</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> SectionName </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)ImageSectionHeader.Name;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">		if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">strncmp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(SectionName, gSQLPluginPDataSectionName, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(gSQLPluginPDataSectionName)) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		{</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			pModuleSectionInfo->pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> pBase </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageSectionHeader.VirtualAddress;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			pModuleSectionInfo->Size </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ImageSectionHeader.Misc.VirtualSize;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">			bResult </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> TRUE;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">			break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">		}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	}</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">End</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">:</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	return</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (bResult);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>相关结构体如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cpp" data-theme="github-light github-dark"><code data-language="cpp" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	gSQLPluginPDataSectionName[] </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;.pdata&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _ModuleSectionInfo_T</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	VOID</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	pBase;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	UINT	Size;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">ModuleSectionInfo_T</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#ifdef</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _WIN64</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">// See http://mimagesdn.microsoft.com/en-us/library/ddssxxy8.aspx</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">typedef</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> struct</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> _UNWIND_INFO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Version : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">3</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Flags : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">5</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> SizeOfProlog;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> CountOfCodes;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FrameRegister : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">	unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> FrameOffset : </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">	ULONG ExceptionHandler;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">} </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">UNWIND_INFO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">PUNWIND_INFO</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#endif</span></span></code></pre></figure></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-424" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#0x01-前言" data-for="0x01-前言">0x01 前言</a></li><li class="depth-0"><a href="#0x02-pe结构" data-for="0x02-pe结构">0x02 PE结构</a></li><li class="depth-1"><a href="#dos头" data-for="dos头">DOS头</a></li><li class="depth-1"><a href="#pe头" data-for="pe头">PE头</a></li><li class="depth-1"><a href="#节表" data-for="节表">节表</a></li><li class="depth-1"><a href="#节表数据" data-for="节表数据">节表数据</a></li><li class="depth-0"><a href="#0x03" data-for="0x03">0x03</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>反向链接</h3><ul id="list-2" class="overflow"><li><a href="../../A_OS/Windows/WinIPC/RPC/【RPC】RpcView-相关" class="internal">【RPC】RpcView是如何检测的</a></li><li><a href="../../A_OS/Windows/开发相关/COM/【COM】通过COM组件IFileOperation越权复制文件" class="internal">【COM】通过COM组件IFileOperation越权复制文件</a></li><li><a href="../../B_Code/CSharp/【.Net】可执行文件结构分析" class="internal">【.Net】可执行文件结构分析（翻译）</a></li><li><a href="../../B_Code/GO/GoSafe/【GO】PE文件分析" class="internal">【GO】PE文件分析</a></li><li><a href="../../C_OpenSource/【PostgreSQL】pqxx-编译" class="internal">【PostgreSQL】windows下编译pqxx</a></li><li><a href="../../wiki/MySQL8/【弱密码】MySQL8-ibd" class="internal">【弱密码】MySQL8-Innodb</a></li><li><a href="../../wiki/PE/【PE】PE文件结构1" class="internal">【PE】PE文件结构1</a></li><li><a href="../../wiki/PE/【PE】PE文件结构6-异常表(Exception)" class="internal">【PE】PE文件结构6-异常表(Exception)</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

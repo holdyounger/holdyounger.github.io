@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【调试技术】使用Windbg查看PEB</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【调试技术】使用Windbg查看PEB"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【调试技术】使用Windbg查看PEB"/><meta name="twitter:description" content="概述：PEB是什么？以及PEB在进程中的实例 先看一下 执行体进程结构和它内嵌的内核进程结构的关键域 方便理解，具体的结构可使用 dt nt!_EPROCESS 查看 0x01、如何在windbg中查看该进程结构？ 环境：Windbg双机调试模式，相关步骤查找 windows双机调试 或 bcdsedit。 以 notepad.exe(记事本) 为例，win+R 运行 notepad。输入以下命令得到 notepad 的进程相关信息 !process 0 0 notepad.exe 输出如下所示： 在这里获取到 notepad 的进程id为 ffff9105b1f38080。 有图可知，整个..."/><meta property="og:description" content="概述：PEB是什么？以及PEB在进程中的实例 先看一下 执行体进程结构和它内嵌的内核进程结构的关键域 方便理解，具体的结构可使用 dt nt!_EPROCESS 查看 0x01、如何在windbg中查看该进程结构？ 环境：Windbg双机调试模式，相关步骤查找 windows双机调试 或 bcdsedit。 以 notepad.exe(记事本) 为例，win+R 运行 notepad。输入以下命令得到 notepad 的进程相关信息 !process 0 0 notepad.exe 输出如下所示： 在这里获取到 notepad 的进程id为 ffff9105b1f38080。 有图可知，整个..."/><meta property="og:image:alt" content="概述：PEB是什么？以及PEB在进程中的实例 先看一下 执行体进程结构和它内嵌的内核进程结构的关键域 方便理解，具体的结构可使用 dt nt!_EPROCESS 查看 0x01、如何在windbg中查看该进程结构？ 环境：Windbg双机调试模式，相关步骤查找 windows双机调试 或 bcdsedit。 以 notepad.exe(记事本) 为例，win+R 运行 notepad。输入以下命令得到 notepad 的进程相关信息 !process 0 0 notepad.exe 输出如下所示： 在这里获取到 notepad 的进程id为 ffff9105b1f38080。 有图可知，整个..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/wiki/调试技术/【调试技术】PEB"/><meta property="twitter:url" content="https://holdyounger.github.io/wiki/调试技术/【调试技术】PEB"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="概述：PEB是什么？以及PEB在进程中的实例 先看一下 执行体进程结构和它内嵌的内核进程结构的关键域 方便理解，具体的结构可使用 dt nt!_EPROCESS 查看 0x01、如何在windbg中查看该进程结构？ 环境：Windbg双机调试模式，相关步骤查找 windows双机调试 或 bcdsedit。 以 notepad.exe(记事本) 为例，win+R 运行 notepad。输入以下命令得到 notepad 的进程相关信息 !process 0 0 notepad.exe 输出如下所示： 在这里获取到 notepad 的进程id为 ffff9105b1f38080。 有图可知，整个..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="wiki/调试技术/【调试技术】PEB"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-1346"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-1346" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/">wiki</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../wiki/调试技术/">调试技术</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【调试技术】使用Windbg查看PEB</a></div></nav><h1 class="article-title">【调试技术】使用Windbg查看PEB</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-07T09:50:53.259Z">2026年4月07日</time><span>12分钟阅读</span></p><ul class="tags"><li><a href="../../tags/Windows开发/RPC" class="internal tag-link">Windows开发/RPC</a></li><li><a href="../../tags/逆向工程/调试技术" class="internal tag-link">逆向工程/调试技术</a></li></ul></div></div><article class="popover-hint"><blockquote>
+<p>概述：<a href="../../wiki/调试技术/【调试技术】PEB" class="internal alias" data-slug="wiki/调试技术/【调试技术】PEB">PEB</a>是什么？以及<a href="../../wiki/调试技术/【调试技术】PEB" class="internal alias" data-slug="wiki/调试技术/【调试技术】PEB">PEB</a>在进程中的实例</p>
+</blockquote>
+
+<p>先看一下 执行体进程结构和它内嵌的内核进程结构的关键域 方便理解，具体的结构可使用 <code>dt nt!_EPROCESS</code> 查看</p>
+<img src="../../【调试技术】PEB/image-20231001002538125.png" alt="执行体进程结构和内嵌内核进程结构" style="zoom:80%;"/>
+<h2 id="0x01如何在windbg中查看该进程结构">0x01、如何在windbg中查看该进程结构？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x01如何在windbg中查看该进程结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p>环境：<a href="../../wiki/调试技术/【调试技术】Windbg基础命令" class="internal alias" data-slug="wiki/调试技术/【调试技术】Windbg基础命令">Windbg</a>双机调试模式，相关步骤查找 <code>windows双机调试</code> 或 <code>bcdsedit</code>。</p>
+<p>以 notepad.exe(记事本) 为例，win+R 运行 notepad。输入以下命令得到 notepad 的进程相关信息</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>!process 0 0 notepad.exe</span></span></code></pre></figure>
+<p>输出如下所示：</p>
+<img src="../../【调试技术】PEB/image-20231007174655756.png" alt="notepad.exe"/>
+<p>在这里获取到 notepad 的进程id为 ffff9105b1f38080。 有图可知，整个 notepad.exe 的保存结构为一个 <code>_EPROCESS</code>，进行下一步，查看进程：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>dt nt!_EPROCESS ffff9105b1f38080</span></span></code></pre></figure>
+<p>输出如下所示：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1: kd> !openpid ffff9105b1f38080</span></span>
+<span data-line><span>No export openpid found</span></span>
+<span data-line><span>1: kd> dt nt!_EPROCESS ffff9105b1f38080</span></span>
+<span data-line><span>+0x000 Pcb              : _KPROCESS</span></span>
+<span data-line><span>+0x438 ProcessLock      : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x440 UniqueProcessId  : 0x00000000`000021c8 Void</span></span>
+<span data-line><span>+0x448 ActiveProcessLinks : _LIST_ENTRY [ 0xffff9105`af299748 - 0xffff9105`af8484c8 ]</span></span>
+<span data-line><span>+0x458 RundownProtect   : _EX_RUNDOWN_REF</span></span>
+<span data-line><span>+0x460 Flags2           : 0xd000</span></span>
+<span data-line><span>+0x460 JobNotReallyActive : 0y0</span></span>
+<span data-line><span>+0x460 AccountingFolded : 0y0</span></span>
+<span data-line><span>+0x460 NewProcessReported : 0y0</span></span>
+<span data-line><span>+0x460 ExitProcessReported : 0y0</span></span>
+<span data-line><span>+0x460 ReportCommitChanges : 0y0</span></span>
+<span data-line><span>+0x460 LastReportMemory : 0y0</span></span>
+<span data-line><span>+0x460 ForceWakeCharge  : 0y0</span></span>
+<span data-line><span>+0x460 CrossSessionCreate : 0y0</span></span>
+<span data-line><span>+0x460 NeedsHandleRundown : 0y0</span></span>
+<span data-line><span>+0x460 RefTraceEnabled  : 0y0</span></span>
+<span data-line><span>+0x460 PicoCreated      : 0y0</span></span>
+<span data-line><span>+0x460 EmptyJobEvaluated : 0y0</span></span>
+<span data-line><span>+0x460 DefaultPagePriority : 0y101</span></span>
+<span data-line><span>+0x460 PrimaryTokenFrozen : 0y1</span></span>
+<span data-line><span>+0x460 ProcessVerifierTarget : 0y0</span></span>
+<span data-line><span>+0x460 RestrictSetThreadContext : 0y0</span></span>
+<span data-line><span>+0x460 AffinityPermanent : 0y0</span></span>
+<span data-line><span>+0x460 AffinityUpdateEnable : 0y0</span></span>
+<span data-line><span>+0x460 PropagateNode    : 0y0</span></span>
+<span data-line><span>+0x460 ExplicitAffinity : 0y0</span></span>
+<span data-line><span>+0x460 ProcessExecutionState : 0y00</span></span>
+<span data-line><span>+0x460 EnableReadVmLogging : 0y0</span></span>
+<span data-line><span>+0x460 EnableWriteVmLogging : 0y0</span></span>
+<span data-line><span>+0x460 FatalAccessTerminationRequested : 0y0</span></span>
+<span data-line><span>+0x460 DisableSystemAllowedCpuSet : 0y0</span></span>
+<span data-line><span>+0x460 ProcessStateChangeRequest : 0y00</span></span>
+<span data-line><span>+0x460 ProcessStateChangeInProgress : 0y0</span></span>
+<span data-line><span>+0x460 InPrivate        : 0y0</span></span>
+<span data-line><span>+0x464 Flags            : 0x144d0c01</span></span>
+<span data-line><span>+0x464 CreateReported   : 0y1</span></span>
+<span data-line><span>+0x464 NoDebugInherit   : 0y0</span></span>
+<span data-line><span>+0x464 ProcessExiting   : 0y0</span></span>
+<span data-line><span>+0x464 ProcessDelete    : 0y0</span></span>
+<span data-line><span>+0x464 ManageExecutableMemoryWrites : 0y0</span></span>
+<span data-line><span>+0x464 VmDeleted        : 0y0</span></span>
+<span data-line><span>+0x464 OutswapEnabled   : 0y0</span></span>
+<span data-line><span>+0x464 Outswapped       : 0y0</span></span>
+<span data-line><span>+0x464 FailFastOnCommitFail : 0y0</span></span>
+<span data-line><span>+0x464 Wow64VaSpace4Gb  : 0y0</span></span>
+<span data-line><span>+0x464 AddressSpaceInitialized : 0y11</span></span>
+<span data-line><span>+0x464 SetTimerResolution : 0y0</span></span>
+<span data-line><span>+0x464 BreakOnTermination : 0y0</span></span>
+<span data-line><span>+0x464 DeprioritizeViews : 0y0</span></span>
+<span data-line><span>+0x464 WriteWatch       : 0y0</span></span>
+<span data-line><span>+0x464 ProcessInSession : 0y1</span></span>
+<span data-line><span>+0x464 OverrideAddressSpace : 0y0</span></span>
+<span data-line><span>+0x464 HasAddressSpace  : 0y1</span></span>
+<span data-line><span>+0x464 LaunchPrefetched : 0y1</span></span>
+<span data-line><span>+0x464 Background       : 0y0</span></span>
+<span data-line><span>+0x464 VmTopDown        : 0y0</span></span>
+<span data-line><span>+0x464 ImageNotifyDone  : 0y1</span></span>
+<span data-line><span>+0x464 PdeUpdateNeeded  : 0y0</span></span>
+<span data-line><span>+0x464 VdmAllowed       : 0y0</span></span>
+<span data-line><span>+0x464 ProcessRundown   : 0y0</span></span>
+<span data-line><span>+0x464 ProcessInserted  : 0y1</span></span>
+<span data-line><span>+0x464 DefaultIoPriority : 0y010</span></span>
+<span data-line><span>+0x464 ProcessSelfDelete : 0y0</span></span>
+<span data-line><span>+0x464 SetTimerResolutionLink : 0y0</span></span>
+<span data-line><span>+0x468 CreateTime       : _LARGE_INTEGER 0x01d9f901`1100d7bf</span></span>
+<span data-line><span>+0x470 ProcessQuotaUsage : [2] 0x3a58</span></span>
+<span data-line><span>+0x480 ProcessQuotaPeak : [2] 0x3a98</span></span>
+<span data-line><span>+0x490 PeakVirtualSize  : 0x00000201`09c0f000</span></span>
+<span data-line><span>+0x498 VirtualSize      : 0x00000201`09c0f000</span></span>
+<span data-line><span>+0x4a0 SessionProcessLinks : _LIST_ENTRY [ 0xffff9105`b1681520 - 0xffff9105`af848520 ]</span></span>
+<span data-line><span>+0x4b0 ExceptionPortData : 0xffff9105`aa569da0 Void</span></span>
+<span data-line><span>+0x4b0 ExceptionPortValue : 0xffff9105`aa569da0</span></span>
+<span data-line><span>+0x4b0 ExceptionPortState : 0y000</span></span>
+<span data-line><span>+0x4b8 Token            : _EX_FAST_REF</span></span>
+<span data-line><span>+0x4c0 MmReserved       : 0</span></span>
+<span data-line><span>+0x4c8 AddressCreationLock : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x4d0 PageTableCommitmentLock : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x4d8 RotateInProgress : (null) </span></span>
+<span data-line><span>+0x4e0 ForkInProgress   : (null) </span></span>
+<span data-line><span>+0x4e8 CommitChargeJob  : (null) </span></span>
+<span data-line><span>+0x4f0 CloneRoot        : _RTL_AVL_TREE</span></span>
+<span data-line><span>+0x4f8 NumberOfPrivatePages : 0x238</span></span>
+<span data-line><span>+0x500 NumberOfLockedPages : 0</span></span>
+<span data-line><span>+0x508 Win32Process     : 0xfffffe41`85f6d620 Void</span></span>
+<span data-line><span>+0x510 Job              : (null) </span></span>
+<span data-line><span>+0x518 SectionObject    : 0xffffb084`5ea9d3b0 Void</span></span>
+<span data-line><span>+0x520 SectionBaseAddress : 0x00007ff6`477c0000 Void</span></span>
+<span data-line><span>+0x528 Cookie           : 0x4118bb70</span></span>
+<span data-line><span>+0x530 WorkingSetWatch  : (null) </span></span>
+<span data-line><span>+0x538 Win32WindowStation : 0x00000000`000000b4 Void</span></span>
+<span data-line><span>+0x540 InheritedFromUniqueProcessId : 0x00000000`000018f4 Void</span></span>
+<span data-line><span>+0x548 OwnerProcessId   : 0x18f6</span></span>
+<span data-line><span>+0x550 Peb              : 0x0000002c`74cc7000 _PEB</span></span>
+<span data-line><span>+0x558 Session          : 0xffffc180`6a1ec000 _MM_SESSION_SPACE</span></span>
+<span data-line><span>+0x560 Spare1           : (null) </span></span>
+<span data-line><span>+0x568 QuotaBlock       : 0xffff9105`aa072cc0 _EPROCESS_QUOTA_BLOCK</span></span>
+<span data-line><span>+0x570 ObjectTable      : 0xffffb084`5f8dbcc0 _HANDLE_TABLE</span></span>
+<span data-line><span>+0x578 DebugPort        : (null) </span></span>
+<span data-line><span>+0x580 WoW64Process     : (null) </span></span>
+<span data-line><span>+0x588 DeviceMap        : 0xffffb084`5e99c190 Void</span></span>
+<span data-line><span>+0x590 EtwDataSource    : 0xffff9105`b4004550 Void</span></span>
+<span data-line><span>+0x598 PageDirectoryPte : 0</span></span>
+<span data-line><span>+0x5a0 ImageFilePointer : 0xffff9105`acb3fc30 _FILE_OBJECT</span></span>
+<span data-line><span>+0x5a8 ImageFileName    : [15]  &quot;notepad.exe&quot;</span></span>
+<span data-line><span>+0x5b7 PriorityClass    : 0x2 ''</span></span>
+<span data-line><span>+0x5b8 SecurityPort     : (null) </span></span>
+<span data-line><span>+0x5c0 SeAuditProcessCreationInfo : _SE_AUDIT_PROCESS_CREATION_INFO</span></span>
+<span data-line><span>+0x5c8 JobLinks         : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]</span></span>
+<span data-line><span>+0x5d8 HighestUserAddress : 0x00007fff`ffff0000 Void</span></span>
+<span data-line><span>+0x5e0 ThreadListHead   : _LIST_ENTRY [ 0xffff9105`af887a68 - 0xffff9105`aad93528 ]</span></span>
+<span data-line><span>+0x5f0 ActiveThreads    : 6</span></span>
+<span data-line><span>+0x5f4 ImagePathHash    : 0xc5670914</span></span>
+<span data-line><span>+0x5f8 DefaultHardErrorProcessing : 1</span></span>
+<span data-line><span>+0x5fc LastThreadExitStatus : 0n1</span></span>
+<span data-line><span>+0x600 PrefetchTrace    : _EX_FAST_REF</span></span>
+<span data-line><span>+0x608 LockedPagesList  : (null) </span></span>
+<span data-line><span>+0x610 ReadOperationCount : _LARGE_INTEGER 0x0</span></span>
+<span data-line><span>+0x618 WriteOperationCount : _LARGE_INTEGER 0x0</span></span>
+<span data-line><span>+0x620 OtherOperationCount : _LARGE_INTEGER 0x30</span></span>
+<span data-line><span>+0x628 ReadTransferCount : _LARGE_INTEGER 0x0</span></span>
+<span data-line><span>+0x630 WriteTransferCount : _LARGE_INTEGER 0x0</span></span>
+<span data-line><span>+0x638 OtherTransferCount : _LARGE_INTEGER 0x210</span></span>
+<span data-line><span>+0x640 CommitChargeLimit : 0</span></span>
+<span data-line><span>+0x648 CommitCharge     : 0x31a</span></span>
+<span data-line><span>+0x650 CommitChargePeak : 0x31a</span></span>
+<span data-line><span>+0x680 Vm               : _MMSUPPORT_FULL</span></span>
+<span data-line><span>+0x7c0 MmProcessLinks   : _LIST_ENTRY [ 0xffff9105`af299ac0 - 0xffff9105`af848840 ]</span></span>
+<span data-line><span>+0x7d0 ModifiedPageCount : 1</span></span>
+<span data-line><span>+0x7d4 ExitStatus       : 0n259</span></span>
+<span data-line><span>+0x7d8 VadRoot          : _RTL_AVL_TREE</span></span>
+<span data-line><span>+0x7e0 VadHint          : 0xffff9105`ad4c8c20 Void</span></span>
+<span data-line><span>+0x7e8 VadCount         : 0x6a</span></span>
+<span data-line><span>+0x7f0 VadPhysicalPages : 0</span></span>
+<span data-line><span>+0x7f8 VadPhysicalPagesLimit : 0</span></span>
+<span data-line><span>+0x800 ALPCContext      : _ALPC_PROCESS_CONTEXT</span></span>
+<span data-line><span>+0x820 TimerResolutionLink : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]</span></span>
+<span data-line><span>+0x830 TimerResolutionStackRecord : (null) </span></span>
+<span data-line><span>+0x838 RequestedTimerResolution : 0</span></span>
+<span data-line><span>+0x83c SmallestTimerResolution : 0</span></span>
+<span data-line><span>+0x840 ExitTime         : _LARGE_INTEGER 0x0</span></span>
+<span data-line><span>+0x848 InvertedFunctionTable : (null) </span></span>
+<span data-line><span>+0x850 InvertedFunctionTableLock : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x858 ActiveThreadsHighWatermark : 6</span></span>
+<span data-line><span>+0x85c LargePrivateVadCount : 0</span></span>
+<span data-line><span>+0x860 ThreadListLock   : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x868 WnfContext       : 0xffffb084`5fe9e180 Void</span></span>
+<span data-line><span>+0x870 ServerSilo       : (null) </span></span>
+<span data-line><span>+0x878 SignatureLevel   : 0 ''</span></span>
+<span data-line><span>+0x879 SectionSignatureLevel : 0 ''</span></span>
+<span data-line><span>+0x87a Protection       : _PS_PROTECTION</span></span>
+<span data-line><span>+0x87b HangCount        : 0y000</span></span>
+<span data-line><span>+0x87b GhostCount       : 0y000</span></span>
+<span data-line><span>+0x87b PrefilterException : 0y0</span></span>
+<span data-line><span>+0x87c Flags3           : 0x41c000</span></span>
+<span data-line><span>+0x87c Minimal          : 0y0</span></span>
+<span data-line><span>+0x87c ReplacingPageRoot : 0y0</span></span>
+<span data-line><span>+0x87c Crashed          : 0y0</span></span>
+<span data-line><span>+0x87c JobVadsAreTracked : 0y0</span></span>
+<span data-line><span>+0x87c VadTrackingDisabled : 0y0</span></span>
+<span data-line><span>+0x87c AuxiliaryProcess : 0y0</span></span>
+<span data-line><span>+0x87c SubsystemProcess : 0y0</span></span>
+<span data-line><span>+0x87c IndirecTCPuSets  : 0y0</span></span>
+<span data-line><span>+0x87c RelinquishedCommit : 0y0</span></span>
+<span data-line><span>+0x87c HighGraphicsPriority : 0y0</span></span>
+<span data-line><span>+0x87c CommitFailLogged : 0y0</span></span>
+<span data-line><span>+0x87c ReserveFailLogged : 0y0</span></span>
+<span data-line><span>+0x87c SystemProcess    : 0y0</span></span>
+<span data-line><span>+0x87c HideImageBaseAddresses : 0y0</span></span>
+<span data-line><span>+0x87c AddressPolicyFrozen : 0y1</span></span>
+<span data-line><span>+0x87c ProcessFirstResume : 0y1</span></span>
+<span data-line><span>+0x87c ForegroundExternal : 0y1</span></span>
+<span data-line><span>+0x87c ForegroundSystem : 0y0</span></span>
+<span data-line><span>+0x87c HighMemoryPriority : 0y0</span></span>
+<span data-line><span>+0x87c EnableProcessSuspendResumeLogging : 0y0</span></span>
+<span data-line><span>+0x87c EnableThreadSuspendResumeLogging : 0y0</span></span>
+<span data-line><span>+0x87c SecurityDomainChanged : 0y0</span></span>
+<span data-line><span>+0x87c SecurityFreezeComplete : 0y1</span></span>
+<span data-line><span>+0x87c VmProcessorHost  : 0y0</span></span>
+<span data-line><span>+0x87c VmProcessorHostTransition : 0y0</span></span>
+<span data-line><span>+0x87c Altsyscall       : 0y0</span></span>
+<span data-line><span>+0x87c TimerResolutionIgnore : 0y0</span></span>
+<span data-line><span>+0x87c DisallowUserTerminate : 0y0</span></span>
+<span data-line><span>+0x880 DeviceAsid       : 0n0</span></span>
+<span data-line><span>+0x888 SvmData          : (null) </span></span>
+<span data-line><span>+0x890 SvmProcessLock   : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x898 SvmLock          : 0</span></span>
+<span data-line><span>+0x8a0 SvmProcessDeviceListHead : _LIST_ENTRY [ 0xffff9105`b1f38920 - 0xffff9105`b1f38920 ]</span></span>
+<span data-line><span>+0x8b0 LastFreezeInterruptTime : 0</span></span>
+<span data-line><span>+0x8b8 DiskCounters     : 0xffff9105`b1f38ac0 _PROCESS_DISK_COUNTERS</span></span>
+<span data-line><span>+0x8c0 PicoContext      : (null) </span></span>
+<span data-line><span>+0x8c8 EnclaveTable     : (null) </span></span>
+<span data-line><span>+0x8d0 Enclavenumber    : 0</span></span>
+<span data-line><span>+0x8d8 EnclaveLock      : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x8e0 HighPriorityFaultsAllowed : 0</span></span>
+<span data-line><span>+0x8e8 EnergyContext    : 0xffff9105`b1f38ae8 _PO_PROCESS_ENERGY_CONTEXT</span></span>
+<span data-line><span>+0x8f0 VmContext        : (null) </span></span>
+<span data-line><span>+0x8f8 SequenceNumber   : 0xe9</span></span>
+<span data-line><span>+0x900 CreateInterruptTime : 0xe8096541</span></span>
+<span data-line><span>+0x908 CreateUnbiasedInterruptTime : 0xe8096541</span></span>
+<span data-line><span>+0x910 TotalUnbiasedFrozenTime : 0</span></span>
+<span data-line><span>+0x918 LastAppStateUpdateTime : 0xe8096541</span></span>
+<span data-line><span>+0x920 LastAppStateUptime : 0y0000000000000000000000000000000000000000000000000000000000000 (0)</span></span>
+<span data-line><span>+0x920 LastAppState     : 0y000</span></span>
+<span data-line><span>+0x928 SharedCommitCharge : 0xa2d</span></span>
+<span data-line><span>+0x930 SharedCommitLock : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0x938 SharedCommitLinks : _LIST_ENTRY [ 0xffffb084`5cc16358 - 0xffffb084`5e777688 ]</span></span>
+<span data-line><span>+0x948 AllowedCpuSets   : 0</span></span>
+<span data-line><span>+0x950 DefaultCpuSets   : 0</span></span>
+<span data-line><span>+0x948 AllowedCpuSetsIndirect : (null) </span></span>
+<span data-line><span>+0x950 DefaultCpuSetsIndirect : (null) </span></span>
+<span data-line><span>+0x958 DiskIoAttribution : (null) </span></span>
+<span data-line><span>+0x960 DxgProcess       : 0xffffb084`5fe76de0 Void</span></span>
+<span data-line><span>+0x968 Win32KFilterSet  : 0</span></span>
+<span data-line><span>+0x970 ProcessTimerDelay : _PS_INTERLOCKED_TIMER_DELAY_VALUES</span></span>
+<span data-line><span>+0x978 KTimerSets       : 0</span></span>
+<span data-line><span>+0x97c KTimer2Sets      : 0</span></span>
+<span data-line><span>+0x980 ThreadTimerSets  : 5</span></span>
+<span data-line><span>+0x988 VirtualTimerListLock : 0</span></span>
+<span data-line><span>+0x990 VirtualTimerListHead : _LIST_ENTRY [ 0xffff9105`b1f38a10 - 0xffff9105`b1f38a10 ]</span></span>
+<span data-line><span>+0x9a0 WakeChannel      : _WNF_STATE_NAME</span></span>
+<span data-line><span>+0x9a0 WakeInfo         : _PS_PROCESS_WAKE_INFORMATION</span></span>
+<span data-line><span>+0x9d0 MitigationFlags  : 0x21</span></span>
+<span data-line><span>+0x9d0 MitigationFlagsValues : &lt;anonymous-tag></span></span>
+<span data-line><span>+0x9d4 MitigationFlags2 : 0x40000000</span></span>
+<span data-line><span>+0x9d4 MitigationFlags2Values : &lt;anonymous-tag></span></span>
+<span data-line><span>+0x9d8 PartitionObject  : 0xffff9105`a589c260 Void</span></span>
+<span data-line><span>+0x9e0 SecurityDomain   : 0x00000001`00000032</span></span>
+<span data-line><span>+0x9e8 ParentSecurityDomain : 0x00000001`00000032</span></span>
+<span data-line><span>+0x9f0 CoverageSamplerContext : (null) </span></span>
+<span data-line><span>+0x9f8 MmHotPatchContext : (null) </span></span>
+<span data-line><span>+0xa00 DynamicEHContinuationTargetsTree : _RTL_AVL_TREE</span></span>
+<span data-line><span>+0xa08 DynamicEHContinuationTargetsLock : _EX_PUSH_LOCK</span></span>
+<span data-line><span>+0xa10 DynamicEnforcedCetCompatibleRanges : _PS_DYNAMIC_ENFORCED_ADDRESS_RANGES</span></span>
+<span data-line><span>+0xa20 DisabledComponentFlags : 0</span></span>
+<span data-line><span>+0xa28 PathRedirectionHashes : (null) </span></span></code></pre></figure>
+<p>这里可以看到很多信息，比如进程的 Pcb（进程控制块）的结构体为 <code>_KPROCESS</code>。进程的映像名(ImageFileName)为 <code>notepad.exe</code></p>
+</blockquote>
+<h2 id="0x02peb与上述-_eprocess-的关系">0x02、PEB与上述 <code>_EPROCESS</code> 的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x02peb与上述-_eprocess-的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote>
+<p>上述看到的信息 <code>_EPROCESS</code> 均位于系统空间中。</p>
+<p>而进程环境块（PEB）是一个比较特殊的存在，它位于<span class="text-highlight">进程的地址空间中</span>。因为PEB的特殊性，比如环境变量、进程信息、线程等不同，因此PEB可以看做是一个私有的变量，定义了每个程序内部所需要的成员。有关PEB结构体可以在主页中搜索 <code>WOW64通过PEB获取32/64位进程模块信息</code> 查看。</p>
+<hr/>
+<p>补充：</p>
+<p>在 windbg 调试中，默认使用 !PEB 命令时，查看的是 CPU 0 上当前运行的线程所属进程的进程环境块（PEB）。 如果要查看具体某一进程的环境块，需要先切换到该进程空间，再使用 !PEB 命令查看。</p>
+<p><img src="../../【win】PEB/image-20231007180501089.png" alt="查看notepad.exe的PEB"/></p>
+</blockquote>
+<h2 id="peb概述">PEB概述<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#peb概述" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>PEB(Process Environment Block), 即进程环境块。不同于 EPROCESS和相关的数据结构（存储于系统空间中），进程环境块位于进程地址空间中（因为它包含一些需要由模式模式代码来修改的信息）。PEB包含了映像加载器、堆管理器以及其他需要从用户迷失访问它的Windows组件所需的信息。PEB域如下所示：</p>
+<img src="../../【调试技术】PEB/image-20230930235737938.png" alt="PEB域"/>
+<h2 id="peb-实例">PEB 实例<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#peb-实例" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在<a href="../../wiki/调试技术/【调试技术】windbg-内核调试记录" class="internal alias" data-slug="wiki/调试技术/【调试技术】windbg-内核调试记录">内核调试</a>器中利用 <code>!PEB</code> 命令，你可以将 PEB 结构转储出来，会显示 CPU 0 上当前运行着的线程所属进程的PEB。</p>
+<p>如下所示为进程 <code>CPU 0</code> 上运行线程所属进程的PEB</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1: kd> !peb</span></span>
+<span data-line><span>PEB at 000000e4829b9000</span></span>
+<span data-line><span>    InheritedAddressSpace:    No</span></span>
+<span data-line><span>    ReadImageFileExecOptions: No</span></span>
+<span data-line><span>    BeingDebugged:            No</span></span>
+<span data-line><span>    ImageBaseAddress:         00007ff6cfaf0000</span></span>
+<span data-line><span>    NtGlobalFlag:             0</span></span>
+<span data-line><span>    NtGlobalFlag2:            0</span></span>
+<span data-line><span>    Ldr                       00007ffe587bb4c0</span></span>
+<span data-line><span>    Ldr.Initialized:          Yes</span></span>
+<span data-line><span>    Ldr.InInitializationOrderModuleList: 00000264d3e03ba0 . 00000264d3e690a0</span></span>
+<span data-line><span>    Ldr.InLoadOrderModuleList:           00000264d3e03d10 . 00000264d3e69080</span></span>
+<span data-line><span>    Ldr.InMemoryOrderModuleList:         00000264d3e03d20 . 00000264d3e69090</span></span>
+<span data-line><span>                    Base TimeStamp                     Module</span></span>
+<span data-line><span>            7ff6cfaf0000 058e175a Dec 15 00:22:50 1972 C:\Windows\System32\svchost.exe</span></span>
+<span data-line><span>            7ffe58650000 4544b4a1 Oct 29 22:03:13 2006 C:\Windows\SYSTEM32\ntdll.dll</span></span>
+<span data-line><span>            7ffe56bc0000 d714134a May 06 10:04:58 2084 C:\Windows\System32\KERNEL32.DLL</span></span>
+<span data-line><span>            7ffe561a0000 0e9c5eae Oct 08 11:21:18 1977 C:\Windows\System32\KERNELBASE.dll</span></span>
+<span data-line><span>            7ffe56e80000 54cbb3a3 Jan 31 00:38:59 2015 C:\Windows\System32\sechost.dll</span></span>
+<span data-line><span>            7ffe56c80000 f564aeb4 Jun 18 23:37:24 2100 C:\Windows\System32\RPCRT4.dll</span></span>
+<span data-line><span>            7ffe55ff0000 2bd748bf Apr 23 09:39:11 1993 C:\Windows\System32\ucrtbase.dll</span></span>
+<span data-line><span>            7ffe576c0000 1cae0c4a Apr 01 09:54:18 1985 C:\Windows\System32\combase.dll</span></span>
+<span data-line><span>            7ffe53d00000 f0713fcd Oct 30 14:42:21 2097 C:\Windows\SYSTEM32\kernel.appcore.dll</span></span>
+<span data-line><span>            7ffe57da0000 564f9f39 Nov 21 06:31:21 2015 C:\Windows\System32\msvcrt.dll</span></span>
+<span data-line><span>            7ffe56120000 8fb0d55f May 24 07:27:27 2046 C:\Windows\System32\bcryptPrimitives.dll</span></span>
+<span data-line><span>            7ffe57050000 13a6e19d Jun 13 08:23:57 1980 C:\Windows\System32\user32.dll</span></span>
+<span data-line><span>            7ffe560f0000 0dcd0213 May 04 04:26:59 1977 C:\Windows\System32\win32u.dll</span></span>
+<span data-line><span>            7ffe57d10000 a19db164 Dec 04 01:05:40 2055 C:\Windows\System32\GDI32.dll</span></span>
+<span data-line><span>            7ffe55e80000 c4d50445 Aug 24 08:03:17 2074 C:\Windows\System32\gdi32full.dll</span></span>
+<span data-line><span>            7ffe55d90000 39255ccf May 19 23:25:03 2000 C:\Windows\System32\msvcp_win.dll</span></span>
+<span data-line><span>            7ffe1e780000 fe47fc1d Mar 10 20:14:21 2105 c:\windows\system32\wscsvc.dll</span></span>
+<span data-line><span>            7ffe54a30000 9f6e1bc3 Oct 05 14:10:11 2054 c:\windows\system32\FirewallAPI.dll</span></span>
+<span data-line><span>            7ffe551e0000 40054298 Jan 14 21:22:32 2004 c:\windows\system32\DNSAPI.dll</span></span>
+<span data-line><span>            7ffe551d0000 fcf57d1b Jun 27 02:06:19 2104 c:\windows\system32\netutils.dll</span></span>
+<span data-line><span>            7ffe55190000 cf9a121a May 15 14:41:30 2080 C:\Windows\SYSTEM32\IPHLPAPI.DLL</span></span>
+<span data-line><span>            7ffe57a20000 aa9c8581 Sep 14 18:48:33 2060 C:\Windows\System32\NSI.dll</span></span>
+<span data-line><span>            7ffe54a00000 752d58d6 Apr 18 21:02:14 2032 c:\windows\system32\fwbase.dll</span></span>
+<span data-line><span>            7ffe55720000 409dec87 May 09 16:32:07 2004 C:\Windows\SYSTEM32\WLDP.DLL</span></span>
+<span data-line><span>            7ffe56830000 15fd8d3b Sep 10 10:51:39 1981 C:\Windows\System32\advapi32.dll</span></span>
+<span data-line><span>            7ffe1e2c0000 1ef1f3ef Jun 15 06:45:03 1986 C:\Windows\SYSTEM32\VbsApi.dll</span></span>
+<span data-line><span>            7ffe1e280000 873e8a3a Nov 26 04:06:18 2041 C:\Windows\SYSTEM32\SecurityCenterBroker.dll</span></span>
+<span data-line><span>            7ffe56520000 ad1aff4d Jan 12 01:54:21 2062 C:\Windows\System32\CRYPT32.dll</span></span>
+<span data-line><span>            7ffe55f90000 3327e4fa Mar 13 19:28:58 1997 C:\Windows\System32\WINTRUST.dll</span></span>
+<span data-line><span>            7ffe558a0000 9dcceb6f Nov 23 03:28:47 2053 C:\Windows\SYSTEM32\MSASN1.dll</span></span>
+<span data-line><span>            7ffe56a40000 db9f728a Oct 05 20:37:30 2086 C:\Windows\System32\clbcatq.dll</span></span>
+<span data-line><span>            7ffe56db0000 f963cc3a Aug 04 00:52:10 2102 C:\Windows\System32\OLEAUT32.dll</span></span>
+<span data-line><span>            7ffe4a290000 d22ad5a9 Sep 25 18:42:49 2081 C:\Windows\system32\wbem\wbemprox.dll</span></span>
+<span data-line><span>            7ffe57ca0000 aff3315b Jul 18 10:18:03 2063 C:\Windows\System32\WS2_32.dll</span></span>
+<span data-line><span>            7ffe4a200000 18d25282 Mar 14 04:54:26 1983 C:\Windows\SYSTEM32\wbemcomn.dll</span></span>
+<span data-line><span>            7ffe46290000 ee86f561 Oct 23 17:14:09 2096 C:\Windows\system32\wbem\wbemsvc.dll</span></span>
+<span data-line><span>            7ffe46370000 9d244220 Jul 18 05:05:36 2053 C:\Windows\system32\wbem\fastprox.dll</span></span>
+<span data-line><span>            7ffe45f80000 690ba034 Nov 06 03:06:28 2025 C:\Windows\SYSTEM32\amsi.dll</span></span>
+<span data-line><span>            7ffe55c80000 fa786637 Mar 01 20:14:47 2103 C:\Windows\SYSTEM32\USERENV.dll</span></span>
+<span data-line><span>            7ffe55cc0000 e5f6eb70 Apr 05 00:23:12 2092 C:\Windows\SYSTEM32\profapi.dll</span></span>
+<span data-line><span>            7ffe45f00000 abeb5625 May 26 17:55:49 2061 C:\ProgramData\Microsoft\Windows Defender\Platform\4.18.23080.2006-0\MpOav.dll</span></span>
+<span data-line><span>            7ffe56f20000 8c6c47c7 Aug 27 18:28:23 2044 C:\Windows\System32\ole32.dll</span></span>
+<span data-line><span>            7ffe4c2d0000 14531102 Oct 21 22:56:02 1980 C:\Windows\system32\version.dll</span></span>
+<span data-line><span>            7ffe4f9e0000 70a9de78 Nov 24 10:12:08 2029 c:\windows\system32\WINHTTP.dll</span></span>
+<span data-line><span>            7ffe55c40000 c6cd965c Sep 11 01:29:00 2075 C:\Windows\System32\sspicli.dll</span></span>
+<span data-line><span>            7ffe546a0000 c156fd2a Oct 15 04:46:34 2072 C:\Windows\SYSTEM32\gpapi.dll</span></span>
+<span data-line><span>            7ffe467c0000 c8c52eef Sep 27 01:10:07 2076 C:\Windows\System32\SecurityCenterBrokerPS.dll</span></span>
+<span data-line><span>    SubSystemData:     0000000000000000</span></span>
+<span data-line><span>    ProcessHeap:       00000264d3ca0000</span></span>
+<span data-line><span>    ProcessParameters: 00000264d3e03300</span></span>
+<span data-line><span>    CurrentDirectory:  'C:\Windows\system32\'</span></span>
+<span data-line><span>    WindowTitle:  'C:\Windows\System32\svchost.exe'</span></span>
+<span data-line><span>    ImageFile:    'C:\Windows\System32\svchost.exe'</span></span>
+<span data-line><span>    CommandLine:  'C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestricted -p'</span></span>
+<span data-line><span>    DllPath:      '&lt; Name not readable >'</span></span>
+<span data-line><span>    Environment:  00000264d3e027f0</span></span>
+<span data-line><span>        ALLUSERSPROFILE=C:\ProgramData</span></span>
+<span data-line><span>        APPDATA=C:\Windows\ServiceProfiles\LocalService\AppData\Roaming</span></span>
+<span data-line><span>        CommonProgramFiles=C:\Program Files\Common Files</span></span>
+<span data-line><span>        CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files</span></span>
+<span data-line><span>        CommonProgramW6432=C:\Program Files\Common Files</span></span>
+<span data-line><span>        COMPUTERNAME=DESKTOP-IMFKJGI</span></span>
+<span data-line><span>        ComSpec=C:\Windows\system32\cmd.exe</span></span>
+<span data-line><span>        DriverData=C:\Windows\System32\Drivers\DriverData</span></span>
+<span data-line><span>        LOCALAPPDATA=C:\Windows\ServiceProfiles\LocalService\AppData\Local</span></span>
+<span data-line><span>        NUMBER_OF_PROCESSORS=2</span></span>
+<span data-line><span>        OS=Windows_NT</span></span>
+<span data-line><span>        Path=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Windows\ServiceProfiles\LocalService\AppData\Local\Microsoft\WindowsApps</span></span>
+<span data-line><span>        PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC</span></span>
+<span data-line><span>        PROCESSOR_ARCHITECTURE=AMD64</span></span>
+<span data-line><span>        PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 158 Stepping 9, GenuineIntel</span></span>
+<span data-line><span>        PROCESSOR_LEVEL=6</span></span>
+<span data-line><span>        PROCESSOR_REVISION=9e09</span></span>
+<span data-line><span>        ProgramData=C:\ProgramData</span></span>
+<span data-line><span>        ProgramFiles=C:\Program Files</span></span>
+<span data-line><span>        ProgramFiles(x86)=C:\Program Files (x86)</span></span>
+<span data-line><span>        ProgramW6432=C:\Program Files</span></span>
+<span data-line><span>        PSModulePath=%ProgramFiles%\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules</span></span>
+<span data-line><span>        PUBLIC=C:\Users\Public</span></span>
+<span data-line><span>        SystemDrive=C:</span></span>
+<span data-line><span>        SystemRoot=C:\Windows</span></span>
+<span data-line><span>        TEMP=C:\Windows\SERVIC~1\LOCALS~1\AppData\Local\Temp</span></span>
+<span data-line><span>        TMP=C:\Windows\SERVIC~1\LOCALS~1\AppData\Local\Temp</span></span>
+<span data-line><span>        USERDOMAIN=NT AUTHORITY</span></span>
+<span data-line><span>        USERNAME=LOCAL SERVICE</span></span>
+<span data-line><span>        USERPROFILE=C:\Windows\ServiceProfiles\LocalService</span></span>
+<span data-line><span>        windir=C:\Windows</span></span></code></pre></figure>
+<h2 id="查看w32process">查看W32PROCESS<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#查看w32process" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="windbg" data-theme="github-light github-dark"><code data-language="windbg" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1: kd> dt win32k!_W32PROCESS ffffb98ae4682300</span></span>
+<span data-line><span>   +0x000 Process          : 0x00000000`00000003 _EPROCESS</span></span>
+<span data-line><span>   +0x008 RefCount         : 0xe4665b60</span></span>
+<span data-line><span>   +0x00c W32PF_Flags      : 0xffffb98a</span></span>
+<span data-line><span>   +0x010 InputIdleEvent   : 0xffffb98a`e7946f40 _KEVENT</span></span>
+<span data-line><span>   +0x018 StartCursorHideTime : 0xe4682318</span></span>
+<span data-line><span>   +0x020 NextStart        : 0xffffb98a`e4682318 _W32PROCESS</span></span>
+<span data-line><span>   +0x028 pDCAttrList      : 0x00000000`2ffdd002 Void</span></span>
+<span data-line><span>   +0x030 pBrushAttrList   : 0xffffb98a`e45f5378 Void</span></span>
+<span data-line><span>   +0x038 W32Pid           : 0xe4064378</span></span>
+<span data-line><span>   +0x03c GDIHandleCount   : 0n-18038</span></span>
+<span data-line><span>   +0x040 GDIHandleCountPeak : 0</span></span>
+<span data-line><span>   +0x044 UserHandleCount  : 0n0</span></span>
+<span data-line><span>   +0x048 UserHandleCountPeak : 0</span></span>
+<span data-line><span>   +0x050 GDIPushLock      : _EX_PUSH_LOCK</span></span>
+<span data-line><span>   +0x058 GDIEngUserMemAllocTable : _RTL_AVL_TABLE</span></span>
+<span data-line><span>   +0x0c0 GDIDcAttrFreeList : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]</span></span>
+<span data-line><span>   +0x0d0 GDIBrushAttrFreeList : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]</span></span>
+<span data-line><span>   +0x0e0 GDIW32PIDLockedBitmaps : _LIST_ENTRY [ 0x00000000`00000000 - 0x00000000`00000000 ]</span></span>
+<span data-line><span>   +0x0f0 hSecureGdiSharedHandleTable : (null) </span></span>
+<span data-line><span>   +0x0f8 DxProcess        : (null) </span></span>
+<span data-line><span>   +0x100 DCompositionProcess : (null) </span></span>
+<span data-line><span>   +0x108 UMPDSandboxingEnabled : 0</span></span>
+<span data-line><span>   +0x110 pWakeReference   : (null) </span></span>
+<span data-line><span>   +0x118 defaultDpiContext : 0</span></span>
+<span data-line><span>   +0x11c Dpi              : 0</span></span>
+<span data-line><span>   +0x120 bChangedGdiGammaRamp : 0y0</span></span>
+<span data-line><span>   +0x120 bReadScreenBits  : 0y0</span></span>
+<span data-line><span>   +0x120 bWroteScreenBits : 0y0</span></span></code></pre></figure>
+<h2 id="参考文献">参考文献<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#参考文献" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>《深入解析windows操作系统 第6版》</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-461" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#0x01如何在windbg中查看该进程结构" data-for="0x01如何在windbg中查看该进程结构">0x01、如何在windbg中查看该进程结构？</a></li><li class="depth-0"><a href="#0x02peb与上述-_eprocess-的关系" data-for="0x02peb与上述-_eprocess-的关系">0x02、PEB与上述 _EPROCESS 的关系</a></li><li class="depth-0"><a href="#peb概述" data-for="peb概述">PEB概述</a></li><li class="depth-0"><a href="#peb-实例" data-for="peb-实例">PEB 实例</a></li><li class="depth-0"><a href="#查看w32process" data-for="查看w32process">查看W32PROCESS</a></li><li class="depth-0"><a href="#参考文献" data-for="参考文献">参考文献</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>反向链接</h3><ul id="list-2" class="overflow"><li><a href="../../A_OS/Windows/WinStruct/【WIN】TEB(线程环境块)" class="internal">【windows】TEB (线程环境块)</a></li><li><a href="../../A_OS/Windows/Winkernel/【win】通过PEB获取进程模块信息" class="internal">【windows】WOW64通过PEB获取32/64位进程模块信息</a></li><li><a href="../../A_OS/Windows/Winkernel/【win】通过断链隐藏模块" class="internal">【windows】通过断链隐藏模块(DLL）</a></li><li><a href="../../A_OS/Windows/【win】开发经验" class="internal">【windows】开发手册-常用代码段及经验整理</a></li><li><a href="../../A_OS/Windows/开发相关/COM/【COM】通过COM组件IFileOperation越权复制文件" class="internal">【COM】通过COM组件IFileOperation越权复制文件</a></li><li><a href="../../A_OS/Windows/进程线程/【win】获取进程环境变量" class="internal">【windows】获取进程的环境变量</a></li><li><a href="../../A_OS/Windows/进程线程/【win】进程相关精华文章" class="internal">【windows】进程相关精华文章整理</a></li><li><a href="../../A_OS/Windows/驱动/EasyDriver/Windows内核模块名称遍历" class="internal">【驱动】Windows内核模块名称遍历</a></li><li><a href="../../wiki/Homework-c-language/" class="internal">【A学习】Homework-of-C-Language</a></li><li><a href="../../wiki/调试技术/【调试技术】PEB" class="internal">【调试技术】使用Windbg查看PEB</a></li><li><a href="../../wiki/调试技术/【调试技术】TTD" class="internal">【调试技术】TTD</a></li><li><a href="../../wiki/调试技术/【调试技术】用户态查看PEB和TEB" class="internal">【调试技术】用户态查看PEB和TEB</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【原理剖析】3-操作系统进程控制及进程间通信概述</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【原理剖析】3-操作系统进程控制及进程间通信概述"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【原理剖析】3-操作系统进程控制及进程间通信概述"/><meta name="twitter:description" content="概述：知识点 Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式 [toc] 0x01 临界资源 两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没..."/><meta property="og:description" content="概述：知识点 Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式 [toc] 0x01 临界资源 两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没..."/><meta property="og:image:alt" content="概述：知识点 Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式 [toc] 0x01 临界资源 两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】3-操作系统进程控制及进程间通信概述"/><meta property="twitter:url" content="https://holdyounger.github.io/A_OS/Linux/Linux操作系统原理剖析/【原理剖析】3-操作系统进程控制及进程间通信概述"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="概述：知识点 Linux 临界资源概述 Linux 进程同步与互斥 Linux 进程间通信概述 Linux 进程间通信之管道方式 [toc] 0x01 临界资源 两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。 举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiRDpcXERvY3VtZW50c1xcQV9Tb3VyY2VcXHdpa2lfbWluZ1xccXVhcnR6XFxxdWFydHpcXGNvbXBvbmVudHNcXHN0eWxlcyIsInNvdXJjZXMiOlsibWVybWFpZC5pbmxpbmUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTs7O0FBS0Y7RUFDRTtFQUNBOzs7QUFJSjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgICAgdHJhbnNmb3JtLW9yaWdpbjogMCAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICAmOmhvdmVyIHtcbiAgICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICB9XG5cbiAgICAgICAgJjphY3RpdmUge1xuICAgICAgICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgxcHgpO1xuICAgICAgICB9XG5cbiAgICAgICAgLy8gU3R5bGUgdGhlIHJlc2V0IGJ1dHRvbiBkaWZmZXJlbnRseVxuICAgICAgICAmOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxufVxuIl19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://holdyounger.github.io/index.xml"/></head><body data-slug="A_OS/Linux/Linux操作系统原理剖析/【原理剖析】3-操作系统进程控制及进程间通信概述"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">小M-Quartz</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索些什么" placeholder="搜索些什么"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-47"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-47" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/">A_OS</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/Linux/">Linux</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../A_OS/Linux/Linux操作系统原理剖析/">Linux操作系统原理剖析</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【原理剖析】3 操作系统进程控制及进程间通信概述</a></div></nav><h1 class="article-title">【原理剖析】3-操作系统进程控制及进程间通信概述</h1><p show-comma="true" class="content-meta"><time datetime="2023-12-25T16:00:00.000Z">2023年12月26日</time><span>29分钟阅读</span></p><ul class="tags"><li><a href="../../../tags/Linux" class="internal tag-link">Linux</a></li><li><a href="../../../tags/Windows/内核" class="internal tag-link">Windows/内核</a></li></ul></div></div><article class="popover-hint"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>概述：知识点 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li>Linux 临界资源概述</li>
+<li>Linux 进程同步与互斥</li>
+<li>Linux 进程间通信概述</li>
+<li>Linux 进程间通信之管道方式</li>
+</ul>
+</div>
+</blockquote>
+
+<p>[toc]</p>
+<h2 id="0x01-临界资源">0x01 临界资源<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x01-临界资源" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>两个以上的进程不能同时使用的资源称为临界资源。临界资源可能是一些独占设备，例如：打印机、播放器、摄像头等等硬件设备；也可能是一块共享内存、表格文件、链表等软件资源。</p>
+<p>举例说明：假设有一个火车订票系统有两个终端程序在运行 T1 和 T2 ，如果不对临界资源进行特殊管理，则很可能出现 T1 和 T2 同时获取到同一张票的信息卖给了不同的乘客，然后车票余量还只减少了一张。出现这样的情况就是因为 T1 和 T2 在访问订票系统的临界资源时没用进行限制使用导致的。</p>
+<h2 id="0x02-临界区">0x02 临界区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x02-临界区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>不论是硬件资源还是软件资源，多个进程必须互斥访问而不能同时访问，一旦同时访问就会出现问题。每个进程中访问临界资源的那段代码称为临界区。所以，如果能够保证各个进程在进入各自临界区是互斥的，那么就可以实现各个进程对临界资源的访问是互斥的。因此，每个进程在进入临界区之前，应该先对欲访问的临界资源进行检查，检查当前临界资源是否有进程在进行访问，如果当前存在进程访问（即占用临界资源），则当前该进程不能进入临界区；如果此刻没有其他进程正在访问和使用临界资源，则当前进程可以进入临界区对临界资源进行访问和使用，并设置正在访问标识来告诉其他进程此时临界资源正在被使用。（这样的操作就类似火车上的男女共用的单独卫生间，当有人在使用时，红灯亮起告诉所有人正在使用，当无人使用时绿灯亮起，表示当前所有人都可以进入）</p>
+<p>进程在进入临界区前需要检查临界资源使用情况，能够访问临界资源后需要设置正在访问标识。在经常访问资源完成后退出临界资源的访问后，需要将访问标识恢复原样，这部分的代码称为退出区。进程中除了进入区、退出区、临界区，其余部分的代码称为剩余区，于是一个访问临界资源的进程可以被封为如下部分组成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">进入区</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">临界区</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">退出区</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">剩余区</span></span></code></pre></figure>
+<h2 id="0x03-进程的互斥与同步">0x03 进程的互斥与同步<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x03-进程的互斥与同步" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li>进程互斥 进程互斥是指多个进程不能同时使用同一个临界资源，即两个或两个以上进程必须互斥地使用临界资源或者不能同时进入临界区。这是由于各个进程共享某些资源引起的。</li>
+<li>进程同步 进程同步是指有协作关系的进程之间不断地调整它们之间的相对执行过程，以保证临界资源在不同进程中执行的顺序和合理利用。</li>
+</ol>
+<h2 id="0x04-linux实现进程互斥和同步机制">0x04 Linux实现进程互斥和同步机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x04-linux实现进程互斥和同步机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Linux 操作系统下对于进程的互斥和同步控制主要有以下这三种方式：</p>
+<ul>
+<li>锁机制</li>
+<li>信号量机制</li>
+<li>xxxxxxxxxx16 1#include &lt;sys/types.h>2#include &lt;sys/IPC].h>3#include &lt;sys/msg.h>4​5int msgctl(int msgqid, int cmd, struct msgid_ds *buf)6/<em>7参数：8- msqid 消息队列的队列 ID9- cmd   执行操作，如下：10    - IPC]_STAT：读取消息队列的数据结构 msgid_ds ，并将其存储到 buf 位置11    - IPD_SET：设置消息队列的数据结构 msgid_ds 中的 IPC]_perm 值，这个值取自 buf 参数12    - IPC]_RMID：从系统内核中删除消息队列13- buf：描述消息队列的 msqid_ds 结构类型的变量14返回值15    成功返回 0， 失败返回 -116</em>/C</li>
+</ul>
+<h2 id="0x05-锁机制">0x05 锁机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x05-锁机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Linux 锁机制其实就是一种实现互斥的软件方式，即提供一对进程共享的锁变量，在进入临界区之前首先测试锁变量的状态，通过锁的状态了解到临界资源是否被占用。临界资源可用，则设置锁变量；临界资源被占用，则会根据锁的不同选择睡眠等待、自旋等待或者返回资源占用状态等。主要操作流程演示如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #加锁</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    Lock</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> w:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">        访问临界资源</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #访问完毕，开锁</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    UnLock</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> w</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h2 id="0x06-信号量机制">0x06 信号量机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x06-信号量机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在早先提出的一种广义锁机制或称为计数锁的同步机制，既能解决互斥又能解决同步，是一种非常有效的同步工具，后来加以改进形成了信号量同步机制。</p>
+<p>申请和释放临界资源的方式通过 <code>wait()</code> 操作和 <code>signal()</code> 操作完成，有时候也称为 P 操作（荷兰语 Passeren 首字母）和 V 操作（Verhoong 的首字母）。</p>
+<p>信号量也被叫做信号灯，是在信号量同步机制中用于实现进程的同步和互斥的有效数据结构。我们可以为每一类资源设置一个信号量，信号量有很多种类型的数据结构，如整型信号量、记录型信号量、AND 型信号量以及信号量集等。</p>
+<h4 id="整型信号量">整型信号量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#整型信号量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>整型信号量是信号量中最简单的类型，也是各种信号量类型中必须包含的类型。整型信号量的数值表示当前系统中可用的该类临界资源的数量。</p>
+<p>如设置了整型信号量 s ，则 s 值的意义为：</p>
+<ul>
+<li><code>s>0</code> ，表示系统中空闲的该类临界资源的个数；</li>
+<li><code>s=0</code> ，表示系统中该类临界资源干好全部被占用，而且没有进程在等待临界资源；</li>
+<li><code>s&lt;0</code> ，s 的绝对值表示当前系统中等待该临界资源的进程个数；</li>
+</ul>
+<p><code>wait(S)</code> 和 <code>Signal(S)</code> 可以简单被描述成如下的代码执行方式：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>//wait(S)</span></span>
+<span data-line><span>    while(s &lt;= 0)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        //进程等待</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>    s = s - 1;</span></span>
+<span data-line> </span>
+<span data-line><span>//Signal(S)</span></span>
+<span data-line><span>    //发送信号</span></span>
+<span data-line><span>    s = s + 1;</span></span></code></pre></figure>
+<h4 id="记录型信号量">记录型信号量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#记录型信号量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>记录型信号量的数据结构由两部分组成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>struct semaphone{</span></span>
+<span data-line><span>    int s;//整型信号</span></span>
+<span data-line><span>    list *l;//进程链表</span></span>
+<span data-line><span>};</span></span>
+<span data-line> </span>
+<span data-line><span>struct semaphone S;</span></span></code></pre></figure>
+<p>在这个结构中，<code>s</code> 的值表示系统中可用的该类临界资源的数量，而 <code>l</code> 为进程链表指针，指向等待该资源的 PCB 队列。具体的操作如下图所示：</p>
+<p><img src="../../../3-操作系统进程控制及进程间通信概述/b40616fae915acce6bde16deac66a24b-0.png" alt="图片描述"/></p>
+<p>在记录型信号量机制中，s 的初值表示系统中该类资源的可用数目，因而又被成为资源信号量，每次对它进行 <code>wait()</code> 操作，即申请该类一个单位的临界资源，描述为 <code>s=s-1</code> ，当 <code>s>=0</code> 条件满足时，表示在没用做减一操作前 <code>s>=1</code> ，因此本进程可以继续执行；当 <code>s>=0</code> 条件不满足时，表示操作前系统就没有空闲的该资源，因此进程应该调用 <code>block</code> 将该进程的 PCB 插入由指针 l 指向的阻塞队列。因此，该机制遵循了“让权等待”。</p>
+<p>s 的绝对值表示在该信号量链表中已阻塞等待进程的数目。对信号量的每次 <code>signal()</code> 操作表示执行进程释放一个单位的该类临界资源，因此操作 <code>s=s+1</code> 表示资源数目加一。如果加一操作后发现 <code>s&lt;=0</code> 条件依然成立，这表示该信号链表中仍然有等待资源被阻塞的经常，所以还需要调用 <code>wakeup</code> 将第一个等待进程唤醒，其余进程继续等待；若 <code>s&lt;=0</code> 不成立，则表示系统中没用等待该类资源的进程，因此本进程只需要释放它所占用的该类资源继续执行即可。</p>
+<h4 id="and-型信号量">AND 型信号量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#and-型信号量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>AND 同步机制的基本思想是将进程在整个运行过程中需要的所有资源，一次性全部分配给进程，待进程使用完成后再一起释放，只要有一个资源尚未分配给进程，其他所有可能分配的资源都不会分配给它。具体描述如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Swait(S1,S2,...,Sn)</span></span>
+<span data-line><span>    if S1>=1 and S2 >=1 ... and Sn >=1 then</span></span>
+<span data-line><span>        for i: =1 to n do</span></span>
+<span data-line><span>            Si:=Si-1;</span></span>
+<span data-line><span>        endfor</span></span>
+<span data-line><span>    else</span></span>
+<span data-line><span>        [将该进程放入阻塞队列]</span></span>
+<span data-line><span>    endif</span></span>
+<span data-line><span>Ssignal(S1,S2,...,Sn)</span></span>
+<span data-line><span>    for i:=1 to n do</span></span>
+<span data-line><span>        Si = Si + 1;</span></span>
+<span data-line><span>        唤醒所有 Si 不满足而进入阻塞队列的进程</span></span>
+<span data-line><span>    endfor</span></span></code></pre></figure>
+<h4 id="信号量集">信号量集<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#信号量集" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>如果某进程一次需要 N 个某类资源时，就需要进行 N 次 <code>wait()</code> 操作，这使得系统效率非常低并且可能造成死锁。</p>
+<p>信号量集机制的基本思想是在 AND 型信号量集的基础上进行扩充，进程对信号量 Si 的测试值为 ti （用于信号量判断），占用值为 di （用于信号量的增减）</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Swait(S1,S2,...,Sn)</span></span>
+<span data-line><span>Ssignal(S1,d1;S2,d2;...;Sn,dn)</span></span></code></pre></figure>
+<p>一般“信号量集”的几种特定情况如下：</p>
+<ul>
+<li><code>Swait(S,d,d)</code> 表示每次申请 d 个资源，当少于 d 时不进行分配</li>
+<li><code>Swait(S,1,1)</code> 表示互斥信号量</li>
+<li><code>Swait(S,1,0)</code> 作为一个可控开关（当 <code>S>=1</code> 时允许多个进程进入临界区；当 <code>S==0</code> 时禁止任何进程进入临界区）</li>
+<li>“信号量集”未必成对使用 <code>Swait()</code> 和 <code>Ssignal()</code>，如一起申请，但可以不一起释放</li>
+</ul>
+<h2 id="0x07-进程间通信">0x07 进程间通信<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x07-进程间通信" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>我们应该都知道了，进程是一个程序的一次执行，是系统资源分配的最小单元。这里所说的进程一般是指运行在用户态的进程，而由于处于用户态的不同进程间是彼此隔离的，但是它们很可能需要相互发送一些信息，好让对方知道自己的进度等情况，像这样进程间传递信息就叫进程间通信。</p>
+<p>Linux 进程间通信的方式有以下几种（这是固定的）：</p>
+<ul>
+<li>管道(Pipe)及有名管道(Named Pipe): 管道可用于具有”血缘”关系进程间(也就是父子进程或者兄弟进程)的通信。有名管道除具有管道所具有的功能外，还允许无”血缘”关系进程间的通信。</li>
+<li>信号(Signal): 信号是在软件层次上对中断机制的一种模拟，它是比较复杂的通信方式，用于通知进程有某事件发生。</li>
+<li>信号量(Semaphore): 主要作为进程之间及同一进程的不同线程之间的同步和互斥手段。</li>
+<li>共享内存(Shared Memory): 可以说这是最有效的进程间通信方式。它使得多个进程可以访问同一块内存空间，不同进程可以及时看到对方进程中对共享内存中数据的更新。这种通信方式需要依靠某种同步机制，如互斥锁和信号量等。</li>
+<li>消息队列(Messge Queue): 消息队列是消息的链表，包括 <code>POSIx 消息队列</code> 和 <code>System V 消息队列</code>。它克服了前两种通信方式中信息量有限的缺点，具有写权限的进程可以按照一定的规则向消息队列中添加消息;对消息队列具有读权限的进程则可以从消息队列中读取消息。</li>
+<li>套接字(<a href="../../../B_Code/网络编程/【网络编程】SOCKET相关函数" class="internal alias" data-slug="B_Code/网络编程/【网络编程】SOCKET相关函数">Socket</a>): 这个绝对是一种更为一般的进程间通信机制，它可用于网络中不同机器之间的进程间通信，目前经常遇到的网络编程就会用到套接字通信。</li>
+</ul>
+<h2 id="0x08-管道">0x08 管道<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x08-管道" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>管道是 Linux 中进程间通信的一种方式，它把一个程序的输出直接连接到另一个程序的输入(其实我更愿意将管道比喻为农村浇地的管子)。Linux 的管道主要包括两种：无名管道和有名管道。这一节主要讲无名管道，首先介绍以下这两种管道。</p>
+<ol>
+<li>无名管道</li>
+</ol>
+<p>无名管道是 Linux 中管道通信的一种原始方法，如下图所示，它具有以下特点：</p>
+<ul>
+<li>它只能用于具有亲缘关系的进程之间的通信（也就是父子进程或者兄弟进程之间）；</li>
+<li>它是一个半双工的通信模式，具有固定的读端和写端；</li>
+<li>管道也可以看成是一种特殊的文件，对于它的读写也可以使用普通的 read()、write() 等函数。但它不是普通的文件，并不属于其他任何文件系统并且只存在于内存中。</li>
+</ul>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410075.png" alt="图片描述"/></p>
+<ol>
+<li>有名管道(FIFO)</li>
+</ol>
+<p>有名管道是对无名管道的一种改进，如下图所示，它具有以下特点：</p>
+<ul>
+<li>它可以使互不相关的两个进程间实现彼此通信；</li>
+<li>该管道可以通过路径名来指出，并且在文件系统中是可见的。在建立了管道之后，两个进程就可以把它当做普通文件一样进行读写操作，使用非常方便；</li>
+<li><code>FIFO</code> 严格地遵循先进先出规则，对管道及 <code>FIFO</code> 的读总是从开始处返回数据，对它们的写则是把数据添加到末尾，它们不支持如 <code>lseek()</code> 等文件定位操作。</li>
+</ul>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410136.png" alt="图片描述"/></p>
+<h4 id="无名管道及系统调用">无名管道及系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#无名管道及系统调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li>管道创建与管道说明</li>
+</ol>
+<p>管道是基于文件描述符的通信方式，当一个管道建立时，它会创建两个文件描述符 <code>fd[0]</code> 和 <code>fd[1]</code>，其中 <code>fd[0]</code> 固定用于读管道，而 <code>fd[1]</code> 固定用于写管道，如下图所示，这样就构成了一个半双工的通道。</p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410193.png" alt="图片描述"/></p>
+<p>管道关闭时只需要将这两个文件描述符关闭即可，可使用普通的 <code>close()</code> 函数逐个关闭各个文件描述符。</p>
+<ol>
+<li>管道创建函数</li>
+</ol>
+<p>创建管道可以用 <code>pipe()</code> 函数实现，具体如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;unistd.h> //所需头文件</span></span>
+<span data-line> </span>
+<span data-line><span>int pipe(int fd[2]) //函数原型</span></span>
+<span data-line><span>/*</span></span>
+<span data-line><span>函数参数：fd[2] 管道的两个文件描述符，函数调用之后可以直接操作这两个文件描述符</span></span>
+<span data-line><span>返回值：0 - 成功，-1 - 出错</span></span>
+<span data-line><span>*/</span></span></code></pre></figure>
+<ol>
+<li>管道读写说明</li>
+</ol>
+<p>用 <code>pipe()</code> 创建的管道两端处于同一个进程中，由于管道主要是用于在不同的进程间通信的，因此，在实际应用中没有太大意义。实际上，通常先是创建一个管道，再调用 <code>fork()</code> 函数创建一个子进程，该子进程会继承父进程所创建的管道，这时，父子进程管道的文件描述符对应关系如下图:</p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410264.png" alt="图片描述"/></p>
+<p>此时的关系看似非常复杂，实际上却已经给不同进程之间的读写创造了很好的条件。父子进程分别拥有自己的读写通道，为了实现父子进程之间的读写，只需把无关的读端或写端的文件描述符关闭即可。将父进程的写端 <code>fd[1]</code> 和子进程的读端 <code>fd[0]</code> 关闭，则父子进程之间就建立起一条“子进程写入父进程读取”的通道。</p>
+<p>同样，也可以将父进程的读端 <code>fd[0]</code> 和子进程的写端 <code>fd[1]</code> 关闭，则父子进程之间就建立起一条“父进程写入子进程读取”的通道。</p>
+<p>另外，父进程还可以创建多个子进程，各个子进程都继承了相应的 <code>fd[0]</code> 和 <code>fd[1]</code> ，此时，只需要关闭相应的端口就可以建立各子进程之间的的通道。</p>
+<ol>
+<li>管道读写注意点</li>
+</ol>
+<ul>
+<li>只有在管道的读端存在时，向管道写入数据才有意义。否则，向管道写入数据的进程将收到内核传来的 SIGPIPE 信号(通常为 Broken pipe 错误)。</li>
+<li>向管道写入数据时，Linux 将不保证写入的原子性，管道缓冲区一有空闲区域，写进程就会试图向管道写入数据。如果读进程不读取管道缓冲区中的数据，那么写进程将会一直阻塞。</li>
+<li>父子进程在运行时，它们的先后次序并不能保证。因此，为了保证父子进程已经关闭了相应的文件描述符，可在两个进程中调用 sleep()函数。当然，最好还是采用进程之间的同步与互斥机制。</li>
+</ul>
+<h4 id="管道通信实验">管道通信实验<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#管道通信实验" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>下面，我们通过一个小的实例代码来学习进程如何通过管道来通信的。在 VS code 窗口中创建新的文件 <code>pipe.c</code> ，然后添加如下代码内容：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;unistd.h></span></span>
+<span data-line><span>#include &lt;sys/types.h></span></span>
+<span data-line><span>#include &lt;errno.h></span></span>
+<span data-line><span>#include &lt;stdio.h></span></span>
+<span data-line><span>#include &lt;stdlib.h></span></span>
+<span data-line><span>#include &lt;string.h></span></span>
+<span data-line><span>#include &lt;sys/wait.h></span></span>
+<span data-line> </span>
+<span data-line><span>#define MAX_DATA_LEN    128</span></span>
+<span data-line><span>#define DELAY_TIME      3</span></span>
+<span data-line> </span>
+<span data-line><span>int main()</span></span>
+<span data-line><span>{</span></span>
+<span data-line><span>    pid_t pid;</span></span>
+<span data-line><span>    int pipe_fd[2];</span></span>
+<span data-line><span>    char buf[MAX_DATA_LEN];</span></span>
+<span data-line><span>    const char data[] = &quot;Pipe Demo Program&quot;;</span></span>
+<span data-line><span>    int real_read;</span></span>
+<span data-line><span>    int real_write;</span></span>
+<span data-line> </span>
+<span data-line><span>    memset((void *)buf, 0, sizeof(buf));</span></span>
+<span data-line><span>    if(pipe(pipe_fd) &lt; 0)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        printf(&quot;pepe create error\n&quot;);</span></span>
+<span data-line><span>        exit(1);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    pid = fork();</span></span>
+<span data-line><span>    if(pid == 0)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        //子进程，关闭写描述符，通过sleep(3)等待父进程关闭相应的读描述符</span></span>
+<span data-line><span>        close(pipe_fd[1]);</span></span>
+<span data-line><span>        sleep(DELAY_TIME);</span></span>
+<span data-line> </span>
+<span data-line><span>        //子进程读取管道内容</span></span>
+<span data-line><span>        real_read = read(pipe_fd[0], buf, MAX_DATA_LEN);</span></span>
+<span data-line><span>        if(real_read > 0)</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;Child progress : read %d bytes from the pipe : '%s' \n&quot;, real_read, buf);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        close(pipe_fd[0]);</span></span>
+<span data-line><span>        exit(0);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>    else if(pid > 0)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        //父进程，关闭读描述符，并通过睡眠3秒等待子进程关闭对应的写描述符</span></span>
+<span data-line><span>        close(pipe_fd[0]);</span></span>
+<span data-line><span>        sleep(DELAY_TIME);</span></span>
+<span data-line> </span>
+<span data-line><span>        //写管道内容</span></span>
+<span data-line><span>        real_write = write(pipe_fd[1], data, strlen(data));</span></span>
+<span data-line><span>        if(real_write != -1)</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;Parent progress : write %d bytes to the pipe : '%s' \n&quot;, real_write, data);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        close(pipe_fd[1]);</span></span>
+<span data-line><span>        waitpid(pid, NULL, 0); //等待子进程结束</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>添加完成后，如下图：</p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410323.png" alt="图片描述"/></p>
+<p>在 VS Code 平台下的终端窗口中输入以下命令进行编译和运行，观察程序最终结果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> pipe.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> pipe</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">./pipe</span></span></code></pre></figure>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410382.png" alt="图片描述"/></p>
+<h4 id="有名管道及其系统调用">有名管道及其系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#有名管道及其系统调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>有名管道是对无名管道的一种改进，它具有以下特点：</p>
+<ul>
+<li>它可以使互不相关的两个进程间实现彼此通信；</li>
+<li>该管道可以通过路径名来指出，并且在文件系统中是可见的。在建立了管道之后，两个进程就可以把它当做普通文件一样进行读写操作，使用非常方便；</li>
+<li><code>FIFO</code> 严格地遵循先进先出规则，对管道及 <code>FIFO</code> 的读总是从开始处返回数据，对它们的写则是把数据添加到末尾，它们不支持如 <code>lseek()</code> 等文件定位操作。</li>
+</ul>
+<p>有名管道的创建可以使用函数 <code>mkfifo()</code>，该函数类似与文件中的 <code>open()</code> 操作，可以指定管道的路径和打开的模式。同时还可以在终端窗口使用命令来创建有名管道。</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mknod</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [管道名] p</span></span></code></pre></figure>
+<p>在管道创建成功后，就可以使用 <code>open()</code>、<code>write()</code> 和 <code>read()</code> 这些函数了。与普通文件的开发设置一样，对于为读而打开的管道可在 <code>open()</code> 中设置 <code>O_RDONLY</code>，对于为写而打开的管道可在 <code>open()</code> 中设置 <code>O_WRONLY</code>，在这里与普通文件不同的是阻塞问题。由于普通文件在读写时不会出现阻塞问题，而在管道的读写中却有阻塞的可能，这里的非阻塞标志可以在 <code>open()</code> 函数中设定为 <code>O_NONBLOCK</code>。</p>
+<p>下面分别对阻塞打开和非阻塞打开的读写进行说明：</p>
+<ol>
+<li>对于读进程：</li>
+</ol>
+<ul>
+<li>若该管道是阻塞打开，且当前 <code>FIFO</code> 内没有数据，则对读进程而言将一直阻塞到有数据写入。</li>
+<li>若该管道是非阻塞打开，则不论 <code>FIFO</code> 内是否有数据，读进程都会立即执行读操作。即如果 <code>FIFO</code> 内没有数据，则读函数将立刻返回 0。</li>
+</ul>
+<ol>
+<li>对于写进程</li>
+</ol>
+<ul>
+<li>若该管道是阻塞打开，则写操作将一直阻塞到数据可以被写入。</li>
+<li>若该管道是非阻塞打开而不能写入全部数据，则读操作进行部分写入或者调用失败。</li>
+</ul>
+<p>对于 <code>mkfifo()</code> 函数介绍如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
+<span data-line><span>#include &lt;sys/state.h></span></span>
+<span data-line> </span>
+<span data-line><span>//函数原型</span></span>
+<span data-line><span>int mkfifo(const char *filename, mode_t mode)</span></span>
+<span data-line><span>/*</span></span>
+<span data-line><span>参数：</span></span>
+<span data-line><span>- filename: 要创建的管道，包含路径</span></span>
+<span data-line><span>- mode: O_RDONLY:读管道</span></span>
+<span data-line><span>        O_WRONLY:写管道</span></span>
+<span data-line><span>        O_RDWR:读写管道</span></span>
+<span data-line><span>        O_NONBLOCK:非阻塞</span></span>
+<span data-line><span>        O_CREAT:如果该文件不存在，那么就创建一个新的文件，并用第三个参数为其设置权限</span></span>
+<span data-line><span>        O_EXECL：如果使用O_CREAT时文件存在，那么可返回错误消息。这个参数可测试文件是否存在</span></span>
+<span data-line> </span>
+<span data-line><span>返回值：成功返回 0 ，失败返回 -1</span></span>
+<span data-line><span>*/</span></span></code></pre></figure>
+<h4 id="有名管道实验">有名管道实验<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#有名管道实验" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>对于有名<a href="../../../A_OS/Windows/API/【winapi】管道的使用" class="internal alias" data-slug="A_OS/Windows/API/【winapi】管道的使用">管道的使用</a>就不需要像无名管道那样使用 <code>fork()</code> 创建子进程来进行通信，有名管道是可以在没有亲属关系的进程之间进行通信的。所以在这个实验中，我们将要编写两个程序，通过执行这两个进程在工作过程中使用 <code>fifo</code> 通信来进行实验。这两个程序一个负责向管道种写数据，一个负责读数据。写数据的程序为 <code>fifo_write.c</code> ，读数据的代码文件为 <code>fifo_read.c</code>，具体如下：</p>
+<p>在 VS Code 平台下创建 <code>fifo_write.c</code> 文件，如下图：</p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410444.png" alt="图片描述"/></p>
+<p>添加以下内容如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
+<span data-line><span>#include &lt;sys/stat.h></span></span>
+<span data-line><span>#include &lt;errno.h></span></span>
+<span data-line><span>#include &lt;fcntl.h></span></span>
+<span data-line><span>#include &lt;stdlib.h></span></span>
+<span data-line><span>#include &lt;stdio.h></span></span>
+<span data-line><span>#include &lt;limits.h></span></span>
+<span data-line><span>#include &lt;string.h></span></span>
+<span data-line><span>#include &lt;unistd.h></span></span>
+<span data-line> </span>
+<span data-line><span>#define FIFO_NAME    &quot;/tmp/demo_fifo&quot;    /* 有名管道名称 */</span></span>
+<span data-line><span>#define MAX_BUFFER_SIZE     PIPE_BUF     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
+<span data-line> </span>
+<span data-line><span>int main(int argc, char *argv[])</span></span>
+<span data-line><span>{</span></span>
+<span data-line><span>    int fd;</span></span>
+<span data-line><span>    char buff[MAX_BUFFER_SIZE];</span></span>
+<span data-line><span>    int nwrite;</span></span>
+<span data-line> </span>
+<span data-line><span>    fd = open(FIFO_NAME, O_WRONLY);</span></span>
+<span data-line><span>    if(fd == -1)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        printf(&quot;Open fifo file error\n&quot;);</span></span>
+<span data-line><span>        exit(1);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    while(1)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        //从键盘获取输入的字符，将数据存入 buff</span></span>
+<span data-line><span>        memset(buff, 0, MAX_BUFFER_SIZE);</span></span>
+<span data-line><span>        printf(&quot;请输入需要向 FIFO 中发送的数据：(q/Q 退出)\n&quot;);</span></span>
+<span data-line><span>        scanf(&quot;%s&quot;, buff);</span></span>
+<span data-line> </span>
+<span data-line><span>        /* 判断退出条件 */</span></span>
+<span data-line><span>        if(!strcmp(buff, &quot;q&quot;) || !strcmp(buff, &quot;Q&quot;))</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;[%d] write fifo 程序退出....&quot;, getpid());</span></span>
+<span data-line><span>            break;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        nwrite = write(fd, buff, strlen(buff)+1);</span></span>
+<span data-line><span>        if(nwrite > 0)</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;Write '%s' to FIFO\n&quot;, buff);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        else{</span></span>
+<span data-line><span>            printf(&quot;Write FIFO error...\n&quot;);</span></span>
+<span data-line><span>            break;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>    }</span></span>
+<span data-line><span>    close(fd);</span></span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>在 VS Code 平台下创建 <code>fifo_read.c</code> 文件，如图：</p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410528.png" alt="图片描述"/></p>
+<p>添加内容如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
+<span data-line><span>#include &lt;sys/stat.h></span></span>
+<span data-line><span>#include &lt;errno.h></span></span>
+<span data-line><span>#include &lt;fcntl.h></span></span>
+<span data-line><span>#include &lt;stdlib.h></span></span>
+<span data-line><span>#include &lt;stdio.h></span></span>
+<span data-line><span>#include &lt;limits.h></span></span>
+<span data-line><span>#include &lt;string.h></span></span>
+<span data-line><span>#include &lt;unistd.h></span></span>
+<span data-line> </span>
+<span data-line><span>#define FIFO_NAME    &quot;/tmp/demo_fifo&quot;    /* 有名管道名称 */</span></span>
+<span data-line><span>#define MAX_BUFFER_SIZE     PIPE_BUF     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
+<span data-line> </span>
+<span data-line><span>int main(int argc, char *argv[])</span></span>
+<span data-line><span>{</span></span>
+<span data-line><span>    int fd;</span></span>
+<span data-line><span>    char buff[MAX_BUFFER_SIZE];</span></span>
+<span data-line><span>    int nread;</span></span>
+<span data-line> </span>
+<span data-line><span>    /* 判断 FIFO 文件是否存在，如果不存在则创建 */</span></span>
+<span data-line><span>    if(access(FIFO_NAME, F_OK) == -1)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        if((mkfifo(FIFO_NAME, 0666) &lt; 0) &amp;&amp; (errno != EEXIST))</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;Cannot create fifo file\n&quot;);</span></span>
+<span data-line><span>            exit(1);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    fd = open(FIFO_NAME, O_RDONLY);</span></span>
+<span data-line><span>    if(fd == -1)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        printf(&quot;Open fifo file error\n&quot;);</span></span>
+<span data-line><span>        exit(1);</span></span>
+<span data-line><span>    }</span></span>
+<span data-line> </span>
+<span data-line><span>    while(1)</span></span>
+<span data-line><span>    {</span></span>
+<span data-line><span>        //从键盘获取输入的字符，将数据存入 buff</span></span>
+<span data-line><span>        memset(buff, 0, MAX_BUFFER_SIZE);</span></span>
+<span data-line><span>        nread = read(fd, buff, MAX_BUFFER_SIZE);</span></span>
+<span data-line> </span>
+<span data-line><span>        if(!strcmp(buff, &quot;q&quot;) || !strcmp(buff, &quot;Q&quot;))</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;[%d] read fifo 程序退出....&quot;, getpid());</span></span>
+<span data-line><span>            break;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line> </span>
+<span data-line><span>        if(nread > 0)</span></span>
+<span data-line><span>        {</span></span>
+<span data-line><span>            printf(&quot;Read '%s' from FIFO\n&quot;, buff);</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>        else{</span></span>
+<span data-line><span>            printf(&quot;Read FIFO error...\n&quot;);</span></span>
+<span data-line><span>            break;</span></span>
+<span data-line><span>        }</span></span>
+<span data-line><span>    }</span></span>
+<span data-line><span>    close(fd);</span></span>
+<span data-line><span>    return 0;</span></span>
+<span data-line><span>}</span></span></code></pre></figure>
+<p>编写完代码后，在终端通过 <code>gcc</code> 进行编译，在执行的时候分为两个终端窗口来执行，首先执行管道读程序 <code>fifo_read</code>，然后在另一个窗口中启动管道写进程 <code>fifo_write</code>，具体结果如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fifo_read.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fifo_read</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fifo_write.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> fifo_write</span></span></code></pre></figure>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410615.png" alt="图片描述"/></p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410661.png" alt="图片描述"/></p>
+<p><img src="../../../【原理剖析】3-操作系统进程控制及进程间通信概述/IMG-20240820093410749.png" alt="图片描述"/></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-9" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#0x01-临界资源" data-for="0x01-临界资源">0x01 临界资源</a></li><li class="depth-0"><a href="#0x02-临界区" data-for="0x02-临界区">0x02 临界区</a></li><li class="depth-0"><a href="#0x03-进程的互斥与同步" data-for="0x03-进程的互斥与同步">0x03 进程的互斥与同步</a></li><li class="depth-0"><a href="#0x04-linux实现进程互斥和同步机制" data-for="0x04-linux实现进程互斥和同步机制">0x04 Linux实现进程互斥和同步机制</a></li><li class="depth-0"><a href="#0x05-锁机制" data-for="0x05-锁机制">0x05 锁机制</a></li><li class="depth-0"><a href="#0x06-信号量机制" data-for="0x06-信号量机制">0x06 信号量机制</a></li><li class="depth-0"><a href="#0x07-进程间通信" data-for="0x07-进程间通信">0x07 进程间通信</a></li><li class="depth-0"><a href="#0x08-管道" data-for="0x08-管道">0x08 管道</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>

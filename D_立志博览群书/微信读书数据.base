@@ -1,0 +1,41 @@
+properties:
+  file.tags:
+    displayName: weread
+views:
+  - type: table
+    name: 表格
+    filters:
+      and:
+        - file.hasTag("书籍/weread")
+    groupBy:
+      property: category
+      direction: ASC
+    order:
+      - file.name
+      - category
+    sort:
+      - property: file.name
+        direction: ASC
+      - property: file.basename
+        direction: ASC
+    columnSize:
+      file.name: 336
+      note.categories: 330
+  - type: cards
+    name: 微信读书视图
+    filters:
+      and:
+        - file.hasTag("书籍/weread")
+    groupBy:
+      property: category
+      direction: ASC
+    order:
+      - file.name
+      - category
+    sort:
+      - property: file.basename
+        direction: ASC
+    indentProperties: false
+    cardSize: 350
+    image: note.cover
+    imageAspectRatio: 0.8
