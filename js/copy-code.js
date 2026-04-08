@@ -13,7 +13,7 @@
                 var text = $pre.text();
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(text).then(function(){
-                        showTip($btn, '已复制');
+                        showTip($btn, '✍️ 已复制');
                     }).catch(function(){
                         fallbackCopy(text, $btn);
                     });
@@ -32,7 +32,7 @@
             textarea.select();
             try {
                 var ok = document.execCommand('copy');
-                showTip($btn, ok ? '🥰 已复制' : '😐 复制失败');
+                showTip($btn, ok ? '✍️ 已复制' : '😐 复制失败');
             } catch (e) {
                 showTip($btn, '复制失败');
             }
