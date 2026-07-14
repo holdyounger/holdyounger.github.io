@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【汇编】内核学习 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../index-09fe923f.css" as="style"/><link rel="preload" href="../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【汇编】内核学习 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【汇编】内核学习 | 蒙塔理斯"/><meta name="twitter:description" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](www.bilibili.com/video/BV11ktWezE9c = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes) 相关参考 书籍： INTEL 开发手册（卷 3） 文章： 保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园 段权限检查 CPU 分级 GDT 与 LDT 判断当前程序处于哪一环 查看当前程序处于哪一环，可查看 CS 和 SS 中存储的段选择子的后 2 位。如下所示： 查看 CS ..."/><meta property="og:description" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](www.bilibili.com/video/BV11ktWezE9c = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes) 相关参考 书籍： INTEL 开发手册（卷 3） 文章： 保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园 段权限检查 CPU 分级 GDT 与 LDT 判断当前程序处于哪一环 查看当前程序处于哪一环，可查看 CS 和 SS 中存储的段选择子的后 2 位。如下所示： 查看 CS ..."/><meta property="og:image:alt" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](www.bilibili.com/video/BV11ktWezE9c = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes) 相关参考 书籍： INTEL 开发手册（卷 3） 文章： 保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园 段权限检查 CPU 分级 GDT 与 LDT 判断当前程序处于哪一环 查看当前程序处于哪一环，可查看 CS 和 SS 中存储的段选择子的后 2 位。如下所示： 查看 CS ..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/b_code/汇编/内核学习"/><meta property="twitter:url" content="https://holdyounger.github.io/b_code/汇编/内核学习"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="概述：B 站公开教程的学习笔记 [内核学习_哔哩哔哩_bilibili](www.bilibili.com/video/BV11ktWezE9c = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes) 相关参考 书籍： INTEL 开发手册（卷 3） 文章： 保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园 段权限检查 CPU 分级 GDT 与 LDT 判断当前程序处于哪一环 查看当前程序处于哪一环，可查看 CS 和 SS 中存储的段选择子的后 2 位。如下所示： 查看 CS ..."/><meta name="generator" content="Quartz"/><link href="../../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="b_code/汇编/内核学习" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-384" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-384" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../b_code/">B_Code</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../b_code/汇编/">汇编</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【汇编】内核学习</a></div></nav><h1 class="article-title">【汇编】内核学习</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">2</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../tags/windows内核" class="internal internal-link tag-link">windows内核</a><span class="note-properties-separator">, </span><a href="../../tags/系统底层/寄存器" class="internal internal-link tag-link">系统底层/寄存器</a><span class="note-properties-separator">, </span><a href="../../tags/编程语言/汇编" class="internal internal-link tag-link">编程语言/汇编</a></span></td></tr><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">aliases</td><td class="note-properties-value metadata-property-value"><span class="note-properties-list"><span class="note-properties-text">内核学习</span></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-06-14T13:38:23.093Z">2026年6月14日</time><span>12分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote>
+<p>概述：B 站公开教程的学习笔记
+[内核学习_哔哩哔哩_bilibili](<a href="https://www.bilibili.com/video/BV11ktWezE9c?vd_source" class="external external-link">https://www.bilibili.com/video/BV11ktWezE9c?vd_source<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a> = 2d8da596010444663e6f18397a9e3505&amp;spm_id_from = 333.788.videopod.episodes)</p>
+</blockquote>
+
+<blockquote class="callout quote" data-callout="quote">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>相关参考 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>书籍：</p>
+<ul>
+<li>INTEL 开发手册（卷 3）</li>
+</ul>
+<p>文章：</p>
+<ul>
+<li><a href="https://www.cnblogs.com/wingsummer/p/15312627.html" class="external external-link">保护模式篇——段描述符与段选择子 - 寂静的羽夏 - 博客园<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+</div>
+</blockquote>
+<h2 id="段权限检查">段权限检查<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#段权限检查" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="cpu-分级">CPU 分级<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cpu-分级" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="../../b_code/汇编/内核学习/img-20260520152540322.png" alt="image-20241017211651383"/></p>
+<h3 id="gdt-与-ldt">GDT 与 LDT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#gdt-与-ldt" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h3 id="判断当前程序处于哪一环">判断当前程序处于哪一环<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#判断当前程序处于哪一环" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>查看当前程序处于哪一环，可查看 <code>CS</code> 和 <code>SS</code> 中存储的段选择子的后 2 位。如下所示：</p>
+<p>查看 <code>CS</code> 寄存器二进制的后两位</p>
+<ul>
+<li>
+<p>0 环
+可以看到 <code>cs</code> 寄存器后两位为 0
+<img src="../../b_code/汇编/内核学习/img-20260520162052100.png" alt="image-20241017205934657"/></p>
+</li>
+<li>
+<p>3 环</p>
+<p>可以看到 <code>cs</code> 寄存器后两位为 11，也就是 3
+<img src="../../b_code/汇编/内核学习/img-20260520162111797.png" alt="image-20241017210055791"/></p>
+</li>
+</ul>
+<h2 id="段描述符结构">段描述符结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#段描述符结构" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这个结构体的内容在后边学习过程中非常重要。这一部分可以详细看 《Intel 开发手册》中的相关描述。</p>
+<p><img src="../../b_code/汇编/内核学习/img-20260520162122871.png" alt="image-20241029194918229"/></p>
+<h3 id="基地址域">基地址域<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基地址域" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>确定该段的第 0 字节在 4GB 线性空间中的位置。处理器将这 3 个及地址域组合在一起构成了一个 32 位地址值。段基址应当是 16 自己额边界对其的。16 字节边界对齐不是必须的，但这种段边界的对齐能够使程序的性能最大化。</p>
+<h3 id="类型域">类型域<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#类型域" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>指明段或者门的类型，确定段的范围权限和增长方向。如何解释这个域，取决于该描述符是应用描述符（代码或数据）还是系统描述符，这由描述符类型标志（S 标记）所确定。代码段，数据段和系统段对类型域有不同的意义。</p>
+<h3 id="s描述符类型标志">S（描述符类型）标志<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#s描述符类型标志" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>确定段描述符是系统描述符（S 标记为 0）或者代码，数据段描述符（S 标记为 1）。</p>
+<h3 id="dpl描述符特权级域">DPL（描述符特权级）域<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dpl描述符特权级域" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>指明该段的特权级。特权级从 0~3，0 为最高特权级。DPL 用来控制对该段的访问。关于代码段的 DPL 与 CPL 关系以及选择符的 RPL 可以参考后文描述 <a href="#%E7%89%B9%E6%9D%83%E7%BA%A7" class="internal internal-link alias">特权级</a> 相关内容。</p>
+<h3 id="p段存在标志">P（段存在）标志<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#p段存在标志" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>标志出该段当前是否在内存中（1 表示在内存中，0 表示不在）。当指向该段描述符的段选择符装载入<a href="../../b_code/汇编/段寄存器" class="internal internal-link alias" data-slug="b_code/汇编/段寄存器">段寄存器</a>时，如果这个标志为 0，处理器会产生一个段不存在的异常（NP）。内存管理软件可以通过这个标志，来控制在某个特定时间有哪些段时真正的被载入物理内存，这样对于管理虚拟内存而言，除了分页机制还提供了另外一种控制方法。</p>
+<h3 id="db默认操作数大小默认栈指针大小和或上限标志">D/B（默认操作数大小/默认栈指针大小和/或上限）标志<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#db默认操作数大小默认栈指针大小和或上限标志" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>根据这个段描述符所指的是一个可执行代码段，一个向下扩展的数据段还是一个堆栈段，这个标志完成不同的功能。（对 32 位的代码和数据段，这个标志总是被置为 1，而 16 位的代码和数据段，这个标志总是被置为 0）</p>
+<ul>
+<li>
+<p>可执行代码段</p>
+<p>这个标志被称为 D 标志，它指明该段中的指令所涉及的有效地址值的缺省位位数和操作符的缺省位位数。如果该标志为 1，缺省为 32 位的地址，32 位或者 8 位的操作符；若为 0，缺省为 16 位的地址，16 位或者 8 位的操作符。指令前缀 66H 可以指定操作符的长度而不使用缺省长度。用前缀 67H 来指定地址值长度。</p>
+</li>
+<li>
+<p>堆栈段</p>
+<p>这个标志被称为 B（big）标志，它为隐含</p>
+<p>的栈操作（如 push，pop 和 call）确定栈指针值的位位数。如果该标志为 1，则使用的是 32 位的栈指针，该指针放在 32 位的 ESP 寄存器中；若该标志为 0，则使用的是放</p>
+<p>在 16 位 SP 寄存器中的 16 位的栈指针。如果该堆栈段为一个向下扩展的数据段（见下一段的说明），B 标志还确定了该堆栈段的地址上界。</p>
+</li>
+<li>
+<p>向下扩展的数据段</p>
+<p>这个标志称为 B 标志，它确定了该段的地址上界。如果该标志为 1，段地址上界为 FFFFFFFFH（4GB）；若该标志为 0，段地址上界为 FFFFH（64KB）。</p>
+<p><img src="../../b_code/汇编/内核学习/img-20260520162129600.png" alt="image-20241030194244595"/></p>
+</li>
+</ul>
+<h3 id="g粒度标志">G（粒度）标志<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#g粒度标志" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>确定段限长扩展的增量。当 G 标志为 0，段限长以自己额为单位；G 标志为 1，段限长以 4KB 为单位。（这个标志不影响段基址的粒度，段基址的粒度永远是字节）如果 G 标志位 1，那么当检测偏移量是否超越段限长时，不用测试偏移量的低 12 位。例如，如果 G 标志位 1，0 段限长意味着有效偏移量为从 0 到 4095。</p>
+<h3 id="可用及保留的位-s">可用及保留的位 s<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#可用及保留的位-s" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段描述符的第二个双字的 20 位可以被系统软件使用，21 位被保留，并且应该设置为 0。</p>
+<h2 id="特权级">特权级<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#特权级" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="cplcurrent-privilege-level">CPL(Current Privilege Level)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cplcurrent-privilege-level" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当前特权级</p>
+<h3 id="dpldescriptor-privilege-level">DPL(Descriptor Privilege Level)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#dpldescriptor-privilege-level" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>描述符特权级别</p>
+<p>DPL 存储在段描述符中，规定了访问该段所需要的特权级别是什么。</p>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>举例说明 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>mov DS, AX</p>
+<p>如果 AX 指向的段 DPL = 0，但当前程序的 CPL = 3，这行指令是不会成功的！</p>
+</div>
+</blockquote>
+<h3 id="rplrequest-privilege-level">RPL(Request Privilege Level)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rplrequest-privilege-level" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>请求特权级别</p>
+<p>RPL 是针对段选择子而言的，每个段的选择子都有自己的 RPL。</p>
+<p><img src="../../b_code/汇编/内核学习/img-20260520162133800.png" alt="image-20241017212209606"/></p>
+<p>举例说明：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="assembly" data-theme="github-light github-dark"><code data-language="assembly" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Mov ax,0008 与 Mov ax,000B # 段选择子</span></span>
+<span data-line><span># 0008 的 RPL 是 0</span></span>
+<span data-line><span># 000B 的 RPL 是 3</span></span>
+<span data-line><span>    </span></span>
+<span data-line><span>Mov ds,ax 与 Mov ds,ax # 段描述符</span></span></code></pre></figure>
+<h3 id="数据段的权限检查">数据段的权限检查<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数据段的权限检查" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>参考如下代码：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="assembly" data-theme="github-light github-dark"><code data-language="assembly" data-theme="github-light github-dark" style="display:grid;"><span data-line><span># 加入当前程序在 0 环，也就是说 CPL = 0</span></span>
+<span data-line> </span>
+<span data-line><span>Mov ax,000B # 1011 RPL = 3</span></span>
+<span data-line><span>MOv ds,ax # ax 指向的段描述符的 DPL=0</span></span></code></pre></figure>
+<p>数据段的权限检查：</p>
+<p><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span></span></span></span> 并且 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span></span></span></span> （数值上的比较）</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>注意 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>代码段和系统段描述符中的检查方式并不一样。</p>
+</div>
+</blockquote>
+<h2 id="代码跨段跳转">代码跨段跳转<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#代码跨段跳转" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>段寄存器</strong></p>
+<p><code>ES</code>、<code>CS</code>、<code>SS</code>、<code>DS</code>、<code>FS</code>、<code>GS</code>、<code>LDTR</code>、<code>TR</code></p>
+<p><strong>段寄存器读写</strong></p>
+<p>除 <code>CS </code> 外，其他的段寄存器都可以通过 <code>MOV</code>、<code>LES</code>、<code>LSS</code>、<code>LDS</code>、<code>LFS</code>、<code>LGS</code> 指令进行修改</p>
+<p><strong><code>CS</code> 为什么不可以直接修改呢？</strong></p>
+<p><code>CS</code> 的改变意味着 <code>EIP</code> 的改变，改变 <code>CS</code> 的同时必须修改 <code>EIP</code>，所以我们无法使用上面的指令来进行修改。</p>
+<h3 id="代码间的跳转段间跳转非调用门之类的">代码间的跳转（段间跳转、非调用门之类的）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#代码间的跳转段间跳转非调用门之类的" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>段间跳转有两种情况</strong></p>
+<p>要跳转的段是：</p>
+<ul>
+<li>一致代码段
+比如：操作系统提供了一些通用代码以便于应用层使用，则可以使用一致代码段</li>
+<li>非一致代码段</li>
+</ul>
+<p><strong>查看 gdt 表</strong></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="dbgcmd" data-theme="github-light github-dark"><code data-language="dbgcmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>r gdtr</span></span></code></pre></figure>
+<p><strong>同时修改 CS 与 EIP 的指令</strong></p>
+<p>JMP FAR / CALL FAR / RETF / INT / IRETED</p>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>注意 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>只改变 EIP 的指令</p>
+<p>JMP / CALL / <a href="../../b_code/汇编/jcc" class="internal internal-link" data-slug="b_code/汇编/jcc">JCC</a> / RET</p>
+</div>
+</blockquote>
+<h3 id="代码间的跳转段间跳转非调用门之类的执行流程">代码间的跳转（段间跳转、非调用门之类的）执行流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#代码间的跳转段间跳转非调用门之类的执行流程" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="assembly" data-theme="github-light github-dark"><code data-language="assembly" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>JMP 0x20:0x004183D7</span></span></code></pre></figure>
+<p>CPU 如何执行这行代码？</p>
+<p>执行上述代码时，分为以下 5 个步骤：</p>
+<ol>
+<li>
+<p>段选择子拆分
+<code>0x20</code> 对应的二进制形式 <code>0000 0000 0010 0000</code></p>
+<ul>
+<li>RPL = 00</li>
+<li>TI = 0</li>
+<li><a href="../.././../a_os/windows/权限与会话/" class="internal internal-link alias" data-slug="a_os/windows/权限与会话/index">Index</a> = 4</li>
+</ul>
+</li>
+<li>
+<p>查表得到段描述符</p>
+<ul>
+<li>TI = 0 所以查 GDT 表</li>
+<li>Index = 4 找到对应的段描述符</li>
+</ul>
+<p>四种情况可以跳转：代码段、调用门、TSS 任务段、任务门</p>
+</li>
+<li>
+<p>权限检查</p>
+<ul>
+<li>非一致代码段：要求 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span><span class="mord mathnormal" style="margin-right:0.2222em;">V</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">==</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span></span></span></span> &amp;&amp; <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[[</span><span class="mord cjk_fallback">【调试技术】</span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.0077em;">R</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span><span class="mclose">]]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span></span></span></span></li>
+<li>一致代码段： 要求： <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathnormal" style="margin-right:0.0715em;">C</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">>=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.0278em;">D</span><span class="mord mathnormal" style="margin-right:0.1389em;">P</span><span class="mord mathnormal">L</span></span></span></span></li>
+</ul>
+</li>
+<li>
+<p>加载段描述符
+通过上面的权限检查后，CPU 会将段描述符加载到 CS 段寄存器中</p>
+</li>
+<li>
+<p>代码执行
+CPU 将 <code>CS.Base + Offset</code> 的值写入 <code>EIP</code>，然后执行 <code>CS:EIP</code> 处的代码，段间跳转结束。</p>
+</li>
+</ol>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>本节总结 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>对于一致代码段：也就是共享的段</p>
+<ul>
+<li>特权级高的程序不允许访问特权级低的数据：核心态不允许访问用户态的数据</li>
+<li>特权级低的程序可以访问到特权级高的数据，但特权级不会改变：用户态还是用户态</li>
+</ul>
+<p>对于普通代码段：也就是非一致代码段</p>
+<ul>
+<li>只允许同级访问</li>
+<li>绝对禁止不同级别的访问：核心态不是用户态，用户态也不是核心态</li>
+</ul>
+</div>
+</blockquote>
+<h2 id="代码段跳转实操">代码段跳转实操<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#代码段跳转实操" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="构造段描述符">构造段描述符<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#构造段描述符" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>找一个非一致代码段描述符，复制一份，写入到 GDT 表中</p>
+<blockquote>
+<p>第 5 位为 9 或者 f 的时候一定是非一致代码段</p>
+</blockquote>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="dbgcmd" data-theme="github-light github-dark"><code data-language="dbgcmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0: kd> r gdtr</span></span>
+<span data-line><span>gdtr=fffff8064749dfb0</span></span>
+<span data-line><span>0: kd> dq fffff8064749dfb0</span></span>
+<span data-line><span>fffff806`4749dfb0  00000000`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749dfc0  00209b00`00000000 00409300`00000000</span></span>
+<span data-line><span>fffff806`4749dfd0  00cffb00`0000ffff 00cff300`0000ffff</span></span>
+<span data-line><span>fffff806`4749dfe0  0020fb00`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749dff0  47008b49`c0000067 00000000`fffff806</span></span>
+<span data-line><span>fffff806`4749e000  0040f300`00003c00 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749e010  00000000`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749e020  00000000`00000000 00000000`00000000</span></span></code></pre></figure>
+<p>修改 <code>fffff806749e008</code> 位置的内容：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="dbgcmd" data-theme="github-light github-dark"><code data-language="dbgcmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0: kd> eq fffff806`4749e008 00cffb00`0000ffff</span></span>
+<span data-line><span>0: kd> dq fffff8064749dfb0</span></span>
+<span data-line><span>fffff806`4749dfb0  00000000`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749dfc0  00209b00`00000000 00409300`00000000</span></span>
+<span data-line><span>fffff806`4749dfd0  00cffb00`0000ffff 00cff300`0000ffff</span></span>
+<span data-line><span>fffff806`4749dfe0  0020fb00`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749dff0  47008b49`c0000067 00000000`fffff806</span></span>
+<span data-line><span>fffff806`4749e000  0040f300`00003c00 00cffb00`0000ffff</span></span>
+<span data-line><span>fffff806`4749e010  00000000`00000000 00000000`00000000</span></span>
+<span data-line><span>fffff806`4749e020  00000000`00000000 00000000`00000000</span></span></code></pre></figure>
+<p>写完后可以查看下写入是否成功。</p>
+<h3 id="在-od-中进行测试">在 OD 中进行测试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#在-od-中进行测试" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>添加成功后，我们要尝试跳转到刚刚添加的段描述符的位置，这里我还是画图示意一下哎，我修改的是低 12 位，下标为 11。对应的二进制为 <code>1011</code>，后三位为 RPC，对应的二进制为 <code>11</code>，所以总的描述符号二进制为：</p>
+<p><code>0000 0000 0101 1011</code>，也就是 <code>0x005B</code></p>
+<p><img src="../../b_code/汇编/内核学习/img-20260520162138566.png" alt="image-20241021232030912"/></p>
+<p>在 OD 中，执行跨段跳转 <code>JMP FAR 005B:008F94A0</code></p>
+<p>9-4B-0000 0000 0100 1011</p>
+<p>11- - 0000 0000 0101 1011</p></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="backlinks"><h3>反向链接</h3><ul id="list-0" class="overflow"><li><a href="../../d_立志博览群书/微信读书数据.base" class="internal">微信读书数据</a></li><li><a href="../../wiki/调试技术/allpages.base" class="internal">AllPages</a></li><li><a href="../../a_os/windows/环境搭建/文档表格.base" class="internal">文档表格</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v5.0.0</a> © 2026</p><ul><li><a href="https://github.com/holdyounger/holdyounger.github.io">GitHub</a></li></ul></footer></div></div></body><script src="../../static/resource-after-e13fffa1.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript-5ffe0bd9.js" type="module" data-persist="true"></script></html>

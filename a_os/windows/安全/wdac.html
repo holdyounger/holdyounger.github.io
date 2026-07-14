@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【Windows】WDAC | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../../index-09fe923f.css" as="style"/><link rel="preload" href="../../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【Windows】WDAC | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【Windows】WDAC | 蒙塔理斯"/><meta name="twitter:description" content="概述：WDAC、武器化 WDAC 相关参考： 武器化 WDAC：终结 EDR WDAC Windows Defender 应用程序控制，允许配置 HoLOLens 以阻止应用启动。 微软官方说明：使用 Windows Admin Center 管理 Windows Defender 应用程序控制（WDAC）强制实施基础结构 | Microsoft Learn QUOTE Windows Defender 应用程序控制 (WDAC) 是 Windows 10+ 和 Windows Server 2016+ 默认启用的一项技术，它允许组织对 Windows 机器上允许运行的可执行代码进行精细控制..."/><meta property="og:description" content="概述：WDAC、武器化 WDAC 相关参考： 武器化 WDAC：终结 EDR WDAC Windows Defender 应用程序控制，允许配置 HoLOLens 以阻止应用启动。 微软官方说明：使用 Windows Admin Center 管理 Windows Defender 应用程序控制（WDAC）强制实施基础结构 | Microsoft Learn QUOTE Windows Defender 应用程序控制 (WDAC) 是 Windows 10+ 和 Windows Server 2016+ 默认启用的一项技术，它允许组织对 Windows 机器上允许运行的可执行代码进行精细控制..."/><meta property="og:image:alt" content="概述：WDAC、武器化 WDAC 相关参考： 武器化 WDAC：终结 EDR WDAC Windows Defender 应用程序控制，允许配置 HoLOLens 以阻止应用启动。 微软官方说明：使用 Windows Admin Center 管理 Windows Defender 应用程序控制（WDAC）强制实施基础结构 | Microsoft Learn QUOTE Windows Defender 应用程序控制 (WDAC) 是 Windows 10+ 和 Windows Server 2016+ 默认启用的一项技术，它允许组织对 Windows 机器上允许运行的可执行代码进行精细控制..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/a_os/windows/安全/wdac"/><meta property="twitter:url" content="https://holdyounger.github.io/a_os/windows/安全/wdac"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="概述：WDAC、武器化 WDAC 相关参考： 武器化 WDAC：终结 EDR WDAC Windows Defender 应用程序控制，允许配置 HoLOLens 以阻止应用启动。 微软官方说明：使用 Windows Admin Center 管理 Windows Defender 应用程序控制（WDAC）强制实施基础结构 | Microsoft Learn QUOTE Windows Defender 应用程序控制 (WDAC) 是 Windows 10+ 和 Windows Server 2016+ 默认启用的一项技术，它允许组织对 Windows 机器上允许运行的可执行代码进行精细控制..."/><meta name="generator" content="Quartz"/><link href="../../../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="a_os/windows/安全/wdac" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-116" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-116" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../a_os/">A_OS</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../a_os/windows/">Windows</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../a_os/windows/安全/">安全</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【Windows】WDAC</a></div></nav><h1 class="article-title">【Windows】WDAC</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">2</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../../tags/windows安全/安全防护/应用控制" class="internal internal-link tag-link">windows安全/安全防护/应用控制</a><span class="note-properties-separator">, </span><a href="../../../tags/windows" class="internal internal-link tag-link">windows</a><span class="note-properties-separator">, </span><a href="../../../tags/渗透技术" class="internal internal-link tag-link">渗透技术</a></span></td></tr><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">aliases</td><td class="note-properties-value metadata-property-value"><span class="note-properties-list"><span class="note-properties-text">WDAC</span></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-06-14T13:38:22.606Z">2026年6月14日</time><span>18分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote>
+<p>概述：WDAC、武器化 WDAC</p>
+</blockquote>
+
+<blockquote class="callout info" data-callout="info">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>相关参考： </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/FmYns_iim2Wwt0GitUZ8Zw" class="external external-link">武器化 WDAC：终结 EDR<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+</div>
+</blockquote>
+<h2 id="wdac">WDAC<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#wdac" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Windows Defender 应用程序控制，允许配置 HoLOLens 以阻止应用启动。</p>
+<blockquote>
+<p>微软官方说明：<a href="https://learn.microsoft.com/zh-cn/windows-server/manage/windows-admin-center/use/manage-aPPLication-control-infrastructure" class="external external-link">使用 Windows Admin Center 管理 Windows Defender 应用程序控制（WDAC）强制实施基础结构 | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></p>
+</blockquote>
+<hr/>
+<blockquote class="callout quote" data-callout="quote">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>QUOTE</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Windows Defender 应用程序控制 (WDAC) 是 Windows 10+ 和 Windows Server 2016+ 默认启用的一项技术，它允许组织对 Windows 机器上允许运行的可执行代码进行精细控制。WDAC 配置适用于整个机器，影响设备的所有用户。应用的 WDAC 配置范围广泛且严格，包括用户模式和内核模式应用程序、驱动程序、DLL 和脚本的规则。WDAC 为防御者提供了一个出色的工具来阻止 Windows 端点上潜在的威胁执行，但 WDAC 也可以被攻击者利用。</p>
+<p>虽然 WDAC 通常用于防御目的，但它也可以用来阻止遥测源和安全解决方案，如终端检测和响应 (EDR) 传感器。这些传感器往往在内核空间中执行，并故意使自己难以停止或篡改。然而，由于 WDAC 可以对内核模式可执行文件和驱动程序应用策略，如果攻击者能够应用 WDAC 策略（这可以通过远程管理权限完成），EDR 传感器就会面临风险。当策略在启动时应用时，EDR 传感器将不再被允许运行，因此不会加载，从而允许攻击者在没有 EDR 限制的情况下操作。</p>
+<p>简而言之，这是一种主要用于防御规避和协助 Active Directory 环境中横向移动活动的技术。它使用专门制作的 WDAC 策略来停止端点上的防御解决方案，可以让攻击者在没有 EDR 等安全解决方案的负担下轻松地转移到新主机。在更大规模上，如果攻击者能够写入组策略对象 (GPO)，那么他们就能够在整个域中分发此策略，并系统地停止域中所有端点上的大多数（如果不是全部）安全解决方案，这可能允许部署后渗透工具和/或勒索软件。</p>
+<p>MITRE ATT&amp;CK 技术：损害防御（T1562）
+潜在影响：整个 Active Directory 林中的所有安全工具可能被远程系统地停止</p>
+</div>
+</blockquote>
+<h2 id="攻击技术">攻击技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#攻击技术" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>虽然这种攻击可以通过多种方式执行，但仍有一个共同因素 - WDAC。由于 WDAC 策略默认拒绝，阻止许多 EDR 传感器加载变得非常简单。然而，攻击者的主要考虑因素是既要建立自己的访问权限，又要限制防御解决方案的访问权限。因此，WDAC 策略需要明确允许攻击者执行权限，才能从攻击角度来看有意义。这就是制作专门的 WDAC 策略最有用的地方。通过自定义策略，攻击者可以停止 EDR 传感器，同时也允许自己执行权限。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520151620237.webp" alt="图片"/>)
+这种攻击可以分为 3 个一般阶段执行：</p>
+<ol>
+<li>攻击者将 WDAC 策略放置在 Windows 代码完整性文件夹内的适当位置。
+<code>C:\Windows\System32\CodeIntegrity</code></li>
+<li>即使策略在运行时刷新，它也不会应用于正在运行的进程。因此，重启机器是重启 EDR 传感器最简单的方法。</li>
+<li>一旦机器开始重启过程，WDAC 策略会在任何 EDR 驱动程序之前应用，并在其执行之前将其停止。</li>
+</ol>
+<h2 id="制作-wdac-策略">制作 WDAC 策略<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#制作-wdac-策略" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>由于某些 EDR 供应商拥有Windows 硬件质量实验室 (WHQL)驱动程序，因此被攻击环境的上下文对于这种技术的成功至关重要。这些驱动程序在 WDAC 策略中默认被允许，并且将允许 WHQL 签名的 EDR 驱动程序加载，尽管其服务二进制文件被阻止。在测试过程中发现，虽然 EDR 服务被成功阻止，但 EDR 的驱动程序被允许加载并继续显示活动。虽然从攻击者的角度来看，最明显的解决方案是简单地禁止 WHQL 驱动程序，但这会造成端点无法启动的重大风险。毕竟，这种技术的最终目标是协助横向移动程序，如果设备永远无法启动，这就变得不可能。因此，一个更好的方法是基于特定发布者或文件属性来专门阻止内核模式组件。在测试过程中发现，一些 EDR 供应商的驱动程序如果不允许运行，将导致机器无法启动。这些驱动程序似乎没有发送任何网络流量，所以决定不仅基于发布者进行阻止，而是专注于基于文件属性进行阻止。这证明非常成功，因为目标驱动程序和可执行文件在不中断设备的情况下被禁止加载。</p>
+<p>如前所述，专门的 WDAC 策略对于这种攻击从攻击者角度来看非常重要。对于阻止没有 WHQL 驱动程序的 EDR，该策略必须至少：</p>
+<ol>
+<li>处于<strong>强制模式</strong></li>
+<li><strong>允许一个通用路径</strong>，以便可以部署可执行文件（即后渗透功能）以供执行</li>
+</ol>
+<p>第一个要求很容易实现 - 只需关闭审核模式。对于第二个要求，选择任何任意位置来存储潜在的后渗透功能材料就足够了。</p>
+<p>另一个重要的考虑因素是兼容性。确保 WDAC 策略能在尽可能多的端点上工作非常重要。因此，策略应该使用单一策略格式以最大化兼容性。在这个例子中，我将允许在 <code>C:\Users\Public</code> 中执行应用程序。要创建这个策略，我将使用 <code>App Control Policy Wizard</code>。首先，选择 <code>Policy Creator</code></p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520152526131.png" alt="image-20250421091419647"/>)</p>
+<p>如前所述，<strong>单一策略格式</strong>是兼容性最好的选择。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162051119.png" alt="image-20250421091436140"/>)</p>
+<p>这个策略应该足够严格，确保 EDR 不会运行。因此，选择 <code>Default Windows Mode</code>。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162051171.png" alt="image-20250421091456429"/>)</p>
+<p>现在，使用前面提到的必要要求配置策略。首先，<strong>禁用审核模式</strong>并启用<code>Disable Runtime Filepath Rules</code>设置，以允许在策略中白名单文件路径。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162109237.png" alt="image-20250421091509302"/>)</p>
+<p>点击 <code>Add Custom</code> 选项并确保：</p>
+<ol>
+<li>范围仅设置为用户模式（路径规则不能应用于内核模式代码）</li>
+<li>动作设置为允许</li>
+<li>规则类型为 <code>Path</code></li>
+<li><code>Reference File</code> 设置为 <code>Folder 选项</code>，并指向 <code>C:\Users\Public\*</code></li>
+</ol>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162109386.png" alt="image-20250421091543629"/>)</p>
+<p>确保规则正确添加。作为经验法则，我通常将策略与推荐的阻止规则合并。虽然这不是必需的。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162122343.png" alt="image-20250421091616481"/>)</p>
+<p>现在，策略应该生成并出现在当前用户的文档文件夹中。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162129209.png" alt="image-20250421091629359"/>)</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162133469.png" alt="image-20250421091637487"/>)</p>
+<p>除了编译后的策略外，还生成了策略配置的 XML 表示。虽然 XML 文件在后续可以编辑以使其更加通用，但在攻击本身中使用的编译策略是<code>SiPolicy.p7b</code>文件。</p>
+<blockquote class="callout info" data-callout="info">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>WHQL </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ol>
+<li><a href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/install/whql-release-signature" class="external external-link">WHQL 发布签名 - Windows drivers | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://learn.microsoft.com/zh-cn/windows-hardware/manufacture/desktop/audit-mode-overview?view=windows-11" class="external external-link">审核模式概述 | Microsoft Learn<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://webapp-wdac-wizard.azurewebsites.NET/" class="external external-link">Microsoft App Control Wizard<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ol>
+</div>
+</blockquote>
+<h2 id="寻找攻击向量">寻找攻击向量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#寻找攻击向量" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>创建 WDAC 策略后，是时候找到使用它的方法了。有三种主要的攻击类型：</p>
+<ol>
+<li>本地机器</li>
+<li>远程机器</li>
+<li>整个域</li>
+</ol>
+<p>对于单台机器（本地/远程），部署 WDAC 策略只需要在 <code>C:\Windows\System32\CodeIntegrity\</code> 上有写入权限，默认情况下这需要管理员权限。</p>
+<p>对于整个域部署 WDAC，用户需要能够为域创建 <code>组策略对象 (GPO)</code> ，并将策略部署在所有域计算机都可以读取的位置。这个部署位置通常包括域控制器上的 SYSVOL 共享等 SMB 共享，但不一定必须是。因此，攻击者可以在策略位置上非常有创意 - 它需要是 UNC 路径或域中本地机器账户（<code>LOCAL SYSTEM</code>）有访问权限的本地有效路径。</p>
+<h2 id="检测">检测<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#检测" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>虽然检测是可能的，但由于这种攻击可以快速执行，强烈建议采取缓解措施。话虽如此，要检测终端上 WDAC 策略的部署，最好是查看文件系统中特定位置的特定命名文件（见下表）。如前所述，出于兼容性考虑，单一策略格式是最佳选择，但攻击者并不局限于此。如果组织使用较新版本的 Windows 操作系统，那么多策略格式也可以达到相同的效果。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>策略格式</th><th>文件系统位置</th><th>策略文件名格式</th></tr></thead><tbody><tr><td>单一</td><td>C:\Windows\System32\CodeIntegrity\</td><td>SiPolicy.p7b</td></tr><tr><td>多个</td><td>C:\Windows\System32\CodeIntegrity\CiPolicies\Active\</td><td>{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}.cip</td></tr></tbody></table></div>
+<p>不幸的是，检测策略是否被放置在这些敏感位置并不是检测此攻击的最佳方式。虽然这些位置存在策略确实是攻击的一个特征，但策略存在于这些位置本身并不一定是恶意的。因此，应该采取措施主动扫描 WDAC 策略以确定其完整性，这包括调查其中<a href="../../.././../../b_code/go/go简明手册/go语言基础/字符串/" class="internal internal-link alias" data-slug="b_code/go/go简明手册/go语言基础/字符串/index">字符串</a>]和特定字节。</p>
+<p>例如，一个只允许运行 Windows 二进制文件和 WHQL 签名驱动程序的基本 WDAC 策略将阻止所有不符合这些要求的程序。因此，不使用 WHQL 签名驱动程序的 EDR 供应商将被此策略阻止，尽管策略从未特别提及与该供应商相关的任何内容。这给潜在的检测带来了重大困难，因为检测需要建立在发现供应商未被提及的基础上。</p>
+<p>另一方面，有些 EDR 供应商使用 WHQL 签名驱动程序，因此需要 WDAC 策略特别阻止该供应商的驱动程序。幸运的是，这一要求使检测变得更容易，因为可以标记对某些 EDR 供应商的提及。虽然已编译的 WDAC 策略的格式并不公开，但检测潜在恶意策略最简单的方法可能就是观察其中包含的字符串。如下面的截图所示，从 WDAC 策略中导出字符串可以显示策略中引用的所有可执行文件、驱动程序和文件属性，尽管出于安全考虑，引用的文件属性已被编辑。</p>
+<p><img src="../../../a_os/windows/安全/wdac/img-20260520162138086.png" alt="image-20250421094851879"/>)</p>
+<p>虽然仅基于字符串创建检测可以检测到恶意策略，但这样做会产生大量误报。因此，能够检测已编译策略中的字节变得至关重要。在分析已编译 WDAC 策略的转储后，对已编译 WDAC 策略的结构进行了一些关键观察。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>字节偏移量</th><th>描述</th><th>字节</th></tr></thead><tbody><tr><td>0x00<br/> -0x04</td><td>将文件标记为已编译的 WDAC 策略</td><td>0x07 00 00 00 0E</td></tr><tr><td>0x25</td><td>禁用运行时文件路径规则（允许在策略中使用文件路径）</td><td>0x20<br/>表示关闭</td></tr><tr><td>0x28<br/>表示开启</td><td></td><td></td></tr><tr><td>0x26</td><td>控制强制/审核模式</td><td>0x8C<br/>表示强制</td></tr><tr><td>0x8D<br/>表示审核</td><td></td><td></td></tr><tr><td>0xE0<br/> -0xE7</td><td>需要更多研究，但这似乎控制着使此攻击技术正常工作所需的允许/阻止规则</td><td>0xFF FF FF FF FF FF FF FF<br/>表示阻止</td></tr><tr><td>0x00 00 00 00 00 00 00 00<br/>表示允许</td><td></td><td></td></tr></tbody></table></div>
+<p>在研究过程中，我们发现基于已编译的 WDAC 策略检测特定阻止规则非常困难，这是由于 WDAC 策略的结构所致。因此，显然需要一个轻量级的检测方案，这导致了 YARA 规则的产生，用于检测 Krueger 的使用以及提及特定文件属性的已编译 WDAC 策略。这些 YARA 规则虽然对恶意策略有效，但也存在尚未解决的误报问题。因此，请自行承担使用这些规则的风险。关于已制定的检测方案，请访问<strong>Krueger 的 Github 仓库</strong>[7]。</p>
+<p>不幸的是，这里的关键结论是检测”恶意”策略并不容易。如果组织在其环境中没有使用 WDAC，检测应该主要针对上表中提到的位置中添加/编辑/删除策略的尝试。此外，这种攻击的检测不太可能为防御者提供太多预警，因为一旦策略部署在终端上，只需重启就能停止 EDR。再次强调，<strong>强烈建议采取措施来缓解潜在的攻击</strong>。</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/logangoins/Krueger" class="external external-link">logangoins/Krueger: Proof of Concept (PoC) .NET tool for remotely killing EDR with WDAC<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+</blockquote>
+<h2 id="缓解措施">缓解措施<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#缓解措施" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>简而言之，可以使用两种缓解技术：</p>
+<p>通过组策略强制执行 WDAC 策略
+遵循最小权限原则 - 限制对代码完整性文件夹、SMB 共享和组策略修改的权限
+虽然及时检测这种攻击以减少影响很困难，但缓解并不难。首先，通过组策略强制执行远程 WDAC 策略将消除攻击者向单个终端推送策略的威胁。当 GPO 强制执行 WDAC 策略时，即使本地 WDAC 策略副本被覆盖，机器也会从 GPO 定义的位置拉取策略，并在”恶意”策略生效之前覆盖它。如果组织不在其终端上使用 WDAC，一种在环境中维持使用和功能性同时仍提供对这种攻击的保护的方法是通过 GPO 部署处于审核模式的 WDAC 策略。</p>
+<p>还有一些较小的缓解措施可以帮助减少这种攻击带来的影响。确保本地管理员账户被禁用和/或通过防御性解决方案（如 Microsoft 的本地管理员密码解决方案（LAPS））强制执行安全密码，可以降低本地管理员账户被攻破并用于执行恶意行为的可能性。此外，最好限制能够修改域中组策略和远程访问 SMB 共享的用户。遵循最小权限原则是限制此攻击风险的有效方式。</p>
+<p>​</p></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="backlinks"><h3>反向链接</h3><ul id="list-0" class="overflow"><li><a href="../../../wiki/安全/【bypass】/导读" class="internal">【ByPass】 导读</a></li><li><a href="../../../d_立志博览群书/微信读书数据.base" class="internal">微信读书数据</a></li><li><a href="../../../wiki/调试技术/allpages.base" class="internal">AllPages</a></li><li><a href="../../../a_os/windows/环境搭建/文档表格.base" class="internal">文档表格</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v5.0.0</a> © 2026</p><ul><li><a href="https://github.com/holdyounger/holdyounger.github.io">GitHub</a></li></ul></footer></div></div></body><script src="../../../static/resource-after-e13fffa1.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript-5ffe0bd9.js" type="module" data-persist="true"></script></html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【网络编程】IPv6 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../index-09fe923f.css" as="style"/><link rel="preload" href="../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【网络编程】IPv6 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【网络编程】IPv6 | 蒙塔理斯"/><meta name="twitter:description" content="[toc] IPv6地址格式 IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:2345:6789:abcd 双冒号法： 如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。 例如：2000::1:2345..."/><meta property="og:description" content="[toc] IPv6地址格式 IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:2345:6789:abcd 双冒号法： 如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。 例如：2000::1:2345..."/><meta property="og:image:alt" content="[toc] IPv6地址格式 IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:2345:6789:abcd 双冒号法： 如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。 例如：2000::1:2345..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/b_code/网络编程/ipv6"/><meta property="twitter:url" content="https://holdyounger.github.io/b_code/网络编程/ipv6"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="[toc] IPv6地址格式 IPv6的地址长度是128位（bit）。 将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。 例如：2000:0000:0000:0000:0001:2345:6789:abcd 这个地址很长，可以用两种方法对这个地址进行压缩， 前导零压缩法： 将每一段的前导零省略，但是每一段都至少应该有一个数字 例如：2000:0:0:0:1:2345:6789:abcd 双冒号法： 如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。 例如：2000::1:2345..."/><meta name="generator" content="Quartz"/><link href="../../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="b_code/网络编程/ipv6" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-399" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-399" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../b_code/">B_Code</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../b_code/网络编程/">网络编程</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【网络编程】IPv6</a></div></nav><h1 class="article-title">【网络编程】IPv6</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">1</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../tags/网络协议/ipv6" class="internal internal-link tag-link">网络协议/ipv6</a><span class="note-properties-separator">, </span><a href="../../tags/网络编程" class="internal internal-link tag-link">网络编程</a></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-06-14T13:38:23.108Z">2026年6月14日</time><span>15分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><p>[toc]</p>
+<h1 id="ipv6地址格式"><strong>IPv6地址格式</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ipv6地址格式" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>IPv6的地址长度是128位（bit）。</p>
+<p>将这128位的地址按每16位划分为一个段，将每个段转换成十六进制数字，并用冒号隔开。</p>
+<p>例如：2000:0000:0000:0000:0001:2345:6789:abcd</p>
+<p>这个地址很长，可以用两种方法对这个地址进行压缩，</p>
+<p>前导零压缩法：</p>
+<p>将每一段的前导零省略，但是每一段都至少应该有一个数字</p>
+<p>例如：2000:0:0:0:1:2345:6789:abcd</p>
+<p>双冒号法：</p>
+<p>如果一个以冒号十六进制数表示法表示的IPv6地址中，如果几个连续的段值都是0，那么这些0可以简记为::。每个地址中只能有一个::。</p>
+<p>例如：2000::1:2345:6789:abcd</p>
+<h3 id="单播地址unicast-ipv6-addresses"><strong>单播地址（<strong><strong>Unicast IPv6 Addresses</strong></strong>）</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#单播地址unicast-ipv6-addresses" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>可聚合的全球单播地址（Aggregatable Global Unicast Addresses）</p>
+<p>可在全球范围内路由和到达的，相当于IPv4里面的global addresses。前三个bit是001</p>
+<p>例如：2000::1:2345:6789:abcd</p>
+<p>链路本地地址（Link-Local Addresses）</p>
+<p>用于同一个链路上的相邻节点之间通信，相当于IPv4里面的169.254.0.0/16地址。Ipv6的路由器不会转发链路本地地址的数据包。前10个bit是1111 1110 10，由于最后是64bit的interface ID，所以它的前缀总是FE80::/64</p>
+<p>例如：FE80::1</p>
+<p>站点本地地址（Site-Local Addresses）</p>
+<p>对于无法访问internet的本地网络，可以使用站点本地地址，这个相当于IPv4里面的private address（10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16）。它的前10个bit是1111 1110 11，它最后是16bit的Subnet ID和64bit的interface ID，所以它的前缀是FEC0::/48。</p>
+<p>值得注意的是，在RFC3879中，最终决定放弃单播站点本地地址。放弃的理由是，由于其固有的二义性带来的单播站点本地地址的复杂性超过了它们可能带来的好处。它在RFC4193中被ULA取代。</p>
+<p>唯一的本地IPv6单播地址（ULA，Unique Local IPv6 Unicast Address）</p>
+<p>在RFC4193中标准化了一种用来在本地通信中取代单播站点本地地址的地址。ULA拥有固定前缀FD00::/8，后面跟一个被称为全局ID的40bit随机标识符。</p>
+<p>未指定地址（Unspecified address）</p>
+<p>0:0:0:0:0:0:0:0 或者::</p>
+<p>当一个有效地址还不能确定，一般用未指定地址作为源地址。未指定地址不能作为一个目标地址来使用。</p>
+<p>回环地址（Loopback address）</p>
+<p>回环地址::1用于标识一个回环接口，可以使一个节点可以给自己发送数据包。相当于IPv4的回环地址127.0.0.1</p>
+<p>兼容IPv4的地址（IPv4-compatible address）</p>
+<p>形如::w.x,y.z，这里的w.x.y.z是IPv4公共地址的十进制点号表示法，用于IPv6/IPv4节点们（同时支持）在使用仅支持IPv4的网络上用IPv6的协议进行通信。</p>
+<p>但是事实证明这种技术不是个好主意，RFC4291中废弃了对这类地址的使用。</p>
+<p>IPv4映射地址（IPv4-mapped address）</p>
+<p>形如::FFFF:w.x.y.z，这里的w.x.y.z是IPv4公共地址的十进制点号表示法,用于一个仅支持IPv4的节点表现为一个IPv6的节点</p>
+<p>6over4地址</p>
+<p>[64bit-prefix]:0:0:WWXX:YYZZ,其中的WWXX:YYZZ是w.x.y.z IPv4公共地址的十进制点号表示法，用于一个使用6to4协议的隧道机制的节点。</p>
+<p>6to4地址</p>
+<p>2002:WWXX:YYZZ:[SLA ID]:[Interface ID],用于表示一个使用6to4协议的隧道机制节点。</p>
+<h3 id="多播ipv6地址multicast-ipv6-addresses"><strong>多播IPv6地址（<strong><strong>Multicast IPv6 Addresses</strong></strong>）</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#多播ipv6地址multicast-ipv6-addresses" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>前8个bit为1111 1111，</p>
+<p>其中FF01::到FF0F::的多播地址是保留专用地址</p>
+<p>FF01::1 节点本地范围所有节点多播地址</p>
+<p>FF02::1 链路本地范围所有节点多播地址</p>
+<p>FF01::2 节点本地范围所有路由器多播地址</p>
+<p>FF02::2 链路本地范围所有路由器多播地址</p>
+<p>FF05::2 站点本地范围所有路由器多播地址</p>
+<h2 id="为-ipv6-划分子网">为 IPv6 划分子网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为-ipv6-划分子网" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在对 IPv6 地址空间进行子网划分时，需要使用子网划分技术，以一种允许将剩余地址空间的摘要和委派路由到 IPv6 Intranet 的不同部分的方式，为 48 位全局地址前缀划分 16 位子网 ID 字段。</p>
+<p>您不需要以任何特定的方式进行子网划分。此处介绍的子网划分技术假定您是通过使用子网 ID 字段的高序位划分其地址空间的可变部分来进行子网划分的。虽然此方法有助于分层寻址和路由，但此方法并不是非用不可。例如，在只有少数子网的小型组织中，您可以通过为子网编号（从 0 开始），轻松地为全局地址创建平面寻址空间。</p>
+<h3 id="对全局地址前缀进行子网划分">对全局地址前缀进行子网划分<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#对全局地址前缀进行子网划分" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>对于全局地址，Internet 编号分配机构 (IANA) 或 ISP 会分配一个前 48 位均为固定位的 IPv6 地址前缀。若要对 48 位全局地址前缀的子网 ID 字段进行子网划分，需要执行一个包含两步的过程：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>1.</th><th>确定用于子网划分的位数。</th></tr></thead><tbody><tr><td>2.</td><td>枚举出新的子网网络前缀。</td></tr></tbody></table></div>
+<p>确定用于子网划分的位数</p>
+<p>用于子网划分的位数决定着您可以分配给您的网络各部分（基于地理区划或部门分类）的新子网网络前缀的可能的数量。在分层路由基础结构中，您必须确定您在层次结构的各层需要的网络前缀数，进而确定各层需要的位数。为层次结构的各层选择的位越多，您拥有的用于枚举层次结构最后一层中的单个子网的位越少。</p>
+<p>例如，您可以实施一个包含两层的层次结构来反映地理/部门结构，4 位用于地理层，6 位用于部门层。这一方案允许 16 个地理区域，各个区域中的各个部门只占剩余的子网划分空间的 6 (16 - 6 - 4) 位，或者说每个部门只有 64 (=26) 个子网。</p>
+<p>在层次结构中任何给定的层上，许多位已被层次结构中的上一层固定了 (<em>f</em>)，许多位被用来在层次结构中的当前层进行子网划分 (<em>s</em>)，还有许多位留给层次结构中的下一层使用 (<em>r</em>)。下面这个等式始终成立：<em>f</em>+<em>s</em>+<em>r</em> = 16。</p>
+<h3 id="枚举子网网络前缀">枚举子网网络前缀<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#枚举子网网络前缀" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>根据用于子网划分的位数，您必须列出新的子网网络前缀，您可以使用下面两种主要方法之一：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>•</th><th>使用子网 ID 和递增值的十六进制表示形式来枚举新的子网网络前缀。</th></tr></thead><tbody><tr><td>•</td><td>使用子网 ID 和递增值的十进制表示形式来枚举新的子网网络前缀。</td></tr></tbody></table></div>
+<p>这两种方法产生的结果相同，都会生成子网网络前缀的一个枚举列表。</p>
+<p>要使用十六进制方法创建子网网络前缀的枚举列表，请执行以下步骤：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>1.</th><th>根据为子网划分选择的位数 <em>s</em> 和进行子网划分的网络前缀的前缀长度 <em>m</em>，计算以下各值：<em>f</em> = <em>m</em> - 48<em>f</em> 是子网 ID 中已固定的位的数目。<em>n</em> = 2s<em>n</em> 是您将获得的网络前缀的数目。<em>i</em> = 216-(f+s) <em>i</em> 是以十六进制表示的各个连续子网 ID 之间的递增值。<em>P</em> = <em>m+s**P</em> 是新的子网网络前缀的前缀长度。</th></tr></thead><tbody><tr><td>2.</td><td>创建一个包含 <em>n</em> 行、两列的表。第一列存放网络前缀编号（从 1 开始），第二列存放新的子网网络前缀。</td></tr><tr><td>3.</td><td>将使用新的前缀长度的原始网络前缀放在第一行的第二列中。例如，根据进行子网划分的子网 ID 的十六进制值 <em>F</em>，子网网络前缀为 [48 位前缀]:<em>F</em>::/<em>P</em>。</td></tr><tr><td>4.</td><td>将站点本地地址或全局地址的子网 ID 部分中的值加上 <em>i</em>，将结果放在下一行的第二列中。例如，在第二行中，子网前缀为 [48 位前缀]:<em>F</em>+<em>i</em>::/<em>P</em>。</td></tr><tr><td>5.</td><td>重复步骤 4，直到您完成该表。</td></tr></tbody></table></div>
+<p>例如，要对全局地址前缀 3FFE:FFFF:0:C000::/51 进行 3 位子网划分，首先计算前缀数量值、递增值和新前缀长度值。起始值是 <em>F</em>=0xC000，<em>s</em>=3，<em>m</em>=51，因此 <em>f</em>=51-48=3。前缀的数量是 8 (<em>n</em>=23)。递增值是 0x400 (<em>i</em>=216-(3+3)=1024=0x400)。新的前缀长度是 54 (<em>P</em>=51+3)。</p>
+<p>接下来，构造一个包含 8 行的表，如表 4-12 所示。将 3FFE:FFFF:0:C000::/54 放在网络前缀 1 所在的那一行的第二列，然后让网络前缀的子网 ID 部分依次递增 0x400，将结果分别填入后面的各行中。</p>
+<p>下表为使用十六进制技术对 3FFE:FFFF:0:C000::/51 进行 3 位子网划分：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>网络前缀</th><th>子网网络前缀</th></tr></thead><tbody><tr><td>1</td><td>3FFE:FFFF:0:C000::/54</td></tr><tr><td>2</td><td>3FFE:FFFF:0:C400::/54</td></tr><tr><td>3</td><td>3FFE:FFFF:0:C800::/54</td></tr><tr><td>4</td><td>3FFE:FFFF:0:CC00::/54</td></tr><tr><td>5</td><td>3FFE:FFFF:0:D000::/54</td></tr><tr><td>6</td><td>3FFE:FFFF:0:D400::/54</td></tr><tr><td>7</td><td>3FFE:FFFF:0:D800::/54</td></tr><tr><td>8</td><td>3FFE:FFFF:0:DC00::/54</td></tr></tbody></table></div>
+<p>要使用十进制方法创建子网网络前缀的枚举列表，请执行以下步骤：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>1.</th><th>根据用于子网划分的位数 <em>s</em>、进行子网划分的网络前缀的前缀长度 <em>m</em> 和进行子网划分的子网 ID 的十六进制值 <em>F</em>，计算以下各值：<em>f</em> = <em>m</em> - 48<em>f</em> 是子网 ID 中已固定的位的数目。<em>n</em> = 2s<em>n</em> 是您将获得的网络前缀的数目。<em>i</em> = 216-(f+s) <em>i</em> 是各个连续子网 ID 之间的递增值。<em>P</em> = <em>m</em>+<em>s**P</em> 是新的子网网络前缀的前缀长度。<em>D</em> = <em>F</em> 的十进制表示形式</th></tr></thead><tbody><tr><td>2.</td><td>创建一个包含 <em>n</em> 行、三列的表。第一列存放网络前缀编号（从 1 开始），第二列存放新的子网网络前缀的子网 ID 部分的十进制表示形式，第三列存放新的子网网络前缀。</td></tr><tr><td>3.</td><td>将子网 ID 的十进制表示形式 (<em>D</em>) 放在第一行的第一列，将子网前缀 [48 位前缀]:<em>F</em>::/<em>P</em> 放在第一行的第二列。</td></tr><tr><td>4.</td><td>用子网 ID 十进制表示形式的值加上 <em>i</em>，将结果放在下一行的第二列。例如，第二行的子网 ID 的十进制表示形式是 <em>D</em>+<em>i</em>。</td></tr><tr><td>5.</td><td>在第三列中，将子网 ID 的十进制表示形式转换为十六进制，并构造前缀 [48 位前缀]:[<em>SubnetID</em>]::/<em>P</em>。例如，在第二行中，子网网络前缀为 [48 位前缀]:[<em>D</em>+<em>i</em>（转换为十六进制）]::/<em>P</em>。</td></tr><tr><td>6.</td><td>重复步骤 4 和 5，直到您完成该表。</td></tr></tbody></table></div>
+<p>例如，要对站点本地网络前缀 3FFE:FFFF:0:C000::/51 进行 3 位子网划分，首先计算前缀数量值、递增值、新前缀长度值和起始子网 ID 十进制表示形式。我们的起始值是 <em>F</em>=0xC000，<em>s</em>=3，<em>m</em>=51，这样 <em>f</em>=51-48=3。前缀数量是 8 (<em>n</em>=23)。递增值是 1024 (<em>i</em>=216-(3+3))。新的前缀长度是 54 (<em>P</em>=51+3)。起始子网 ID 的十进制表示形式是 49152 (D=0xC000=49152)。</p>
+<p>接下来，构造一个包含 8 行的表，如表 4-13 所示。将 49192 放在网络前缀 1 所在的那一行的第一列，将 3FFE:FFFF:0:C000::/54 放在该行的第二列。让网络前缀的子网 ID 部分（第四个十六进制块）依次递增 1024，然后将结果转换为十六进制并分别填入后面的各行中。</p>
+<p>下表为使用十进制技术对 3FFE:FFFF:0:C000::/51 进行 3 位子网划分：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>网络前缀</th><th>子网 ID 的十进制表示形式</th><th>子网网络前缀</th></tr></thead><tbody><tr><td>1</td><td>49192</td><td>3FFE:FFFF:0:C000::/54</td></tr><tr><td>2</td><td>50176</td><td>3FFE:FFFF:0:C400::/54</td></tr><tr><td>3</td><td>51200</td><td>3FFE:FFFF:0:C800::/54</td></tr><tr><td>4</td><td>52224</td><td>3FFE:FFFF:0:CC00::/54</td></tr><tr><td>5</td><td>53248</td><td>3FFE:FFFF:0:D000::/54</td></tr><tr><td>6</td><td>54272</td><td>3FFE:FFFF:0:D400::/54</td></tr><tr><td>7</td><td>55296</td><td>3FFE:FFFF:0:D800::/54</td></tr><tr><td>8</td><td>56320</td><td>3FFE:FFFF:0:DC00::/54</td></tr></tbody></table></div>
+<h3 id="变量长度子网划分">变量长度子网划分<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#变量长度子网划分" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>与 IPv4 相同的是，您可以对 IPv6 地址前缀循环进行子网划分来在组织 Intranet 的各个层次提供路由摘要，定义单个子网的地址前缀可达到 64 位。与 IPv4 不同的是，您无法使用可变长度子网划分来创建不同大小的子网，因为所有 IPv6 子网都使用 64 位网络 ID 和 64 位接口 ID。</p></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="backlinks"><h3>反向链接</h3><ul id="list-0" class="overflow"><li><a href="../../a_os/linux/linux防火墙/iptables" class="internal">【Linux防火墙】iptables</a></li><li><a href="../../wiki/弱密码/postgresql" class="internal">【弱密码】PostgreSQL</a></li><li><a href="../../d_立志博览群书/微信读书数据.base" class="internal">微信读书数据</a></li><li><a href="../../wiki/调试技术/allpages.base" class="internal">AllPages</a></li><li><a href="../../a_os/windows/环境搭建/文档表格.base" class="internal">文档表格</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v5.0.0</a> © 2026</p><ul><li><a href="https://github.com/holdyounger/holdyounger.github.io">GitHub</a></li></ul></footer></div></div></body><script src="../../static/resource-after-e13fffa1.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript-5ffe0bd9.js" type="module" data-persist="true"></script></html>
