@@ -3,7 +3,7 @@ await Promise.all([
   import("./static/scripts/script-1-0e41d61b.js"),
   import("./static/scripts/script-2-ec880d15.js"),
   import("./static/scripts/script-3-1f9394e6.js"),
-  import("./static/scripts/script-4-2a102aaa.js"),
+  import("./static/scripts/script-4-0912de38.js"),
   import("./static/scripts/script-5-5ef560a8.js"),
   import("./static/scripts/script-6-632b2822.js"),
   import("./static/scripts/script-7-cc8afa9d.js"),
