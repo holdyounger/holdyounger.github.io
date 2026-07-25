@@ -24,28 +24,28 @@
 <p>既然对于用户空间来说访问的内存地址都是连续的 4GB 线性虚拟地址，那么就需要知道 Linux 是如何划分虚拟空间。Linux 采用“按需调页”技术管理虚拟内存。标准 Linux 的虚拟页表分为三级页表，依次为页目录（<code>PGD</code> Page Directory）、中间页目录（<code>PMD</code> Page Middle Directory）和页表（<code>PTE</code> PageTable），如下图所示：</p>
 <p>![图片描述](a-Linux 内存管理/1.png)</p>
 <p>在 Intel CPU 上，Linux 的页表结构实际上为两级。IA-32 体系结构的页管理机制中的页目录是 PGD，页表是 PTE，而 PGD 和 PMD 实际上合二为一。在用户进程中用到的与内存管理有关的数据结构是 <code>mm_struct</code> 结构，此结构中包含了用户进程中与存储有关的信息，具体结构定义如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>struct mm_struct</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>　　struct vm_area_struct       * mmap; /* 指向虚拟区间（VMA）链表 */</span></span>
-<span data-line><span>　　rb_root_t                   mm_rb; ／*指向red_black树*/</span></span>
-<span data-line><span>　　struct vm_area_struct       * mmap_cache; /* 指向最近找到的虚拟区间*/</span></span>
-<span data-line><span>　　pgd_t                       * pgd; ／*指向进程的页目录*/　</span></span>
-<span data-line><span>　　atomic_t                    mm_users; /* 用户空间中的有多少用户*/</span></span>
-<span data-line><span>　　atomic_t                    mm_count; /* 对&quot;struct mm_struct&quot;有多少引用*/</span></span>
-<span data-line><span>　　int                         map_count; /* 虚拟区间的个数*/</span></span>
-<span data-line><span>　　struct rw_semaphore         mmap_sem;</span></span>
-<span data-line><span>　　spinlock_t                  page_table_lock; /* 保护任务页表和 mm->rss */</span></span>
-<span data-line><span>　　struct list_head            mmlist; /*所有活动（active）mm的链表 */</span></span>
-<span data-line><span>　　unsigned long               start_code, end_code, start_data, end_data; /*start_code 代码段起始地址,end_code 代码段结束地址,start_data 数据段起始地址, start_end 数据段结束地址*/</span></span>
-<span data-line><span>　　unsigned long               start_brk, brk, start_stack; /*start_brk 和brk记录有关堆的信息, start_brk是用户虚拟地址空间初始化时，堆的结束地址, brk 是当前堆的结束地址, start_stack 是栈的起始地址*/</span></span>
-<span data-line><span>　　unsigned long               arg_start, arg_end, env_start, env_end; /*arg_start 参数段的起始地址, arg_end 参数段的结束地址, env_start 环境段的起始地址, env_end 环境段的结束地址*/</span></span>
-<span data-line><span>　　unsigned long               rss, total_vm, locked_vm;</span></span>
-<span data-line><span>　　unsigned long               def_flags;</span></span>
-<span data-line><span>　　unsigned long               cpu_vm_mask;</span></span>
-<span data-line><span>　　unsigned long               swap_address;</span></span>
-<span data-line><span>　　unsigned                    dumpable:1;</span></span>
-<span data-line><span>　　mm_context_t                context; /* Architecture-specific MM context, 是与平台相关的一个结构，对i386 几乎用处不大*/</span></span>
-<span data-line><span>};</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mm_struct</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vm_area_struct       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> mmap;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 指向虚拟区间（VMA）链表 */</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　rb_root_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                   mm_rb; ／</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">指向red_black树</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vm_area_struct       </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> mmap_cache;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 指向最近找到的虚拟区间*/</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　pgd_t</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">                       *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> pgd; ／</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">指向进程的页目录</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">　</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　atomic_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                    mm_users;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 用户空间中的有多少用户*/</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　atomic_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                    mm_count;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 对&quot;struct mm_struct&quot;有多少引用*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                         map_count;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 虚拟区间的个数*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> rw_semaphore         mmap_sem;</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　spinlock_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                  page_table_lock;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* 保护任务页表和 mm->rss */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> list_head            mmlist;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /*所有活动（active）mm的链表 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               start_code, end_code, start_data, end_data;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /*start_code 代码段起始地址,end_code 代码段结束地址,start_data 数据段起始地址, start_end 数据段结束地址*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               start_brk, brk, start_stack;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /*start_brk 和brk记录有关堆的信息, start_brk是用户虚拟地址空间初始化时，堆的结束地址, brk 是当前堆的结束地址, start_stack 是栈的起始地址*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               arg_start, arg_end, env_start, env_end;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /*arg_start 参数段的起始地址, arg_end 参数段的结束地址, env_start 环境段的起始地址, env_end 环境段的结束地址*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               rss, total_vm, locked_vm;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               def_flags;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               cpu_vm_mask;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">               swap_address;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">　　unsigned</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">                    dumpable:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">　　mm_context_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">                context;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> /* Architecture-specific MM context, 是与平台相关的一个结构，对i386 几乎用处不大*/</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span></code></pre></figure>
 <p>每一个进程都有一个页目录，存储该进程所使用的内存页面情况。Linux 按照“按需调页”的原则，只分配必需的内存页面，从而避免了页表过多占用存储空间的情况出现。例如，系统调用 <code>fork</code> 分配内存页面的情况如下：</p>
 <ul>
 <li>内核态堆栈 1 页；</li>
@@ -62,56 +62,56 @@
 <p>用户程序总共拥有 4GB 的虚拟空间，但是并不是 4GB 空间都可以让用户进程读写或申请使用。用户进程实际上可以申请的虚拟空间为 0 ~ 3GB 。在用户进程创建时，已由系统调用 <code>fork()</code> 的执行函数 <code>do_fork()</code> 将内核的代码段和数据段映射到 3GB 以后的虚拟空间，供内核态进程访问。所有进程的 3GB~4GB 的虚拟控件的映像都是相同的，并以此方式共享代码段和数据段。</p>
 <p>为了能够以自然的方式管理进程虚拟控件，Linux 定义了虚拟段（<code>vma</code> virtual memory area），一个 <code>vma</code> 段是某个进程的一段连续的虚拟控件，在这段虚拟空间的所有单元拥有相同的特征。例如，属于同一个进程具有相同的访问权限，将同时被锁定、受保护等。</p>
 <p>虚拟段的数据结构如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>struct vm_area_struct {</span></span>
-<span data-line><span>    /*  第一个缓存行具有VMA树移动的信息*/</span></span>
-<span data-line><span>    unsigned long vm_start;                     /* Our start address within vm_mm. */</span></span>
-<span data-line><span>    unsigned long vm_end;                       /* The first byte after our end address within vm_mm. */</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_area_struct {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /*  第一个缓存行具有VMA树移动的信息*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_start;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                     /* Our start address within vm_mm. */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_end;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                       /* The first byte after our end address within vm_mm. */</span></span>
 <span data-line> </span>
-<span data-line><span>    struct vm_area_struct *vm_next, *vm_prev;   /* 每个任务的VM区域的链接列表，按地址排序*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vm_area_struct </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">vm_next, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">vm_prev;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">   /* 每个任务的VM区域的链接列表，按地址排序*/</span></span>
 <span data-line> </span>
-<span data-line><span>    struct rb_node vm_rb;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> rb_node vm_rb;</span></span>
 <span data-line> </span>
-<span data-line><span>    /*</span></span>
-<span data-line><span>     此VMA左侧最大的可用内存间隙（以字节为单位）。</span></span>
-<span data-line><span>     在此VMA和vma-> vm_prev之间，</span></span>
-<span data-line><span>     或者在VMA rbtree中我们下面的一个VMA与其->vm_prev之间。</span></span>
-<span data-line><span>     这有助于get_unmapped_area找到合适大小的空闲区域。</span></span>
-<span data-line><span>     */</span></span>
-<span data-line><span>    unsigned long rb_subtree_gap;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     此VMA左侧最大的可用内存间隙（以字节为单位）。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     在此VMA和vma-> vm_prev之间，</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     或者在VMA rbtree中我们下面的一个VMA与其->vm_prev之间。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     这有助于get_unmapped_area找到合适大小的空闲区域。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> rb_subtree_gap;</span></span>
 <span data-line> </span>
-<span data-line><span>    /* 第二个缓存行从这里开始*/</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 第二个缓存行从这里开始*/</span></span>
 <span data-line> </span>
-<span data-line><span>    struct mm_struct *vm_mm;    /* 我们所属的address space*/</span></span>
-<span data-line><span>    pgprot_t vm_page_prot;      /* 此VMA的访问权限 */</span></span>
-<span data-line><span>    unsigned long vm_flags;     /* Flags, see mm.h. */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> mm_struct </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">vm_mm;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 我们所属的address space*/</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="property">    pgprot_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_page_prot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">      /* 此VMA的访问权限 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_flags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     /* Flags, see mm.h. */</span></span>
 <span data-line> </span>
-<span data-line><span>    /*</span></span>
-<span data-line><span>     对于具有地址空间（address apace）和后备存储(backing store)的区域，</span></span>
-<span data-line><span>     链接到address_space->i_mmap间隔树，或者链接到address_space-> i_mmap_nonlinear列表中的vma。</span></span>
-<span data-line><span>     */</span></span>
-<span data-line><span>    union {</span></span>
-<span data-line><span>        struct {</span></span>
-<span data-line><span>            struct rb_node rb;</span></span>
-<span data-line><span>            unsigned long rb_subtree_last;</span></span>
-<span data-line><span>        } linear;</span></span>
-<span data-line><span>        struct list_head nonlinear;</span></span>
-<span data-line><span>    } shared;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     对于具有地址空间（address apace）和后备存储(backing store)的区域，</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     链接到address_space->i_mmap间隔树，或者链接到address_space-> i_mmap_nonlinear列表中的vma。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> rb_node rb;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> rb_subtree_last;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        } linear;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> list_head nonlinear;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    } shared;</span></span>
 <span data-line> </span>
-<span data-line><span>    /*</span></span>
-<span data-line><span>     在其中一个文件页面的COW之后，文件的MAP_PRIVATE vma可以在i_mmap树和anon_vma列表中。</span></span>
-<span data-line><span>     MAP_SHARED vma只能位于i_mmap树中。</span></span>
-<span data-line><span>     匿名MAP_PRIVATE，堆栈或brk vma（带有NULL文件）只能位于anon_vma列表中。</span></span>
-<span data-line><span>     */</span></span>
-<span data-line><span>    struct list_head anon_vma_chain;                /* 由mmap_sem和* page_table_lock序列化*/</span></span>
-<span data-line><span>    struct anon_vma *anon_vma;                      /* Serialized by page_table_lock 由page_table_lock序列化*/</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     在其中一个文件页面的COW之后，文件的MAP_PRIVATE vma可以在i_mmap树和anon_vma列表中。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     MAP_SHARED vma只能位于i_mmap树中。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     匿名MAP_PRIVATE，堆栈或brk vma（带有NULL文件）只能位于anon_vma列表中。</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> list_head anon_vma_chain;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                /* 由mmap_sem和* page_table_lock序列化*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> anon_vma </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">anon_vma;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                      /* Serialized by page_table_lock 由page_table_lock序列化*/</span></span>
 <span data-line> </span>
-<span data-line><span>    const struct vm_operations_struct *vm_ops;      /* 用于处理此结构体的函数指针 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vm_operations_struct </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">vm_ops;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">      /* 用于处理此结构体的函数指针 */</span></span>
 <span data-line> </span>
-<span data-line><span>    /* 后备存储（backing store）的信息: */</span></span>
-<span data-line><span>    unsigned long vm_pgoff;                         /* 以PAGE_SIZE为单位的偏移量（在vm_file中），*不是* PAGE_CACHE_SIZE*/</span></span>
-<span data-line><span>    struct file * vm_file;                          /* 我们映射到文件（可以为NULL）*/</span></span>
-<span data-line><span>    void * vm_private_data;                         /* 是vm_pte（共享内存） */</span></span>
-<span data-line><span>};</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 后备存储（backing store）的信息: */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_pgoff;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                         /* 以PAGE_SIZE为单位的偏移量（在vm_file中），*不是* PAGE_CACHE_SIZE*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> file </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_file;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                          /* 我们映射到文件（可以为NULL）*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_private_data;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">                         /* 是vm_pte（共享内存） */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span></code></pre></figure>
 <p>结合前面的内存管理数据结构，可以绘制如下的 Linux 内存管理框图：</p>
 <p>![图片描述](a-Linux 内存管理/2.png)</p>
 <h2 id="0x03-内存的共享和保护">0x03 内存的共享和保护<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x03-内存的共享和保护" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
@@ -147,12 +147,12 @@
 <p>由 <code>vmalloc()</code> 分配的存储空间在进程的虚拟空间是连续的，当它对应的物理内存扔需要经过缺页中断后由缺页中断服务程序分配，所分配的物理页帧不是连续的。这些特征和访问用户内存相似，所以<span class="text-highlight">不妨把 `vmalloc()` 和 `vfree()` 成为用户态内存的申请和释放界面</span>。</p>
 <p>可分配的虚拟空间在 <code>3GB+high_memory+HOLE_8MB</code> 以上的高端，由 <code>vmlist</code> 链表管理。<code>3GB</code> 是内核态赖以访问物理内存的起始地址。<code>high_memory</code> 是安装在计算机中实际可用的物理内存的最高地址。 因此 <code>3GB+high_memory</code> 也是物理内存的上界。 <code>HOLE_8MB</code> 则是长度为 8MB 的“隔离带”，起越界保护作用。这样，<code>vmlist</code>管辖的虚拟空间既不与进程用户态<code>0~3GB</code>的虚拟空间冲突，也不与进程内核态映射的 <code>3GB~3GB+high_memory</code> 的虚拟空间冲突。</p>
 <p><code>vmlist</code>链表的节点类型 <code>vm_struct</code> 具体内容如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>struct vm_struct{</span></span>
-<span data-line><span>    unsigned long       flags;  /* 虚拟内存块的占用标志 */</span></span>
-<span data-line><span>    void                *addr;  /* 虚拟内存块的起始地址 */</span></span>
-<span data-line><span>    unsigned long       size;   /* 虚拟内存块的长度 */</span></span>
-<span data-line><span>    struct vm_struct    *next;  /* 下一个虚拟内存块 */</span></span>
-<span data-line><span>};</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> vm_struct{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">       flags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">  /* 虚拟内存块的占用标志 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">                *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">addr;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">  /* 虚拟内存块的起始地址 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">       size;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">   /* 虚拟内存块的长度 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vm_struct    </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">next;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">  /* 下一个虚拟内存块 */</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span></code></pre></figure>
 <p>起始时，<code>vmlist</code> 只有一个节点，<code>vmlist_addr</code> 置为 <code>VMALLOC_START</code>（段地址 3GB，偏移量 <code>high_memory+8MB</code>）。动态管理过程中，<code>vmlist</code> 的虚拟内存块按起始地址从小到大排序，每个虚拟内存块之后都有一个 <code>4KB</code> 大小的“隔离带”，用来检查指针的越界错误，用户申请大块连续空间可用 <code>vmalloc()</code> ，如下图所示：</p>
 <p>![图片描述](a-Linux 内存管理/7.png)</p>
 <h2 id="0x08-交换空间">0x08 交换空间<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x08-交换空间" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
@@ -173,10 +173,10 @@
 <h2 id="0x0a-缺页中断和页面交换">0x0a 缺页中断和页面交换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x0a-缺页中断和页面交换" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <p>磁盘中的可执行文件映像 <code>Image</code> 一旦被映射到一个进程的虚拟空间就可以开始执行。由于只有该映像区的开始部分调入内存，因此，进程迟早会执行到那些尚未调入内存的代码。当一个进程访问了一个还没有有效页表项的虚拟地址时（即页表项的 P 位为 0），处理器将产生缺页中断，通知操作系统，并将出现缺页的虚拟地址（在 CR2 寄存器中）和缺页时访问虚拟内存的模式，并传递给 Linux 的缺页中断服务程序。</p>
 <p>在系统初始化时，设定了缺页中断服务程序为 <code>do_page_fault()</code> ：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>    Set_ttrap_gate(14, &amp;page_fault);</span></span>
-<span data-line><span>    ENTRY(page_fault)</span></span>
-<span data-line><span>    pushI$SYMBOL_NAME(do_page_fault)</span></span>
-<span data-line><span>    jmp error_code  /* 异常中断服务程序统一入口 */</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    Set_ttrap_gate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">14</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">page_fault</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    ENTRY</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(page_fault)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pushI$</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">SYMBOL_NAME</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(do_page_fault)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    jmp error_code</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">  /* 异常中断服务程序统一入口 */</span></span></code></pre></figure>
 <p>根据控制寄存器 <code>CR2</code> 传递的缺页地址，Linux 必须找到用来表示缺页的虚拟存储区的 <code>vm_area_struct</code> 结构。在搜索进程的 <code>vm_area_struct</code> 结构时，对搜索时间应有严格的限制。为了有效地处理搜索工作，Linux 将所有的 <code>vm_area_struct</code> 结构通过 AVL 平衡树连接起来。如果没用找到与缺页相对应的 <code>vm_area_struct</code> 结构，那么说明进程访问了一个非法存储器，Linux 向进程发送信号 <code>GIGSEGV</code> ，如果进程没用处理该信号的函数，该进程将被终止。</p>
 <p>Linux 接着检测缺页时访问模式是否合法。如果进程对该页的访问超越权限，例如试图对只允许读操作的页面进行写操作，系统也将向该进程发送一个信号，通知进程的存储访问出错。经过以上两步检查，可以确定肯定是正常的缺页中断。</p>
 <p>Linux 还区分产生缺页中断的页面是在交换空间，还是在磁盘中作为某一可执行文件映像的一部分，进而做出不同的处理，这一点通过页表项中的位来区分。如果该页面所对应的页表项是无效的（<code>p=0</code>），但是非空，说明缺页在交换空间中。否则，页面是某一个可执行文件映像（<code>image</code>）的一部分。</p>

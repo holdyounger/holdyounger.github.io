@@ -60,48 +60,48 @@
 <li><code>s&lt;0</code> ，s 的绝对值表示当前系统中等待该临界资源的进程个数；</li>
 </ul>
 <p><code>wait(S)</code> 和 <code>Signal(S)</code> 可以简单被描述成如下的代码执行方式：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>//wait(S)</span></span>
-<span data-line><span>    while(s &lt;= 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //进程等待</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    s = s - 1;</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//wait(S)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(s </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //进程等待</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    s </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> s </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
 <span data-line> </span>
-<span data-line><span>//Signal(S)</span></span>
-<span data-line><span>    //发送信号</span></span>
-<span data-line><span>    s = s + 1;</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//Signal(S)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //发送信号</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    s </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> s </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span></code></pre></figure>
 <h4 id="记录型信号量">记录型信号量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#记录型信号量" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>记录型信号量的数据结构由两部分组成：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>struct semaphone{</span></span>
-<span data-line><span>    int s;//整型信号</span></span>
-<span data-line><span>    list *l;//进程链表</span></span>
-<span data-line><span>};</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semaphone{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> s;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//整型信号</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    list </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">l;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//进程链表</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span>
 <span data-line> </span>
-<span data-line><span>struct semaphone S;</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semaphone S;</span></span></code></pre></figure>
 <p>在这个结构中，<code>s</code> 的值表示系统中可用的该类临界资源的数量，而 <code>l</code> 为进程链表指针，指向等待该资源的 PCB 队列。具体的操作如下图所示：</p>
 <p><img src="../../../3-操作系统进程控制及进程间通信概述/b40616fae915acce6bde16deac66a24b-0.png" alt="图片描述"/></p>
 <p>在记录型信号量机制中，s 的初值表示系统中该类资源的可用数目，因而又被成为资源信号量，每次对它进行 <code>wait()</code> 操作，即申请该类一个单位的临界资源，描述为 <code>s=s-1</code> ，当 <code>s>=0</code> 条件满足时，表示在没用做减一操作前 <code>s>=1</code> ，因此本进程可以继续执行；当 <code>s>=0</code> 条件不满足时，表示操作前系统就没有空闲的该资源，因此进程应该调用 <code>block</code> 将该进程的 PCB 插入由指针 l 指向的阻塞队列。因此，该机制遵循了“让权等待”。</p>
 <p>s 的绝对值表示在该信号量链表中已阻塞等待进程的数目。对信号量的每次 <code>signal()</code> 操作表示执行进程释放一个单位的该类临界资源，因此操作 <code>s=s+1</code> 表示资源数目加一。如果加一操作后发现 <code>s&lt;=0</code> 条件依然成立，这表示该信号链表中仍然有等待资源被阻塞的经常，所以还需要调用 <code>wakeup</code> 将第一个等待进程唤醒，其余进程继续等待；若 <code>s&lt;=0</code> 不成立，则表示系统中没用等待该类资源的进程，因此本进程只需要释放它所占用的该类资源继续执行即可。</p>
 <h4 id="and-型信号量">AND 型信号量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#and-型信号量" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>AND 同步机制的基本思想是将进程在整个运行过程中需要的所有资源，一次性全部分配给进程，待进程使用完成后再一起释放，只要有一个资源尚未分配给进程，其他所有可能分配的资源都不会分配给它。具体描述如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Swait(S1,S2,...,Sn)</span></span>
-<span data-line><span>    if S1>=1 and S2 >=1 ... and Sn >=1 then</span></span>
-<span data-line><span>        for i: =1 to n do</span></span>
-<span data-line><span>            Si:=Si-1;</span></span>
-<span data-line><span>        endfor</span></span>
-<span data-line><span>    else</span></span>
-<span data-line><span>        [将该进程放入阻塞队列]</span></span>
-<span data-line><span>    endif</span></span>
-<span data-line><span>Ssignal(S1,S2,...,Sn)</span></span>
-<span data-line><span>    for i:=1 to n do</span></span>
-<span data-line><span>        Si = Si + 1;</span></span>
-<span data-line><span>        唤醒所有 Si 不满足而进入阻塞队列的进程</span></span>
-<span data-line><span>    endfor</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">Swait</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(S1,S2,...,Sn)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> S1</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">>=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> and S2 </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">>=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> ... and Sn </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">>=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> then</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> to n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">do</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            Si:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Si</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        endfor</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    else</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        [将该进程放入阻塞队列]</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    endif</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">Ssignal</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(S1,S2,...,Sn)</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> to n </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">do</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        Si </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> Si </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        唤醒所有 Si 不满足而进入阻塞队列的进程</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    endfor</span></span></code></pre></figure>
 <h4 id="信号量集">信号量集<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#信号量集" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>如果某进程一次需要 N 个某类资源时，就需要进行 N 次 <code>wait()</code> 操作，这使得系统效率非常低并且可能造成死锁。</p>
 <p>信号量集机制的基本思想是在 AND 型信号量集的基础上进行扩充，进程对信号量 Si 的测试值为 ti （用于信号量判断），占用值为 di （用于信号量的增减）</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Swait(S1,S2,...,Sn)</span></span>
-<span data-line><span>Ssignal(S1,d1;S2,d2;...;Sn,dn)</span></span></code></pre></figure>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">Swait</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(S1,S2,...,Sn)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">Ssignal</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(S1,d1;S2,d2;...;Sn,dn)</span></span></code></pre></figure>
 <p>一般“信号量集”的几种特定情况如下：</p>
 <ul>
 <li><code>Swait(S,d,d)</code> 表示每次申请 d 个资源，当少于 d 时不进行分配</li>
@@ -153,13 +153,13 @@
 <li>管道创建函数</li>
 </ol>
 <p>创建管道可以用 <code>pipe()</code> 函数实现，具体如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;unistd.h> //所需头文件</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> //所需头文件</span></span>
 <span data-line> </span>
-<span data-line><span>int pipe(int fd[2]) //函数原型</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>函数参数：fd[2] 管道的两个文件描述符，函数调用之后可以直接操作这两个文件描述符</span></span>
-<span data-line><span>返回值：0 - 成功，-1 - 出错</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> pipe</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal"> fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">])</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> //函数原型</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">函数参数：fd[2] 管道的两个文件描述符，函数调用之后可以直接操作这两个文件描述符</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：0 - 成功，-1 - 出错</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <ol>
 <li>管道读写说明</li>
 </ol>
@@ -178,66 +178,66 @@
 </ul>
 <h4 id="管道通信实验">管道通信实验<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#管道通信实验" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>下面，我们通过一个小的实例代码来学习进程如何通过管道来通信的。在 VS code 窗口中创建新的文件 <code>pipe.c</code> ，然后添加如下代码内容：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;unistd.h></span></span>
-<span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;errno.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
-<span data-line><span>#include &lt;string.h></span></span>
-<span data-line><span>#include &lt;sys/wait.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;errno.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;string.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/wait.h></span></span>
 <span data-line> </span>
-<span data-line><span>#define MAX_DATA_LEN    128</span></span>
-<span data-line><span>#define DELAY_TIME      3</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> MAX_DATA_LEN</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">    128</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> DELAY_TIME</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">      3</span></span>
 <span data-line> </span>
-<span data-line><span>int main()</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    pid_t pid;</span></span>
-<span data-line><span>    int pipe_fd[2];</span></span>
-<span data-line><span>    char buf[MAX_DATA_LEN];</span></span>
-<span data-line><span>    const char data[] = &quot;Pipe Demo Program&quot;;</span></span>
-<span data-line><span>    int real_read;</span></span>
-<span data-line><span>    int real_write;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    pid_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> pid;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal"> pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">];</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal"> buf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[MAX_DATA_LEN];</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> char</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> data</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">[]</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> =</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;Pipe Demo Program&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> real_read;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> real_write;</span></span>
 <span data-line> </span>
-<span data-line><span>    memset((void *)buf, 0, sizeof(buf));</span></span>
-<span data-line><span>    if(pipe(pipe_fd) &lt; 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        printf(&quot;pepe create error\n&quot;);</span></span>
-<span data-line><span>        exit(1);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    memset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">((</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)buf, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">sizeof</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buf));</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">pipe</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pipe_fd) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;pepe create error</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    pid = fork();</span></span>
-<span data-line><span>    if(pid == 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //子进程，关闭写描述符，通过sleep(3)等待父进程关闭相应的读描述符</span></span>
-<span data-line><span>        close(pipe_fd[1]);</span></span>
-<span data-line><span>        sleep(DELAY_TIME);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> fork</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //子进程，关闭写描述符，通过sleep(3)等待父进程关闭相应的读描述符</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">]);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sleep</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(DELAY_TIME);</span></span>
 <span data-line> </span>
-<span data-line><span>        //子进程读取管道内容</span></span>
-<span data-line><span>        real_read = read(pipe_fd[0], buf, MAX_DATA_LEN);</span></span>
-<span data-line><span>        if(real_read > 0)</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;Child progress : read %d bytes from the pipe : '%s' \n&quot;, real_read, buf);</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>        close(pipe_fd[0]);</span></span>
-<span data-line><span>        exit(0);</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    else if(pid > 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //父进程，关闭读描述符，并通过睡眠3秒等待子进程关闭对应的写描述符</span></span>
-<span data-line><span>        close(pipe_fd[0]);</span></span>
-<span data-line><span>        sleep(DELAY_TIME);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //子进程读取管道内容</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        real_read </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> read</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">], buf, MAX_DATA_LEN);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(real_read </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Child progress : read </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> bytes from the pipe : '</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">' </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, real_read, buf);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">]);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //父进程，关闭读描述符，并通过睡眠3秒等待子进程关闭对应的写描述符</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">]);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sleep</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(DELAY_TIME);</span></span>
 <span data-line> </span>
-<span data-line><span>        //写管道内容</span></span>
-<span data-line><span>        real_write = write(pipe_fd[1], data, strlen(data));</span></span>
-<span data-line><span>        if(real_write != -1)</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;Parent progress : write %d bytes to the pipe : '%s' \n&quot;, real_write, data);</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>        close(pipe_fd[1]);</span></span>
-<span data-line><span>        waitpid(pid, NULL, 0); //等待子进程结束</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //写管道内容</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        real_write </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">], data, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strlen</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(data));</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(real_write </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">!=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Parent progress : write </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> bytes to the pipe : '</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">' </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, real_write, data);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">pipe_fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">]);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        waitpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"> //等待子进程结束</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>添加完成后，如下图：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/3-操作系统进程控制及进程间通信概述/img-20260520152011619.png" alt="图片描述"/>)</p>
 <p>在 VS Code 平台下的终端窗口中输入以下命令进行编译和运行，观察程序最终结果：</p>
@@ -270,144 +270,144 @@
 <li>若该管道是非阻塞打开而不能写入全部数据，则读操作进行部分写入或者调用失败。</li>
 </ul>
 <p>对于 <code>mkfifo()</code> 函数介绍如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/state.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/state.h></span></span>
 <span data-line> </span>
-<span data-line><span>//函数原型</span></span>
-<span data-line><span>int mkfifo(const char *filename, mode_t mode)</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>- filename: 要创建的管道，包含路径</span></span>
-<span data-line><span>- mode: O_RDONLY:读管道</span></span>
-<span data-line><span>        O_WRONLY:写管道</span></span>
-<span data-line><span>        O_RDWR:读写管道</span></span>
-<span data-line><span>        O_NONBLOCK:非阻塞</span></span>
-<span data-line><span>        O_CREAT:如果该文件不存在，那么就创建一个新的文件，并用第三个参数为其设置权限</span></span>
-<span data-line><span>        O_EXECL：如果使用O_CREAT时文件存在，那么可返回错误消息。这个参数可测试文件是否存在</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//函数原型</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> mkfifo</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> char</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">filename</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">mode_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> mode</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- filename: 要创建的管道，包含路径</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- mode: O_RDONLY:读管道</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        O_WRONLY:写管道</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        O_RDWR:读写管道</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        O_NONBLOCK:非阻塞</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        O_CREAT:如果该文件不存在，那么就创建一个新的文件，并用第三个参数为其设置权限</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        O_EXECL：如果使用O_CREAT时文件存在，那么可返回错误消息。这个参数可测试文件是否存在</span></span>
 <span data-line> </span>
-<span data-line><span>返回值：成功返回 0 ，失败返回 -1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：成功返回 0 ，失败返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <h4 id="有名管道实验">有名管道实验<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#有名管道实验" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>对于有<a href="../../.././../windows/api/管道的使用" class="internal internal-link alias" data-slug="windows/api/管道的使用">管道的使用</a>]就不需要像无名管道那样使用 <code>fork()</code> 创建子进程来进行通信，有名管道是可以在没有亲属关系的进程之间进行通信的。所以在这个实验中，我们将要编写两个程序，通过执行这两个进程在工作过程中使用 <code>fifo</code> 通信来进行实验。这两个程序一个负责向管道种写数据，一个负责读数据。写数据的程序为 <code>fifo_write.c</code> ，读数据的代码文件为 <code>fifo_read.c</code>，具体如下：</p>
 <p>在 VS Code 平台下创建 <code>fifo_write.c</code> 文件，如下图：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/3-操作系统进程控制及进程间通信概述/img-20260520162100299.png" alt="图片描述"/>)</p>
 <p>添加以下内容如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/stat.h></span></span>
-<span data-line><span>#include &lt;errno.h></span></span>
-<span data-line><span>#include &lt;fcntl.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;limits.h></span></span>
-<span data-line><span>#include &lt;string.h></span></span>
-<span data-line><span>#include &lt;unistd.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/stat.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;errno.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;fcntl.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;limits.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;string.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
 <span data-line> </span>
-<span data-line><span>#define FIFO_NAME    &quot;/tmp/demo_fifo&quot;    /* 有名管道名称 */</span></span>
-<span data-line><span>#define MAX_BUFFER_SIZE     PIPE_BUF     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> FIFO_NAME</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">    &quot;/tmp/demo_fifo&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 有名管道名称 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> MAX_BUFFER_SIZE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">     PIPE_BUF</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
 <span data-line> </span>
-<span data-line><span>int main(int argc, char *argv[])</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    int fd;</span></span>
-<span data-line><span>    char buff[MAX_BUFFER_SIZE];</span></span>
-<span data-line><span>    int nwrite;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> argc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">char</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">argv</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">[]</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> fd;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal"> buff</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[MAX_BUFFER_SIZE];</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> nwrite;</span></span>
 <span data-line> </span>
-<span data-line><span>    fd = open(FIFO_NAME, O_WRONLY);</span></span>
-<span data-line><span>    if(fd == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        printf(&quot;Open fifo file error\n&quot;);</span></span>
-<span data-line><span>        exit(1);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    fd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> open</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(FIFO_NAME, O_WRONLY);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Open fifo file error</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    while(1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //从键盘获取输入的字符，将数据存入 buff</span></span>
-<span data-line><span>        memset(buff, 0, MAX_BUFFER_SIZE);</span></span>
-<span data-line><span>        printf(&quot;请输入需要向 FIFO 中发送的数据：(q/Q 退出)\n&quot;);</span></span>
-<span data-line><span>        scanf(&quot;%s&quot;, buff);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //从键盘获取输入的字符，将数据存入 buff</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        memset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, MAX_BUFFER_SIZE);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;请输入需要向 FIFO 中发送的数据：(q/Q 退出)</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        scanf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, buff);</span></span>
 <span data-line> </span>
-<span data-line><span>        /* 判断退出条件 */</span></span>
-<span data-line><span>        if(!strcmp(buff, &quot;q&quot;) || !strcmp(buff, &quot;Q&quot;))</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;[%d] write fifo 程序退出....&quot;, getpid());</span></span>
-<span data-line><span>            break;</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>        nwrite = write(fd, buff, strlen(buff)+1);</span></span>
-<span data-line><span>        if(nwrite > 0)</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;Write '%s' to FIFO\n&quot;, buff);</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>        else{</span></span>
-<span data-line><span>            printf(&quot;Write FIFO error...\n&quot;);</span></span>
-<span data-line><span>            break;</span></span>
-<span data-line><span>        }</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        /* 判断退出条件 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strcmp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;q&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">||</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> !</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strcmp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Q&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] write fifo 程序退出....&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        nwrite </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd, buff, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strlen</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff)</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(nwrite </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Write '</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">' to FIFO</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, buff);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Write FIFO error...</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
 <span data-line> </span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    close(fd);</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>在 VS Code 平台下创建 <code>fifo_read.c</code> 文件，如图：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/3-操作系统进程控制及进程间通信概述/img-20260520162115899.png" alt="图片描述"/>)</p>
 <p>添加内容如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/stat.h></span></span>
-<span data-line><span>#include &lt;errno.h></span></span>
-<span data-line><span>#include &lt;fcntl.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;limits.h></span></span>
-<span data-line><span>#include &lt;string.h></span></span>
-<span data-line><span>#include &lt;unistd.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/stat.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;errno.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;fcntl.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;limits.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;string.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
 <span data-line> </span>
-<span data-line><span>#define FIFO_NAME    &quot;/tmp/demo_fifo&quot;    /* 有名管道名称 */</span></span>
-<span data-line><span>#define MAX_BUFFER_SIZE     PIPE_BUF     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> FIFO_NAME</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">    &quot;/tmp/demo_fifo&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 有名管道名称 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> MAX_BUFFER_SIZE</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">     PIPE_BUF</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">     /* 定义数据长度，使用 limits.h 中的 PIPE_BUF 长度 */</span></span>
 <span data-line> </span>
-<span data-line><span>int main(int argc, char *argv[])</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    int fd;</span></span>
-<span data-line><span>    char buff[MAX_BUFFER_SIZE];</span></span>
-<span data-line><span>    int nread;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> argc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">char</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">argv</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">[]</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> fd;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal"> buff</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[MAX_BUFFER_SIZE];</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> nread;</span></span>
 <span data-line> </span>
-<span data-line><span>    /* 判断 FIFO 文件是否存在，如果不存在则创建 */</span></span>
-<span data-line><span>    if(access(FIFO_NAME, F_OK) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        if((mkfifo(FIFO_NAME, 0666) &lt; 0) &amp;&amp; (errno != EEXIST))</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;Cannot create fifo file\n&quot;);</span></span>
-<span data-line><span>            exit(1);</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    /* 判断 FIFO 文件是否存在，如果不存在则创建 */</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">access</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(FIFO_NAME, F_OK) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">((</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">mkfifo</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(FIFO_NAME, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> (errno </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">!=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> EEXIST))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Cannot create fifo file</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    fd = open(FIFO_NAME, O_RDONLY);</span></span>
-<span data-line><span>    if(fd == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        printf(&quot;Open fifo file error\n&quot;);</span></span>
-<span data-line><span>        exit(1);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    fd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> open</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(FIFO_NAME, O_RDONLY);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Open fifo file error</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    while(1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //从键盘获取输入的字符，将数据存入 buff</span></span>
-<span data-line><span>        memset(buff, 0, MAX_BUFFER_SIZE);</span></span>
-<span data-line><span>        nread = read(fd, buff, MAX_BUFFER_SIZE);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    while</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //从键盘获取输入的字符，将数据存入 buff</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        memset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, MAX_BUFFER_SIZE);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        nread </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> read</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd, buff, MAX_BUFFER_SIZE);</span></span>
 <span data-line> </span>
-<span data-line><span>        if(!strcmp(buff, &quot;q&quot;) || !strcmp(buff, &quot;Q&quot;))</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;[%d] read fifo 程序退出....&quot;, getpid());</span></span>
-<span data-line><span>            break;</span></span>
-<span data-line><span>        }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">!</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strcmp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;q&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">||</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> !</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">strcmp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(buff, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Q&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">))</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] read fifo 程序退出....&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
 <span data-line> </span>
-<span data-line><span>        if(nread > 0)</span></span>
-<span data-line><span>        {</span></span>
-<span data-line><span>            printf(&quot;Read '%s' from FIFO\n&quot;, buff);</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>        else{</span></span>
-<span data-line><span>            printf(&quot;Read FIFO error...\n&quot;);</span></span>
-<span data-line><span>            break;</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    close(fd);</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(nread </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">></span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Read '</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">' from FIFO</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, buff);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        else</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">            printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Read FIFO error...</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">            break</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">        }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    close</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(fd);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>编写完代码后，在终端通过 <code>gcc</code> 进行编译，在执行的时候分为两个终端窗口来执行，首先执行管道读程序 <code>fifo_read</code>，然后在另一个窗口中启动管道写进程 <code>fifo_write</code>，具体结果如下：</p>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> fifo_read.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> fifo_read</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> fifo_write.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> fifo_write</span></span></code></pre></figure>

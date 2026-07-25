@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" dir="ltr"><head><title>【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../index-09fe923f.css" as="style"/><link rel="preload" href="../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯"/><meta name="twitter:description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:image:alt" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用"/><meta property="twitter:url" content="https://holdyounger.github.io/ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta name="generator" content="Quartz"/><link href="../../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-2335c6f6.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-0df53187.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-3" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-3" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../ai大模型/">AI大模型</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../ai大模型/openclaw/">OpenClaw</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用</a></div></nav><h1 class="article-title">【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">2</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../tags/openclaw" class="internal internal-link tag-link">openclaw</a><span class="note-properties-separator">, </span><a href="../../tags/安全排查" class="internal internal-link tag-link">安全排查</a><span class="note-properties-separator">, </span><a href="../../tags/问题定位" class="internal internal-link tag-link">问题定位</a><span class="note-properties-separator">, </span><a href="../../tags/wsl" class="internal internal-link tag-link">wsl</a><span class="note-properties-separator">, </span><a href="../../tags/nvm" class="internal internal-link tag-link">nvm</a><span class="note-properties-separator">, </span><a href="../../tags/node.js" class="internal internal-link tag-link">node.js</a><span class="note-properties-separator">, </span><a href="../../tags/linux" class="internal internal-link tag-link">linux</a></span></td></tr><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">aliases</td><td class="note-properties-value metadata-property-value"><span class="note-properties-list"><span class="note-properties-text">OpenClaw 排查 20260716</span><span class="note-properties-separator">, </span><span class="note-properties-text">WSL nvm 版本切换问题</span></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-07-17T00:50:37.689Z">2026年7月17日</time><span>28分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote class="callout abstract" data-callout="abstract">
+<html lang="zh" dir="ltr"><head><title>【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../index-09fe923f.css" as="style"/><link rel="preload" href="../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用 | 蒙塔理斯"/><meta name="twitter:description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:image:alt" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用"/><meta property="twitter:url" content="https://holdyounger.github.io/ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="概述 2026-07-17 上午发现 OpenClaw 无法使用，表现为 openclaw gateway restart 返回 command not found。经过系统性排查（系统日志、shell 历史、包管理日志、节点进程日志），定位到根因：WSL 关机重启后，nvm 未自动激活正确的 Node.js 版本，导致 npm 全局安装的 openclaw 命令不在 PATH 中，而非真正的卸载。 排查背景 Host：MS-Zephyrus16 (WSL2, Ubuntu 24.04.4 LTS) 用户：montarius OpenClaw 版本：v2026.7.1 Node.js 版本：..."/><meta name="generator" content="Quartz"/><link href="../../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-2335c6f6.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-0df53187.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="ai大模型/openclaw/openclaw排查-wsl重启后nvm版本切换导致命令不可用" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-3" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-3" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../ai大模型/">AI大模型</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../ai大模型/openclaw/">OpenClaw</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用</a></div></nav><h1 class="article-title">【安全排查】OpenClaw 异常&quot;卸载&quot;事件 — WSL 重启后 nvm 版本切换导致命令不可用</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">2</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../tags/openclaw" class="internal internal-link tag-link">openclaw</a><span class="note-properties-separator">, </span><a href="../../tags/安全排查" class="internal internal-link tag-link">安全排查</a><span class="note-properties-separator">, </span><a href="../../tags/问题定位" class="internal internal-link tag-link">问题定位</a><span class="note-properties-separator">, </span><a href="../../tags/wsl" class="internal internal-link tag-link">wsl</a><span class="note-properties-separator">, </span><a href="../../tags/nvm" class="internal internal-link tag-link">nvm</a><span class="note-properties-separator">, </span><a href="../../tags/node.js" class="internal internal-link tag-link">node.js</a><span class="note-properties-separator">, </span><a href="../../tags/linux" class="internal internal-link tag-link">linux</a></span></td></tr><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">aliases</td><td class="note-properties-value metadata-property-value"><span class="note-properties-list"><span class="note-properties-text">OpenClaw 排查 20260716</span><span class="note-properties-separator">, </span><span class="note-properties-text">WSL nvm 版本切换问题</span></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-07-24T08:06:32.192Z">2026年7月24日</time><span>28分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote class="callout abstract" data-callout="abstract">
 <div class="callout-title">
                   <div class="callout-icon"></div>
                   <div class="callout-title-inner"><p>概述 </p></div>
@@ -68,32 +68,31 @@
 <p>当天上午执行 <code>openclaw gateway restart</code> 返回 <code>command not found</code>，用户据此推断 openclaw 被意外卸载。排查目标：确认是否真的发生了卸载，并定位根因。</p>
 <h3 id="排查思路">排查思路<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#排查思路" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>作为安全开发工程师，排查遵循<strong>系统取证分析</strong>标准流程：</p>
-<pre><code>┌─────────────────────────────────────────────────────┐
-│  Step 1: 确认当前状态                                │
-│  - openclaw 命令是否存在？                           │
-│  - npm 全局包是否还在？                              │
-│  - gateway 进程是否运行？                             │
-├─────────────────────────────────────────────────────┤
-│  Step 2: 查看系统日志 (journalctl)                   │
-│  - 节点进程是否异常退出？                            │
-│  - 有无信号终止 (SIGTERM/SIGKILL)？                  │
-│  - 有无 OOM Killer 事件？                            │
-├─────────────────────────────────────────────────────┤
-│  Step 3: 分析 Shell 历史记录                        │
-│  - 用户是否手动执行了 uninstall 命令？               │
-│  - 确切的操作时间点                                  │
-├─────────────────────────────────────────────────────┤
-│  Step 4: 检查包管理器日志                            │
-│  - dpkg/apt 日志中有无删除记录？                     │
-├─────────────────────────────────────────────────────┤
-│  Step 5: 分析身份认证日志 (auth.log)                 │
-│  - sudo 执行记录，是否有 root 权限操作？             │
-├─────────────────────────────────────────────────────┤
-│  Step 6: 交叉验证进程生命周期                        │
-│  - 节点进程 PID 生命周期                            │
-│  - 系统启动/关闭时间                                │
-└─────────────────────────────────────────────────────┘
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>┌─────────────────────────────────────────────────────┐</span></span>
+<span data-line><span>│  Step 1: 确认当前状态                                │</span></span>
+<span data-line><span>│  - openclaw 命令是否存在？                           │</span></span>
+<span data-line><span>│  - npm 全局包是否还在？                              │</span></span>
+<span data-line><span>│  - gateway 进程是否运行？                             │</span></span>
+<span data-line><span>├─────────────────────────────────────────────────────┤</span></span>
+<span data-line><span>│  Step 2: 查看系统日志 (journalctl)                   │</span></span>
+<span data-line><span>│  - 节点进程是否异常退出？                            │</span></span>
+<span data-line><span>│  - 有无信号终止 (SIGTERM/SIGKILL)？                  │</span></span>
+<span data-line><span>│  - 有无 OOM Killer 事件？                            │</span></span>
+<span data-line><span>├─────────────────────────────────────────────────────┤</span></span>
+<span data-line><span>│  Step 3: 分析 Shell 历史记录                        │</span></span>
+<span data-line><span>│  - 用户是否手动执行了 uninstall 命令？               │</span></span>
+<span data-line><span>│  - 确切的操作时间点                                  │</span></span>
+<span data-line><span>├─────────────────────────────────────────────────────┤</span></span>
+<span data-line><span>│  Step 4: 检查包管理器日志                            │</span></span>
+<span data-line><span>│  - dpkg/apt 日志中有无删除记录？                     │</span></span>
+<span data-line><span>├─────────────────────────────────────────────────────┤</span></span>
+<span data-line><span>│  Step 5: 分析身份认证日志 (auth.log)                 │</span></span>
+<span data-line><span>│  - sudo 执行记录，是否有 root 权限操作？             │</span></span>
+<span data-line><span>├─────────────────────────────────────────────────────┤</span></span>
+<span data-line><span>│  Step 6: 交叉验证进程生命周期                        │</span></span>
+<span data-line><span>│  - 节点进程 PID 生命周期                            │</span></span>
+<span data-line><span>│  - 系统启动/关闭时间                                │</span></span>
+<span data-line><span>└─────────────────────────────────────────────────────┘</span></span></code></pre></figure>
 <blockquote>
 <p><strong>排查原则</strong>：任何非预期的卸载通常会在系统层面留下痕迹。逐层排除才能定位根因，不能仅凭一个 <code>command not found</code> 就判断为卸载。</p>
 </blockquote>
@@ -118,13 +117,12 @@
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">nvm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> list</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        # 查看已安装的 Node 版本</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">nvm</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> ls</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">          # 同上，查看当前激活版本</span></span></code></pre></figure>
 <h4 id="输出及解读">输出及解读<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#输出及解读" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
-<pre><code>$ which openclaw
-which: no openclaw in (/usr/local/bin:/usr/bin:/bin)
-
-$ npm list -g openclaw
-/home/montarius/.nvm/versions/node/v22.23.1/lib
-└── openclaw@2026.7.1
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$ which openclaw</span></span>
+<span data-line><span>which: no openclaw in (/usr/local/bin:/usr/bin:/bin)</span></span>
+<span data-line> </span>
+<span data-line><span>$ npm list -g openclaw</span></span>
+<span data-line><span>/home/montarius/.nvm/versions/node/v22.23.1/lib</span></span>
+<span data-line><span>└── openclaw@2026.7.1</span></span></code></pre></figure>
 <p><strong>关键发现</strong>：<code>which openclaw</code> 找不到，但 <code>npm list -g openclaw</code> 显示包仍然存在。这是一个<strong>矛盾的信号</strong>——包没有被卸载，只是命令不在 PATH 中。</p>
 <hr/>
 <h3 id="step-2分析系统日志-journalctl">Step 2：分析系统日志 (journalctl)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#step-2分析系统日志-journalctl" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
@@ -134,16 +132,15 @@ $ npm list -g openclaw
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> --since</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;2026-07-16 00:00:00&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> --until</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;2026-07-16 23:59:59&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string"> \</span></span>
 <span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">  --no-pager</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;node\[98829\]&quot;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> less</span></span></code></pre></figure>
 <p><strong>输出示例</strong>（全天共 1142 条日志）：</p>
-<pre><code>Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.521+08:00 [agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
-Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.643+08:00 [provider-transport-fetch] [model-fetch] start provider=custom-claudecode-internal-geelib-360-cn api=anthropic-messages model=claude-sonnet-4-6 method=POST
-Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.721+08:00 [provider-transport-fetch] [model-fetch] response provider=custom-claudecode-internal-geelib-360-cn api=anthropic-messages model=claude-sonnet-4-6 status=200 elapsedMs=75
-Jul 16 00:05:40 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:40.336+08:00 [tools] read failed: ENOENT: no such file or directory, access '/home/montarius/.openclaw/workspace/memory/task-queue.json'
-...
-Jul 16 09:00:10 MS-Zephyrus16 node[98829]: 2026-07-16T09:00:10.444+08:00 [agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts
-Jul 16 09:00:11 MS-Zephyrus16 node[98829]: 2026-07-16T09:00:11.095+08:00 [provider-transport-fetch] [model-fetch] response provider=... status=200 elapsedMs=102
-...
-Jul 16 22:19:49 MS-Zephyrus16 node[98829]: 2026-07-16T22:19:49.359+08:00 [memory] sync failed (session-start): Error: No API key found for provider &quot;openai&quot;
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.521+08:00 [agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts</span></span>
+<span data-line><span>Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.643+08:00 [provider-transport-fetch] [model-fetch] start provider=custom-claudecode-internal-geelib-360-cn api=anthropic-messages model=claude-sonnet-4-6 method=POST</span></span>
+<span data-line><span>Jul 16 00:05:36 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:36.721+08:00 [provider-transport-fetch] [model-fetch] response provider=custom-claudecode-internal-geelib-360-cn api=anthropic-messages model=claude-sonnet-4-6 status=200 elapsedMs=75</span></span>
+<span data-line><span>Jul 16 00:05:40 MS-Zephyrus16 node[98829]: 2026-07-16T00:05:40.336+08:00 [tools] read failed: ENOENT: no such file or directory, access '/home/montarius/.openclaw/workspace/memory/task-queue.json'</span></span>
+<span data-line><span>...</span></span>
+<span data-line><span>Jul 16 09:00:10 MS-Zephyrus16 node[98829]: 2026-07-16T09:00:10.444+08:00 [agents/tool-policy] tool policy removed 5 tool(s) via tools.profile (coding): agents_list, gateway, message, nodes, tts</span></span>
+<span data-line><span>Jul 16 09:00:11 MS-Zephyrus16 node[98829]: 2026-07-16T09:00:11.095+08:00 [provider-transport-fetch] [model-fetch] response provider=... status=200 elapsedMs=102</span></span>
+<span data-line><span>...</span></span>
+<span data-line><span>Jul 16 22:19:49 MS-Zephyrus16 node[98829]: 2026-07-16T22:19:49.359+08:00 [memory] sync failed (session-start): Error: No API key found for provider &quot;openai&quot;</span></span></code></pre></figure>
 <p><strong>解读</strong>：</p>
 <ul>
 <li>PID 98829 在 7/16 <strong>全天都有日志输出</strong>（活跃），进程持续运行</li>
@@ -156,18 +153,17 @@ Jul 16 22:19:49 MS-Zephyrus16 node[98829]: 2026-07-16T22:19:49.359+08:00 [memory
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">journalctl</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> --since</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;2026-07-17 00:44:00&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> --until</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;2026-07-17 00:46:00&quot;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string"> \</span></span>
 <span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">  --no-pager</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>Jul 17 00:44:25 MS-Zephyrus16 systemd-resolved[161]: Clock change detected. Flushing caches.
-Jul 17 00:44:43 MS-Zephyrus16 node[98829]: [ws] webchat disconnected code=1006 reason=n/a
-Jul 17 00:44:53 MS-Zephyrus16 node[98829]: [skills] watcher error: EFAULT: bad address
-Jul 17 00:44:53 MS-Zephyrus16 node[98829]: [skills] watcher error: EIO: i/o error
-Jul 17 00:45:01 MS-Zephyrus16 unknown: WSL Relay ERROR: ReceiveMessage:253: ExpectedMessage LxInitMessageExitStatus, but socket Control was closed
-Jul 17 00:45:05 MS-Zephyrus16 systemd-logind[179]: The system will power off now!
-Jul 17 00:45:05 MS-Zephyrus16 systemd[1]: Stopping session-2.scope...
-Jul 17 00:45:05 MS-Zephyrus16 systemd[233]: Stopping openclaw-gateway.service...
-Jul 17 00:45:05 MS-Zephyrus16 node[98829]: [gateway] signal SIGTERM received
-Jul 17 00:45:05 MS-Zephyrus16 node[98829]: [gateway] received SIGTERM; shutting down
-Jul 17 00:45:07 MS-Zephyrus16 systemd[233]: Stopped openclaw-gateway.service - OpenClaw Gateway (v2026.7.1).
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Jul 17 00:44:25 MS-Zephyrus16 systemd-resolved[161]: Clock change detected. Flushing caches.</span></span>
+<span data-line><span>Jul 17 00:44:43 MS-Zephyrus16 node[98829]: [ws] webchat disconnected code=1006 reason=n/a</span></span>
+<span data-line><span>Jul 17 00:44:53 MS-Zephyrus16 node[98829]: [skills] watcher error: EFAULT: bad address</span></span>
+<span data-line><span>Jul 17 00:44:53 MS-Zephyrus16 node[98829]: [skills] watcher error: EIO: i/o error</span></span>
+<span data-line><span>Jul 17 00:45:01 MS-Zephyrus16 unknown: WSL Relay ERROR: ReceiveMessage:253: ExpectedMessage LxInitMessageExitStatus, but socket Control was closed</span></span>
+<span data-line><span>Jul 17 00:45:05 MS-Zephyrus16 systemd-logind[179]: The system will power off now!</span></span>
+<span data-line><span>Jul 17 00:45:05 MS-Zephyrus16 systemd[1]: Stopping session-2.scope...</span></span>
+<span data-line><span>Jul 17 00:45:05 MS-Zephyrus16 systemd[233]: Stopping openclaw-gateway.service...</span></span>
+<span data-line><span>Jul 17 00:45:05 MS-Zephyrus16 node[98829]: [gateway] signal SIGTERM received</span></span>
+<span data-line><span>Jul 17 00:45:05 MS-Zephyrus16 node[98829]: [gateway] received SIGTERM; shutting down</span></span>
+<span data-line><span>Jul 17 00:45:07 MS-Zephyrus16 systemd[233]: Stopped openclaw-gateway.service - OpenClaw Gateway (v2026.7.1).</span></span></code></pre></figure>
 <p><strong>解读</strong>：</p>
 <ul>
 <li><code>webchat disconnected code=1006</code> — WebSocket 在关机前先断开</li>
@@ -182,19 +178,16 @@ Jul 17 00:45:07 MS-Zephyrus16 systemd[233]: Stopped openclaw-gateway.service - O
 <span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 方法二：dmesg</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">dmesg</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> grep</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -iE</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;oom|kill|out of memory&quot;</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>[  823.630231] WSL (219 - GnsEngine) ERROR: nft -a list chain ip nat WSLPOSTROUTING killed by signal 13
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>[  823.630231] WSL (219 - GnsEngine) ERROR: nft -a list chain ip nat WSLPOSTROUTING killed by signal 13</span></span></code></pre></figure>
 <p><strong>解读</strong>：唯一的相关日志是 WSL 内一个 <code>nft</code>（网络过滤）进程被 signal 13 杀死，与 openclaw 完全无关。<strong>无 OOM 事件</strong>。</p>
 <hr/>
 <h3 id="step-3分析-shell-历史记录">Step 3：分析 Shell 历史记录<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#step-3分析-shell-历史记录" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>系统上有两个历史文件：<code>~/.bash_history</code>（bash，记录命令文本）和 <code>~/.zsh_history</code>（zsh，带 Unix 时间戳）。</p>
 <h4 id="31-zsh-历史文件格式说明">3.1 zsh 历史文件格式说明<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-zsh-历史文件格式说明" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>zsh 历史记录中的每一行格式如下：</p>
-<pre><code>: &lt;unix_timestamp>:&lt;elapsed_seconds>;&lt;command>
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>: &lt;unix_timestamp>:&lt;elapsed_seconds>;&lt;command></span></span></code></pre></figure>
 <p>示例：</p>
-<pre><code>: 1784025455:0;openclaw gateway restart
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>: 1784025455:0;openclaw gateway restart</span></span></code></pre></figure>
 <p>时间戳 <code>1784025455</code> 是 Unix 时间戳（自 1970-01-01 以来的秒数），可用 <code>date</code> 命令转换为可读时间：</p>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">date</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> @1784025455</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> '+%Y-%m-%d %H:%M:%S %Z'</span></span>
 <span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 输出：2026-07-14 18:37:35 CST</span></span></code></pre></figure>
@@ -248,24 +241,23 @@ Jul 17 00:45:07 MS-Zephyrus16 systemd[233]: Stopped openclaw-gateway.service - O
 <span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    fi</span></span>
 <span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">done</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> 2></span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/dev/null </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">|</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> head</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -30</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>2026-07-17 08:09:51 | openclaw gateway restart          ← 第一次尝试，command not found ❌
-2026-07-17 08:10:29 | which openclaw                     ← 确认命令不存在
-2026-07-17 08:12:17 | echo $PATH                         ← 查看当前 PATH
-2026-07-17 08:13:34 | source ~/.zshrc                     ← 尝试重新加载配置
-2026-07-17 08:13:41 | which openclaw                     ← 仍然找不到
-2026-07-17 08:14:52 | npm list -g openclaw                ← 检查包是否存在
-2026-07-17 08:15:51 | nvm --version                       ← 检查 nvm 状态
-2026-07-17 08:15:56 | nvm list                            ← 列出 Node 版本
-2026-07-17 08:16:06 | nvm use --delete-prefix v22.23.1    ← 激活正确版本
-2026-07-17 08:16:14 | which openclaw                     ← ✅ 现在能找到了！
-2026-07-17 08:16:18 | nvm ls
-2026-07-17 08:17:04 | node -v
-2026-07-17 08:17:17 | which npm
-2026-07-17 08:17:29 | npm install -g openclaw              ← 重新安装（保证万无一失）
-2026-07-17 08:18:28 | openclaw doctor --fix                ← 修复配置
-2026-07-17 08:19:10 | openclaw gateway restart             ← ✅ 成功启动！
-2026-07-17 08:24:13 | which openclaw                     ← 确认持久可用
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2026-07-17 08:09:51 | openclaw gateway restart          ← 第一次尝试，command not found ❌</span></span>
+<span data-line><span>2026-07-17 08:10:29 | which openclaw                     ← 确认命令不存在</span></span>
+<span data-line><span>2026-07-17 08:12:17 | echo $PATH                         ← 查看当前 PATH</span></span>
+<span data-line><span>2026-07-17 08:13:34 | source ~/.zshrc                     ← 尝试重新加载配置</span></span>
+<span data-line><span>2026-07-17 08:13:41 | which openclaw                     ← 仍然找不到</span></span>
+<span data-line><span>2026-07-17 08:14:52 | npm list -g openclaw                ← 检查包是否存在</span></span>
+<span data-line><span>2026-07-17 08:15:51 | nvm --version                       ← 检查 nvm 状态</span></span>
+<span data-line><span>2026-07-17 08:15:56 | nvm list                            ← 列出 Node 版本</span></span>
+<span data-line><span>2026-07-17 08:16:06 | nvm use --delete-prefix v22.23.1    ← 激活正确版本</span></span>
+<span data-line><span>2026-07-17 08:16:14 | which openclaw                     ← ✅ 现在能找到了！</span></span>
+<span data-line><span>2026-07-17 08:16:18 | nvm ls</span></span>
+<span data-line><span>2026-07-17 08:17:04 | node -v</span></span>
+<span data-line><span>2026-07-17 08:17:17 | which npm</span></span>
+<span data-line><span>2026-07-17 08:17:29 | npm install -g openclaw              ← 重新安装（保证万无一失）</span></span>
+<span data-line><span>2026-07-17 08:18:28 | openclaw doctor --fix                ← 修复配置</span></span>
+<span data-line><span>2026-07-17 08:19:10 | openclaw gateway restart             ← ✅ 成功启动！</span></span>
+<span data-line><span>2026-07-17 08:24:13 | which openclaw                     ← 确认持久可用</span></span></code></pre></figure>
 <p><strong>解读</strong>：</p>
 <ul>
 <li>08:09 报 <code>command not found</code> → 用户推断为被卸载，但实际上包仍在，只是 PATH 中没有</li>
@@ -297,36 +289,35 @@ Jul 17 00:45:07 MS-Zephyrus16 systemd[233]: Stopped openclaw-gateway.service - O
 <h4 id="42-检查-apt-history-日志">4.2 检查 apt history 日志<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-检查-apt-history-日志" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">cat</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> /var/log/apt/history.log</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> tail</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -50</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>Start-Date: 2026-07-15  08:42:15
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: libasound2t64:amd64 (1.2.11-1ubuntu0.2, 1.2.11-1ubuntu0.3)
-End-Date: 2026-07-15  08:42:16
-
-Start-Date: 2026-07-15  08:42:17
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: openssh-client:amd64 (1:9.6p1-3ubuntu13.16, 1:9.6p1-3ubuntu13.18)
-End-Date: 2026-07-15  08:42:18
-
-Start-Date: 2026-07-17  08:21:59
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: python3-idna:amd64 (3.6-2ubuntu0.1, 3.6-2ubuntu0.2)
-End-Date: 2026-07-17  08:21:59
-
-Start-Date: 2026-07-17  08:22:01
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: libheif1:amd64 (1.17.6-1ubuntu4.4, 1.17.6-1ubuntu4.6), ...
-End-Date: 2026-07-17  08:22:02
-
-Start-Date: 2026-07-17  08:22:03
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: vim:amd64 (2:9.1.0016-1ubuntu7.17, 2:9.1.0016-1ubuntu7.18), ...
-End-Date: 2026-07-17  08:22:06
-
-Start-Date: 2026-07-17  08:22:06
-Commandline: /usr/bin/unattended-upgrade
-Upgrade: wget:amd64 (1.21.4-1ubuntu4.1, 1.21.4-1ubuntu4.3)
-End-Date: 2026-07-17  08:22:07
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Start-Date: 2026-07-15  08:42:15</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: libasound2t64:amd64 (1.2.11-1ubuntu0.2, 1.2.11-1ubuntu0.3)</span></span>
+<span data-line><span>End-Date: 2026-07-15  08:42:16</span></span>
+<span data-line> </span>
+<span data-line><span>Start-Date: 2026-07-15  08:42:17</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: openssh-client:amd64 (1:9.6p1-3ubuntu13.16, 1:9.6p1-3ubuntu13.18)</span></span>
+<span data-line><span>End-Date: 2026-07-15  08:42:18</span></span>
+<span data-line> </span>
+<span data-line><span>Start-Date: 2026-07-17  08:21:59</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: python3-idna:amd64 (3.6-2ubuntu0.1, 3.6-2ubuntu0.2)</span></span>
+<span data-line><span>End-Date: 2026-07-17  08:21:59</span></span>
+<span data-line> </span>
+<span data-line><span>Start-Date: 2026-07-17  08:22:01</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: libheif1:amd64 (1.17.6-1ubuntu4.4, 1.17.6-1ubuntu4.6), ...</span></span>
+<span data-line><span>End-Date: 2026-07-17  08:22:02</span></span>
+<span data-line> </span>
+<span data-line><span>Start-Date: 2026-07-17  08:22:03</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: vim:amd64 (2:9.1.0016-1ubuntu7.17, 2:9.1.0016-1ubuntu7.18), ...</span></span>
+<span data-line><span>End-Date: 2026-07-17  08:22:06</span></span>
+<span data-line> </span>
+<span data-line><span>Start-Date: 2026-07-17  08:22:06</span></span>
+<span data-line><span>Commandline: /usr/bin/unattended-upgrade</span></span>
+<span data-line><span>Upgrade: wget:amd64 (1.21.4-1ubuntu4.1, 1.21.4-1ubuntu4.3)</span></span>
+<span data-line><span>End-Date: 2026-07-17  08:22:07</span></span></code></pre></figure>
 <p><strong>解读</strong>：7/16 没有任何 apt 操作。7/15 和 7/17 的变更都是 <code>unattended-upgrades</code> 自动安全更新（libasound、openssh-client、python3-idna、vim、wget 等）——<strong>与 openclaw 无关</strong>。</p>
 <hr/>
 <h3 id="step-5分析身份认证日志-authlog">Step 5：分析身份认证日志 (auth.log)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#step-5分析身份认证日志-authlog" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
@@ -334,16 +325,15 @@ End-Date: 2026-07-17  08:22:07
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 查看 7/16 的身份认证日志</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">cat</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> /var/log/auth.log</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> grep</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;2026-07-16&quot;</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>2026-07-16T00:00:06.395748+08:00 MS-Zephyrus16 CRON[200787]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)
-2026-07-16T00:00:06.656527+08:00 MS-Zephyrus16 CRON[200787]: pam_unix(cron:session): session closed for user montarius
-2026-07-16T00:10:06.203752+08:00 MS-Zephyrus16 CRON[202512]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)
-2026-07-16T00:10:06.509337+08:00 MS-Zephyrus16 CRON[202512]: pam_unix(cron:session): session closed for user montarius
-2026-07-16T00:17:05.643630+08:00 MS-Zephyrus16 CRON[203677]: pam_unix(cron:session): session opened for user root(uid=0) by root(uid=0)
-2026-07-16T00:17:05.646844+08:00 MS-Zephyrus16 CRON[203677]: pam_unix(cron:session): session closed for user root
-2026-07-16T00:20:06.311747+08:00 MS-Zephyrus16 CRON[204173]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)
-2026-07-16T00:20:06.494510+08:00 MS-Zephyrus16 CRON[204173]: pam_unix(cron:session): session closed for user montarius
-...
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2026-07-16T00:00:06.395748+08:00 MS-Zephyrus16 CRON[200787]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)</span></span>
+<span data-line><span>2026-07-16T00:00:06.656527+08:00 MS-Zephyrus16 CRON[200787]: pam_unix(cron:session): session closed for user montarius</span></span>
+<span data-line><span>2026-07-16T00:10:06.203752+08:00 MS-Zephyrus16 CRON[202512]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)</span></span>
+<span data-line><span>2026-07-16T00:10:06.509337+08:00 MS-Zephyrus16 CRON[202512]: pam_unix(cron:session): session closed for user montarius</span></span>
+<span data-line><span>2026-07-16T00:17:05.643630+08:00 MS-Zephyrus16 CRON[203677]: pam_unix(cron:session): session opened for user root(uid=0) by root(uid=0)</span></span>
+<span data-line><span>2026-07-16T00:17:05.646844+08:00 MS-Zephyrus16 CRON[203677]: pam_unix(cron:session): session closed for user root</span></span>
+<span data-line><span>2026-07-16T00:20:06.311747+08:00 MS-Zephyrus16 CRON[204173]: pam_unix(cron:session): session opened for user montarius(uid=1000) by montarius(uid=0)</span></span>
+<span data-line><span>2026-07-16T00:20:06.494510+08:00 MS-Zephyrus16 CRON[204173]: pam_unix(cron:session): session closed for user montarius</span></span>
+<span data-line><span>...</span></span></code></pre></figure>
 <p><strong>解读</strong>：全部是 CRON 定时任务会话的 open/close 事件，只有两种用户：</p>
 <ul>
 <li><code>montarius(uid=1000)</code> — 用户自身的 cron 任务（session-tagger，每 10 分钟执行一次）</li>
@@ -359,30 +349,28 @@ End-Date: 2026-07-17  08:22:07
 <span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 查看完整的运行级别变更历史</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">last</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -x</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> |</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> head</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -20</span></span></code></pre></figure>
 <p><strong>输出</strong>：</p>
-<pre><code>         system boot  2026-07-17 08:07
-
-runlevel (to lvl 5)   6.6.87.2-microso Fri Jul 17 08:08   still running
-reboot   system boot  6.6.87.2-microso Fri Jul 17 08:07   still running
-shutdown system down  6.6.87.2-microso Fri Jul 17 00:45 - 08:07  (07:22)
-runlevel (to lvl 5)   6.6.87.2-microso Tue Jul 14 18:25 - 00:45 (2+06:19)
-reboot   system boot  6.6.87.2-microso Tue Jul 14 18:25 - 00:45 (2+06:19)
-shutdown system down  6.6.87.2-microso Tue Jul 14 18:25 - 18:25  (00:00)
-runlevel (to lvl 5)   6.6.87.2-microso Tue Jul 14 16:30 - 18:25  (01:54)
-reboot   system boot  6.6.87.2-microso Tue Jul 14 16:30 - 18:25  (01:54)
-runlevel (to lvl 5)   6.6.87.2-microso Thu Jul  9 12:48 - 16:30 (5+03:41)
-reboot   system boot  6.6.87.2-microso Thu Jul  9 12:48 - 18:25 (5+05:36)
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>         system boot  2026-07-17 08:07</span></span>
+<span data-line> </span>
+<span data-line><span>runlevel (to lvl 5)   6.6.87.2-microso Fri Jul 17 08:08   still running</span></span>
+<span data-line><span>reboot   system boot  6.6.87.2-microso Fri Jul 17 08:07   still running</span></span>
+<span data-line><span>shutdown system down  6.6.87.2-microso Fri Jul 17 00:45 - 08:07  (07:22)</span></span>
+<span data-line><span>runlevel (to lvl 5)   6.6.87.2-microso Tue Jul 14 18:25 - 00:45 (2+06:19)</span></span>
+<span data-line><span>reboot   system boot  6.6.87.2-microso Tue Jul 14 18:25 - 00:45 (2+06:19)</span></span>
+<span data-line><span>shutdown system down  6.6.87.2-microso Tue Jul 14 18:25 - 18:25  (00:00)</span></span>
+<span data-line><span>runlevel (to lvl 5)   6.6.87.2-microso Tue Jul 14 16:30 - 18:25  (01:54)</span></span>
+<span data-line><span>reboot   system boot  6.6.87.2-microso Tue Jul 14 16:30 - 18:25  (01:54)</span></span>
+<span data-line><span>runlevel (to lvl 5)   6.6.87.2-microso Thu Jul  9 12:48 - 16:30 (5+03:41)</span></span>
+<span data-line><span>reboot   system boot  6.6.87.2-microso Thu Jul  9 12:48 - 18:25 (5+05:36)</span></span></code></pre></figure>
 <p><strong>解读</strong>：</p>
-<pre><code>系统运行时间表：
-──────────────────────────────────────────────────────
-7/8  08:15 ─→ 08:22   (0h07m)
-7/8  08:28 ─→ 7/9 12:48 (1d04h)
-7/9  12:48 ─→ 7/14 18:25 (5d05h)  ← 最长运行
-7/14 18:25 ─→ 7/17 00:45 (2d06h)  ← 本次关键周期 ↑
-                  ↓ ★ 关机 ★
-7/17 08:07 ─→ 至今                ← 本次重启后出问题
-──────────────────────────────────────────────────────
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>系统运行时间表：</span></span>
+<span data-line><span>──────────────────────────────────────────────────────</span></span>
+<span data-line><span>7/8  08:15 ─→ 08:22   (0h07m)</span></span>
+<span data-line><span>7/8  08:28 ─→ 7/9 12:48 (1d04h)</span></span>
+<span data-line><span>7/9  12:48 ─→ 7/14 18:25 (5d05h)  ← 最长运行</span></span>
+<span data-line><span>7/14 18:25 ─→ 7/17 00:45 (2d06h)  ← 本次关键周期 ↑</span></span>
+<span data-line><span>                  ↓ ★ 关机 ★</span></span>
+<span data-line><span>7/17 08:07 ─→ 至今                ← 本次重启后出问题</span></span>
+<span data-line><span>──────────────────────────────────────────────────────</span></span></code></pre></figure>
 <p>关键时间点：</p>
 <ul>
 <li><strong>7/14 18:25</strong> 系统重启（当时 openclaw 正常工作）</li>
@@ -404,24 +392,23 @@ reboot   system boot  6.6.87.2-microso Thu Jul  9 12:48 - 18:25 (5+05:36)
 <span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">$NVM_DIR</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">/nvm.sh&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> ] &amp;&amp; </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">\.</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">$NVM_DIR</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">/nvm.sh&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">              # line 129</span></span>
 <span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">[ </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">$NVM_DIR</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">/bash_completion&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> ] &amp;&amp; </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">\.</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">$NVM_DIR</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">/bash_completion&quot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">  # line 130</span></span></code></pre></figure>
 <p><strong>问题链</strong>：</p>
-<pre><code>WSL 关机 (7/17 00:45)   ← 用户关闭 WSL/Windows 导致
-    ↓
-WSL 重启 (7/17 08:07)   ← 用户重新打开
-    ↓
-Shell 启动（zsh）
-    ↓
-~/.zshrc 执行 → nvm.sh 理论上应被 source
-    ↓
-但 nvm 的 default alias **可能没有设置**，或者 ~/.zshrc 的 nvm 初始化
-  在非交互模式下未被正确调用
-    ↓
-PATH 中不包含 /home/montarius/.nvm/versions/node/v22.23.1/bin/
-   （该路径由 nvm use 激活后动态添加到 PATH）
-    ↓
-which openclaw → 找不到该命令
-    ↓
-用户误认为 openclaw 被卸载
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>WSL 关机 (7/17 00:45)   ← 用户关闭 WSL/Windows 导致</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>WSL 重启 (7/17 08:07)   ← 用户重新打开</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>Shell 启动（zsh）</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>~/.zshrc 执行 → nvm.sh 理论上应被 source</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>但 nvm 的 default alias **可能没有设置**，或者 ~/.zshrc 的 nvm 初始化</span></span>
+<span data-line><span>  在非交互模式下未被正确调用</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>PATH 中不包含 /home/montarius/.nvm/versions/node/v22.23.1/bin/</span></span>
+<span data-line><span>   （该路径由 nvm use 激活后动态添加到 PATH）</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>which openclaw → 找不到该命令</span></span>
+<span data-line><span>    ↓</span></span>
+<span data-line><span>用户误认为 openclaw 被卸载</span></span></code></pre></figure>
 <p><strong>为什么 nvm 版本没激活？</strong></p>
 <p>有几种可能性：</p>
 <ol>
@@ -432,38 +419,36 @@ which openclaw → 找不到该命令
 </ol>
 <p><strong>关键证据</strong>：</p>
 <p>从 shell history 可以看到精确的修复过程：</p>
-<pre><code>08:15:56 | nvm list                  ← 查看已安装版本
-08:16:06 | nvm use --delete-prefix v22.23.1  ← 激活版本（需要 --delete-prefix!）
-08:16:14 | which openclaw            ← ✅ 立刻找到了！
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>08:15:56 | nvm list                  ← 查看已安装版本</span></span>
+<span data-line><span>08:16:06 | nvm use --delete-prefix v22.23.1  ← 激活版本（需要 --delete-prefix!）</span></span>
+<span data-line><span>08:16:14 | which openclaw            ← ✅ 立刻找到了！</span></span></code></pre></figure>
 <p><code>nvm use</code> 之后立刻 <code>which openclaw</code> 成功，<strong>这直接证明了问题确实出在 nvm 版本激活上</strong>。</p>
 <h3 id="问题复原场景">问题复原场景<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#问题复原场景" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p><strong>“作案”过程复原</strong>：</p>
-<pre><code>你在 7/14 晚上做了一些插件清理和 nvm 升级操作：
-  ├─ 安装 nvm 0.40.5（之前是旧版）
-  ├─ nvm install 22（安装 Node 22）
-  ├─ 重新安装 openclaw
-  └─ 删除插件目录、清理残留
-
-然后系统持续正常运行了约 2 天（7/14 18:25 → 7/17 00:45）
-
-7/17 凌晨你关闭了 WSL（或 Windows 关机/休眠）
-  → openclaw gateway 收到 SIGTERM，正常停止
-
-7/17 早上你重新打开 WSL
-  → WSL 启动
-  → systemd 启动 openclaw-gateway.service（服务本身正常，用了硬编码路径）
-  → 但你打开的交互式 Shell 中，nvm 没有激活 Node 22
-  → PATH 中没有 node/npm 的 bin 目录
-  → 你运行 openclaw → command not found
-
-后续排查：
-  → which openclaw → 找不到
-  → npm list -g openclaw → 发现包还在 ✅
-  → nvm use → 激活版本
-  → which openclaw → ✅ 恢复了！
-  → 保险起见还是重新安装了一次
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>你在 7/14 晚上做了一些插件清理和 nvm 升级操作：</span></span>
+<span data-line><span>  ├─ 安装 nvm 0.40.5（之前是旧版）</span></span>
+<span data-line><span>  ├─ nvm install 22（安装 Node 22）</span></span>
+<span data-line><span>  ├─ 重新安装 openclaw</span></span>
+<span data-line><span>  └─ 删除插件目录、清理残留</span></span>
+<span data-line> </span>
+<span data-line><span>然后系统持续正常运行了约 2 天（7/14 18:25 → 7/17 00:45）</span></span>
+<span data-line> </span>
+<span data-line><span>7/17 凌晨你关闭了 WSL（或 Windows 关机/休眠）</span></span>
+<span data-line><span>  → openclaw gateway 收到 SIGTERM，正常停止</span></span>
+<span data-line> </span>
+<span data-line><span>7/17 早上你重新打开 WSL</span></span>
+<span data-line><span>  → WSL 启动</span></span>
+<span data-line><span>  → systemd 启动 openclaw-gateway.service（服务本身正常，用了硬编码路径）</span></span>
+<span data-line><span>  → 但你打开的交互式 Shell 中，nvm 没有激活 Node 22</span></span>
+<span data-line><span>  → PATH 中没有 node/npm 的 bin 目录</span></span>
+<span data-line><span>  → 你运行 openclaw → command not found</span></span>
+<span data-line> </span>
+<span data-line><span>后续排查：</span></span>
+<span data-line><span>  → which openclaw → 找不到</span></span>
+<span data-line><span>  → npm list -g openclaw → 发现包还在 ✅</span></span>
+<span data-line><span>  → nvm use → 激活版本</span></span>
+<span data-line><span>  → which openclaw → ✅ 恢复了！</span></span>
+<span data-line><span>  → 保险起见还是重新安装了一次</span></span></code></pre></figure>
 <h3 id="为什么不是真正的卸载">为什么不是真正的卸载<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么不是真正的卸载" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 
 
@@ -513,54 +498,53 @@ which openclaw → 找不到该命令
 <div class="table-container"><table><thead><tr><th>排除项</th><th>证据</th><th>结论</th></tr></thead><tbody><tr><td>npm uninstall</td><td>Shell history 中没有任何 <code>npm uninstall</code> 命令</td><td>非卸载</td></tr><tr><td>apt/dpkg 卸载</td><td>dpkg.log 中 7/16 无记录，apt history 只有 unattended-upgrades</td><td>非系统包操作</td></tr><tr><td>OOM Killer</td><td>journalctl -k 和 dmesg 无 OOM 事件</td><td>非进程崩溃</td></tr><tr><td>用户手动删除</td><td>所有 <code>rm</code> 操作针对的是插件目录，非主程序</td><td>非手动删除</td></tr><tr><td>系统回滚</td><td>apt history.log 只有普通安全更新</td><td>非系统变更</td></tr><tr><td>恶意软件/入侵</td><td>auth.log 无异常 sudo/root 操作</td><td>非安全事件</td></tr><tr><td>磁盘损坏/坏道</td><td>磁盘 I/O 日志无异常</td><td>非硬件问题</td></tr></tbody></table></div>
 <hr/>
 <h2 id="完整事件时间线">完整事件时间线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#完整事件时间线" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code>2026-07-09
-  ├─ 16:34   安装 nvm、Node.js、配置 node 版本
-  └─ 16:55   npm install -g openclaw
-
-2026-07-12
-  └─ 09:44   openclaw gateway restart
-
-2026-07-14
-  ├─ 17:23   开始处理 headroom 插件 (openclaw plugins install headroom)
-  ├─ 17:42   nvm 操作 (升级到 v0.40.5)
-  ├─ 17:43   nvm install 22
-  ├─ 17:45   npm install -g openclaw &amp; openclaw@latest
-  ├─ 17:59   rm -rf ~/.openclaw/extensions/feishu          ← 删除插件目录
-  ├─ 18:06   rm -rf ~/.openclaw/extensions/headroom         ← 删除插件目录
-  ├─ 18:27   pkill -f openclaw                              ← 强制重启 gateway
-  ├─ 18:27   清理：锁文件、安装残留、数据库 WAL
-  ├─ 18:37   openclaw plugins uninstall feishu --force      ← 卸载 feishu 插件
-  ├─ 18:38   openclaw plugins install @openclaw/feishu      ← 重新安装
-  └─ 18:40   nvm use --delete-prefix v22.23.1               ← 设置 Node 版本
-
-2026-07-15                  ← openclaw 正常运行一整天
-  ├─ 08:44   openclaw gateway restart
-  ├─ 11:22   openclaw gateway restart
-  ├─ 14:46   openclaw gateway restart
-  └─ 17:14   openclaw gateway restart
-
-2026-07-16                  ← openclaw 正常运行（7/15 22:22 启动后持续运行）
-  ├─ 00:05~22:19   节点进程 98829 持续活跃（1142 条日志）
-  ├─ 01:35~全天    memory sync failed（OpenAI key 缺失，已知问题）
-  ├─ 11:07~11:14   LLM idle timeout（模型超时，不影响进程）
-  ├─ 19:47         feishu/lark 连接 ping_timeout 出错
-  └─ 全天          session-tagger cron 每 10分钟运行一次
-
-2026-07-17 (今天)
-  ├─ 00:18         openclaw gateway 正常运行（tool policy 更新）
-  ├─ 00:44         webchat 断开（WSL 关机前兆）
-  ├─ 00:45 ★★★    系统关机 (WSL shutdown) ★★★
-  │                 └─ openclaw-gateway.service 收到 SIGTERM → 正常停止
-  ├─ 08:07 ★★★    系统重启 (WSL boot) ★★★
-  │                 └─ ⚠️ 此时 nvm 默认版本未激活 → openclaw 命令不可用
-  ├─ 08:09         openclaw gateway restart → command not found ❌  ← 用户报告的时刻
-  ├─ 08:10         which openclaw → 找不到
-  ├─ 08:14         npm list -g openclaw → 发现包仍在 ✅
-  ├─ 08:16         nvm use --delete-prefix v22.23.1 ✅  ← 根因确认
-  ├─ 08:17         npm install -g openclaw（保险操作）
-  ├─ 08:18         openclaw doctor --fix（修复配置）
-  └─ 08:19         openclaw gateway restart → 成功启动 ✅
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2026-07-09</span></span>
+<span data-line><span>  ├─ 16:34   安装 nvm、Node.js、配置 node 版本</span></span>
+<span data-line><span>  └─ 16:55   npm install -g openclaw</span></span>
+<span data-line> </span>
+<span data-line><span>2026-07-12</span></span>
+<span data-line><span>  └─ 09:44   openclaw gateway restart</span></span>
+<span data-line> </span>
+<span data-line><span>2026-07-14</span></span>
+<span data-line><span>  ├─ 17:23   开始处理 headroom 插件 (openclaw plugins install headroom)</span></span>
+<span data-line><span>  ├─ 17:42   nvm 操作 (升级到 v0.40.5)</span></span>
+<span data-line><span>  ├─ 17:43   nvm install 22</span></span>
+<span data-line><span>  ├─ 17:45   npm install -g openclaw &amp; openclaw@latest</span></span>
+<span data-line><span>  ├─ 17:59   rm -rf ~/.openclaw/extensions/feishu          ← 删除插件目录</span></span>
+<span data-line><span>  ├─ 18:06   rm -rf ~/.openclaw/extensions/headroom         ← 删除插件目录</span></span>
+<span data-line><span>  ├─ 18:27   pkill -f openclaw                              ← 强制重启 gateway</span></span>
+<span data-line><span>  ├─ 18:27   清理：锁文件、安装残留、数据库 WAL</span></span>
+<span data-line><span>  ├─ 18:37   openclaw plugins uninstall feishu --force      ← 卸载 feishu 插件</span></span>
+<span data-line><span>  ├─ 18:38   openclaw plugins install @openclaw/feishu      ← 重新安装</span></span>
+<span data-line><span>  └─ 18:40   nvm use --delete-prefix v22.23.1               ← 设置 Node 版本</span></span>
+<span data-line> </span>
+<span data-line><span>2026-07-15                  ← openclaw 正常运行一整天</span></span>
+<span data-line><span>  ├─ 08:44   openclaw gateway restart</span></span>
+<span data-line><span>  ├─ 11:22   openclaw gateway restart</span></span>
+<span data-line><span>  ├─ 14:46   openclaw gateway restart</span></span>
+<span data-line><span>  └─ 17:14   openclaw gateway restart</span></span>
+<span data-line> </span>
+<span data-line><span>2026-07-16                  ← openclaw 正常运行（7/15 22:22 启动后持续运行）</span></span>
+<span data-line><span>  ├─ 00:05~22:19   节点进程 98829 持续活跃（1142 条日志）</span></span>
+<span data-line><span>  ├─ 01:35~全天    memory sync failed（OpenAI key 缺失，已知问题）</span></span>
+<span data-line><span>  ├─ 11:07~11:14   LLM idle timeout（模型超时，不影响进程）</span></span>
+<span data-line><span>  ├─ 19:47         feishu/lark 连接 ping_timeout 出错</span></span>
+<span data-line><span>  └─ 全天          session-tagger cron 每 10分钟运行一次</span></span>
+<span data-line> </span>
+<span data-line><span>2026-07-17 (今天)</span></span>
+<span data-line><span>  ├─ 00:18         openclaw gateway 正常运行（tool policy 更新）</span></span>
+<span data-line><span>  ├─ 00:44         webchat 断开（WSL 关机前兆）</span></span>
+<span data-line><span>  ├─ 00:45 ★★★    系统关机 (WSL shutdown) ★★★</span></span>
+<span data-line><span>  │                 └─ openclaw-gateway.service 收到 SIGTERM → 正常停止</span></span>
+<span data-line><span>  ├─ 08:07 ★★★    系统重启 (WSL boot) ★★★</span></span>
+<span data-line><span>  │                 └─ ⚠️ 此时 nvm 默认版本未激活 → openclaw 命令不可用</span></span>
+<span data-line><span>  ├─ 08:09         openclaw gateway restart → command not found ❌  ← 用户报告的时刻</span></span>
+<span data-line><span>  ├─ 08:10         which openclaw → 找不到</span></span>
+<span data-line><span>  ├─ 08:14         npm list -g openclaw → 发现包仍在 ✅</span></span>
+<span data-line><span>  ├─ 08:16         nvm use --delete-prefix v22.23.1 ✅  ← 根因确认</span></span>
+<span data-line><span>  ├─ 08:17         npm install -g openclaw（保险操作）</span></span>
+<span data-line><span>  ├─ 08:18         openclaw doctor --fix（修复配置）</span></span>
+<span data-line><span>  └─ 08:19         openclaw gateway restart → 成功启动 ✅</span></span></code></pre></figure>
 <hr/>
 <h2 id="修复步骤">修复步骤<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#修复步骤" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <h3 id="已执行的操作">已执行的操作<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#已执行的操作" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
@@ -599,10 +583,9 @@ which openclaw → 找不到该命令
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 检查 ~/.zshrc 中是否有以下配置</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">grep</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;NVM_DIR\|nvm.sh&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> ~/.zshrc</span></span></code></pre></figure>
 <p>期望输出（当前已有）：</p>
-<pre><code>128:export NVM_DIR=&quot;$HOME/.nvm&quot;
-129:[ -s &quot;$NVM_DIR/nvm.sh&quot; ] &amp;&amp; \. &quot;$NVM_DIR/nvm.sh&quot;  # This loads nvm
-130:[ -s &quot;$NVM_DIR/bash_completion&quot; ] &amp;&amp; \. &quot;$NVM_DIR/bash_completion&quot;  # This loads nvm bash_completion
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>128:export NVM_DIR=&quot;$HOME/.nvm&quot;</span></span>
+<span data-line><span>129:[ -s &quot;$NVM_DIR/nvm.sh&quot; ] &amp;&amp; \. &quot;$NVM_DIR/nvm.sh&quot;  # This loads nvm</span></span>
+<span data-line><span>130:[ -s &quot;$NVM_DIR/bash_completion&quot; ] &amp;&amp; \. &quot;$NVM_DIR/bash_completion&quot;  # This loads nvm bash_completion</span></span></code></pre></figure>
 <h4 id="3-在-profile-中也添加-nvm-初始化">3. 在 ~/.profile 中也添加 nvm 初始化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-在-profile-中也添加-nvm-初始化" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p>WSL 启动时 <code>~/.profile</code> 会被读取，而 <code>~/.zshrc</code> 只在交互式 zsh 会话中读取。为保险起见建议也在 <code>~/.profile</code> 中添加：</p>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># ~/.profile 中添加</span></span>

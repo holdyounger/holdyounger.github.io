@@ -65,11 +65,10 @@
 
 <div class="table-container"><table><thead><tr><th>协议</th><th>方向</th><th>OpenClaw 角色</th><th>文档入口</th><th>典型客户端</th></tr></thead><tbody><tr><td><strong>ACP</strong>（Agent Client Protocol）</td><td>IDE ↔ OpenClaw</td><td>ACP 服务器</td><td><code>cli/acp</code></td><td>Zed, Codex (<code>acpx openclaw</code>), Claude Code</td></tr><tr><td><strong>MCP</strong>（Model Context Protocol）</td><td>工具 ↔ OpenClaw</td><td>MCP 服务器 或 MCP 客户端注册表</td><td><code>cli/mcp</code></td><td>Claude Desktop, Cursor, VS Code</td></tr><tr><td><strong>Codex Harness</strong></td><td>OpenAI 代理 ↔ OpenClaw</td><td>Codex 运行载体</td><td><code>plugins/codex-harness</code></td><td>ChatGPT/Codex 订阅</td></tr></tbody></table></div>
 <h3 id="12-openclaw-的-agent-运行时体系">1.2 OpenClaw 的 Agent 运行时体系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-openclaw-的-agent-运行时体系" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<pre><code>OpenClaw Gateway（会话路由 + 渠道接入）
-    ├── PI harness（内置 AI 运行时）
-    ├── Codex harness（通过 Codex app-server）
-    └── ACP harness（外部 ACP 客户端接入）
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OpenClaw Gateway（会话路由 + 渠道接入）</span></span>
+<span data-line><span>    ├── PI harness（内置 AI 运行时）</span></span>
+<span data-line><span>    ├── Codex harness（通过 Codex app-server）</span></span>
+<span data-line><span>    └── ACP harness（外部 ACP 客户端接入）</span></span></code></pre></figure>
 <p>关键模型引用约定：</p>
 <ul>
 <li><code>openai/gpt-*</code> → 通过 Codex harness（当 <code>codex</code> 插件启用时）</li>
@@ -101,19 +100,18 @@
 <h2 id="3-三大集成方案">3. 三大集成方案<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-三大集成方案" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <h3 id="方案-a通过-acp-桥接推荐">方案 A：<strong>通过 ACP 桥接</strong>（推荐）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#方案-a通过-acp-桥接推荐" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p><strong>原理</strong>：<code>openclaw acp</code> 是 OpenClaw 官方提供的 IDE 集成路径，Claude Code、Codex 均有成熟案例。</p>
-<pre><code>OpenCode（ACP 客户端）
-    │
-    │  stdio (ACP 协议)
-    ▼
-openclaw acp
-    │
-    │  WebSocket
-    ▼
-OpenClaw Gateway
-    │
-    ├── 会话路由 → WeChat / Telegram / Discord 等渠道
-    └── AI 运行时 → PI / Codex
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OpenCode（ACP 客户端）</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    │  stdio (ACP 协议)</span></span>
+<span data-line><span>    ▼</span></span>
+<span data-line><span>openclaw acp</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    │  WebSocket</span></span>
+<span data-line><span>    ▼</span></span>
+<span data-line><span>OpenClaw Gateway</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    ├── 会话路由 → WeChat / Telegram / Discord 等渠道</span></span>
+<span data-line><span>    └── AI 运行时 → PI / Codex</span></span></code></pre></figure>
 <h4 id="操作步骤">操作步骤<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#操作步骤" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <p><strong>Step 1</strong>：确认 OpenCode 支持 ACP 协议</p>
 <p>在 OpenCode 配置文件中检查是否有类似以下配置：</p>
@@ -170,16 +168,15 @@ OpenClaw Gateway
 <hr/>
 <h3 id="方案-b通过-mcp-桥接">方案 B：<strong>通过 MCP 桥接</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#方案-b通过-mcp-桥接" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p><strong>原理</strong>：<code>openclaw mcp serve</code> 将 OpenClaw 暴露为 MCP 服务器，支持标准 MCP 客户端（如 Claude Desktop、Cursor）。</p>
-<pre><code>OpenCode（MCP 客户端）
-    │
-    │  stdio（MCP 协议）
-    ▼
-openclaw mcp serve --url wss://127.0.0.1:18789 --token-file ~/.openclaw/gateway.token
-    │
-    │  WebSocket
-    ▼
-OpenClaw Gateway
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OpenCode（MCP 客户端）</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    │  stdio（MCP 协议）</span></span>
+<span data-line><span>    ▼</span></span>
+<span data-line><span>openclaw mcp serve --url wss://127.0.0.1:18789 --token-file ~/.openclaw/gateway.token</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    │  WebSocket</span></span>
+<span data-line><span>    ▼</span></span>
+<span data-line><span>OpenClaw Gateway</span></span></code></pre></figure>
 <h4 id="mcp-暴露的工具">MCP 暴露的工具<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mcp-暴露的工具" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 
 
@@ -254,14 +251,13 @@ OpenClaw Gateway
 <p><strong>原理</strong>：如果 OpenCode 也支持 <code>acpx</code>，可以直接在 OpenClaw 内部通过 <code>/acp spawn</code> 调度 OpenCode 处理任务。</p>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">/acp</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> spawn</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> opencode</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> --cwd</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> /path/to/project</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &quot;分析当前代码库的漏洞&quot;</span></span></code></pre></figure>
 <p>这属于 OpenClaw 作为 <strong>ACP Agent Host</strong> 的场景：</p>
-<pre><code>OpenClaw Gateway
-    │
-    ├── /acp spawn opencode
-    │
-    └── acpx opencode exec &quot;...&quot;
-        │
-        └── OpenCode（作为 ACP 客户端处理任务）
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OpenClaw Gateway</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    ├── /acp spawn opencode</span></span>
+<span data-line><span>    │</span></span>
+<span data-line><span>    └── acpx opencode exec &quot;...&quot;</span></span>
+<span data-line><span>        │</span></span>
+<span data-line><span>        └── OpenCode（作为 ACP 客户端处理任务）</span></span></code></pre></figure>
 <h4 id="-优点-2">✅ 优点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-优点-2" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <ul>
 <li>在 OpenClaw 内部直接调度 OpenCode</li>
@@ -349,11 +345,10 @@ OpenClaw Gateway
 <hr/>
 <h2 id="5-最佳实践建议">5. 最佳实践建议<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-最佳实践建议" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <h3 id="51-推荐集成路径">5.1 推荐集成路径<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-推荐集成路径" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<pre><code>优先级排序：
-1. ✅ 方案 A（ACP 桥接）—— OpenClaw 官方推荐，Codex/Claude Code 已有案例
-2. 🔶 方案 B（MCP 桥接）—— 开放标准，适合 MCP-first 的客户端
-3. 🔶 方案 C（acpx 调度）—— 仅当 OpenCode 原生支持 acpx 时考虑
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>优先级排序：</span></span>
+<span data-line><span>1. ✅ 方案 A（ACP 桥接）—— OpenClaw 官方推荐，Codex/Claude Code 已有案例</span></span>
+<span data-line><span>2. 🔶 方案 B（MCP 桥接）—— 开放标准，适合 MCP-first 的客户端</span></span>
+<span data-line><span>3. 🔶 方案 C（acpx 调度）—— 仅当 OpenCode 原生支持 acpx 时考虑</span></span></code></pre></figure>
 <h3 id="52-验证步骤">5.2 验证步骤<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-验证步骤" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <ol>
 <li><strong>确认 OpenCode 通信协议</strong>：检查 OpenCode 是否支持 ACP 或 MCP</li>

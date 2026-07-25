@@ -7,15 +7,14 @@
 <hr/>
 <h2 id="1-完整工具链概览">1. 完整工具链概览<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-完整工具链概览" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <p>训练一条 AI 模型，需要从硬件到软件层层搭建：</p>
-<pre><code>硬件 (NVIDIA GPU)
-  → NVIDIA 驱动（Windows 端安装，WSL/原生 Linux 共用）
-    → CUDA Toolkit（GPU 编程平台）
-      → cuDNN（深度神经网络加速库）
-        → Python + Miniconda（环境管理）
-          → PyTorch（深度学习框架）
-            → Transformers / PEFT / Accelerate（训练工具库）
-              → TensorBoard / WandB（监控可视化）
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>硬件 (NVIDIA GPU)</span></span>
+<span data-line><span>  → NVIDIA 驱动（Windows 端安装，WSL/原生 Linux 共用）</span></span>
+<span data-line><span>    → CUDA Toolkit（GPU 编程平台）</span></span>
+<span data-line><span>      → cuDNN（深度神经网络加速库）</span></span>
+<span data-line><span>        → Python + Miniconda（环境管理）</span></span>
+<span data-line><span>          → PyTorch（深度学习框架）</span></span>
+<span data-line><span>            → Transformers / PEFT / Accelerate（训练工具库）</span></span>
+<span data-line><span>              → TensorBoard / WandB（监控可视化）</span></span></code></pre></figure>
 <p>每一层依赖下一层。下面的安装步骤按这个顺序走。</p>
 <hr/>
 <h2 id="2-操作系统基础环境">2. 操作系统基础环境<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-操作系统基础环境" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
@@ -490,33 +489,32 @@
 </ul>
 <hr/>
 <h2 id="12-环境搭建速查表">12. 环境搭建速查表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-环境搭建速查表" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<pre><code># WSL 用户：先配 .wslconfig
-%USERPROFILE%\.wslconfig  →  memory=32GB, swap=8GB
-
-# 然后一行一行执行（不要一次性全贴）
-sudo apt update &amp;&amp; sudo apt upgrade -y
-sudo apt install -y build-essential git curl wget unzip vim tmux
-
-# 装 Miniconda
-bash Miniforge3-Linux-x86_64.sh
-
-# 创建环境
-conda create -n ml_env python=3.10 -y
-conda activate ml_env
-
-# 装 CUDA Toolkit（WSL）
-sudo apt install -y cuda-toolkit-12-4
-
-# 装 PyTorch
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-
-# 装训练库
-pip install transformers datasets accelerate peft bitsandbytes trl
-pip install tensorboard wandb scikit-learn tqdm
-
-# 验证
-python -c &quot;import torch; print(torch.cuda.is_available())&quot;
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="python" data-theme="github-light github-dark"><code data-language="python" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># WSL 用户：先配 .wslconfig</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">%</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">USERPROFILE</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">%</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">\</span><span style="--shiki-light:#B31D28;--shiki-light-font-style:italic;--shiki-dark:#FDAEB7;--shiki-dark-font-style:italic;" data-token-type="error">.wslconfig  →  memory=32GB, swap=8GB</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 然后一行一行执行（不要一次性全贴）</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sudo apt update </span><span style="--shiki-light:#B31D28;--shiki-light-font-style:italic;--shiki-dark:#FDAEB7;--shiki-dark-font-style:italic;" data-token-type="error">&amp;&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sudo apt upgrade </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sudo apt install </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y build</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">essential git curl wget unzip vim tmux</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 装 Miniconda</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">bash Miniforge3</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">Linux</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">x86_64.sh</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 创建环境</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">conda create </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">n ml_env python</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">3.10</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">conda activate ml_env</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 装 CUDA Toolkit（WSL）</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">sudo apt install </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y cuda</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">toolkit</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">12</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">4</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 装 PyTorch</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pip install torch torchvision torchaudio </span><span style="--shiki-light:#B31D28;--shiki-light-font-style:italic;--shiki-dark:#FDAEB7;--shiki-dark-font-style:italic;" data-token-type="error">--</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">index</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">url https:</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">//</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">download.pytorch.org</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">whl</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">cu124</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 装训练库</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pip install transformers datasets accelerate peft bitsandbytes trl</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">pip install tensorboard wandb scikit</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">learn tqdm</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment"># 验证</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">python </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">-</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">c </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;import torch; print(torch.cuda.is_available())&quot;</span></span></code></pre></figure>
 <hr/>
 <blockquote>
 <p><strong>下一篇文章</strong>：<a href="../../ai大模型/训练模型新手教程/数据准备与预处理" class="internal internal-link alias" data-slug="ai大模型/训练模型新手教程/数据准备与预处理">数据准备与预处理</a></p>

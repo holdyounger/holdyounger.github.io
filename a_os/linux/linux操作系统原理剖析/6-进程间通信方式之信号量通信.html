@@ -34,165 +34,165 @@
 <li>进行信号量的 PV 操作，此时，调用 semop() 函数。这一步是实现进程间的同步和互斥的核心工作部分。</li>
 <li>如果不需要信号量，则从系统中删除它，此时使用 semctl() 函数的 IPC]_RMID 操作。需要注意的是，在程序中不应该出现对已经被删除的信号量的操作：</li>
 </ul>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
 <span data-line> </span>
-<span data-line><span>int semget(key_t key, int nsems, int semflg);</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>    key：信号量的键值，多个进程可以通过它访问一个信号量，其中有个特殊值 IPC_PRIVATE ，用来创建当前进程私有信号量</span></span>
-<span data-line><span>    nsems：需要创建的信号量数目</span></span>
-<span data-line><span>    semflg：同 open() 函数的权限位相同，其中 IPC_CREAT 创建新的信号量，IPC_EXCL 创建新的唯一的信号量</span></span>
-<span data-line><span>返回值：</span></span>
-<span data-line><span>    成功：信号量标识符，在信号量其他函数中会用到    失败：返回 -1</span></span>
-<span data-line><span>*/</span></span>
-<span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">key_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> key</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> nsems</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> semflg</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    key：信号量的键值，多个进程可以通过它访问一个信号量，其中有个特殊值 IPC_PRIVATE ，用来创建当前进程私有信号量</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    nsems：需要创建的信号量数目</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    semflg：同 open() 函数的权限位相同，其中 IPC_CREAT 创建新的信号量，IPC_EXCL 创建新的唯一的信号量</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功：信号量标识符，在信号量其他函数中会用到    失败：返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
 <span data-line> </span>
-<span data-line><span>int semctl(int semid, int semnum, int cmd, union semun arg);</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>    semid：semget() 函数反悔的信号量标识符，要操作的信号量</span></span>
-<span data-line><span>    semnum：信号量编号，当使用信号量集会用到，单个信号量操作取参数 0</span></span>
-<span data-line><span>    cmd：指定对信号量的各种操作，当使用单个信号量时，常用的操作如下：</span></span>
-<span data-line><span>        IPC_STAT：获得该信号量的 semid_ds 结构，并存放到第四个参数指定的位置中</span></span>
-<span data-line><span>        IPC_SETVAL：将信号量值设置为 arg 的 val 值</span></span>
-<span data-line><span>        IPC_GETVAL：返回信号量的当前值</span></span>
-<span data-line><span>        IPC_RMID：从系统中删除信号量（或者信号量集）</span></span>
-<span data-line><span>    arg：是 union semun 结构，有时需要执行定义</span></span>
-<span data-line><span>返回值：</span></span>
-<span data-line><span>    成功：根据 cmd 的值返回不同的值</span></span>
-<span data-line><span>    失败：-1</span></span>
-<span data-line><span>*/</span></span>
-<span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> semid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> semnum</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> cmd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semun </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">arg</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    semid：semget() 函数反悔的信号量标识符，要操作的信号量</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    semnum：信号量编号，当使用信号量集会用到，单个信号量操作取参数 0</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    cmd：指定对信号量的各种操作，当使用单个信号量时，常用的操作如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        IPC_STAT：获得该信号量的 semid_ds 结构，并存放到第四个参数指定的位置中</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        IPC_SETVAL：将信号量值设置为 arg 的 val 值</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        IPC_GETVAL：返回信号量的当前值</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        IPC_RMID：从系统中删除信号量（或者信号量集）</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    arg：是 union semun 结构，有时需要执行定义</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功：根据 cmd 的值返回不同的值</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    失败：-1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
 <span data-line> </span>
-<span data-line><span>int semop(int semid, struct sembuf *sops, size_t nsops);</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>    semid：semget() 函数反悔的信号量标识符，要操作的信号量</span></span>
-<span data-line><span>    sops：指向信号量操作数组，</span></span>
-<span data-line><span>    nsops：操作数组 sops 中的操作个数，通常取 1 （一个操作）</span></span>
-<span data-line><span>返回值：</span></span>
-<span data-line><span>    成功：信号量标识符  失败：-1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> semid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> sembuf </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">sops</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">size_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> nsops</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    semid：semget() 函数反悔的信号量标识符，要操作的信号量</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    sops：指向信号量操作数组，</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    nsops：操作数组 sops 中的操作个数，通常取 1 （一个操作）</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功：信号量标识符  失败：-1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <h2 id="0x04-信号量基本用法">0x04 信号量基本用法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x04-信号量基本用法" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <p>在 VS Code 平台下创建新的代码文件 <code>fork_demo.c</code> ，如下图所示：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/6-进程间通信方式之信号量通信/img-20260520150822889.png" alt="图片描述"/>)</p>
 <p>然后添加如下代码：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
-<span data-line><span>#include &lt;sys/wait.h></span></span>
-<span data-line><span>#include &lt;unistd.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/wait.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
 <span data-line> </span>
-<span data-line><span>#define DELAY_TIME  3</span></span>
-<span data-line> </span>
-<span data-line> </span>
-<span data-line><span>union semun</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    int val;</span></span>
-<span data-line><span>    struct semid_ds *buf;</span></span>
-<span data-line><span>    unsigned short *array;</span></span>
-<span data-line><span>};</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> DELAY_TIME</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">  3</span></span>
 <span data-line> </span>
 <span data-line> </span>
-<span data-line><span>int init_sem(int sem_id, int init_val)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    sem_union.val = init_val;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, SETVAL, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;init semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
-<span data-line> </span>
-<span data-line><span>int del_sem(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, IPC_RMID, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        // perror(&quot;Delete semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
-<span data-line> </span>
-<span data-line><span>int sem_p(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = -1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
-<span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
-<span data-line> </span>
-<span data-line><span>int sem_v(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = 1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
-<span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semun</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semid_ds </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">buf;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> short</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">array;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span>
 <span data-line> </span>
 <span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> init_val</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_union.val </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> init_val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, SETVAL, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;init semaphore error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int main(int argc, char *argv[])</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    pid_t pid;</span></span>
-<span data-line><span>    int sem_id;</span></span>
-<span data-line><span>    //创建信号量</span></span>
-<span data-line><span>    sem_id = semget(ftok(&quot;.&quot;,'a'), 1, 0666|IPC_CREAT);</span></span>
-<span data-line><span>    //初始化信号量</span></span>
-<span data-line><span>    init_sem(sem_id, 0);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, IPC_RMID, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        // perror(&quot;Delete semaphore error.\n&quot;);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>    pid = fork();</span></span>
-<span data-line><span>    if(pid &lt; 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;fork error&quot;);</span></span>
-<span data-line><span>        exit(1);</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    else if(pid == 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //子进程</span></span>
-<span data-line><span>        printf(&quot;Child progress [%d] will wait for som seconds...\n&quot;, getpid());</span></span>
-<span data-line><span>        sleep(DELAY_TIME);</span></span>
-<span data-line><span>        printf(&quot;Child progress [%d] \n&quot;, getpid());</span></span>
-<span data-line><span>        sem_v(sem_id);</span></span>
-<span data-line><span>        exit(1);</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    else</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        //父进程</span></span>
-<span data-line><span>        sem_p(sem_id);</span></span>
-<span data-line><span>        printf(&quot;Parent progress [%d] will wait for som seconds...\n&quot;, getpid());</span></span>
-<span data-line><span>        sem_v(sem_id);</span></span>
-<span data-line><span>        del_sem(sem_id);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
 <span data-line> </span>
-<span data-line><span>    waitpid(pid, NULL, 0);</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> argc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">char</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">argv</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">[]</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    pid_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> pid;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sem_id;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //创建信号量</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sem_id </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">ftok</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;.&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">'a'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">IPC_CREAT);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //初始化信号量</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> fork</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;fork error&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    else</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //子进程</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Child progress [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] will wait for som seconds...</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sleep</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(DELAY_TIME);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Child progress [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    else</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        //父进程</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Parent progress [</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] will wait for som seconds...</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    waitpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>在 VS Code 平台下的终端窗口使用 <code>gcc</code> 编译代码并执行，如下图所示：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/6-进程间通信方式之信号量通信/img-20260520150902061.png" alt="图片描述"/>)</p>
 <h2 id="0x05-信号量进程同步">0x05 信号量进程同步<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x05-信号量进程同步" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
@@ -200,245 +200,245 @@
 <p>在 VS Code 平台下创建新的代码文件偶数输出程序代码 <code>even_demo.c</code> ，如下图所示：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/6-进程间通信方式之信号量通信/img-20260520150902246.png" alt="图片描述"/>)</p>
 <p>然后添加如下代码：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>/* 该程序将仅输出奇数值，配合 even_demo 程序完成 0 - 20 的计数输出*/</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/* 该程序将仅输出奇数值，配合 even_demo 程序完成 0 - 20 的计数输出*/</span></span>
 <span data-line> </span>
-<span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
-<span data-line><span>#include &lt;unistd.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
-<span data-line><span>#include &lt;sys/wait.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/wait.h></span></span>
 <span data-line> </span>
 <span data-line> </span>
-<span data-line><span>#define     DELAY_TIME  3</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">     DELAY_TIME</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">  3</span></span>
 <span data-line> </span>
-<span data-line><span>union semun</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    int val;</span></span>
-<span data-line><span>    struct semid_ds *buf;</span></span>
-<span data-line><span>    unsigned short *array;</span></span>
-<span data-line><span>};</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semun</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semid_ds </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">buf;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> short</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">array;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span>
 <span data-line> </span>
-<span data-line><span>//信号量初始化</span></span>
-<span data-line><span>int init_sem(int sem_id, int init_value);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//信号量初始化</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> init_value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//从系统中删除信号量</span></span>
-<span data-line><span>int del_sem(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//从系统中删除信号量</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//P操作</span></span>
-<span data-line><span>int sem_p(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//P操作</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//V操作</span></span>
-<span data-line><span>int sem_v(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//V操作</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//定义ftok参数</span></span>
-<span data-line><span>#define SEM_ODD_KEY     &quot;./odd_dem_key&quot;</span></span>
-<span data-line><span>#define SEM_EVEN_KEY    &quot;./even_dem_key&quot;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//定义ftok参数</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> SEM_ODD_KEY</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">     &quot;./odd_dem_key&quot;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> SEM_EVEN_KEY</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">    &quot;./even_dem_key&quot;</span></span>
 <span data-line> </span>
-<span data-line><span>int main()</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    pid_t pid;</span></span>
-<span data-line><span>    int sem_odd, sem_even;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    pid_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> pid;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sem_odd, sem_even;</span></span>
 <span data-line> </span>
-<span data-line><span>    //创建一个信号量</span></span>
-<span data-line><span>    sem_even = semget(ftok(SEM_EVEN_KEY, 'a'), 1, 0666|IPC_CREAT);</span></span>
-<span data-line><span>    sem_odd = semget(ftok(SEM_ODD_KEY, 'a'), 1, 0666);</span></span>
-<span data-line><span>    init_sem(sem_even, 0);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //创建一个信号量</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sem_even </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">ftok</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(SEM_EVEN_KEY, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">'a'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">IPC_CREAT);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sem_odd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">ftok</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(SEM_ODD_KEY, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">'a'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_even, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>    pid = fork();</span></span>
-<span data-line><span>    if(pid &lt; 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;fork error.&quot;);</span></span>
-<span data-line><span>        exit(0);</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    if(pid == 0)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        execl(&quot;./odd_demo&quot;, &quot;test&quot;, NULL);</span></span>
-<span data-line><span>        exit(0);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> fork</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;fork error.&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        execl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;./odd_demo&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;test&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    for(int i = 0; i &lt; 20; i = i + 2)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        sem_p(sem_odd);    //获取奇数程序信号</span></span>
-<span data-line><span>        printf(&quot;[%d]====> (%d)\n&quot;, getpid(), i);</span></span>
-<span data-line><span>        sem_v(sem_even);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_odd);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //获取奇数程序信号</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">]====> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">)</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(), i);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_even);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    sem_p(sem_even);</span></span>
-<span data-line><span>    // sleep(DELAY_TIME);</span></span>
-<span data-line><span>    waitpid(pid, NULL, 0);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_even);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    // sleep(DELAY_TIME);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    waitpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(pid, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>    del_sem(sem_even);</span></span>
-<span data-line><span>    printf(&quot;prograss even[%d] quit..\n&quot;, getpid());</span></span>
-<span data-line><span>    exit(0);</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_even);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;prograss even[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] quit..</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    exit</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int init_sem(int sem_id, int init_val)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    sem_union.val = init_val;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, SETVAL, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;init semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> init_val</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_union.val </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> init_val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, SETVAL, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;init semaphore error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int del_sem(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, IPC_RMID, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        // perror(&quot;Delete semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, IPC_RMID, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        // perror(&quot;Delete semaphore error.\n&quot;);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int sem_p(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = -1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
 <span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int sem_v(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = 1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
 <span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>然后继续新建代码文件 <code>odd_demo.c</code> ，这是用于输出奇数消息的程序，如下图所示：</p>
 <p><img src="../../../a_os/linux/linux操作系统原理剖析/6-进程间通信方式之信号量通信/img-20260520151058405.png" alt="图片描述"/>)</p>
 <p>然后添加如下代码内容：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>/* 该程序将仅输出奇数值，配合 even_demo 程序完成 0 - 20 的计数输出*/</span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/* 该程序将仅输出奇数值，配合 even_demo 程序完成 0 - 20 的计数输出*/</span></span>
 <span data-line> </span>
-<span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/sem.h></span></span>
-<span data-line><span>#include &lt;unistd.h></span></span>
-<span data-line><span>#include &lt;stdio.h></span></span>
-<span data-line><span>#include &lt;stdlib.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/sem.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;unistd.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdio.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;stdlib.h></span></span>
 <span data-line> </span>
-<span data-line><span>#define     DELAY_TIME  3</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">     DELAY_TIME</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">  3</span></span>
 <span data-line> </span>
-<span data-line><span>union semun</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    int val;</span></span>
-<span data-line><span>    struct semid_ds *buf;</span></span>
-<span data-line><span>    unsigned short *array;</span></span>
-<span data-line><span>};</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semun</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> semid_ds </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">buf;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    unsigned</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> short</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">array;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">};</span></span>
 <span data-line> </span>
-<span data-line><span>//信号量初始化</span></span>
-<span data-line><span>int init_sem(int sem_id, int init_value);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//信号量初始化</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> init_value</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//从系统中删除信号量</span></span>
-<span data-line><span>int del_sem(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//从系统中删除信号量</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//P操作</span></span>
-<span data-line><span>int sem_p(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//P操作</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//V操作</span></span>
-<span data-line><span>int sem_v(int sem_id);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//V操作</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>//定义ftok参数</span></span>
-<span data-line><span>#define SEM_ODD_KEY     &quot;./odd_dem_key&quot;</span></span>
-<span data-line><span>#define SEM_EVEN_KEY    &quot;./even_dem_key&quot;</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">//定义ftok参数</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> SEM_ODD_KEY</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">     &quot;./odd_dem_key&quot;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> SEM_EVEN_KEY</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">    &quot;./even_dem_key&quot;</span></span>
 <span data-line> </span>
-<span data-line><span>int main()</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    pid_t pid;</span></span>
-<span data-line><span>    int sem_odd, sem_even;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> main</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">()</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    pid_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> pid;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sem_odd, sem_even;</span></span>
 <span data-line> </span>
-<span data-line><span>    //创建一个信号量</span></span>
-<span data-line><span>    sem_odd = semget(ftok(SEM_ODD_KEY, 'a'), 1, 0666|IPC_CREAT);</span></span>
-<span data-line><span>    sem_even = semget(ftok(SEM_EVEN_KEY, 'a'), 1, 0666);</span></span>
-<span data-line><span>    init_sem(sem_odd, 0);</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //创建一个信号量</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sem_odd </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">ftok</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(SEM_ODD_KEY, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">'a'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">|</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">IPC_CREAT);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    sem_even </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> semget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">ftok</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(SEM_EVEN_KEY, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">'a'</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">), </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">0</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">666</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_odd, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
 <span data-line> </span>
-<span data-line><span>    sem_v(sem_odd);</span></span>
-<span data-line><span>    for(int i = 1; i &lt; 20; i = i + 2)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        sem_p(sem_even);    //获取偶数信号量</span></span>
-<span data-line><span>        printf(&quot;[%d]====> (%d)\n&quot;, getpid(), i);</span></span>
-<span data-line><span>        sem_v(sem_odd);</span></span>
-<span data-line><span>    }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_odd);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&lt;</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 20</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_even);</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    //获取偶数信号量</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">]====> (</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">)</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(), i);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_odd);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
 <span data-line> </span>
-<span data-line><span>    sleep(DELAY_TIME);</span></span>
-<span data-line><span>    del_sem(sem_odd);</span></span>
-<span data-line><span>    printf(&quot;prograss odd[%d] quit..\n&quot;, getpid());</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    sleep</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(DELAY_TIME);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_odd);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">    printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;prograss odd[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">%d</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">] quit..</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">getpid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">());</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int init_sem(int sem_id, int init_val)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    sem_union.val = init_val;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, SETVAL, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;init semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> init_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> init_val</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_union.val </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> init_val;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, SETVAL, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;init semaphore error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int del_sem(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    union semun sem_union;</span></span>
-<span data-line><span>    if(semctl(sem_id, 0, IPC_RMID, sem_union) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;Delete semaphore error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> del_sem</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    union</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> semun sem_union;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, IPC_RMID, sem_union) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;Delete semaphore error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int sem_p(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = -1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_p</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
 <span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
 <span data-line> </span>
-<span data-line><span>int sem_v(int sem_id)</span></span>
-<span data-line><span>{</span></span>
-<span data-line><span>    struct sembuf sem_b;</span></span>
-<span data-line><span>    sem_b.sem_num = 0;</span></span>
-<span data-line><span>    sem_b.sem_op = 1;</span></span>
-<span data-line><span>    sem_b.sem_flg = SEM_UNDO;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> sem_v</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> sem_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> sembuf sem_b;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_num </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_op </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="normal">    sem_b.sem_flg </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation"> SEM_UNDO;</span></span>
 <span data-line> </span>
-<span data-line><span>    if(semop(sem_id, &amp;sem_b, 1) == -1)</span></span>
-<span data-line><span>    {</span></span>
-<span data-line><span>        perror(&quot;P error.\n&quot;);</span></span>
-<span data-line><span>        return -1;</span></span>
-<span data-line><span>    }</span></span>
-<span data-line><span>    return 0;</span></span>
-<span data-line><span>}</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">semop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(sem_id, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="function">sem_b, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">==</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    {</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">        perror</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;P error.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="string">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">        return</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> -</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">    return</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
 <p>在 VS Code 平台下的终端窗口使用 <code>gcc</code> 编译代码并执行，如下图所示：</p>
 <figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> odd_demo.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> odd_demo</span></span>
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">gcc</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> even_demo.c</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value"> -o</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> even_demo</span></span>

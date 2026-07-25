@@ -291,12 +291,11 @@
 <div class="table-container"><table><thead><tr><th>条件</th><th>要求</th></tr></thead><tbody><tr><td>Windows 版本</td><td><strong>Windows 10 21H2+</strong> 或 <strong>Windows 11</strong></td></tr><tr><td>CPU</td><td>Intel/AMD 支持虚拟化（VT-x/AMD-V）</td></tr><tr><td>GPU（如需 CUDA）</td><td><strong>NVIDIA 显卡</strong> + 最新驱动</td></tr><tr><td>WSL 版本</td><td><strong>WSL 2</strong>（务必确认，不是 WSL 1）</td></tr></tbody></table></div>
 <h3 id="42-当前环境一览你的配置">4.2 当前环境一览（你的配置）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-当前环境一览你的配置" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>你当前的环境是：</p>
-<pre><code>OS:        Ubuntu 24.04 LTS (WSL2)
-Windows:   Windows 11 (内部版本号查看: winver)
-CPU:       Intel/AMD x86_64
-GPU:       NVIDIA（需要确认型号）
-驱动:      NVIDIA 驱动安装在 Windows 端，WSL 2 自动继承
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>OS:        Ubuntu 24.04 LTS (WSL2)</span></span>
+<span data-line><span>Windows:   Windows 11 (内部版本号查看: winver)</span></span>
+<span data-line><span>CPU:       Intel/AMD x86_64</span></span>
+<span data-line><span>GPU:       NVIDIA（需要确认型号）</span></span>
+<span data-line><span>驱动:      NVIDIA 驱动安装在 Windows 端，WSL 2 自动继承</span></span></code></pre></figure>
 <blockquote>
 <p>💡 WSL2 的 GPU 驱动是<strong>在 Windows 端安装的</strong>，WSL 内不需要额外装驱动。</p>
 </blockquote>
@@ -360,12 +359,11 @@ GPU:       NVIDIA（需要确认型号）
 <span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function">wsl</span></span></code></pre></figure>
 <h3 id="45-wsl-内部文件-vs-windows-外部文件">4.5 WSL 内部文件 vs Windows 外部文件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#45-wsl-内部文件-vs-windows-外部文件" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p><strong>黄金法则：训练数据必须在 WSL 内部文件系统，不要放在 <code>/mnt/d/</code> 下！</strong></p>
-<pre><code>✅ 推荐:  ~/datasets/         → WSL 内部 ext4 文件系统，I/O 性能正常
-✅ 推荐:  ~/models/           → WSL 内部
-✅ 推荐:  ~/training/         → WSL 内部
-❌ 避免:  /mnt/d/datasets/    → Windows NTFS 挂载，I/O 性能极差（慢 10~50 倍）
-❌ 避免:  /mnt/d/models/      → 同样问题
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>✅ 推荐:  ~/datasets/         → WSL 内部 ext4 文件系统，I/O 性能正常</span></span>
+<span data-line><span>✅ 推荐:  ~/models/           → WSL 内部</span></span>
+<span data-line><span>✅ 推荐:  ~/training/         → WSL 内部</span></span>
+<span data-line><span>❌ 避免:  /mnt/d/datasets/    → Windows NTFS 挂载，I/O 性能极差（慢 10~50 倍）</span></span>
+<span data-line><span>❌ 避免:  /mnt/d/models/      → 同样问题</span></span></code></pre></figure>
 <blockquote>
 <p>注意：你当前的 wiki 文章在 <code>/mnt/d/Montarius/source/wiki_ming/...</code> 是因为文章本身是文本文件，对 I/O 不敏感。
 但<strong>模型权重文件和数据集千万不要放 Windows 分区</strong>，否则训练速度会显著下降。</p>
@@ -575,43 +573,42 @@ GPU:       NVIDIA（需要确认型号）
 
 <div class="table-container"><table><thead><tr><th>如果你…</th><th>建议阅读路线</th></tr></thead><tbody><tr><td><strong>完全零基础</strong></td><td>① 环境要求与说明（本篇）→ ② 基础概念与术语 → ③ 环境搭建 → ④ 走一次训练流程</td></tr><tr><td><strong>已搭好环境</strong></td><td>① 快速扫读硬件要求 → ② 基础概念 → ③ 直接开始训练流程</td></tr><tr><td><strong>已有 GPU 经验</strong></td><td>① 看 WSL 注意事项 → ② 直接看训练流程和监控</td></tr><tr><td><strong>用 Colab 学习</strong></td><td>① 跳过硬件篇 → ② 基础概念 → ③ 直接开始动手</td></tr><tr><td><strong>只想看看概念</strong></td><td>基础概念与术语 → 模型架构入门 → 训练流程全解析</td></tr></tbody></table></div>
 <h3 id="文章依赖关系">文章依赖关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文章依赖关系" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<pre><code>                    ┌─────────────────────┐
-                    │ 训练环境要求与说明.md  │ ← 本篇
-                    │  （先确认能不能跑）    │
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  基础概念与术语.md    │ ← 懂术语才能看后面的
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  环境搭建与工具链.md   │ ← 动手搭环境
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  数据准备与预处理.md   │ ← 准备数据
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  模型架构入门.md      │ ← 理解模型结构（可选但推荐）
-                    └──────────┬──────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  训练流程全解析.md     │ ← 核心章节
-                    └──────────┬──────────┘
-                               ↓
-              ┌────────────────┴────────────────┐
-              ↓                                  ↓
-    ┌──────────────────┐              ┌──────────────────┐
-    │ 训练监控与可视化.md │              │  超参数调优.md    │
-    └──────────────────┘              └──────────────────┘
-              ↓                                  ↓
-              └────────────────┬────────────────┘
-                               ↓
-                    ┌─────────────────────┐
-                    │  模型评估与验证.md    │ ← 收尾
-                    └─────────────────────┘
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │ 训练环境要求与说明.md  │ ← 本篇</span></span>
+<span data-line><span>                    │  （先确认能不能跑）    │</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  基础概念与术语.md    │ ← 懂术语才能看后面的</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  环境搭建与工具链.md   │ ← 动手搭环境</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  数据准备与预处理.md   │ ← 准备数据</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  模型架构入门.md      │ ← 理解模型结构（可选但推荐）</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  训练流程全解析.md     │ ← 核心章节</span></span>
+<span data-line><span>                    └──────────┬──────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>              ┌────────────────┴────────────────┐</span></span>
+<span data-line><span>              ↓                                  ↓</span></span>
+<span data-line><span>    ┌──────────────────┐              ┌──────────────────┐</span></span>
+<span data-line><span>    │ 训练监控与可视化.md │              │  超参数调优.md    │</span></span>
+<span data-line><span>    └──────────────────┘              └──────────────────┘</span></span>
+<span data-line><span>              ↓                                  ↓</span></span>
+<span data-line><span>              └────────────────┬────────────────┘</span></span>
+<span data-line><span>                               ↓</span></span>
+<span data-line><span>                    ┌─────────────────────┐</span></span>
+<span data-line><span>                    │  模型评估与验证.md    │ ← 收尾</span></span>
+<span data-line><span>                    └─────────────────────┘</span></span></code></pre></figure>
 <hr/>
 <h2 id="9-快速自查清单">9. 快速自查清单<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-快速自查清单" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <p>在开始之前，逐项打勾确认：</p>

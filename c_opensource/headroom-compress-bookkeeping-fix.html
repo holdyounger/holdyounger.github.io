@@ -87,21 +87,18 @@
 <div class="table-container"><table><thead><tr><th>参数</th><th>值</th><th>说明</th></tr></thead><tbody><tr><td><code>provider</code></td><td><code>&quot;headroom&quot;</code></td><td>专有 provider 标识，区别于 openai/anthropic</td></tr><tr><td><code>client</code></td><td><code>&quot;compress&quot;</code></td><td>Dashboard 中显示请求来源</td></tr><tr><td><code>attempted_input_tokens</code></td><td><code>tokens_before</code></td><td>用于计算 active_savings_percent</td></tr><tr><td><code>total_latency_ms</code> / <code>overhead_ms</code></td><td>0.0</td><td>compress 不涉及上游调用，无此维度</td></tr></tbody></table></div>
 <h3 id="文件修改">文件修改<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#文件修改" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>只修改了一个文件：</p>
-<pre><code>/home/montarius/.local/share/uv/tools/headroom-ai/lib/python3.11/site-packages/headroom/proxy/handlers/openai.py
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>/home/montarius/.local/share/uv/tools/headroom-ai/lib/python3.11/site-packages/headroom/proxy/handlers/openai.py</span></span></code></pre></figure>
 <h2 id="验证结果">验证结果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#验证结果" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <h3 id="修复前">修复前<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#修复前" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<pre><code>$ curl http://127.0.0.1:8787/stats
-request_logs: 0 条
-summary.compression.requests_compressed: 0
-tokens.proxy_compression_saved: 0
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$ curl http://127.0.0.1:8787/stats</span></span>
+<span data-line><span>request_logs: 0 条</span></span>
+<span data-line><span>summary.compression.requests_compressed: 0</span></span>
+<span data-line><span>tokens.proxy_compression_saved: 0</span></span></code></pre></figure>
 <h3 id="修复后">修复后<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#修复后" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<pre><code>request_logs: 2 条（comrpess 请求）
-summary.compression.requests_compressed: 1
-tokens.proxy_compression_saved: 1
-tokens.saved: 1
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>request_logs: 2 条（comrpess 请求）</span></span>
+<span data-line><span>summary.compression.requests_compressed: 1</span></span>
+<span data-line><span>tokens.proxy_compression_saved: 1</span></span>
+<span data-line><span>tokens.saved: 1</span></span></code></pre></figure>
 <p>Dashboard 页面现在可以正确显示 compress 请求的记录，包括：</p>
 <ul>
 <li>Provider（headroom）</li>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" dir="ltr"><head><title>【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../index-09fe923f.css" as="style"/><link rel="preload" href="../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯"/><meta name="twitter:description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:image:alt" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/c_opensource/postgresql-pqxx-编译"/><meta property="twitter:url" content="https://holdyounger.github.io/c_opensource/postgresql-pqxx-编译"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta name="generator" content="Quartz"/><link href="../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-2335c6f6.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-0df53187.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="c_opensource/postgresql-pqxx-编译" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-436" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-436" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../c_opensource/">C_OpenSource</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【OpenSource】PostgreSQL-pqxx 编译</a></div></nav><h1 class="article-title">【OpenSource】PostgreSQL-pqxx 编译</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">1</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../tags/开源项目" class="internal internal-link tag-link">开源项目</a><span class="note-properties-separator">, </span><a href="../tags/数据库/数据库开发" class="internal internal-link tag-link">数据库/数据库开发</a></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-06-14T13:38:23.126Z">2026年6月14日</time><span>10分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote>
+<html lang="zh" dir="ltr"><head><title>【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../index-09fe923f.css" as="style"/><link rel="preload" href="../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【OpenSource】PostgreSQL-pqxx 编译 | 蒙塔理斯"/><meta name="twitter:description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:image:alt" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/c_opensource/postgresql-pqxx-编译"/><meta property="twitter:url" content="https://holdyounger.github.io/c_opensource/postgresql-pqxx-编译"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="概述：windows下编译libpq :dango: 注意1：PostgreSQL 从版本10之后就只有64位了。使用pqxx也不用考虑32位 使用版本说明： PostGreSQL: 16.1 pqxx: 7.7.6 :dango: 注意2: pqxx 使用的是 C++17 0x01 前言 what: The official C++ client API for PostgreSQL."/><meta name="generator" content="Quartz"/><link href="../index-09fe923f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-2335c6f6.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-0df53187.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="c_opensource/postgresql-pqxx-编译" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-436" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-436" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../c_opensource/">C_OpenSource</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【OpenSource】PostgreSQL-pqxx 编译</a></div></nav><h1 class="article-title">【OpenSource】PostgreSQL-pqxx 编译</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">1</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../tags/开源项目" class="internal internal-link tag-link">开源项目</a><span class="note-properties-separator">, </span><a href="../tags/数据库/数据库开发" class="internal internal-link tag-link">数据库/数据库开发</a></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-07-24T08:06:41.983Z">2026年7月24日</time><span>10分钟阅读</span></p></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote>
 <p>概述：windows下编译libpq</p>
 <p>:dango: 注意1：<a href=".././wiki/弱密码/postgresql" class="internal internal-link alias" data-slug="wiki/弱密码/postgresql">PostgreSQL</a> 从版本10之后就只有64位了。使用pqxx也不用考虑32位</p>
 <p>使用版本说明：</p>
@@ -51,370 +51,369 @@
 <span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">set</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="normal">CMAKE_MODULE_PATH</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> ${PROJECT_SOURCE_DIR}</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">/cmake)</span></span></code></pre></figure>
 <p>然后就是使用 <code>cmake</code> 编译了，目前 VSCode 和 Visual Studio 都支持 CMake 文件的编译，直接编译即可。</p>
 <p>这里使用 Visual Studio 编译后，会在 out 目录下生成lib文件，如下所示：</p>
-<pre><code>D:\Documents\A_Source\OpenSource\libpqxx\out>tree /F
-卷 本地磁盘 的文件夹 PATH 列表
-卷序列号为 724D-690E
-D:.
-├─build
-│  └─x64-Debug
-│      │  .ninja_deps
-│      │  .ninja_log
-│      │  build.ninja
-│      │  CMakeCache.txt
-│      │  cmake_install.cmake
-│      │  CPackConfig.cmake
-│      │  CPackSourceConfig.cmake
-│      │  install_manifest.txt
-│      │  libpqxx-config-version.cmake
-│      │  libpqxx-config.cmake
-│      │  libpqxx-targets.cmake
-│      │  libpqxx.pc
-│      │  VSInheritEnvironments.txt
-│      │
-│      ├─.cmake
-│      │  └─api
-│      │      └─v1
-│      │          ├─query
-│      │          │  └─client-MicrosoftVS
-│      │          │          query.json
-│      │          │
-│      │          └─reply
-│      │                  cache-v2-4c1f3ae5d14ffd09e2dd.json
-│      │                  cmakeFiles-v1-6f2def4807820d15719b.json
-│      │                  codemodel-v2-8933aef952d7508a3af3.json
-│      │                  directory-.-Debug-6b54e12c0d4bd01edfca.json
-│      │                  directory-include-Debug-ba96d77232f254970ce6.json
-│      │                  directory-src-Debug-5d1cc30954eb9bce3508.json
-│      │                  directory-test-Debug-f18be1977b403cfd1a50.json
-│      │                  index-2023-11-16T09-03-01-0309.json
-│      │                  target-pqxx-Debug-08c4b9d672ef282e41c8.json
-│      │                  target-runner-Debug-b625a8b78dd4666c4f11.json
-│      │                  toolchains-v1-3b995f712f6d6e9a85c1.json
-│      │
-│      ├─CMakeFiles
-│      │  │  cmake.check_cache
-│      │  │  CMakeConfigureLog.yaml
-│      │  │  rules.ninja
-│      │  │  TargetDirectories.txt
-│      │  │
-│      │  ├─3.26.4-msvc4
-│      │  │  │  CMakeCXXCompiler.cmake
-│      │  │  │  CMakeDetermineCompilerABI_CXX.bin
-│      │  │  │  CMakeRCCompiler.cmake
-│      │  │  │  CMakeSystem.cmake
-│      │  │  │
-│      │  │  └─CompilerIdCXX
-│      │  │      │  CMakeCXXCompilerId.cpp
-│      │  │      │  CMakeCXXCompilerId.exe
-│      │  │      │  CMakeCXXCompilerId.obj
-│      │  │      │
-│      │  │      └─tmp
-│      │  ├─CMakeTmp
-│      │  ├─Export
-│      │  │  └─d6b66e93f8212dd1f00debf9f6654819
-│      │  │          libpqxx-targets-debug.cmake
-│      │  │          libpqxx-targets.cmake
-│      │  │
-│      │  ├─pkgRedirects
-│      │  └─ShowIncludes
-│      │          foo.h
-│      │          main.c
-│      │          main.obj
-│      │
-│      ├─include
-│      │  │  cmake_install.cmake
-│      │  │
-│      │  ├─CMakeFiles
-│      │  └─pqxx
-│      │          config-internal-compiler.h
-│      │          config-internal-libpq.h
-│      │          config-public-compiler.h
-│      │          config_cmake.h.in
-│      │
-│      ├─src
-│      │  │  cmake_install.cmake
-│      │  │  pqxx.lib
-│      │  │
-│      │  └─CMakeFiles
-│      │      └─pqxx.dir
-│      │              array.cxx.obj
-│      │              binarystring.cxx.obj
-│      │              blob.cxx.obj
-│      │              connection.cxx.obj
-│      │              cursor.cxx.obj
-│      │              encodings.cxx.obj
-│      │              errorhandler.cxx.obj
-│      │              except.cxx.obj
-│      │              field.cxx.obj
-│      │              largeobject.cxx.obj
-│      │              notification.cxx.obj
-│      │              params.cxx.obj
-│      │              pipeline.cxx.obj
-│      │              pqxx.pdb
-│      │              result.cxx.obj
-│      │              robusttransaction.cxx.obj
-│      │              row.cxx.obj
-│      │              sql_cursor.cxx.obj
-│      │              strconv.cxx.obj
-│      │              stream_from.cxx.obj
-│      │              stream_to.cxx.obj
-│      │              subtransaction.cxx.obj
-│      │              time.cxx.obj
-│      │              transaction.cxx.obj
-│      │              transaction_base.cxx.obj
-│      │              util.cxx.obj
-│      │              version.cxx.obj
-│      │              wait.cxx.obj
-│      │
-│      ├─test
-│      │  │  cmake_install.cmake
-│      │  │  CTestTestfile.cmake
-│      │  │  runner.exe
-│      │  │  runner.ilk
-│      │  │  runner.pdb
-│      │  │
-│      │  └─CMakeFiles
-│      │      └─runner.dir
-│      │          │  embed.manifest
-│      │          │  intermediate.manifest
-│      │          │  manifest.rc
-│      │          │  manifest.res
-│      │          │  runner.cxx.obj
-│      │          │  test00.cxx.obj
-│      │          │  test01.cxx.obj
-│      │          │  test02.cxx.obj
-│      │          │  test04.cxx.obj
-│      │          │  test07.cxx.obj
-│      │          │  test10.cxx.obj
-│      │          │  test11.cxx.obj
-│      │          │  test13.cxx.obj
-│      │          │  test14.cxx.obj
-│      │          │  test16.cxx.obj
-│      │          │  test17.cxx.obj
-│      │          │  test18.cxx.obj
-│      │          │  test20.cxx.obj
-│      │          │  test21.cxx.obj
-│      │          │  test26.cxx.obj
-│      │          │  test29.cxx.obj
-│      │          │  test30.cxx.obj
-│      │          │  test32.cxx.obj
-│      │          │  test37.cxx.obj
-│      │          │  test39.cxx.obj
-│      │          │  test46.cxx.obj
-│      │          │  test56.cxx.obj
-│      │          │  test60.cxx.obj
-│      │          │  test61.cxx.obj
-│      │          │  test62.cxx.obj
-│      │          │  test69.cxx.obj
-│      │          │  test70.cxx.obj
-│      │          │  test71.cxx.obj
-│      │          │  test72.cxx.obj
-│      │          │  test74.cxx.obj
-│      │          │  test75.cxx.obj
-│      │          │  test76.cxx.obj
-│      │          │  test77.cxx.obj
-│      │          │  test78.cxx.obj
-│      │          │  test79.cxx.obj
-│      │          │  test82.cxx.obj
-│      │          │  test84.cxx.obj
-│      │          │  test87.cxx.obj
-│      │          │  test88.cxx.obj
-│      │          │  test89.cxx.obj
-│      │          │  test90.cxx.obj
-│      │          │  vc140.pdb
-│      │          │
-│      │          └─unit
-│      │                  test_array.cxx.obj
-│      │                  test_binarystring.cxx.obj
-│      │                  test_blob.cxx.obj
-│      │                  test_cancel_query.cxx.obj
-│      │                  test_column.cxx.obj
-│      │                  test_composite.cxx.obj
-│      │                  test_connection.cxx.obj
-│      │                  test_cursor.cxx.obj
-│      │                  test_encodings.cxx.obj
-│      │                  test_errorhandler.cxx.obj
-│      │                  test_error_verbosity.cxx.obj
-│      │                  test_escape.cxx.obj
-│      │                  test_exceptions.cxx.obj
-│      │                  test_field.cxx.obj
-│      │                  test_float.cxx.obj
-│      │                  test_largeobject.cxx.obj
-│      │                  test_nonblocking_connect.cxx.obj
-│      │                  test_notification.cxx.obj
-│      │                  test_pipeline.cxx.obj
-│      │                  test_prepared_statement.cxx.obj
-│      │                  test_range.cxx.obj
-│      │                  test_read_transaction.cxx.obj
-│      │                  test_result_iteration.cxx.obj
-│      │                  test_result_slicing.cxx.obj
-│      │                  test_row.cxx.obj
-│      │                  test_separated_list.cxx.obj
-│      │                  test_simultaneous_transactions.cxx.obj
-│      │                  test_sql_cursor.cxx.obj
-│      │                  test_stateless_cursor.cxx.obj
-│      │                  test_strconv.cxx.obj
-│      │                  test_stream_from.cxx.obj
-│      │                  test_stream_to.cxx.obj
-│      │                  test_string_conversion.cxx.obj
-│      │                  test_subtransaction.cxx.obj
-│      │                  test_test_helpers.cxx.obj
-│      │                  test_thread_safety_model.cxx.obj
-│      │                  test_time.cxx.obj
-│      │                  test_transaction.cxx.obj
-│      │                  test_transaction_base.cxx.obj
-│      │                  test_transaction_focus.cxx.obj
-│      │                  test_transactor.cxx.obj
-│      │                  test_type_name.cxx.obj
-│      │                  test_zview.cxx.obj
-│      │
-│      └─Testing
-│          └─Temporary
-│                  LastTest.log
-│
-└─install
-    └─x64-Debug
-        ├─include
-        │  └─pqxx
-        │      │  array
-        │      │  array.hxx
-        │      │  binarystring
-        │      │  binarystring.hxx
-        │      │  blob
-        │      │  blob.hxx
-        │      │  composite
-        │      │  composite.hxx
-        │      │  config-public-compiler.h
-        │      │  connection
-        │      │  connection.hxx
-        │      │  cursor
-        │      │  cursor.hxx
-        │      │  dbtransaction
-        │      │  dbtransaction.hxx
-        │      │  errorhandler
-        │      │  errorhandler.hxx
-        │      │  except
-        │      │  except.hxx
-        │      │  field
-        │      │  field.hxx
-        │      │  isolation
-        │      │  isolation.hxx
-        │      │  largeobject
-        │      │  largeobject.hxx
-        │      │  nontransaction
-        │      │  nontransaction.hxx
-        │      │  notification
-        │      │  notification.hxx
-        │      │  params
-        │      │  params.hxx
-        │      │  pipeline
-        │      │  pipeline.hxx
-        │      │  pqxx
-        │      │  prepared_statement
-        │      │  prepared_statement.hxx
-        │      │  range
-        │      │  range.hxx
-        │      │  result
-        │      │  result.hxx
-        │      │  robusttransaction
-        │      │  robusttransaction.hxx
-        │      │  row
-        │      │  row.hxx
-        │      │  separated_list
-        │      │  separated_list.hxx
-        │      │  strconv
-        │      │  strconv.hxx
-        │      │  stream_from
-        │      │  stream_from.hxx
-        │      │  stream_to
-        │      │  stream_to.hxx
-        │      │  subtransaction
-        │      │  subtransaction.hxx
-        │      │  time
-        │      │  time.hxx
-        │      │  transaction
-        │      │  transaction.hxx
-        │      │  transaction_base
-        │      │  transaction_base.hxx
-        │      │  transaction_focus
-        │      │  transaction_focus.hxx
-        │      │  transactor
-        │      │  transactor.hxx
-        │      │  types
-        │      │  types.hxx
-        │      │  util
-        │      │  util.hxx
-        │      │  version
-        │      │  version.hxx
-        │      │  zview
-        │      │  zview.hxx
-        │      │
-        │      └─internal
-        │          │  array-composite.hxx
-        │          │  callgate.hxx
-        │          │  concat.hxx
-        │          │  conversions.hxx
-        │          │  encodings.hxx
-        │          │  encoding_group.hxx
-        │          │  header-post.hxx
-        │          │  header-pre.hxx
-        │          │  ignore-deprecated-post.hxx
-        │          │  ignore-deprecated-pre.hxx
-        │          │  libpq-forward.hxx
-        │          │  result_iter.hxx
-        │          │  result_iterator.hxx
-        │          │  sql_cursor.hxx
-        │          │  statement_parameters.hxx
-        │          │  stream_iterator.hxx
-        │          │  wait.hxx
-        │          │
-        │          └─gates
-        │                  connection-errorhandler.hxx
-        │                  connection-largeobject.hxx
-        │                  connection-notification_receiver.hxx
-        │                  connection-pipeline.hxx
-        │                  connection-sql_cursor.hxx
-        │                  connection-stream_from.hxx
-        │                  connection-stream_to.hxx
-        │                  connection-transaction.hxx
-        │                  errorhandler-connection.hxx
-        │                  icursorstream-icursor_iterator.hxx
-        │                  icursor_iterator-icursorstream.hxx
-        │                  result-connection.hxx
-        │                  result-creation.hxx
-        │                  result-pipeline.hxx
-        │                  result-sql_cursor.hxx
-        │                  transaction-sql_cursor.hxx
-        │                  transaction-transaction_focus.hxx
-        │
-        ├─lib
-        │  │  pqxx.lib
-        │  │
-        │  ├─cmake
-        │  │  └─libpqxx
-        │  │          libpqxx-config-version.cmake
-        │  │          libpqxx-config.cmake
-        │  │          libpqxx-targets-debug.cmake
-        │  │          libpqxx-targets.cmake
-        │  │
-        │  └─pkgconfig
-        │          libpqxx.pc
-        │
-        └─share
-            └─doc
-                └─libpqxx
-                        accessing-results.md
-                        binary-data.md
-                        datatypes.md
-                        escaping.md
-                        getting-started.md
-                        mainpage.md
-                        parameters.md
-                        performance.md
-                        prepared-statement.md
-                        streams.md
-                        thread-safety.md
-</code></pre>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>D:\Documents\A_Source\OpenSource\libpqxx\out>tree /F</span></span>
+<span data-line><span>卷 本地磁盘 的文件夹 PATH 列表</span></span>
+<span data-line><span>卷序列号为 724D-690E</span></span>
+<span data-line><span>D:.</span></span>
+<span data-line><span>├─build</span></span>
+<span data-line><span>│  └─x64-Debug</span></span>
+<span data-line><span>│      │  .ninja_deps</span></span>
+<span data-line><span>│      │  .ninja_log</span></span>
+<span data-line><span>│      │  build.ninja</span></span>
+<span data-line><span>│      │  CMakeCache.txt</span></span>
+<span data-line><span>│      │  cmake_install.cmake</span></span>
+<span data-line><span>│      │  CPackConfig.cmake</span></span>
+<span data-line><span>│      │  CPackSourceConfig.cmake</span></span>
+<span data-line><span>│      │  install_manifest.txt</span></span>
+<span data-line><span>│      │  libpqxx-config-version.cmake</span></span>
+<span data-line><span>│      │  libpqxx-config.cmake</span></span>
+<span data-line><span>│      │  libpqxx-targets.cmake</span></span>
+<span data-line><span>│      │  libpqxx.pc</span></span>
+<span data-line><span>│      │  VSInheritEnvironments.txt</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      ├─.cmake</span></span>
+<span data-line><span>│      │  └─api</span></span>
+<span data-line><span>│      │      └─v1</span></span>
+<span data-line><span>│      │          ├─query</span></span>
+<span data-line><span>│      │          │  └─client-MicrosoftVS</span></span>
+<span data-line><span>│      │          │          query.json</span></span>
+<span data-line><span>│      │          │</span></span>
+<span data-line><span>│      │          └─reply</span></span>
+<span data-line><span>│      │                  cache-v2-4c1f3ae5d14ffd09e2dd.json</span></span>
+<span data-line><span>│      │                  cmakeFiles-v1-6f2def4807820d15719b.json</span></span>
+<span data-line><span>│      │                  codemodel-v2-8933aef952d7508a3af3.json</span></span>
+<span data-line><span>│      │                  directory-.-Debug-6b54e12c0d4bd01edfca.json</span></span>
+<span data-line><span>│      │                  directory-include-Debug-ba96d77232f254970ce6.json</span></span>
+<span data-line><span>│      │                  directory-src-Debug-5d1cc30954eb9bce3508.json</span></span>
+<span data-line><span>│      │                  directory-test-Debug-f18be1977b403cfd1a50.json</span></span>
+<span data-line><span>│      │                  index-2023-11-16T09-03-01-0309.json</span></span>
+<span data-line><span>│      │                  target-pqxx-Debug-08c4b9d672ef282e41c8.json</span></span>
+<span data-line><span>│      │                  target-runner-Debug-b625a8b78dd4666c4f11.json</span></span>
+<span data-line><span>│      │                  toolchains-v1-3b995f712f6d6e9a85c1.json</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      ├─CMakeFiles</span></span>
+<span data-line><span>│      │  │  cmake.check_cache</span></span>
+<span data-line><span>│      │  │  CMakeConfigureLog.yaml</span></span>
+<span data-line><span>│      │  │  rules.ninja</span></span>
+<span data-line><span>│      │  │  TargetDirectories.txt</span></span>
+<span data-line><span>│      │  │</span></span>
+<span data-line><span>│      │  ├─3.26.4-msvc4</span></span>
+<span data-line><span>│      │  │  │  CMakeCXXCompiler.cmake</span></span>
+<span data-line><span>│      │  │  │  CMakeDetermineCompilerABI_CXX.bin</span></span>
+<span data-line><span>│      │  │  │  CMakeRCCompiler.cmake</span></span>
+<span data-line><span>│      │  │  │  CMakeSystem.cmake</span></span>
+<span data-line><span>│      │  │  │</span></span>
+<span data-line><span>│      │  │  └─CompilerIdCXX</span></span>
+<span data-line><span>│      │  │      │  CMakeCXXCompilerId.cpp</span></span>
+<span data-line><span>│      │  │      │  CMakeCXXCompilerId.exe</span></span>
+<span data-line><span>│      │  │      │  CMakeCXXCompilerId.obj</span></span>
+<span data-line><span>│      │  │      │</span></span>
+<span data-line><span>│      │  │      └─tmp</span></span>
+<span data-line><span>│      │  ├─CMakeTmp</span></span>
+<span data-line><span>│      │  ├─Export</span></span>
+<span data-line><span>│      │  │  └─d6b66e93f8212dd1f00debf9f6654819</span></span>
+<span data-line><span>│      │  │          libpqxx-targets-debug.cmake</span></span>
+<span data-line><span>│      │  │          libpqxx-targets.cmake</span></span>
+<span data-line><span>│      │  │</span></span>
+<span data-line><span>│      │  ├─pkgRedirects</span></span>
+<span data-line><span>│      │  └─ShowIncludes</span></span>
+<span data-line><span>│      │          foo.h</span></span>
+<span data-line><span>│      │          main.c</span></span>
+<span data-line><span>│      │          main.obj</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      ├─include</span></span>
+<span data-line><span>│      │  │  cmake_install.cmake</span></span>
+<span data-line><span>│      │  │</span></span>
+<span data-line><span>│      │  ├─CMakeFiles</span></span>
+<span data-line><span>│      │  └─pqxx</span></span>
+<span data-line><span>│      │          config-internal-compiler.h</span></span>
+<span data-line><span>│      │          config-internal-libpq.h</span></span>
+<span data-line><span>│      │          config-public-compiler.h</span></span>
+<span data-line><span>│      │          config_cmake.h.in</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      ├─src</span></span>
+<span data-line><span>│      │  │  cmake_install.cmake</span></span>
+<span data-line><span>│      │  │  pqxx.lib</span></span>
+<span data-line><span>│      │  │</span></span>
+<span data-line><span>│      │  └─CMakeFiles</span></span>
+<span data-line><span>│      │      └─pqxx.dir</span></span>
+<span data-line><span>│      │              array.cxx.obj</span></span>
+<span data-line><span>│      │              binarystring.cxx.obj</span></span>
+<span data-line><span>│      │              blob.cxx.obj</span></span>
+<span data-line><span>│      │              connection.cxx.obj</span></span>
+<span data-line><span>│      │              cursor.cxx.obj</span></span>
+<span data-line><span>│      │              encodings.cxx.obj</span></span>
+<span data-line><span>│      │              errorhandler.cxx.obj</span></span>
+<span data-line><span>│      │              except.cxx.obj</span></span>
+<span data-line><span>│      │              field.cxx.obj</span></span>
+<span data-line><span>│      │              largeobject.cxx.obj</span></span>
+<span data-line><span>│      │              notification.cxx.obj</span></span>
+<span data-line><span>│      │              params.cxx.obj</span></span>
+<span data-line><span>│      │              pipeline.cxx.obj</span></span>
+<span data-line><span>│      │              pqxx.pdb</span></span>
+<span data-line><span>│      │              result.cxx.obj</span></span>
+<span data-line><span>│      │              robusttransaction.cxx.obj</span></span>
+<span data-line><span>│      │              row.cxx.obj</span></span>
+<span data-line><span>│      │              sql_cursor.cxx.obj</span></span>
+<span data-line><span>│      │              strconv.cxx.obj</span></span>
+<span data-line><span>│      │              stream_from.cxx.obj</span></span>
+<span data-line><span>│      │              stream_to.cxx.obj</span></span>
+<span data-line><span>│      │              subtransaction.cxx.obj</span></span>
+<span data-line><span>│      │              time.cxx.obj</span></span>
+<span data-line><span>│      │              transaction.cxx.obj</span></span>
+<span data-line><span>│      │              transaction_base.cxx.obj</span></span>
+<span data-line><span>│      │              util.cxx.obj</span></span>
+<span data-line><span>│      │              version.cxx.obj</span></span>
+<span data-line><span>│      │              wait.cxx.obj</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      ├─test</span></span>
+<span data-line><span>│      │  │  cmake_install.cmake</span></span>
+<span data-line><span>│      │  │  CTestTestfile.cmake</span></span>
+<span data-line><span>│      │  │  runner.exe</span></span>
+<span data-line><span>│      │  │  runner.ilk</span></span>
+<span data-line><span>│      │  │  runner.pdb</span></span>
+<span data-line><span>│      │  │</span></span>
+<span data-line><span>│      │  └─CMakeFiles</span></span>
+<span data-line><span>│      │      └─runner.dir</span></span>
+<span data-line><span>│      │          │  embed.manifest</span></span>
+<span data-line><span>│      │          │  intermediate.manifest</span></span>
+<span data-line><span>│      │          │  manifest.rc</span></span>
+<span data-line><span>│      │          │  manifest.res</span></span>
+<span data-line><span>│      │          │  runner.cxx.obj</span></span>
+<span data-line><span>│      │          │  test00.cxx.obj</span></span>
+<span data-line><span>│      │          │  test01.cxx.obj</span></span>
+<span data-line><span>│      │          │  test02.cxx.obj</span></span>
+<span data-line><span>│      │          │  test04.cxx.obj</span></span>
+<span data-line><span>│      │          │  test07.cxx.obj</span></span>
+<span data-line><span>│      │          │  test10.cxx.obj</span></span>
+<span data-line><span>│      │          │  test11.cxx.obj</span></span>
+<span data-line><span>│      │          │  test13.cxx.obj</span></span>
+<span data-line><span>│      │          │  test14.cxx.obj</span></span>
+<span data-line><span>│      │          │  test16.cxx.obj</span></span>
+<span data-line><span>│      │          │  test17.cxx.obj</span></span>
+<span data-line><span>│      │          │  test18.cxx.obj</span></span>
+<span data-line><span>│      │          │  test20.cxx.obj</span></span>
+<span data-line><span>│      │          │  test21.cxx.obj</span></span>
+<span data-line><span>│      │          │  test26.cxx.obj</span></span>
+<span data-line><span>│      │          │  test29.cxx.obj</span></span>
+<span data-line><span>│      │          │  test30.cxx.obj</span></span>
+<span data-line><span>│      │          │  test32.cxx.obj</span></span>
+<span data-line><span>│      │          │  test37.cxx.obj</span></span>
+<span data-line><span>│      │          │  test39.cxx.obj</span></span>
+<span data-line><span>│      │          │  test46.cxx.obj</span></span>
+<span data-line><span>│      │          │  test56.cxx.obj</span></span>
+<span data-line><span>│      │          │  test60.cxx.obj</span></span>
+<span data-line><span>│      │          │  test61.cxx.obj</span></span>
+<span data-line><span>│      │          │  test62.cxx.obj</span></span>
+<span data-line><span>│      │          │  test69.cxx.obj</span></span>
+<span data-line><span>│      │          │  test70.cxx.obj</span></span>
+<span data-line><span>│      │          │  test71.cxx.obj</span></span>
+<span data-line><span>│      │          │  test72.cxx.obj</span></span>
+<span data-line><span>│      │          │  test74.cxx.obj</span></span>
+<span data-line><span>│      │          │  test75.cxx.obj</span></span>
+<span data-line><span>│      │          │  test76.cxx.obj</span></span>
+<span data-line><span>│      │          │  test77.cxx.obj</span></span>
+<span data-line><span>│      │          │  test78.cxx.obj</span></span>
+<span data-line><span>│      │          │  test79.cxx.obj</span></span>
+<span data-line><span>│      │          │  test82.cxx.obj</span></span>
+<span data-line><span>│      │          │  test84.cxx.obj</span></span>
+<span data-line><span>│      │          │  test87.cxx.obj</span></span>
+<span data-line><span>│      │          │  test88.cxx.obj</span></span>
+<span data-line><span>│      │          │  test89.cxx.obj</span></span>
+<span data-line><span>│      │          │  test90.cxx.obj</span></span>
+<span data-line><span>│      │          │  vc140.pdb</span></span>
+<span data-line><span>│      │          │</span></span>
+<span data-line><span>│      │          └─unit</span></span>
+<span data-line><span>│      │                  test_array.cxx.obj</span></span>
+<span data-line><span>│      │                  test_binarystring.cxx.obj</span></span>
+<span data-line><span>│      │                  test_blob.cxx.obj</span></span>
+<span data-line><span>│      │                  test_cancel_query.cxx.obj</span></span>
+<span data-line><span>│      │                  test_column.cxx.obj</span></span>
+<span data-line><span>│      │                  test_composite.cxx.obj</span></span>
+<span data-line><span>│      │                  test_connection.cxx.obj</span></span>
+<span data-line><span>│      │                  test_cursor.cxx.obj</span></span>
+<span data-line><span>│      │                  test_encodings.cxx.obj</span></span>
+<span data-line><span>│      │                  test_errorhandler.cxx.obj</span></span>
+<span data-line><span>│      │                  test_error_verbosity.cxx.obj</span></span>
+<span data-line><span>│      │                  test_escape.cxx.obj</span></span>
+<span data-line><span>│      │                  test_exceptions.cxx.obj</span></span>
+<span data-line><span>│      │                  test_field.cxx.obj</span></span>
+<span data-line><span>│      │                  test_float.cxx.obj</span></span>
+<span data-line><span>│      │                  test_largeobject.cxx.obj</span></span>
+<span data-line><span>│      │                  test_nonblocking_connect.cxx.obj</span></span>
+<span data-line><span>│      │                  test_notification.cxx.obj</span></span>
+<span data-line><span>│      │                  test_pipeline.cxx.obj</span></span>
+<span data-line><span>│      │                  test_prepared_statement.cxx.obj</span></span>
+<span data-line><span>│      │                  test_range.cxx.obj</span></span>
+<span data-line><span>│      │                  test_read_transaction.cxx.obj</span></span>
+<span data-line><span>│      │                  test_result_iteration.cxx.obj</span></span>
+<span data-line><span>│      │                  test_result_slicing.cxx.obj</span></span>
+<span data-line><span>│      │                  test_row.cxx.obj</span></span>
+<span data-line><span>│      │                  test_separated_list.cxx.obj</span></span>
+<span data-line><span>│      │                  test_simultaneous_transactions.cxx.obj</span></span>
+<span data-line><span>│      │                  test_sql_cursor.cxx.obj</span></span>
+<span data-line><span>│      │                  test_stateless_cursor.cxx.obj</span></span>
+<span data-line><span>│      │                  test_strconv.cxx.obj</span></span>
+<span data-line><span>│      │                  test_stream_from.cxx.obj</span></span>
+<span data-line><span>│      │                  test_stream_to.cxx.obj</span></span>
+<span data-line><span>│      │                  test_string_conversion.cxx.obj</span></span>
+<span data-line><span>│      │                  test_subtransaction.cxx.obj</span></span>
+<span data-line><span>│      │                  test_test_helpers.cxx.obj</span></span>
+<span data-line><span>│      │                  test_thread_safety_model.cxx.obj</span></span>
+<span data-line><span>│      │                  test_time.cxx.obj</span></span>
+<span data-line><span>│      │                  test_transaction.cxx.obj</span></span>
+<span data-line><span>│      │                  test_transaction_base.cxx.obj</span></span>
+<span data-line><span>│      │                  test_transaction_focus.cxx.obj</span></span>
+<span data-line><span>│      │                  test_transactor.cxx.obj</span></span>
+<span data-line><span>│      │                  test_type_name.cxx.obj</span></span>
+<span data-line><span>│      │                  test_zview.cxx.obj</span></span>
+<span data-line><span>│      │</span></span>
+<span data-line><span>│      └─Testing</span></span>
+<span data-line><span>│          └─Temporary</span></span>
+<span data-line><span>│                  LastTest.log</span></span>
+<span data-line><span>│</span></span>
+<span data-line><span>└─install</span></span>
+<span data-line><span>    └─x64-Debug</span></span>
+<span data-line><span>        ├─include</span></span>
+<span data-line><span>        │  └─pqxx</span></span>
+<span data-line><span>        │      │  array</span></span>
+<span data-line><span>        │      │  array.hxx</span></span>
+<span data-line><span>        │      │  binarystring</span></span>
+<span data-line><span>        │      │  binarystring.hxx</span></span>
+<span data-line><span>        │      │  blob</span></span>
+<span data-line><span>        │      │  blob.hxx</span></span>
+<span data-line><span>        │      │  composite</span></span>
+<span data-line><span>        │      │  composite.hxx</span></span>
+<span data-line><span>        │      │  config-public-compiler.h</span></span>
+<span data-line><span>        │      │  connection</span></span>
+<span data-line><span>        │      │  connection.hxx</span></span>
+<span data-line><span>        │      │  cursor</span></span>
+<span data-line><span>        │      │  cursor.hxx</span></span>
+<span data-line><span>        │      │  dbtransaction</span></span>
+<span data-line><span>        │      │  dbtransaction.hxx</span></span>
+<span data-line><span>        │      │  errorhandler</span></span>
+<span data-line><span>        │      │  errorhandler.hxx</span></span>
+<span data-line><span>        │      │  except</span></span>
+<span data-line><span>        │      │  except.hxx</span></span>
+<span data-line><span>        │      │  field</span></span>
+<span data-line><span>        │      │  field.hxx</span></span>
+<span data-line><span>        │      │  isolation</span></span>
+<span data-line><span>        │      │  isolation.hxx</span></span>
+<span data-line><span>        │      │  largeobject</span></span>
+<span data-line><span>        │      │  largeobject.hxx</span></span>
+<span data-line><span>        │      │  nontransaction</span></span>
+<span data-line><span>        │      │  nontransaction.hxx</span></span>
+<span data-line><span>        │      │  notification</span></span>
+<span data-line><span>        │      │  notification.hxx</span></span>
+<span data-line><span>        │      │  params</span></span>
+<span data-line><span>        │      │  params.hxx</span></span>
+<span data-line><span>        │      │  pipeline</span></span>
+<span data-line><span>        │      │  pipeline.hxx</span></span>
+<span data-line><span>        │      │  pqxx</span></span>
+<span data-line><span>        │      │  prepared_statement</span></span>
+<span data-line><span>        │      │  prepared_statement.hxx</span></span>
+<span data-line><span>        │      │  range</span></span>
+<span data-line><span>        │      │  range.hxx</span></span>
+<span data-line><span>        │      │  result</span></span>
+<span data-line><span>        │      │  result.hxx</span></span>
+<span data-line><span>        │      │  robusttransaction</span></span>
+<span data-line><span>        │      │  robusttransaction.hxx</span></span>
+<span data-line><span>        │      │  row</span></span>
+<span data-line><span>        │      │  row.hxx</span></span>
+<span data-line><span>        │      │  separated_list</span></span>
+<span data-line><span>        │      │  separated_list.hxx</span></span>
+<span data-line><span>        │      │  strconv</span></span>
+<span data-line><span>        │      │  strconv.hxx</span></span>
+<span data-line><span>        │      │  stream_from</span></span>
+<span data-line><span>        │      │  stream_from.hxx</span></span>
+<span data-line><span>        │      │  stream_to</span></span>
+<span data-line><span>        │      │  stream_to.hxx</span></span>
+<span data-line><span>        │      │  subtransaction</span></span>
+<span data-line><span>        │      │  subtransaction.hxx</span></span>
+<span data-line><span>        │      │  time</span></span>
+<span data-line><span>        │      │  time.hxx</span></span>
+<span data-line><span>        │      │  transaction</span></span>
+<span data-line><span>        │      │  transaction.hxx</span></span>
+<span data-line><span>        │      │  transaction_base</span></span>
+<span data-line><span>        │      │  transaction_base.hxx</span></span>
+<span data-line><span>        │      │  transaction_focus</span></span>
+<span data-line><span>        │      │  transaction_focus.hxx</span></span>
+<span data-line><span>        │      │  transactor</span></span>
+<span data-line><span>        │      │  transactor.hxx</span></span>
+<span data-line><span>        │      │  types</span></span>
+<span data-line><span>        │      │  types.hxx</span></span>
+<span data-line><span>        │      │  util</span></span>
+<span data-line><span>        │      │  util.hxx</span></span>
+<span data-line><span>        │      │  version</span></span>
+<span data-line><span>        │      │  version.hxx</span></span>
+<span data-line><span>        │      │  zview</span></span>
+<span data-line><span>        │      │  zview.hxx</span></span>
+<span data-line><span>        │      │</span></span>
+<span data-line><span>        │      └─internal</span></span>
+<span data-line><span>        │          │  array-composite.hxx</span></span>
+<span data-line><span>        │          │  callgate.hxx</span></span>
+<span data-line><span>        │          │  concat.hxx</span></span>
+<span data-line><span>        │          │  conversions.hxx</span></span>
+<span data-line><span>        │          │  encodings.hxx</span></span>
+<span data-line><span>        │          │  encoding_group.hxx</span></span>
+<span data-line><span>        │          │  header-post.hxx</span></span>
+<span data-line><span>        │          │  header-pre.hxx</span></span>
+<span data-line><span>        │          │  ignore-deprecated-post.hxx</span></span>
+<span data-line><span>        │          │  ignore-deprecated-pre.hxx</span></span>
+<span data-line><span>        │          │  libpq-forward.hxx</span></span>
+<span data-line><span>        │          │  result_iter.hxx</span></span>
+<span data-line><span>        │          │  result_iterator.hxx</span></span>
+<span data-line><span>        │          │  sql_cursor.hxx</span></span>
+<span data-line><span>        │          │  statement_parameters.hxx</span></span>
+<span data-line><span>        │          │  stream_iterator.hxx</span></span>
+<span data-line><span>        │          │  wait.hxx</span></span>
+<span data-line><span>        │          │</span></span>
+<span data-line><span>        │          └─gates</span></span>
+<span data-line><span>        │                  connection-errorhandler.hxx</span></span>
+<span data-line><span>        │                  connection-largeobject.hxx</span></span>
+<span data-line><span>        │                  connection-notification_receiver.hxx</span></span>
+<span data-line><span>        │                  connection-pipeline.hxx</span></span>
+<span data-line><span>        │                  connection-sql_cursor.hxx</span></span>
+<span data-line><span>        │                  connection-stream_from.hxx</span></span>
+<span data-line><span>        │                  connection-stream_to.hxx</span></span>
+<span data-line><span>        │                  connection-transaction.hxx</span></span>
+<span data-line><span>        │                  errorhandler-connection.hxx</span></span>
+<span data-line><span>        │                  icursorstream-icursor_iterator.hxx</span></span>
+<span data-line><span>        │                  icursor_iterator-icursorstream.hxx</span></span>
+<span data-line><span>        │                  result-connection.hxx</span></span>
+<span data-line><span>        │                  result-creation.hxx</span></span>
+<span data-line><span>        │                  result-pipeline.hxx</span></span>
+<span data-line><span>        │                  result-sql_cursor.hxx</span></span>
+<span data-line><span>        │                  transaction-sql_cursor.hxx</span></span>
+<span data-line><span>        │                  transaction-transaction_focus.hxx</span></span>
+<span data-line><span>        │</span></span>
+<span data-line><span>        ├─lib</span></span>
+<span data-line><span>        │  │  pqxx.lib</span></span>
+<span data-line><span>        │  │</span></span>
+<span data-line><span>        │  ├─cmake</span></span>
+<span data-line><span>        │  │  └─libpqxx</span></span>
+<span data-line><span>        │  │          libpqxx-config-version.cmake</span></span>
+<span data-line><span>        │  │          libpqxx-config.cmake</span></span>
+<span data-line><span>        │  │          libpqxx-targets-debug.cmake</span></span>
+<span data-line><span>        │  │          libpqxx-targets.cmake</span></span>
+<span data-line><span>        │  │</span></span>
+<span data-line><span>        │  └─pkgconfig</span></span>
+<span data-line><span>        │          libpqxx.pc</span></span>
+<span data-line><span>        │</span></span>
+<span data-line><span>        └─share</span></span>
+<span data-line><span>            └─doc</span></span>
+<span data-line><span>                └─libpqxx</span></span>
+<span data-line><span>                        accessing-results.md</span></span>
+<span data-line><span>                        binary-data.md</span></span>
+<span data-line><span>                        datatypes.md</span></span>
+<span data-line><span>                        escaping.md</span></span>
+<span data-line><span>                        getting-started.md</span></span>
+<span data-line><span>                        mainpage.md</span></span>
+<span data-line><span>                        parameters.md</span></span>
+<span data-line><span>                        performance.md</span></span>
+<span data-line><span>                        prepared-statement.md</span></span>
+<span data-line><span>                        streams.md</span></span>
+<span data-line><span>                        thread-safety.md</span></span></code></pre></figure>
 <p>⚠ 然后就可以编代码使用 pqxx.lib 了。除此之外，在编译项目时还需要添加 libpq.lib.</p>
 <p>除此之外可以看到以下两个目录，这两个目录待会要引入到 VS 工程中：</p>
 <ul>

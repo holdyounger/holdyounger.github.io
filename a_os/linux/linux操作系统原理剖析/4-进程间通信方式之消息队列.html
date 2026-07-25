@@ -22,78 +22,78 @@
 </ul>
 <h2 id="0x03-linux消息队列相关-api-介绍">0x03 Linux消息队列相关 API 介绍<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0x03-linux消息队列相关-api-介绍" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
 <p>在 Linux 操作系统中，我们可以通过使用 <code>msgget()</code> 函数来创建和打开消息队列，具体描述如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/msg.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/msg.h></span></span>
 <span data-line> </span>
-<span data-line><span>int msgget(key_t key, int msgflg)</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>- key 消息队列键值，多个进程可以通过这个 ID 值来访问同一个消息队列，其中有个特殊值 `IPC_PRIVATE` 用于创建当前进程的私有消息队列</span></span>
-<span data-line><span>- msgflg 权限标志位</span></span>
-<span data-line><span>返回值：</span></span>
-<span data-line><span>    成功返回消息队列 ID， 失败返回 -1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> msgget</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">key_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> key</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgflg</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- key 消息队列键值，多个进程可以通过这个 ID 值来访问同一个消息队列，其中有个特殊值 `IPC_PRIVATE` 用于创建当前进程的私有消息队列</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgflg 权限标志位</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功返回消息队列 ID， 失败返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <p>向已经被创建和打开的消息队列中发送数据，可以使用 <code>msgsnd()</code> 函数，具体描述如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/msg.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/msg.h></span></span>
 <span data-line> </span>
-<span data-line><span>int msgsnd(int msqid, const void *msgp, size_t msgsz, int msgflg)</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>- msqid 消息队列的队列 ID</span></span>
-<span data-line><span>- msgp  执行消息结构的指针，该消息结构 `msgbuf` 通常如下：</span></span>
-<span data-line><span>        struct msgbuf{</span></span>
-<span data-line><span>            long mtype; //消息类型</span></span>
-<span data-line><span>            char mtext[1];//消息正文</span></span>
-<span data-line><span>        }</span></span>
-<span data-line><span>- msgsz 消息正文的字节数</span></span>
-<span data-line><span>- msgflg  如下：</span></span>
-<span data-line><span>        `IPC_NOWAIT`:若消息无法立即发生（当前消息队列已满，函数立即返回</span></span>
-<span data-line><span>        0：msgsnd() 调用阻塞知道发送成功为止</span></span>
-<span data-line><span>函数返回值：</span></span>
-<span data-line><span>    成功返回 0， 失败返回 -1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> msgsnd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msqid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">const</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">msgp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">size_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgsz</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgflg</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msqid 消息队列的队列 ID</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgp  执行消息结构的指针，该消息结构 `msgbuf` 通常如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        struct msgbuf{</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">            long mtype; //消息类型</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">            char mtext[1];//消息正文</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        }</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgsz 消息正文的字节数</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgflg  如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        `IPC_NOWAIT`:若消息无法立即发生（当前消息队列已满，函数立即返回</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        0：msgsnd() 调用阻塞知道发送成功为止</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">函数返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功返回 0， 失败返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <p>对于消息队列的接收，在程序中可以通过调用 <code>msgrcv()</code> 来进行读取数据，如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/msg.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/msg.h></span></span>
 <span data-line> </span>
-<span data-line><span>int msgrcv(int msqid, void *msgp, size_t msgsz, long int msgtyp, int msgflg)</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>- msqid 消息队列的队列 ID</span></span>
-<span data-line><span>- msgp  消息缓冲区</span></span>
-<span data-line><span>- msgsz 正文字节数</span></span>
-<span data-line><span>- msgtyp 描述如下：</span></span>
-<span data-line><span>        0：接收消息队列中第一个消息</span></span>
-<span data-line><span>        大于0：接收消息队列中第一个类型为 msgtyp 的消息</span></span>
-<span data-line><span>        小于0：接收消息队列中第一个类型值不小于 msgtyp 绝对值且值最小的消息</span></span>
-<span data-line><span>- msgflg    描述如下：</span></span>
-<span data-line><span>        - MSG_NOERROR：若返回的消息比 msgsz 字节多，则消息就会截断到 msgsz 字节，且不会通知消息到进程</span></span>
-<span data-line><span>        - IPC_NOWAIT:若消息队列中没有相应类型的消息可以接收，则函数会立即返回</span></span>
-<span data-line><span>        - 0：函数调用阻塞等待接收到一条消息为止</span></span>
-<span data-line><span>返回值：</span></span>
-<span data-line><span>    成功返回 0， 失败返回 -1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> msgrcv</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msqid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">msgp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">size_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgsz</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">long</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword"> int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgtyp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgflg</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msqid 消息队列的队列 ID</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgp  消息缓冲区</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgsz 正文字节数</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgtyp 描述如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        0：接收消息队列中第一个消息</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        大于0：接收消息队列中第一个类型为 msgtyp 的消息</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        小于0：接收消息队列中第一个类型值不小于 msgtyp 绝对值且值最小的消息</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msgflg    描述如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        - MSG_NOERROR：若返回的消息比 msgsz 字节多，则消息就会截断到 msgsz 字节，且不会通知消息到进程</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        - IPC_NOWAIT:若消息队列中没有相应类型的消息可以接收，则函数会立即返回</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">        - 0：函数调用阻塞等待接收到一条消息为止</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功返回 0， 失败返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure>
 <p>除了上述 API 之外，还可以用 <code>msgctl()</code> 函数来对消息队列进行设置，具体如下：</p>
-<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="C" data-theme="github-light github-dark"><code data-language="C" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>#include &lt;sys/types.h></span></span>
-<span data-line><span>#include &lt;sys/ipc.h></span></span>
-<span data-line><span>#include &lt;sys/msg.h></span></span>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/types.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/ipc.h></span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="punctuation">#include</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string"> &lt;sys/msg.h></span></span>
 <span data-line> </span>
-<span data-line><span>int msgctl(int msgqid, int cmd, struct msgid_ds *buf)</span></span>
-<span data-line><span>/*</span></span>
-<span data-line><span>参数：</span></span>
-<span data-line><span>- msqid 消息队列的队列 ID</span></span>
-<span data-line><span>- cmd   执行操作，如下：</span></span>
-<span data-line><span>    - IPC_STAT：读取消息队列的数据结构 msgid_ds ，并将其存储到 buf 位置</span></span>
-<span data-line><span>    - IPD_SET：设置消息队列的数据结构 msgid_ds 中的 ipc_perm 值，这个值取自 buf 参数</span></span>
-<span data-line><span>    - IPC_RMID：从系统内核中删除消息队列</span></span>
-<span data-line><span>- buf：描述消息队列的 msqid_ds 结构类型的变量</span></span>
-<span data-line><span>返回值</span></span>
-<span data-line><span>    成功返回 0， 失败返回 -1</span></span>
-<span data-line><span>*/</span></span></code></pre></figure></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;" data-token-type="function"> msgctl</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> msgqid</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important"> cmd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="keyword">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> msgid_ds </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;" data-token-type="operator">*</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;" data-token-type="important">buf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">/*</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">参数：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- msqid 消息队列的队列 ID</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- cmd   执行操作，如下：</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    - IPC_STAT：读取消息队列的数据结构 msgid_ds ，并将其存储到 buf 位置</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    - IPD_SET：设置消息队列的数据结构 msgid_ds 中的 ipc_perm 值，这个值取自 buf 参数</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    - IPC_RMID：从系统内核中删除消息队列</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">- buf：描述消息队列的 msqid_ds 结构类型的变量</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">返回值</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">    成功返回 0， 失败返回 -1</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;" data-token-type="comment">*/</span></span></code></pre></figure></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
                 s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
                 c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
                 C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
