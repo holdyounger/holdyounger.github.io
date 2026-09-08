@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>【.Net】clr.dll 逆向：GetFunctionPointer 决策链与 Precode 体系 | 蒙塔理斯</title><meta charset="utf-8"/><link rel="preload" href="../../../index-c87b6ad7.css" as="style"/><link rel="preload" href="../../../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto Sans SC:wght@400;700&amp;family=Noto Sans SC:ital,wght@0,400;0,600;1,400;1,600&amp;family=JetBrains Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="小M-Quartz"/><meta property="og:title" content="【.Net】clr.dll 逆向：GetFunctionPointer 决策链与 Precode 体系 | 蒙塔理斯"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="【.Net】clr.dll 逆向：GetFunctionPointer 决策链与 Precode 体系 | 蒙塔理斯"/><meta name="twitter:description" content="概述 基于 IDA 对 .NET Framework 4.8 clr.dll（x64）的逆向分析，还原 RuntimeMethodHandle.GetFunctionPointer() 背后的完整决策链——MethodDesc::TryGetMultiCallableAddrOfCode 的 9 条分支，以及每类方法（FCall / 已 JIT / precode / 临时入口）分别如何拿到 entrypoint。 关键字：#编程语言/DotNet/CLR 逆向/ida hook methoddesc precode 背景 在 .NET RASP / Hook 框架中，核心需求是拿到一个方法..."/><meta property="og:description" content="概述 基于 IDA 对 .NET Framework 4.8 clr.dll（x64）的逆向分析，还原 RuntimeMethodHandle.GetFunctionPointer() 背后的完整决策链——MethodDesc::TryGetMultiCallableAddrOfCode 的 9 条分支，以及每类方法（FCall / 已 JIT / precode / 临时入口）分别如何拿到 entrypoint。 关键字：#编程语言/DotNet/CLR 逆向/ida hook methoddesc precode 背景 在 .NET RASP / Hook 框架中，核心需求是拿到一个方法..."/><meta property="og:image:alt" content="概述 基于 IDA 对 .NET Framework 4.8 clr.dll（x64）的逆向分析，还原 RuntimeMethodHandle.GetFunctionPointer() 背后的完整决策链——MethodDesc::TryGetMultiCallableAddrOfCode 的 9 条分支，以及每类方法（FCall / 已 JIT / precode / 临时入口）分别如何拿到 entrypoint。 关键字：#编程语言/DotNet/CLR 逆向/ida hook methoddesc precode 背景 在 .NET RASP / Hook 框架中，核心需求是拿到一个方法..."/><meta property="og:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:url" content="https://holdyounger.github.io/static/og-image.png"/><meta name="twitter:image" content="https://holdyounger.github.io/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="holdyounger.github.io"/><meta property="og:url" content="https://holdyounger.github.io/b_code/csharp/coreclr源码学习/clr.dll逆向-getfunctionpointer与precode"/><meta property="twitter:url" content="https://holdyounger.github.io/b_code/csharp/coreclr源码学习/clr.dll逆向-getfunctionpointer与precode"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="概述 基于 IDA 对 .NET Framework 4.8 clr.dll（x64）的逆向分析，还原 RuntimeMethodHandle.GetFunctionPointer() 背后的完整决策链——MethodDesc::TryGetMultiCallableAddrOfCode 的 9 条分支，以及每类方法（FCall / 已 JIT / precode / 临时入口）分别如何拿到 entrypoint。 关键字：#编程语言/DotNet/CLR 逆向/ida hook methoddesc precode 背景 在 .NET RASP / Hook 框架中，核心需求是拿到一个方法..."/><meta name="generator" content="Quartz"/><link href="../../../index-c87b6ad7.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-7262b5a7.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-97198771.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-2335c6f6.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../../static/resource-style-0df53187.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script></head><body data-slug="b_code/csharp/coreclr源码学习/clr.dll逆向-getfunctionpointer与precode" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">小M-Quartz</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-318" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-318" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../b_code/">B_Code</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../b_code/csharp/">【.Net】概述</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../b_code/csharp/coreclr源码学习/">CoreCLR源码学习</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>【.Net】clr.dll 逆向：GetFunctionPointer 决策链与 Precode 体系</a></div></nav><h1 class="article-title">【.Net】clr.dll 逆向：GetFunctionPointer 决策链与 Precode 体系</h1><p show-comma="true" class="content-meta"><time datetime="2026-09-08T03:18:34.438Z">2026年9月08日</time><span>7分钟阅读</span></p><div class="encrypted-page-wrapper"></div></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>概述 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>基于 IDA 对 .NET Framework 4.8 clr.dll（x64）的逆向分析，还原 <code>RuntimeMethodHandle.GetFunctionPointer()</code> 背后的完整决策链——<code>MethodDesc::TryGetMultiCallableAddrOfCode</code> 的 9 条分支，以及每类方法（FCall / 已 JIT / precode / 临时入口）分别如何拿到 entrypoint。</p>
+<p>关键字：#编程语言/DotNet/CLR <a href="../../.././../../tags/逆向/ida" class="tag-link internal internal-link alias" data-slug="tags/逆向/ida">逆向/ida</a> <a href="../../.././../../tags/hook" class="tag-link internal internal-link alias" data-slug="tags/hook">hook</a> <a href="../../.././../../tags/methoddesc" class="tag-link internal internal-link alias" data-slug="tags/methoddesc">methoddesc</a> <a href="../../.././../../tags/precode" class="tag-link internal internal-link alias" data-slug="tags/precode">precode</a></p>
+</div>
+</blockquote>
+
+<h2 id="背景">背景<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#背景" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在 .NET RASP / Hook 框架中，核心需求是拿到一个方法的真实 native code 入口地址。最常用的 <code>RuntimeMethodHandle.GetFunctionPointer()</code> <strong>不保证返回真实 JIT 代码</strong>——很多情况下返回的是 precode（跳板 stub）。要理解它的返回语义，必须深入 clr.dll 的决策函数 <code>MethodDesc::TryGetMultiCallableAddrOfCode</code>。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>分析对象 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li>clr.dll 4.8.4795.0（x64，<code>clr.pdb</code> 已入 IDA）</li>
+<li>配套复现工程：<code>FunctionPointerDemo</code>（net48/net9.0 双框架，<code>D:\Montarius\source\Windows-API-Usage\.Net-Code\FunctionPointerDemo\</code>）</li>
+</ul>
+</div>
+</blockquote>
+<h2 id="getfunctionpointer-调用链">GetFunctionPointer 调用链<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#getfunctionpointer-调用链" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><code>托管层   mi.MethodHandle.GetFunctionPointer()
+              ↓ QCall
+CLR 原生  RuntimeMethodHandle::GetFunctionPointer  (0x180066080)
+              ↓
+         MethodDesc::GetMultiCallableAddrOfCode   (0x18003ddd8)
+              ↓ 失败则 FuncPtrStubs::GetFuncPtrStub 兜底
+CLR 核心  MethodDesc::TryGetMultiCallableAddrOfCode  (0x18003de10)  ← 核心决策点
+</code></pre>
+<h2 id="trygetmulticallableaddrofcode-完整决策树">TryGetMultiCallableAddrOfCode 完整决策树<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trygetmulticallableaddrofcode-完整决策树" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>入参 <code>accessFlags</code>（GetFunctionPointer 传 <code>CORINFO_ACCESS_UNMANAGED_CALLER_MAYBE|LDFTN</code>=16）。决策顺序（每条分支 = 一种方法形态拿 entrypoint 的方式）：</p>
+<pre><code>TryGetMultiCallableAddrOfCode(md, accessFlags)
+│
+├─① IsGenericMethodDefinition(md)          → 抛 InvalidOperationException（未实例化泛型不可调）
+│
+├─② IsWrapperStub(md) || IsEnCAddedMethod(md)
+│      → GetOrCreatePrecode() → GetMethodEntryPoint()
+│      【wrapper stub（unboxing/实例化 stub）与 EnC 新增方法：先确保有 precode，返回稳定入口】
+│
+├─③ accessFlags 无 UNMANAGED_CALLER 且 IsRemotingInterceptedViaVirtualDispatch(md)
+│      → CRemotingServices::GetNonVirtualEntryPointForVirtualMethod(md)
+│      【Remoting 拦截：虚分发被拦截的虚方法，返回非虚入口点（remoting 桩）】
+│
+├─④ Module::IsEditAndContinueEnabled(md 的模块)
+│      → GetOrCreatePrecode() → GetMethodEntryPoint()
+│      【EnC 启用的模块：必须用可回 patch 的 precode 入口，保证热更新时可改写】
+│
+├─⑤ (b6 &amp; 7) == mcFCall(1)  ←★ 读 MethodDesc+6 低 3 位分类位
+│      且 非remoting拦截 且 MethodTable flags 条件满足
+│      → ECall::GetFCallImpl(md)                ← 直接返回 FCall 的原生实现地址！
+│      【FCall 方法：绕过 precode 直达 ECall 表里的 C++ 实现】
+│
+├─⑥ 否则 IsPointingToNativeCode(md)          ← 读 b[3]&amp;1(HasStableEntryPoint) 与 b[3]&amp;2(HasNativeCodeSlot)
+│      → GetNativeCode(md)                     ← 直接返回已 JIT 的真实代码
+│      【★ 最理想分支：已 JIT 且无 precode 间接，entry == realCode】
+│
+├─⑦ b[3]&amp;1 HasStableEntryPoint
+│      → GetMethodEntryPoint(md)               ← 返回方法当前入口（可能是 precode）
+│      【已 JIT 但仍带 precode 的方法】
+│
+├─⑧ MayHaveNativeCode(md)==0 或 IsRemotingInterceptedViaPrestub(md)
+│      → GetOrCreatePrecode(md)
+│      【★ MayHaveNativeCode 读 MethodDesc+6 的 0x20(mdcStatic) 位。
+│         判定失败 = &quot;不可能有 native code&quot; → 只能给 precode（Hook 拿不到真实函数头的根因之一）】
+│
+└─⑨ md 所在 chunk 的 word >= 0
+       → GetTemporaryEntryPoint(md)            ← 临时入口点（PrecodeFixupThunk 场景）
+   否则 → return NULL
+</code></pre>
+<p><strong>分支语义速记</strong>：</p>
+<ul>
+<li>⑤ FCall → 直达 C++ 实现</li>
+<li>⑥ 已 JIT 无 precode → 直达 native code（Hook 最理想）</li>
+<li>⑦ 已 JIT 有 precode → 稳定入口（可能 E8/E9 跳板，需偏移跟随）</li>
+<li>⑧⑨ 未 JIT / 异常场景 → precode / 临时入口（<strong>Hook 不能直接 patch 这里</strong>）</li>
+</ul>
+<h2 id="各被调函数语义clrdll-实测反编译">各被调函数语义（clr.dll 实测反编译）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#各被调函数语义clrdll-实测反编译" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>函数</th><th>地址</th><th>功能</th></tr></thead><tbody><tr><td><code>IsGenericMethodDefinition</code></td><td>0x18000e19c</td><td>是否泛型方法定义（未实例化）。是 → 直接抛 InvalidOperationException，Hook 不能挂未实例化泛型</td></tr><tr><td><code>IsWrapperStub</code></td><td>0x180029228</td><td>是否 unboxing stub 或 instantiating stub（泛型包装桩）。这类方法的”入口”语义是桩本身，须先 GetOrCreatePrecode</td></tr><tr><td><code>IsEnCAddedMethod</code></td><td>0x18002ad0c</td><td>是否 EnC（Edit and Continue）运行期新增方法</td></tr><tr><td><code>IsRemotingInterceptedViaVirtualDispatch</code></td><td>0x18003dd64</td><td><code>MayBeRemotingIntercepted &amp;&amp; IsVtableMethod</code>——remoting 透明代理场景的虚方法拦截</td></tr><tr><td><code>IsRemotingInterceptedViaPrestub</code></td><td>0x18001123c</td><td><code>MayBeRemotingIntercepted &amp;&amp; !IsVtableMethod &amp;&amp; !RequiresInstArg</code>——非虚方法的 remoting 拦截走 prestub</td></tr><tr><td><code>MayBeRemotingIntercepted</code></td><td>0x18003dd90</td><td>开头 <code>test [rcx+6],0x20</code>（mdcStatic）→ 静态方法直接 return 0；再排除 Object ctor/finalizer</td></tr><tr><td><code>IsPointingToNativeCode</code></td><td>0x18003df00</td><td>读 b[3]&amp;1（HasStableEntryPoint）+ b[3]&amp;2（HasNativeCodeSlot）+ <code>Precode::IsPointingTo</code>——判断 entry 是否已指向真实 JIT 代码</td></tr><tr><td><code>MayHaveNativeCode</code></td><td>0x180010b70</td><td>综合分类位 + MethodTable flags（0xF0000/0x80000030）+ byte+6 的 0x20 位，判定”此方法可能存在 native code”。失败 → GetOrCreatePrecode</td></tr><tr><td><code>GetNativeCode</code></td><td>0x1800103dc</td><td>读 b[3]&amp;8（HasNativeCodeSlot）→ 按 <code>s_ClassificationSizeTable[分类]</code> 定位代码槽指针，<code>&amp; ~1</code> 清标志位。无 slot 返回 0</td></tr><tr><td><code>GetMethodEntryPoint</code></td><td>0x180006c78</td><td>读方法当前入口点槽：有 native code slot 走 ClassificationSizeTable 定位；否则从 MethodTable slot / chunk 间接解析</td></tr><tr><td><code>GetTemporaryEntryPoint</code></td><td>0x18001df40</td><td>沿 MethodDescChunk 的 TempEntryPoints 表找/分配临时入口（PrecodeFixupThunk 形态的来源之一）</td></tr><tr><td><code>GetOrCreatePrecode</code></td><td>0x1801736dc</td><td>有 TempEntry 就地升级为 precode（AllocMemTracker 分配），否则新分配 Precode 并回填 entrypoint</td></tr><tr><td><code>ECall::GetFCallImpl</code></td><td>0x180011578</td><td>查 ECall 表拿 FCall 的 C++ 实现地址（<code>Console.WriteLine</code>、<code>String.Compare</code> 这类内部方法不走 JIT）</td></tr><tr><td><code>CRemotingServices::GetNonVirtualEntryPointForVirtualMethod</code></td><td>0x18003e364</td><td>remoting 场景：虚方法被透明代理拦截时返回非虚入口</td></tr></tbody></table></div>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>MethodDesc+6 字节位语义（net48 x64） </p></div>
+                  
+                </div>
+<div class="callout-content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>位</th><th>含义</th><th>实测佐证</th></tr></thead><tbody><tr><td><code>&amp; 7</code></td><td>分类（mcIL=0/mcFCall=1/mcPInvoke=2/mcEEImpl=3/mcArray=4/mcInstantiated=5/mcDynamic=7）</td><td><code>String.ToUpper</code>=0x08</td></tr><tr><td><code>0x08</code></td><td>mdcHasNonVtableSlot</td><td>实例方法 0x08、静态方法 0x28</td></tr><tr><td><code>0x20</code></td><td><strong>mdcStatic（静态缓存位）</strong></td><td><code>MayBeRemotingIntercepted</code> 读此位</td></tr><tr><td><code>0x80</code></td><td>mdcRequiresInheritanceCheck</td><td>继承/override 链方法置位</td></tr></tbody></table></div>
+<p>⚠️ 注意：lordmilko/DebugTools 的 <code>mdcStatic=0x0080</code> 是 16 位 flags 新定义，对 net48 x64 的 byte+6 <strong>不适用</strong>。CoreCLR 现代源码布局已重构（<code>mdfStatic = 0x0080</code> 在 <code>m_wFlags</code>），不能拿新源码套旧字节偏移。</p>
+</div>
+</blockquote>
+<h2 id="实测验证要点">实测验证要点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实测验证要点" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ol>
+<li><strong>PrepareMethod 与 InvocationFlags 无关</strong>：<code>ReflectionInvocation::PrepareMethod</code>（FCall 0x18065eca0）无条件走 <code>PrepareMethodDesc → MethodCallGraphPreparer::Run</code> 强制 JIT。<code>m_invocationFlags</code> 是 mscorlib 托管侧的反射调用准入缓存，native 侧零消费。</li>
+<li><strong>md+8（int32）= 真实代码相对 MethodDesc 的偏移</strong>：<code>realCode = md + ReadInt32(md+8) + 8</code>——任何入口形态下都能跟随到真实代码。</li>
+<li><strong>E8 跳板目标</strong>：未 JIT 方法的 entry <code>E8 rel32</code> → clr.dll 共享 <code>PrecodeFixupThunk</code>；<code>PrepareMethod</code> 后回填为 <code>E9 → 真实函数头</code>。</li>
+<li><strong>扫描实验</strong>：21128 个 BCL 方法中 2171 个带 mdcRequiresInheritanceCheck(0x80)，无手术 PrepareMethod 后仍 thunk 100 个（全为 async/Task/IL stub 类，by design）。</li>
+</ol>
+<h2 id="参考">参考<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#参考" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>CoreCLR 源码对照：<code>src/coreclr/vm/method.cpp</code>（<code>TryGetMultiCallableAddrOfCode</code>，main 分支行号 2245）</li>
+<li>precode 结构：<code>src/coreclr/vm/precode.h</code>（<code>StubPrecodeData</code>/<code>FixupPrecodeData</code>）</li>
+<li>本地复现工程：<code>Windows-API-Usage/.Net-Code/FunctionPointerDemo/</code>（含 ReproMdcStatic / ReproMd8Probe / ReproSurgeryHunter 三个实验）</li>
+<li>关联工作文档：<a href="../../../【逆向】clr.dll-preparemethod-与-hookinfo-mdcstatic-位手术-20260904" class="internal internal-link alias" data-slug="【逆向】clr.dll-preparemethod-与-hookinfo-mdcstatic-位手术-20260904">【逆向】clr.dll PrepareMethod 与 HookInfo mdcStatic 位手术-20260904</a>（DNRSP 视角的 HookInfo 位手术分析）</li>
+</ul></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc"><button type="button" class="toc-header" aria-controls="toc-256" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-0" class="toc-content overflow"><li class="depth-0"><a href="#背景" data-for="背景">背景</a></li><li class="depth-0"><a href="#getfunctionpointer-调用链" data-for="getfunctionpointer-调用链">GetFunctionPointer 调用链</a></li><li class="depth-0"><a href="#trygetmulticallableaddrofcode-完整决策树" data-for="trygetmulticallableaddrofcode-完整决策树">TryGetMultiCallableAddrOfCode 完整决策树</a></li><li class="depth-0"><a href="#各被调函数语义clrdll-实测反编译" data-for="各被调函数语义clrdll-实测反编译">各被调函数语义（clr.dll 实测反编译）</a></li><li class="depth-0"><a href="#实测验证要点" data-for="实测验证要点">实测验证要点</a></li><li class="depth-0"><a href="#参考" data-for="参考">参考</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>反向链接</h3><ul id="list-0" class="overflow"><li><a href="../../../wiki/调试技术/w3wp崩溃-clrcas栈走查getsecuritydescriptor空指针" class="internal">【调试技术】w3wp 崩溃分析：P/Invoke 触发 CLR CAS 走查导致 GetSecurityDescriptor 空指针</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v5.0.0</a> © 2026</p><ul><li><a href="https://github.com/holdyounger/holdyounger.github.io">GitHub</a></li></ul></footer></div></div></body><script src="../../../static/resource-after-aaacaeae.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="https://viewer.diagrams.net/js/viewer-static.min.js" type="application/javascript" data-persist="true"></script><script src="../../../static/resource-after-f8b219ab.js" type="application/javascript" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript-d8b36774.js" type="module" data-persist="true"></script></html>
