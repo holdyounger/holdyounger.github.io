@@ -1,0 +1,73 @@
+@startuml
+!theme materia
+title x86 4.8.1 (9181) PrepareMethod 完整调用流 — 0x80 登记路径 vs 0x20 JIT 路径
+
+start
+:RuntimeHelpers.PrepareMethod(handle, instantiation);
+:mscorlib QCall stub\npush 0 / mov ecx,[esp+8] / xor edx,edx;
+:clr!ReflectionInvocation__PrepareMethod\n(0x1043D380)\nedi = handle[+0x28] = MethodDesc;
+
+if (test 0x400: abstract 方法?) then (是)
+  :抛 Argument_CannotPrepareAbstract; <<#FFCCCC>>
+  stop
+else (否)
+endif
+
+:SetFlag6 预调 + 泛型处理\n(edx≠0 时 instantiation 校验/重组);
+:PrepareMethodDesc(pMD, 0, 5栈参)\n0x1007D996;
+:GetModuleStruct(pMD) 0x1001EFE6;
+
+if (IsRegistered?\n0x100DC451 二分查找\n[modstruct+0x368] 登记表) then (已登记)
+  :SetFlag6(6) + 登记进 module 表; <<#E8E8E8>>
+  :返回 —— 无 JIT;
+  stop
+else (未登记)
+endif
+
+:InitRecord(0x100937FC)\nrecord 初始化 (0x10 字节);
+:FillEnqueue(0x100DC6A9)\n字段填充 + 入队;
+
+partition "Finalize(0x1009387B) 执行循环 —— A/B 分岔区" {
+  :遍历 record 队列;
+  :SetFlag6(pMD, 6);
+  if (module flags & 0x400 ?) then (置位)
+    :跳过该项;
+  else (未置位)
+  endif
+  if (ClsCmpGate 0x10038AD7\n[MD+6]&7 ∈ {6,5} ?) then (匹配)
+    :FCallCheck(0x100172F9);
+    if (通过?) then (通过)
+      :ExecuteGate(0x100D6B06)\ncall [record+0xC] vtable 间接;
+      :StateMachine(0x101838EC);
+      :**执行 JIT**\n+3: 08→39\nmd+8 回填 code_real_addr-8; <<#CCFFCC>>
+      note right
+        A 记录（MD+6=0x20）
+        走到此处
+      end note
+    else (不通过)
+      :跳过（不 JIT）;
+      note right
+        0x80 方法被拦的
+        具体 gate 指令未逐条锁定
+        （SetFlag6 内部 0x1004F608
+        chunk 访问段为嫌疑区）
+      end note
+    endif
+  else (不匹配)
+    :跳过（不 JIT）;
+    note right
+      B 记录（MD+6=0x80）
+      停在此层
+    end note
+  endif
+}
+
+:返回;
+stop
+legend right
+  0x80 = mdcRequiresInheritanceCheck
+  （override 链未解析，保守：只登记，等首次调用激活）
+  0x20 = mdcStatic
+  （无继承解析需求 → gate 全放行 → 直接 JIT）
+end legend
+@enduml
