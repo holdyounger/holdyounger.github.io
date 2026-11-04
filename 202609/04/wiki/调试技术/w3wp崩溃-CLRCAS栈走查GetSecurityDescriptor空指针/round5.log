@@ -1,0 +1,479 @@
+=== SESSION: cdb-1e6443d0 ===
+
+########## CMD: .sympath D:\symbols\flat ##########
+Command: .sympath D:\symbols\flat
+
+Output:
+```
+0:057> Symbol search path is: D:\symbols\flat
+Expanded Symbol search path is: d:\symbols\flat
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             D:\symbols\flat
+```
+
+########## CMD: .reload /f clr.dll ##########
+Command: .reload /f clr.dll
+
+Output:
+```
+
+```
+
+########## CMD: .cordll -lp D:\symbols\dacflat ##########
+Command: .cordll -lp D:\symbols\dacflat
+
+Output:
+```
+0:057> CLR DLL status: Loaded DLL D:\symbols\dacflat\mscordacwks_AMD64_AMD64_4.8.4795.00.dll
+```
+
+########## CMD: .load D:\symbols\dacflat\SOS_AMD64_AMD64_4.8.4795.00.dll ##########
+Command: .load D:\symbols\dacflat\SOS_AMD64_AMD64_4.8.4795.00.dll
+
+Output:
+```
+
+```
+
+########## CMD: u clr+0x5a8c0 ##########
+Command: u clr+0x5a8c0
+
+Output:
+```
+0:057> clr!Assembly::GetSecurityDescriptor+0x4:
+00007ffb`57aaa8c0 ec              in      al,dx
+00007ffb`57aaa8c1 20488b          and     byte ptr [rax-75h],cl
+00007ffb`57aaa8c4 c2488b          ret     8B48h
+00007ffb`57aaa8c7 d9              ???
+00007ffb`57aaa8c8 4885d2          test    rdx,rdx
+00007ffb`57aaa8cb 0f8487000000    je      clr!Assembly::GetSecurityDescriptor+0x35 (00007ffb`57aaa958)
+00007ffb`57aaa8d1 488b4b58        mov     rcx,qword ptr [rbx+58h]
+00007ffb`57aaa8d5 488bd0          mov     rdx,rax
+```
+
+########## CMD: r ##########
+Command: r
+
+Output:
+```
+0:057> rax=0000000000000000 rbx=000002a6feaa4c40 rcx=00007ffaf9615018
+rdx=000002a6fe7312a0 rsi=000002a6fe7312a0 rdi=000000c4786fa9a0
+rip=00007ffb57aaa8eb rsp=000000c4786f9240 rbp=00007ffaf9619228
+ r8=000002a6feaa4c40  r9=00007ffaf9615ae8 r10=000000c4786fadd0
+r11=000000c4786f92b0 r12=0000000000000001 r13=000002a6feaa4c40
+r14=000000c4786f9320 r15=0000000000000000
+iopl=0         nv up ei pl zr na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010246
+clr!Assembly::GetSecurityDescriptor+0x2b:
+00007ffb`57aaa8eb 488b4070        mov     rax,qword ptr [rax+70h] ds:00000000`00000070=????????????????
+```
+
+########## CMD: !clrstack -p ##########
+Command: !clrstack -p
+
+Output:
+```
+0:057> OS Thread Id: 0x49d4 (57)
+        Child SP               IP Call Site
+000000c4786fa968 00007ffb57aaa8eb [GCFrame: 000000c4786fa968]
+000000c4786faab8 00007ffb57aaa8eb [GCFrame: 000000c4786faab8]
+000000c4786fab38 00007ffb57aaa8eb [DebuggerSecurityCodeMarkFrame: 000000c4786fab38]
+000000c4786fabf8 00007ffb57aaa8eb [HelperMethodFrame: 000000c4786fabf8] System.StubHelpers.StubHelpers.DemandPermission(IntPtr)
+000000c4786fae10 00007ffaf85a7873 [InlinedCallFrame: 000000c4786fae10] DnrspEngine.HookLib.Api64.CheckHookConfig(System.String, DnrspEngine.HookLib.HookCheckType, System.String, IntPtr, Int32)
+000000c4786fadd0 00007ffaf85a7873 DomainBoundILStubClass.IL_STUB_PInvoke(System.String, DnrspEngine.HookLib.HookCheckType, System.String, IntPtr, Int32)
+    PARAMETERS:
+        <no data>
+        <no data>
+        <no data>
+        <no data>
+        <no data>
+
+000000c4786faef0 00007ffaf85a76fe DnrspEngine.Tools.ConfigManager.CheckConfig(System.String, DnrspEngine.HookLib.HookCheckType, System.String)
+    PARAMETERS:
+        this (0x000000c4786fafb0) = 0x000002a3fd80a2d8
+        hookName (0x000000c4786fafb8) = 0x000002a3fd809358
+        checkType (0x000000c4786fafc0) = 0x0000000100000001
+        input (0x000000c4786fafc8) = 0x000002a60f1ccad0
+
+000000c4786fafb0 00007ffaf85a73c4 DnrspEngine.Tools.ConfigManager.HitUrlWhitelist(System.String, System.String)
+    PARAMETERS:
+        this (0x000000c4786fb040) = 0x000002a3fd80a2d8
+        hookName (0x000000c4786fb048) = 0x000002a3fd809358
+        url (0x000000c4786fb050) = 0x000002a60f1ccad0
+
+000000c4786fb040 00007ffaf85a5e1c DnrspEngine.Hooks.Mscorlib.DnrspBinaryFormatter+SecureSerializationBinder.BindToType(System.String, System.String)
+    PARAMETERS:
+        this (0x000000c4786fb3b0) = 0x000002a60f5afa88
+        assemblyName (0x000000c4786fb3b8) = 0x000002a57d491ab0
+        typeName (0x000000c4786fb3c0) = 0x000002a60f5b0950
+
+000000c4786fb3b0 00007ffb114ad57a System.Runtime.Serialization.Formatters.Binary.ObjectReader.Bind(System.String, System.String)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5afc00
+        assemblyString (<CLR reg>) = 0x000002a57d491ab0
+        typeString (<CLR reg>) = 0x000002a60f5b0950
+
+000000c4786fb3f0 00007ffb114ad483 System.Runtime.Serialization.Formatters.Binary.ObjectReader.GetType(System.Runtime.Serialization.Formatters.Binary.BinaryAssemblyInfo, System.String)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5afc00
+        assemblyInfo (<CLR reg>) = 0x000002a60f5b0140
+        name (<CLR reg>) = 0x000002a60f5b0950
+
+000000c4786fb440 00007ffb114ad15a System.Runtime.Serialization.Formatters.Binary.ObjectMap..ctor(System.String, System.String[], System.Runtime.Serialization.Formatters.Binary.BinaryTypeEnum[], System.Object[], Int32[], System.Runtime.Serialization.Formatters.Binary.ObjectReader, Int32, System.Runtime.Serialization.Formatters.Binary.BinaryAssemblyInfo, System.Runtime.Serialization.Formatters.Binary.SizedArray)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5b0f08
+        objectName = <no data>
+        memberNames (<CLR reg>) = 0x000002a60f5b09a8
+        binaryTypeEnumA (<CLR reg>) = 0x000002a60f5b09f8
+        typeInformationA (<CLR reg>) = 0x000002a60f5b0a30
+        memberAssemIds (<CLR reg>) = 0x000002a60f5b0a80
+        objectReader (<CLR reg>) = 0x000002a60f5afc00
+        objectId = <no data>
+        assemblyInfo = <no data>
+        assemIdToAssemblyTable (0x000000c4786fb588) = 0x000002a60f5b0e98
+
+000000c4786fb540 00007ffb114acd0e System.Runtime.Serialization.Formatters.Binary.__BinaryParser.ReadObjectWithMapTyped(System.Runtime.Serialization.Formatters.Binary.BinaryObjectWithMapTyped)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5afcf0
+        record (<CLR reg>) = 0x000002a60f5b0908
+
+000000c4786fb620 00007ffb114abf29 System.Runtime.Serialization.Formatters.Binary.__BinaryParser.Run()
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5afcf0
+
+000000c4786fb680 00007ffb114abbfd System.Runtime.Serialization.Formatters.Binary.ObjectReader.Deserialize(System.Runtime.Remoting.Messaging.HeaderHandler, System.Runtime.Serialization.Formatters.Binary.__BinaryParser, Boolean, Boolean, System.Runtime.Remoting.Messaging.IMethodCallMessage)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f5afc00
+        handler (<CLR reg>) = 0x0000000000000000
+        serParser = <no data>
+        fCheck = <no data>
+        isCrossAppDomain = <no data>
+        methodCallMessage (0xff86eb000007f098) = <unable to retrieve data>
+
+000000c4786fb6f0 00007ffb114ab907 System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Deserialize(System.IO.Stream, System.Runtime.Remoting.Messaging.HeaderHandler, Boolean, Boolean, System.Runtime.Remoting.Messaging.IMethodCallMessage)
+    PARAMETERS:
+        this = <no data>
+        serializationStream = <no data>
+        handler = <no data>
+        fCheck = <no data>
+        isCrossAppDomain = <no data>
+        methodCallMessage = <no data>
+
+000000c4786fb790 00007ffb11c401e1 System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Deserialize(System.IO.Stream)
+    PARAMETERS:
+        this = <no data>
+        serializationStream = <no data>
+
+000000c4786fb7d0 00007ffafe720032 GrapeCity.Licenses.PowerToolsLicenseProvider.DeserializeLicenseStream(System.IO.Stream, System.String, System.String)
+    PARAMETERS:
+        this = <no data>
+        stream = <no data>
+        fileName (<CLR reg>) = 0x000002a60f5ae780
+        licensedComponentType = <no data>
+
+000000c4786fb840 00007ffafe71fbf5 GrapeCity.Licenses.PowerToolsLicenseProvider.a(System.IO.Stream, System.String, GrapeCity.Licenses.ProductInfo, System.String)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f483db0
+        A_0 (0x000000c4786fb8d8) = 0x000002a60f5ae948
+        A_1 (0x000000c4786fb8e0) = 0x000002a60f5ae780
+        A_2 = <no data>
+        A_3 (0x000000c4786fb8f0) = 0x000002a60f48d650
+
+000000c4786fb8d0 00007ffafe71f8d1 GrapeCity.Licenses.PowerToolsLicenseProvider.LoadLicenseData(System.IO.Stream, System.String, GrapeCity.Licenses.ProductInfo, System.String, System.Collections.IDictionary)
+    PARAMETERS:
+        this = <no data>
+        stream = <no data>
+        fileName = <no data>
+        product = <no data>
+        licensedComponentType (0x000000c4786fb970) = 0x000002a60f48d650
+        licenseDataCache (0x000000c4786fb978) = 0x000002a60f5aec88
+
+000000c4786fb950 00007ffafe71f5ea GrapeCity.Licenses.PowerToolsLicenseProvider.a(System.Reflection.Assembly, GrapeCity.Licenses.ProductInfo, System.String)
+    PARAMETERS:
+        this = <no data>
+        A_0 = <no data>
+        A_1 = <no data>
+        A_2 = <no data>
+
+000000c4786fb9f0 00007ffafe71f08e GrapeCity.Licenses.PowerToolsLicenseProvider.GetRunTimeLicenseFromAssembly(System.Reflection.Assembly, GrapeCity.Licenses.ProductInfo, System.String)
+    PARAMETERS:
+        this = <no data>
+        assembly = <no data>
+        product = <no data>
+        licensedComponentType = <no data>
+
+000000c4786fba40 00007ffafe71e860 GrapeCity.Licenses.PowerToolsLicenseProvider.GetRunTimeLicense(System.Type, GrapeCity.Licenses.ProductInfo, GrapeCity.Licenses.PowerToolsLicense ByRef, System.Reflection.Assembly ByRef)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f483db0
+        componentType = <no data>
+        product (<CLR reg>) = 0x000002a60f483f30
+        license (<CLR reg>) = 0x000000c4786fbae8
+        licenseLocation (<CLR reg>) = 0x000000c4786fbb60
+
+000000c4786fbab0 00007ffafe71e4ed GrapeCity.Licenses.Spread7BaseLicenseProvider.GetRunTimeLicense(System.ComponentModel.LicenseContext, System.Type, GrapeCity.Licenses.PowerToolsLicense ByRef, System.Reflection.Assembly ByRef)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f483db0
+        context = <no data>
+        componentType (<CLR reg>) = 0x000002a60f4836d8
+        license (<CLR reg>) = 0x000000c4786fbb68
+        licenseLocation (<CLR reg>) = 0x000000c4786fbb60
+
+000000c4786fbb20 00007ffafe71e15e GrapeCity.Licenses.PowerToolsLicenseProvider.GetLicense(System.ComponentModel.LicenseContext, System.Type, System.Object, Boolean)
+    PARAMETERS:
+        this (0x000000c4786fbba0) = 0x000002a60f483db0
+        context (0x000000c4786fbba8) = 0x000002a60f483740
+        type (0x000000c4786fbbb0) = 0x000002a60f4836d8
+        instance (0x000000c4786fbbb8) = 0x000002a60f480010
+        allowExceptions (0x000000c4786fbbc0) = 0x0000000000000001
+
+000000c4786fbba0 00007ffb465f4645 System.ComponentModel.LicenseManager.ValidateInternalRecursive(System.ComponentModel.LicenseContext, System.Type, System.Object, Boolean, System.ComponentModel.License ByRef, System.String ByRef)
+    PARAMETERS:
+        context (<CLR reg>) = 0x000002a60f483740
+        type (<CLR reg>) = 0x000002a60f4836d8
+        instance (<CLR reg>) = 0x000002a60f480010
+        allowExceptions (<CLR reg>) = 0x0000000000000001
+        license (<CLR reg>) = 0x000000c4786fbc58
+        licenseKey (<CLR reg>) = 0x000000c4786fbc50
+
+000000c4786fbc20 00007ffb465f47ef System.ComponentModel.LicenseManager.Validate(System.Type, System.Object)
+    PARAMETERS:
+        type (<CLR reg>) = 0x000002a60f4836d8
+        instance (<CLR reg>) = 0x000002a60f480010
+
+000000c4786fbc80 00007ffafe71d5b5 FarPoint.Win.Spread.FpSpread..ctor()
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f480010
+
+000000c4786fbcf0 00007ffafe71a71c Kingdee.BOS.ExcelToolHelper.ExcelHelper..ctor(Kingdee.BOS.Core.DynamicForm.IDynamicFormView)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f47f728
+        view = <no data>
+
+000000c4786fbd30 00007ffafe715e1d Kingdee.K3.FIN.Business.PlugIn.ARAP.Statement.ExportData()
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a586999150
+
+000000c4786fbdb0 00007ffafe6fba78 Kingdee.K3.FIN.Business.PlugIn.ARAP.Statement.BarItemClick(Kingdee.BOS.Core.DynamicForm.PlugIn.Args.BarItemClickEventArgs)
+    PARAMETERS:
+        this = <no data>
+        e (<CLR reg>) = 0x000002a60f1d41b0
+
+000000c4786fbe10 00007ffafa73a200 Kingdee.BOS.Core.DynamicForm.PlugIn.DynamicFormViewPlugInProxy.FireBarItemClick(Kingdee.BOS.Core.DynamicForm.PlugIn.Args.BarItemClickEventArgs)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a2801e5d78
+        e (<CLR reg>) = 0x000002a60f1d41b0
+
+000000c4786fbe60 00007ffafa71cd6e Kingdee.BOS.Web.DynamicForm.DynamicWebFormView.BarItemClick(System.String, System.String, Kingdee.BOS.Core.Metadata.BarElement.BarDataManager, Int32)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a2801e6908
+        parentKey (<CLR reg>) = 0x000002a57d431420
+        barItemKey (<CLR reg>) = 0x000002a60f1cf6b0
+        bar (<CLR reg>) = 0x000002a508488cd0
+        bartype (<CLR reg>) = 0x0000000000000000
+
+000000c4786fbf00 00007ffafa8199f3 Kingdee.BOS.Web.DynamicForm.DynamicWebFormView.MainBarItemClick(System.String)
+    PARAMETERS:
+        this = <no data>
+        barItemKey = <no data>
+
+000000c4786fbf50 00007ffafa71c306 Kingdee.BOS.Web.DynamicForm.DynamicWebFormController.MainBarItemClick(System.String, Kingdee.BOS.JSON.JSONArray)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a60f1d1eb8
+        itemKey = <no data>
+        postDatas = <no data>
+
+000000c4786fc1c0 00007ffb57a56893 [DebuggerU2MCatchHandlerFrame: 000000c4786fc1c0]
+000000c4786fc508 00007ffb57a56893 [HelperMethodFrame_PROTECTOBJ: 000000c4786fc508] System.RuntimeMethodHandle.InvokeMethod(System.Object, System.Object[], System.Signature, Boolean)
+000000c4786fc680 00007ffb11420a24 System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(System.Object, System.Object[], System.Object[])
+    PARAMETERS:
+        this = <no data>
+        obj = <no data>
+        parameters (<CLR reg>) = 0x000002a60f1d3160
+        arguments (<CLR reg>) = 0x000002a60f1d32a8
+
+000000c4786fc6f0 00007ffb11438442 System.Reflection.RuntimeMethodInfo.Invoke(System.Object, System.Reflection.BindingFlags, System.Reflection.Binder, System.Object[], System.Globalization.CultureInfo)
+    PARAMETERS:
+        this = <no data>
+        obj = <no data>
+        invokeAttr = <no data>
+        binder = <no data>
+        parameters = <no data>
+        culture = <no data>
+
+000000c4786fc770 00007ffaf98c35ca Kingdee.BOS.ServiceFacade.ServicesStub.DynamicForm.DynamicFormService.Call(System.String, System.String, System.String, System.String, System.Collections.IList, System.Web.Script.Serialization.JavaScriptSerializer, System.String)
+    PARAMETERS:
+        this (0x000000c4786fc8e0) = 0x000002a60f1cd230
+        serviceName = <no data>
+        pageId (0x000000c4786fc8f0) = 0x000002a60f1aca50
+        layoutId = <no data>
+        methodName = <no data>
+        pparams = <no data>
+        js = <no data>
+        dbId = <no data>
+
+000000c4786fc8e0 00007ffaf98c19cb Kingdee.BOS.ServiceFacade.ServicesStub.DynamicForm.DynamicFormService.Call(System.String, System.String, System.String, Kingdee.BOS.JSON.JSONArray)
+    PARAMETERS:
+        this = <no data>
+        serviceName = <no data>
+        pageId = <no data>
+        methodName = <no data>
+        pparams = <no data>
+
+000000c4786fcba0 00007ffb57a56893 [DebuggerU2MCatchHandlerFrame: 000000c4786fcba0]
+000000c4786fcee8 00007ffb57a56893 [HelperMethodFrame_PROTECTOBJ: 000000c4786fcee8] System.RuntimeMethodHandle.InvokeMethod(System.Object, System.Object[], System.Signature, Boolean)
+000000c4786fd060 00007ffb11420a24 System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(System.Object, System.Object[], System.Object[])
+    PARAMETERS:
+        this = <no data>
+        obj = <no data>
+        parameters (<CLR reg>) = 0x000002a60f1cd310
+        arguments (<CLR reg>) = 0x000002a60f1d0430
+
+000000c4786fd0d0 00007ffb11438442 System.Reflection.RuntimeMethodInfo.Invoke(System.Object, System.Reflection.BindingFlags, System.Reflection.Binder, System.Object[], System.Globalization.CultureInfo)
+    PARAMETERS:
+        this = <no data>
+        obj = <no data>
+        invokeAttr = <no data>
+        binder = <no data>
+        parameters = <no data>
+        culture = <no data>
+
+000000c4786fd150 00007ffaf9119bac Kingdee.BOS.ServiceFacade.KDServiceFx.ServiceExecutor.Execute(Kingdee.BOS.ServiceFacade.KDServiceFx.KDServiceContext, Kingdee.BOS.ServiceFacade.KDServiceFx.ServiceType, System.String[], Kingdee.BOS.ServiceFacade.SerializerProxy, Kingdee.BOS.ServiceFacade.KDServiceFx.ServiceType)
+    PARAMETERS:
+        this (0x000000c4786fd230) = 0x000002a5fd45fe08
+        context (0x000000c4786fd238) = 0x000002a60f18cd00
+        svcType (0x000000c4786fd240) = 0x000002a5ff286788
+        paraValues (0x000000c4786fd248) = 0x000002a60f18e9d8
+        serializeProxy (<CLR reg>) = 0x000002a60f1d02a8
+        beginMethod = <no data>
+
+000000c4786fd230 00007ffaf9114c97 Kingdee.BOS.ServiceFacade.KDServiceFx.ExecuteServiceModule.OnProcess(Kingdee.BOS.ServiceFacade.KDServiceFx.KDServiceContext)
+    PARAMETERS:
+        this = <no data>
+        context (<CLR reg>) = 0x000002a60f18cd00
+
+000000c4786fd300 00007ffaf9114068 Kingdee.BOS.ServiceFacade.KDServiceFx.ModulePipeline.ExcuteRequest(Kingdee.BOS.ServiceFacade.KDServiceFx.KDServiceContext)
+    PARAMETERS:
+        this (<CLR reg>) = 0x000002a5fd45f818
+        context (<CLR reg>) = 0x000002a60f18cd00
+
+000000c4786fd360 00007ffaf8f67d6a Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExcuteRuntime.BeginRquest(Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor, Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext)
+    PARAMETERS:
+        requestExtractor (0x000000c4786fd3e0) = 0x000002a60f136a78
+        webCtx (0x000000c4786fd3e8) = 0x000002a60f13b508
+
+000000c4786fd3e0 00007ffaf8f671bf Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExcuteRuntime.StartRequest(Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor, Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext)
+    PARAMETERS:
+        requestExtractor (0x000000c4786fd430) = 0x000002a60f136a78
+        context (0x000000c4786fd438) = 0x000002a60f13b508
+
+000000c4786fd430 00007ffaf8f66cf9 Kingdee.BOS.ServiceFacade.KDServiceFx.KDSVCHandler.ExecuteRequest(Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext, Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor)
+    PARAMETERS:
+        this = <no data>
+        ctx (<CLR reg>) = 0x000002a60f13b508
+        requestExtractor = <no data>
+
+000000c4786fd480 00007ffaf8f66b59 Kingdee.BOS.ServiceFacade.KDServiceFx.KDSVCHandler.ProcessRequestInternal(Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext, Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor)
+    PARAMETERS:
+        this = <no data>
+        webCtx (0x000000c4786fd4d8) = 0x000002a60f13b508
+        requestExtractor (0x000000c4786fd4e0) = 0x000002a60f136a78
+
+000000c4786fd4d0 00007ffaf8f665cb Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractorQueueManager.RunExtractor(Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext, Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor, System.Action`2<Kingdee.BOS.ServiceFacade.KDServiceFx.WebContext,Kingdee.BOS.ServiceFacade.KDServiceFx.RequestExtractor>)
+    PARAMETERS:
+        ctx = <no data>
+        requestExtractor = <no data>
+        callback = <no data>
+
+000000c4786fd530 00007ffaf8f5f19b Kingdee.BOS.ServiceFacade.KDServiceFx.KDSVCHandler.ProcessRequest(System.Web.HttpContext)
+    PARAMETERS:
+        this = <no data>
+        context = <no data>
+
+000000c4786fd580 00007ffb101b804e System.Web.HttpApplication+CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+    PARAMETERS:
+        this = <no data>
+
+000000c4786fd600 00007ffb1017af5b System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep)
+    PARAMETERS:
+        this = <no data>
+        step = <no data>
+
+000000c4786fd640 00007ffb1017afcd System.Web.HttpApplication.ExecuteStep(IExecutionStep, Boolean ByRef)
+    PARAMETERS:
+        this (0x000000c4786fd690) = 0x000002a604589da8
+        step (0x000000c4786fd698) = 0x000002a60458dcb8
+        completedSynchronously (0x000000c4786fd6a0) = 0x000000c4786fd780
+
+000000c4786fd690 00007ffb1018ed7f System.Web.HttpApplication+PipelineStepManager.ResumeSteps(System.Exception)
+    PARAMETERS:
+        this (0x000000c4786fd7d0) = 0x000002a60458d960
+        error = <no data>
+
+000000c4786fd7d0 00007ffb10179c9d System.Web.HttpApplication.BeginProcessRequestNotification(System.Web.HttpContext, System.AsyncCallback)
+    PARAMETERS:
+        this = <no data>
+        context = <no data>
+        cb = <no data>
+
+000000c4786fd820 00007ffb1018cee0 System.Web.HttpRuntime.ProcessRequestNotificationPrivate(System.Web.Hosting.IIS7WorkerRequest, System.Web.HttpContext)
+    PARAMETERS:
+        this (0x000000c4786fd8a0) = 0x000002a57d49e788
+        wr (0x000000c4786fd8a8) = 0x000002a60f10b1a8
+        context (0x000000c4786fd8b0) = 0x000002a60f10b758
+
+000000c4786fd8a0 00007ffb1017c4dc System.Web.Hosting.PipelineRuntime.ProcessRequestNotificationHelper(IntPtr, IntPtr, IntPtr, Int32)
+    PARAMETERS:
+        rootedObjectsPointer = <no data>
+        nativeRequestContext (0x000000c4786fda48) = 0x000002a20e51cc40
+        moduleData = <no data>
+        flags = <no data>
+
+000000c4786fda40 00007ffb1017bfd4 System.Web.Hosting.PipelineRuntime.ProcessRequestNotification(IntPtr, IntPtr, IntPtr, Int32)
+    PARAMETERS:
+        rootedObjectsPointer = <no data>
+        nativeRequestContext = <no data>
+        moduleData = <no data>
+        flags = <no data>
+
+000000c4786fda80 00007ffb1082f093 DomainNeutralILStubClass.IL_STUB_ReversePInvoke(Int64, Int64, Int64, Int32)
+    PARAMETERS:
+        <no data>
+        <no data>
+        <no data>
+        <no data>
+
+000000c4786fe2f0 00007ffb57a5222e [InlinedCallFrame: 000000c4786fe2f0] System.Web.Hosting.UnsafeIISMethods.MgdIndicateCompletion(IntPtr, System.Web.RequestNotificationStatus ByRef)
+000000c4786fe2f0 00007ffb101e731f [InlinedCallFrame: 000000c4786fe2f0] System.Web.Hosting.UnsafeIISMethods.MgdIndicateCompletion(IntPtr, System.Web.RequestNotificationStatus ByRef)
+000000c4786fe2c0 00007ffb101e731f DomainNeutralILStubClass.IL_STUB_PInvoke(IntPtr, System.Web.RequestNotificationStatus ByRef)
+    PARAMETERS:
+        <no data>
+        <no data>
+
+000000c4786fe380 00007ffb1017c607 System.Web.Hosting.PipelineRuntime.ProcessRequestNotificationHelper(IntPtr, IntPtr, IntPtr, Int32)
+    PARAMETERS:
+        rootedObjectsPointer = <no data>
+        nativeRequestContext = <no data>
+        moduleData = <no data>
+        flags = <no data>
+
+000000c4786fe520 00007ffb1017bfd4 System.Web.Hosting.PipelineRuntime.ProcessRequestNotification(IntPtr, IntPtr, IntPtr, Int32)
+    PARAMETERS:
+        rootedObjectsPointer = <no data>
+        nativeRequestContext = <no data>
+        moduleData = <no data>
+        flags = <no data>
+
+000000c4786fe560 00007ffb1082f093 DomainNeutralILStubClass.IL_STUB_ReversePInvoke(Int64, Int64, Int64, Int32)
+    PARAMETERS:
+        <no data>
+        <no data>
+        <no data>
+        <no data>
+
+000000c4786fe738 00007ffb57a52483 [ContextTransitionFrame: 000000c4786fe738]
+```
+
+=== CLOSED ===
+Successfully closed cdb session cdb-1e6443d0

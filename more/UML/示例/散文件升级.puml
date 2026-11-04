@@ -1,0 +1,48 @@
+@startuml
+!theme materia
+skinparam defaultFontName WenQuanYi Micro Hei
+skinparam handwritten ture
+skin rose
+
+skinparam rectangle {
+    roundCorner 25
+}
+
+actor user
+
+agent Web as web
+
+rectangle  "Web拉起TA" <<TrustAgent>> {
+rectangle trustagent
+rectangle trustcore
+}
+
+web --> trustcore : 1.1 trust_core_info 检查登录状态
+note right
+{
+    "method": "trust_core_info",
+    "params": {
+        "browser_useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+    }
+}
+end note
+web --> trustcore
+trustcore --> web : 1.1 trust_core_info 检查登录状态
+
+
+user --> web : 认证
+
+web --> trustcore : trust_session_relay_code
+note right
+{
+    "method": "trust_session_relay_code",
+    "params": {
+        "tac_host": "10.49.40.250",
+        "tac_port": "",
+        "browser_useragent": "",
+        "extra_xxx": ""
+    }
+}
+end note
+
+@enduml

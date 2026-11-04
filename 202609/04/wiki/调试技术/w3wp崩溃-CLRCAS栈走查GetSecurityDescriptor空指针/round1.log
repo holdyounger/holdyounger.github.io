@@ -1,0 +1,216 @@
+=== SESSION: cdb-ce087231 ===
+
+########## CMD: .sympath srv*C:\websymbols*https://msdl.microsoft.com/download/symbols ##########
+Command: .sympath srv*C:\websymbols*https://msdl.microsoft.com/download/symbols
+
+Output:
+```
+0:057> Symbol search path is: srv*C:\websymbols*https://msdl.microsoft.com/download/symbols
+Expanded Symbol search path is: srv*c:\websymbols*https://msdl.microsoft.com/download/symbols
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*C:\websymbols*https://msdl.microsoft.com/download/symbols
+```
+
+########## CMD: .reload /f clr.dll ##########
+Command: .reload /f clr.dll
+
+Output:
+```
+0:057>
+************* Symbol Loading Error Summary **************
+Module name            Error
+clr                    The system cannot find the file specified
+
+You can troubleshoot most symbol related issues by turning on symbol loading diagnostics (!sym noisy) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path (.sympath) is correct.
+```
+
+########## CMD: .loadby sos clr ##########
+Command: .loadby sos clr
+
+Output:
+```
+
+```
+
+########## CMD: .load ext ##########
+Command: .load ext
+
+Output:
+```
+0:057> The call to LoadLibrary(ext) failed, Win32 error 0n2
+    "系统找不到指定的文件。"
+Please check your debugger configuration and/or netwoError: Failed to load extension ext
+```
+
+########## CMD: !analyze -v ##########
+Command: !analyze -v
+
+Output:
+```
+0:057> No export analyze found
+```
+
+########## CMD: .exr -1 ##########
+Command: .exr -1
+
+Output:
+```
+0:057> ExceptionAddress: 00007ffb57aaa8eb (clr!DllUnregisterServerInternal+0x000000000004cd5b)
+   ExceptionCode: c0000005 (Access violation)
+  ExceptionFlags: 00000000
+NumberParameters: 2
+   Parameter[0]: 0000000000000000
+   Parameter[1]: 0000000000000070
+Attempt to read from address 0000000000000070
+```
+
+########## CMD: r ##########
+Command: r
+
+Output:
+```
+0:057> rax=0000000000000000 rbx=000002a6feaa4c40 rcx=00007ffaf9615018
+rdx=000002a6fe7312a0 rsi=000002a6fe7312a0 rdi=000000c4786fa9a0
+rip=00007ffb57aaa8eb rsp=000000c4786f9240 rbp=00007ffaf9619228
+ r8=000002a6feaa4c40  r9=00007ffaf9615ae8 r10=000000c4786fadd0
+r11=000000c4786f92b0 r12=0000000000000001 r13=000002a6feaa4c40
+r14=000000c4786f9320 r15=0000000000000000
+iopl=0         nv up ei pl zr na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010246
+clr!DllUnregisterServerInternal+0x4cd5b:
+00007ffb`57aaa8eb 488b4070        mov     rax,qword ptr [rax+70h] ds:00000000`00000070=????????????????
+```
+
+########## CMD: kb 40 ##########
+Command: kb 40
+
+Output:
+```
+0:057> RetAddr               : Args to Child                                                           : Call Site
+00007ffb`57c371b9     : 000000c4`786fae10 00007ffb`57c36630 00007ffa`f8580020 000002a6`fe7312a0 : clr!DllUnregisterServerInternal+0x4cd5b
+00007ffb`57bde817     : 00007ffb`57a54010 00007ffb`57a54010 000000c4`786f93e0 00007ffb`57c36630 : clr!StrongNameSignatureVerification+0x9889
+00007ffb`57c4ebc9     : 00000000`00000000 000002a2`12ff4950 00000000`00000000 00000000`00000000 : clr!ClrCreateManagedInstance+0x27567
+00007ffb`57c3675c     : 00000000`00000002 00007ffb`00000001 00000000`00000000 000002a6`0f5b1f10 : clr!StrongNameSignatureVerification+0x21299
+00007ffb`57c36591     : 000000c4`786fa9a0 00000000`00000000 00000000`00000000 000000c4`786fab28 : clr!StrongNameSignatureVerification+0x8e2c
+00007ffb`57c363ec     : 000000c4`786fab28 00000000`00000000 00000000`00000000 00000000`00000000 : clr!StrongNameSignatureVerification+0x8c61
+00007ffb`57c32298     : 00000000`00000081 000000c4`786faaf0 00000000`00000000 00007ffb`57ad463a : clr!StrongNameSignatureVerification+0x8abc
+00007ffb`57f6c9c1     : 00007ffa`feb0b7a0 00007ffb`582305c0 00007ffa`f9619228 000002a6`0f5b1f10 : clr!StrongNameSignatureVerification+0x4968
+00007ffb`57e811f5     : 00000000`00000001 00007ffa`f9619228 00000000`00000000 00002f66`7c50cf22 : clr!TranslateSecurityAttributes+0x92601
+00007ffa`f85a7873     : 00007ffa`f9619228 000002a3`fd809358 000002a6`0f1ccad0 00007ffb`11438442 : clr!ParseManifest+0x1f9bf5
+00007ffa`f85a76fe     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : 0x00007ffa`f85a7873
+00007ffa`f85a73c4     : 000002a3`fd80a2d8 000002a3`fd809358 00000001`00000001 000002a6`0f1ccad0 : 0x00007ffa`f85a76fe
+00007ffa`f85a5e1c     : 000002a3`fd80a2d8 000002a3`fd809358 000002a6`0f1ccad0 00000000`00000000 : 0x00007ffa`f85a73c4
+00007ffb`114ad57a     : 000002a6`0f5afa88 000002a5`7d491ab0 000002a6`0f5b0950 00007ffb`11415c2c : 0x00007ffa`f85a5e1c
+00007ffb`114ad483     : 00000000`00000081 000002a6`0f5afe68 000000c4`786fb3e0 000002a6`0f5b0400 : mscorlib_ni+0x63d57a
+00007ffb`114ad15a     : 000002a6`0f5afc00 00000000`00000024 00000000`00000001 00000000`00000000 : mscorlib_ni+0x63d483
+00007ffb`114acd0e     : 000002a6`0f5b0908 000002a6`0f5afcf0 000002a6`0f5b0a30 00007ffb`114aca79 : mscorlib_ni+0x63d15a
+00007ffb`114abf29     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ffb`1143cf63 : mscorlib_ni+0x63cd0e
+00007ffb`114abbfd     : 000002a6`0f5afcf0 000002a6`0f5afcf0 000002a6`0f5afe20 00007ffb`114abac3 : mscorlib_ni+0x63bf29
+00007ffb`114ab907     : 000002a6`0f48ddb8 000002a6`0f5afae0 00000000`00000196 00000000`00000102 : mscorlib_ni+0x63bbfd
+00007ffb`11c401e1     : 000002a6`0f5ae948 000002a6`0f5aed60 000000c4`786fb830 00000000`00000102 : mscorlib_ni+0x63b907
+00007ffa`fe720032     : 000002a6`0f5aed60 000002a6`0f5ae948 000002a6`0f5afb90 00000000`00000000 : mscorlib_ni+0xdd01e1
+00007ffa`fe71fbf5     : 000002a6`0f483db0 000002a6`0f5ae948 000002a6`0f5ae780 000002a6`0f48d650 : 0x00007ffa`fe720032
+00007ffa`fe71f8d1     : 000002a6`0f483db0 000002a6`0f5ae948 000002a6`0f5ae780 000002a6`0f483f30 : 0x00007ffa`fe71fbf5
+00007ffa`fe71f5ea     : 000002a6`0f483db0 000002a6`0f5ae948 000002a6`0f5ae780 000002a6`0f483f30 : 0x00007ffa`fe71f8d1
+00007ffa`fe71f08e     : 000002a6`0f483db0 000002a4`81665148 000002a6`0f483f30 000002a6`0f48d650 : 0x00007ffa`fe71f5ea
+00007ffa`fe71e860     : 000002a6`0f483db0 000002a5`7d498698 000002a6`0f483f30 000002a6`0f48d650 : 0x00007ffa`fe71f08e
+00007ffa`fe71e4ed     : 000002a6`0f483db0 000002a6`0f4836d8 000002a6`0f483f30 000000c4`786fbae8 : 0x00007ffa`fe71e860
+00007ffa`fe71e15e     : 000002a6`0f483db0 000002a6`0f483740 000002a6`0f4836d8 000000c4`786fbb68 : 0x00007ffa`fe71e4ed
+*** WARNING: Unable to verify checksum for System.ni.dll
+00007ffb`465f4645     : 000002a6`0f483db0 000002a6`0f483740 000002a6`0f4836d8 000002a6`0f480010 : 0x00007ffa`fe71e15e
+00007ffb`465f47ef     : 00007ffb`57aa9460 000000c4`786fbae8 000000c4`786fbb18 000002a6`00000003 : System_ni+0x964645
+00007ffa`fe71d5b5     : 000002a6`0f480010 00000000`00000001 000000c4`786fb240 00000000`00008000 : System_ni+0x9647ef
+00007ffa`fe71a71c     : 000002a6`0f480010 00000000`00000000 000002a2`129e58f8 000002a2`7ce40098 : 0x00007ffa`fe71d5b5
+00007ffa`fe715e1d     : 000002a6`0f47f728 000002a2`801e6908 00000000`00000000 00000000`00000002 : 0x00007ffa`fe71a71c
+00007ffa`fe6fba78     : 000002a5`86999150 00007ffa`fe6fb835 00000000`00000000 000002a6`0f1cf6cc : 0x00007ffa`fe715e1d
+00007ffa`fa73a200     : 000002a5`86999150 000002a6`0f1d41b0 00000000`00000000 000002a6`0f1cf6cc : 0x00007ffa`fe6fba78
+00007ffa`fa71cd6e     : 000002a6`0f1d3c70 00007ffa`fa6d8433 000002a6`0f1cf7b8 000002a5`86998a40 : 0x00007ffa`fa73a200
+00007ffa`fa8199f3     : 00000002`00000003 000002a6`0f1cf7b8 000000c4`786fbfb0 000002a6`0f1d1eb8 : 0x00007ffa`fa71cd6e
+00007ffa`fa71c306     : 00000000`00002000 000002a2`7d3c2180 000002a5`fd430000 00007ffb`00000007 : 0x00007ffa`fa8199f3
+00007ffb`57a56893     : 000002a6`0f1d1eb8 000002a6`0f1cf6b0 000002a6`0f1cf7b8 000002a2`7d3c2180 : 0x00007ffa`fa71c306
+00007ffb`57a56780     : 000002a2`12ff49b8 00007ffa`00000007 000000c4`ffffffff 000000c4`786fc000 : clr!LogHelp_TerminateOnAssert+0x1b93
+00007ffb`57aab5aa     : 00000000`00000000 00000000`00000000 000000c4`786fc1c0 00007ffa`f8aa7f60 : clr!LogHelp_TerminateOnAssert+0x1a80
+00007ffb`57aaba65     : 00007ffa`f8aa7f60 000002a6`0f1d32c0 00000000`00000000 000000c4`786fc094 : clr!DllUnregisterServerInternal+0x4da1a
+00007ffb`11420a24     : 00000000`00000001 00000000`00000001 000002a6`0f1d1eb8 00007ffb`11413000 : clr!DllUnregisterServerInternal+0x4ded5
+00007ffb`11438442     : 00000000`00000000 00000000`00000000 000002a6`0f1d31d0 00007ffb`11404695 : mscorlib_ni+0x5b0a24
+00007ffa`f98c35ca     : 000002a6`09905500 000000c4`786fc8d0 000002a6`0f1d0468 00000000`00000000 : mscorlib_ni+0x5c8442
+00007ffa`f98c19cb     : 000002a6`0f1cd230 000002a6`0f19d9e8 000002a6`0f1aca50 000002a5`7d431420 : 0x00007ffa`f98c35ca
+00007ffb`57a56893     : 000002a6`0f1cd230 000002a6`0f19d9e8 000002a6`0f1aca50 000002a6`0f1bba90 : 0x00007ffa`f98c19cb
+00007ffb`57a56780     : 000002a6`0f1cf560 00007ffa`f86e3071 000002a6`0f1cec90 00007ffa`f86f43ad : clr!LogHelp_TerminateOnAssert+0x1b93
+00007ffb`57aab5aa     : 00000000`00000000 00000000`00000000 000000c4`786fcba0 00007ffa`f8aa7f60 : clr!LogHelp_TerminateOnAssert+0x1a80
+00007ffb`57aaba65     : 00007ffa`f8aa7f60 000002a6`0f1d0458 00000000`00000000 000000c4`786fcbb0 : clr!DllUnregisterServerInternal+0x4da1a
+00007ffb`11420a24     : 00000000`00000001 000002a5`fd4668f8 000002a6`0f1cd230 00007ffb`11413000 : clr!DllUnregisterServerInternal+0x4ded5
+00007ffb`11438442     : 00000000`00000000 000002a5`fd4668f8 00000000`00000001 000002a5`fd462978 : mscorlib_ni+0x5b0a24
+00007ffa`f9119bac     : 000002a5`fd466918 000000c4`786fcfa8 000000c4`786fd010 00000000`00000003 : mscorlib_ni+0x5c8442
+00007ffa`f9114c97     : 000002a5`fd45fe08 000002a6`0f18cd00 000002a5`ff286788 000002a6`0f18e9d8 : 0x00007ffa`f9119bac
+00007ffa`f9114068     : 000002a2`7d47b910 000002a6`0f18cd00 000002a6`0f18c108 000002a4`09499348 : 0x00007ffa`f9114c97
+00007ffa`f8f67d6a     : 000002a6`0f18c108 00007ffb`114b95aa 00000000`00000001 00000000`00000041 : 0x00007ffa`f9114068
+00007ffa`f8f671bf     : 000002a6`0f136a78 000002a6`0f13b508 000002a6`0f10b518 000002a5`7d49f2b8 : 0x00007ffa`f8f67d6a
+00007ffa`f8f66cf9     : 000002a6`0f136a78 000002a6`0f13b508 000002a6`0f18a7f0 000002a6`0f13b508 : 0x00007ffa`f8f671bf
+00007ffa`f8f66b59     : 000000c4`786fd460 00000000`00000000 00000000`00000000 00000000`00000000 : 0x00007ffa`f8f66cf9
+00007ffa`f8f665cb     : 00000000`00000000 000002a6`0f13b508 000002a6`0f136a78 00000002`00000002 : 0x00007ffa`f8f66b59
+00007ffa`f8f5f19b     : 00007ffb`0ff3a670 00000000`00000007 000002a6`0458dcb8 000002a6`0f132910 : 0x00007ffa`f8f665cb
+*** WARNING: Unable to verify checksum for System.Web.ni.dll
+00007ffb`101b804e     : 000002a6`0f132ab0 00007ffb`57c23720 00000000`00000000 00007ffb`1085eac5 : 0x00007ffa`f8f5f19b
+00007ffb`1017af5b     : 000002a6`0f10c980 00007ffb`101b7e19 00007ffa`f8b1e9b0 000002a6`0f10c978 : System_Web_ni+0x37804e
+```
+
+########## CMD: !clrstack ##########
+Command: !clrstack
+
+Output:
+```
+0:057> PDB symbol for clr.dll not loaded
+CLRDLL: Consider using ".cordll -lp <path>" command to specify .NET runtime directory.
+Failed to load data access DLL, 0x80004005
+Verify that 1) you have a recent build of the debugger (6.2.14 or newer)
+            2) the file mscordacwks.dll that matches your version of clr.dll is
+                in the version directory or on the symbol path
+            3) or, if you are debugging a dump file, verify that the file
+                mscordacwks_<arch>_<arch>_<version>.dll is on your symbol path.
+            4) you are debugging on supported cross platform architecture as
+                the dump file. For example, an ARM dump file must be debugged
+                on an X86 or an ARM machine; an AMD64 dump file must be
+                debugged on an AMD64 machine.
+
+You can also run the debugger command .cordll to control the debugger's
+load of mscordacwks.dll.  .cordll -ve -u -l will do a verbose reload.
+If that succeeds, the SOS command should work on retry.
+
+If you are debugging a minidump, you need to make sure that your executable
+path is pointing to clr.dll as well.
+```
+
+########## CMD: !pe ##########
+Command: !pe
+
+Output:
+```
+0:057> The version of SOS does not match the version of CLR you are debugging.  Please
+load the matching version of SOS for the version of CLR you are debugging.
+CLR Version: 4.8.4795.0
+SOS Version: 4.8.9337.0
+Failed to load data access DLL, 0x80004005
+Verify that 1) you have a recent build of the debugger (6.2.14 or newer)
+            2) the file mscordacwks.dll that matches your version of clr.dll is
+                in the version directory or on the symbol path
+            3) or, if you are debugging a dump file, verify that the file
+                mscordacwks_<arch>_<arch>_<version>.dll is on your symbol path.
+            4) you are debugging on supported cross platform architecture as
+                the dump file. For example, an ARM dump file must be debugged
+                on an X86 or an ARM machine; an AMD64 dump file must be
+                debugged on an AMD64 machine.
+
+You can also run the debugger command .cordll to control the debugger's
+load of mscordacwks.dll.  .cordll -ve -u -l will do a verbose reload.
+If that succeeds, the SOS command should work on retry.
+
+If you are debugging a minidump, you need to make sure that your executable
+path is pointing to clr.dll as well.
+```
+
+=== CLOSED ===
+Successfully closed cdb session cdb-ce087231
